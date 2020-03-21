@@ -3,4 +3,17 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+
+    <!--说明：颜色名字带后缀_x表示程度加一级，_xx表示程度加两级-->
+    <color name="lightBlue_x">#DFF6F0</color>
+    <color name="lightBlue">#46b3e6</color>
+    <color name="blue">#4d80e4</color>
+    <color name="darkBlur">#2e279d</color>
+
+    <color name="lightGray">#f1f3f4</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+
+
 </resources>

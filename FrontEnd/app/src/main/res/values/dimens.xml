@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 配置文字大小-->
+    <dimen name="fontSize_s">15</dimen>
+    <dimen name="fontSize_xs">10</dimen>
+    <dimen name="fontSize_l">20</dimen>
+    <dimen name="fontSize_xl">25</dimen>
+
+</resources>
