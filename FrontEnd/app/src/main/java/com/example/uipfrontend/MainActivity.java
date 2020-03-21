@@ -13,21 +13,26 @@ import com.example.uipfrontend.Student.StudentActivity;
 
 import butterknife.BindView;
 
+
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.commonUser)
+//    @BindView(R.id.btn_commonUser)
     Button commonUser;
 
-    @BindView(R.id.student)
+//    @BindView( R.id.btn_student)
     Button student;
 
-    @BindView(R.id.admin)
+//    @BindView( R.id.btn_admin)
     Button admin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        commonUser = findViewById(R.id.btn_commonUser);
+        student = findViewById(R.id.btn_student);
+        admin = findViewById(R.id.btn_admin);
 
         commonUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
 
         student.setOnClickListener(new View.OnClickListener() {
             @Override

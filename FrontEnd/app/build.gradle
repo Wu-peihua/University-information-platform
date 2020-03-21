@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+//apply plugin: 'com.jakewharton.butterknife'
 
 android {
     compileSdkVersion 29
@@ -18,6 +18,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+
+        sourceCompatibility JavaVersion.VERSION_1_8
+
+        targetCompatibility JavaVersion.VERSION_1_8
+
+    }
 }
 
 dependencies {
@@ -29,9 +36,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
     //butterknife依赖
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     //底部导航栏依赖
-    implementation 'com.github.chaychan:BottomBarLayout:1.2.0' //建议使用最新版本
-
+    implementation 'com.aurelhubert:ahbottomnavigation:2.3.4'
+    implementation 'com.ms-square:etsyblur:0.2.1'
 }

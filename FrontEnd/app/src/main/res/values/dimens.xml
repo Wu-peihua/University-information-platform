@@ -2,9 +2,27 @@
 <resources>
 
     <!-- 配置文字大小-->
-    <dimen name="fontSize_s">15</dimen>
-    <dimen name="fontSize_xs">10</dimen>
-    <dimen name="fontSize_l">20</dimen>
-    <dimen name="fontSize_xl">25</dimen>
+    <dimen name="fontSize_s">15sp</dimen>
+    <dimen name="fontSize_xs">10sp</dimen>
+    <dimen name="fontSize_xxs">8sp</dimen>
+
+    <dimen name="fontSize_l">20sp</dimen>
+    <dimen name="fontSize_xl">25sp</dimen>
+
+
+    <!--边距大小-->
+    <dimen name="margin_s">5dp</dimen>
+    <dimen name="margin">10dp</dimen>
+    <dimen name="margin_l">15dp</dimen>
+    <dimen name="margin_xl">20dp</dimen>
+
+
+    <dimen name="padding_s">5dp</dimen>
+    <dimen name="padding">10dp</dimen>
+    <dimen name="padding_l">15dp</dimen>
+
+
+    <!--底部导航栏高度-->
+    <dimen name="tabLayoutHeight">45dp</dimen>
 
 </resources>
