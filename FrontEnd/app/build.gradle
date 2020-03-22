@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'com.jakewharton.butterknife'
 
 android {
     compileSdkVersion 29
@@ -41,4 +40,8 @@ dependencies {
     //底部导航栏依赖
     implementation 'com.aurelhubert:ahbottomnavigation:2.3.4'
     implementation 'com.ms-square:etsyblur:0.2.1'
+    //顶部可下拉条件筛选框
+    implementation 'com.github.wzgl5533:DropMenu:1.0.1'
+
+
 }

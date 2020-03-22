@@ -18,4 +18,9 @@
     <color name="black">#000000</color>
 
 
+    <!--下拉条件筛选框颜色-->
+    <color name="divider">#88888888</color>
+
+
+
 </resources>
