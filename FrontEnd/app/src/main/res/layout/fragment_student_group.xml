@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
-    
+
     <com.qlh.dropdownmenu.DropDownMenu
         android:id="@+id/dropDownMenu_student_group"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:dddividerColor="@color/gray"
         app:ddmaskColor="@color/lightGray"
         app:ddmenuBackgroundColor="@color/white"
@@ -19,6 +19,18 @@
         app:ddtextSelectedColor="@color/blue"
         app:ddtextUnselectedColor="@color/gray"
         app:ddunderlineColor="@color/lightGray"
+        android:background="@color/blue"
     />
+
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/rv_student_group"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:scrollbars="none">
+    </com.jcodecraeer.xrecyclerview.XRecyclerView>
+
+
 
 </LinearLayout>

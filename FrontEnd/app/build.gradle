@@ -42,6 +42,11 @@ dependencies {
     implementation 'com.ms-square:etsyblur:0.2.1'
     //顶部可下拉条件筛选框
     implementation 'com.github.wzgl5533:DropMenu:1.0.1'
+    //可显示图片九宫格卡片
+    implementation 'com.lzy.widget:ninegridview:0.2.0'
+    //下拉刷新和加载更多recyclerview
+    implementation 'com.jcodecraeer:xrecyclerview:1.6.0'
+
 
 
 }
