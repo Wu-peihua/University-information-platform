@@ -1,9 +1,6 @@
 package com.example.uipfrontend.Student.Fragment;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.uipfrontend.R;
-import com.example.uipfrontend.Student.Adapter.StudentFragmentAdapter;
-import com.example.uipfrontend.Student.Adapter.StudentGroupRecyclerViewAdapter;
+import com.example.uipfrontend.Student.Adapter.StudentRecruitRecyclerViewAdapter;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.qlh.dropdownmenu.DropDownMenu;
@@ -26,14 +22,14 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class StudentGroupFragment extends Fragment {
+public class StudentRecruitFragment extends Fragment {
 
     private String[] headers;//菜单头部选项
     private List<View> popupViews = new ArrayList<>();//菜单列表视图
     private DropDownMenu dropDownMenu;
     private MultiMenusView multiMenusView;//多级菜单
     private XRecyclerView recyclerView;  //下拉刷新上拉加载
-    private StudentGroupRecyclerViewAdapter studentGroupRecyclerViewAdapter;     //每条组队信息内容适配器
+    private StudentRecruitRecyclerViewAdapter studentRecruitRecyclerViewAdapter;     //每条组队信息内容适配器
 
     private List<String> list;   //组队信息实体类数组
     private View rootView;
@@ -52,7 +48,7 @@ public class StudentGroupFragment extends Fragment {
                 parent.removeView(rootView);
             }
         } else {
-            rootView = inflater.inflate(R.layout.fragment_student_group, null);
+            rootView = inflater.inflate(R.layout.fragment_student_recruit, null);
             recyclerView = rootView.findViewById(R.id.rv_student_group);
 
             init();
@@ -84,7 +80,7 @@ public class StudentGroupFragment extends Fragment {
         multiMenusView = new MultiMenusView(this.getContext(),levelOneMenu,levelTwoMenu);
         popupViews.add(multiMenusView);
         //初始化内容视图
-        View contentView = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_student_group,null);
+        View contentView = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_student_recruit,null);
         //装载
         dropDownMenu.setDropDownMenu(Arrays.asList(headers),popupViews,contentView);
 
@@ -117,8 +113,8 @@ public class StudentGroupFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        studentGroupRecyclerViewAdapter = new StudentGroupRecyclerViewAdapter(this.getContext(), list);
-        recyclerView.setAdapter(studentGroupRecyclerViewAdapter);
+        studentRecruitRecyclerViewAdapter = new StudentRecruitRecyclerViewAdapter(this.getContext(), list);
+        recyclerView.setAdapter(studentRecruitRecyclerViewAdapter);
 
         recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);

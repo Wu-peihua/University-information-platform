@@ -46,6 +46,18 @@ dependencies {
     implementation 'com.lzy.widget:ninegridview:0.2.0'
     //下拉刷新和加载更多recyclerview
     implementation 'com.jcodecraeer:xrecyclerview:1.6.0'
+    //组队信息item
+    implementation 'com.lzy.widget:ninegridview:0.2.0'
+    //头像图片控件
+    implementation 'com.lzy.widget:view-core:0.2.1'
+    //图片加载
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    //图片加载器
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
+
+
+
 
 
 

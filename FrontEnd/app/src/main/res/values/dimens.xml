@@ -11,7 +11,8 @@
 
 
     <!--边距大小-->
-    <dimen name="margin_s">5dp</dimen>
+    <dimen name="margin_xs">5dp</dimen>
+    <dimen name="margin_s">8dp</dimen>
     <dimen name="margin">10dp</dimen>
     <dimen name="margin_l">15dp</dimen>
     <dimen name="margin_xl">20dp</dimen>
@@ -20,10 +21,15 @@
     <dimen name="padding_s">5dp</dimen>
     <dimen name="padding">10dp</dimen>
     <dimen name="padding_l">15dp</dimen>
-    <dimen name="padding_xl">25dp</dimen>
+    <dimen name="padding_xl">20dp</dimen>
 
 
     <!--底部导航栏高度-->
     <dimen name="tabLayoutHeight">45dp</dimen>
+
+    <!--宽度和高度-->
+    <dimen name="layoutWidth">54dp</dimen>
+    <dimen name="layoutHeight">54dp</dimen>
+    <dimen name="layoutHeight_s">18dp</dimen>
 
 </resources>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+<!--    <TextView-->
+<!--        android:id="@+id/tv_student_group"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="left"-->
+<!--        android:textSize="15sp"-->
+<!--        android:text="组队信息"/>-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/tv_content"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textSize="15sp" />-->
+
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="1px"-->
+<!--        android:background="#abc" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/padding"
+        android:paddingLeft="@dimen/padding_l"
+        android:paddingRight="@dimen/padding_xl"
+        android:paddingTop="@dimen/padding_l">
+
+        <com.lzy.widget.CircleImageView
+            android:id="@+id/iv_student_group_item_portrait"
+            android:layout_width="@dimen/layoutWidth"
+            android:layout_height="@dimen/layoutHeight"
+            android:src="@drawable/portrait_default"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_student_group_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="组队标题"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"/>
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_student_group_item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/layoutHeight_s"
+                    android:layout_marginBottom="@dimen/margin"
+                    android:layout_marginTop="@dimen/margin_s"
+                    android:layout_weight="1"
+                    android:text="发布人"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+                <TextView
+                    android:id="@+id/tv_student_group_item_contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/layoutHeight_s"
+                    android:layout_marginBottom="@dimen/margin"
+                    android:layout_marginTop="@dimen/margin_s"
+                    android:layout_marginLeft="@dimen/margin_xl"
+                    android:layout_toRightOf="@id/tv_student_group_item_name"
+                    android:text="联系方式"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/tv_student_group_item_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
+                android:textColor="@color/item_text"
+                android:textSize="@dimen/fontSize_s"/>
+
+            <com.lzy.ninegrid.NineGridView
+                android:id="@+id/nineGrid_student_group_item_pic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/padding_s"
+                android:paddingTop="@dimen/padding_s"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_student_group_item_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:text="2020-3-26 12:30"
+                    android:textColor="@color/item_time"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+                <TextView
+                    android:id="@+id/tv_student_group_item_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_xl"
+                    android:layout_marginTop="@dimen/margin"
+                    android:layout_toRightOf="@id/tv_student_group_item_time"
+                    android:text="删除"
+                    android:textColor="@color/item_delete"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+                <ImageView
+                    android:id="@+id/more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@mipmap/feed_more"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
+
+            <!--评论UI控件-->
+<!--            <com.lzy.widget.ExpandListView-->
+<!--                android:id="@+id/lv_comments"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginRight="5dp"-->
+<!--                android:layout_marginTop="9.5dp"-->
+<!--                android:background="@drawable/event_di"-->
+<!--                android:divider="@null"-->
+<!--                android:dividerHeight="0dp"-->
+<!--                android:orientation="vertical"-->
+<!--                android:paddingBottom="5dp"-->
+<!--                android:paddingLeft="8dp"-->
+<!--                android:paddingRight="8dp"-->
+<!--                android:paddingTop="16dp"/>-->
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGray"/>
+
+</LinearLayout>

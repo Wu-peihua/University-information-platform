@@ -2,14 +2,17 @@ package com.example.uipfrontend.Student;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.StudentFragmentAdapter;
-
-import butterknife.BindView;
+import com.lzy.ninegrid.NineGridView;
+import com.squareup.picasso.Picasso;
 
 public class StudentActivity extends AppCompatActivity {
 
@@ -29,6 +32,8 @@ public class StudentActivity extends AppCompatActivity {
 
     public void init(){
 
+        NineGridView.setImageLoader(new PicassoImageLoader());
+
         studentViewPager = findViewById(R.id.vp_student);
         studentAHBottomNavigation = findViewById(R.id.btmNav_student);
 
@@ -39,7 +44,7 @@ public class StudentActivity extends AppCompatActivity {
         //创建items，3个参数分别是item的文字，item的icon，选中item时的整体颜色（该项需要开启）
         AHBottomNavigationItem item1 = new AHBottomNavigationItem("论坛讨论", R.drawable.forum_ed, R.color.lightBlue);
         AHBottomNavigationItem item2 = new AHBottomNavigationItem("资源分享", R.drawable.resource_ed, R.color.lightBlue);
-        AHBottomNavigationItem item3 = new AHBottomNavigationItem("组队招聘", R.drawable.group_ed, R.color.lightBlue);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem("组队招聘", R.drawable.recruit_ed, R.color.lightBlue);
         AHBottomNavigationItem item4 = new AHBottomNavigationItem("课程点评", R.drawable.comment_ed, R.color.lightBlue);
         AHBottomNavigationItem item5 = new AHBottomNavigationItem("我的信息", R.drawable.home_ed, R.color.lightBlue);
 
@@ -100,5 +105,22 @@ public class StudentActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    /** Picasso 加载 */
+    private class PicassoImageLoader implements NineGridView.ImageLoader {
+
+        @Override
+        public void onDisplayImage(Context context, ImageView imageView, String url) {
+            Picasso.with(context).load(url)//
+                    .placeholder(R.drawable.ic_default_image)//
+                    .error(R.drawable.ic_default_image)//
+                    .into(imageView);
+        }
+
+        @Override
+        public Bitmap getCacheImage(String url) {
+            return null;
+        }
     }
 }

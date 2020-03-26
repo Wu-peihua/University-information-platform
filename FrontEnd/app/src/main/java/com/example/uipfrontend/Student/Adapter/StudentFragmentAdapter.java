@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.uipfrontend.Student.Fragment.StudentCommentFragment;
 import com.example.uipfrontend.Student.Fragment.StudentForumFragment;
-import com.example.uipfrontend.Student.Fragment.StudentGroupFragment;
+import com.example.uipfrontend.Student.Fragment.StudentRecruitFragment;
 import com.example.uipfrontend.Student.Fragment.StudentHomeFragment;
 import com.example.uipfrontend.Student.Fragment.StudentResourceFragment;
 
@@ -25,7 +25,7 @@ public class StudentFragmentAdapter extends FragmentPagerAdapter {
         fragmentList = new ArrayList<>();
         fragmentList.add(0, new StudentForumFragment());
         fragmentList.add(1, new StudentResourceFragment());
-        fragmentList.add(2, new StudentGroupFragment());
+        fragmentList.add(2, new StudentRecruitFragment());
         fragmentList.add(3, new StudentCommentFragment());
         fragmentList.add(4, new StudentHomeFragment());
 

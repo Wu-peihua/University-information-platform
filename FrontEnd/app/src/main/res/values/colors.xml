@@ -20,6 +20,12 @@
 
     <!--下拉条件筛选框颜色-->
     <color name="divider">#88888888</color>
+    <!--学生组队信息item发布资源文字颜色-->
+    <color name="item_text">#505050</color>
+    <!--学生组队信息item发布资源时间颜色-->
+    <color name="item_time">#8e8e8e</color>
+    <!--学生组队信息item删除按钮文字颜色-->
+    <color name="item_delete">#883A5FCD</color>
 
 
 
