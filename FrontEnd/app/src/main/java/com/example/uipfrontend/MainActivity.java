@@ -8,10 +8,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.uipfrontend.Admin.AdminHomeActivity;
-import com.example.uipfrontend.CommonUser.CommonUserHomeActivity;
+import com.example.uipfrontend.CommonUser.CommonUserActivity;
 import com.example.uipfrontend.Student.StudentActivity;
-
-import butterknife.BindView;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -37,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         commonUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this , CommonUserHomeActivity.class);
+                Intent i = new Intent(MainActivity.this , CommonUserActivity.class);
                 //启动
                 startActivity(i);
             }
