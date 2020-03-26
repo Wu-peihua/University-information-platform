@@ -55,10 +55,11 @@ dependencies {
     //图片加载器
     implementation 'com.squareup.picasso:picasso:2.5.2'
 
+    // 点赞
+    implementation 'com.sunbq:iconcountview:1.0.1'
 
 
 
-
-
+    
 
 }
