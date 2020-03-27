@@ -1,0 +1,68 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/AddCommentArea"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/EditTitle"
+            android:onClick="doclick"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:text="编辑评论"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontSize_xl"/>
+
+        <me.zhanghai.android.materialratingbar.MaterialRatingBar
+            android:layout_below="@+id/EditTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_margin="@dimen/margin_s"
+            android:numStars="5"
+            android:isIndicator="false"
+            android:gravity="center"
+            android:id="@+id/SetRating"
+            style="@style/Widget.MaterialRatingBar.RatingBar" />
+
+        <TextView
+            android:layout_below="@+id/SetRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_s"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/UserEditTitle"
+            android:text="详细描述"
+            android:textSize="@dimen/fontSize_s">
+        </TextView>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/UserEidtComment"
+            app:met_minCharacters="1"
+            app:met_maxCharacters="100"
+            app:met_singleLineEllipsis="false"
+            android:layout_margin="@dimen/margin_xl"
+            android:layout_below="@+id/UserEditTitle"
+            android:hint="写下你的评论吧"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_s"
+            android:layout_below="@+id/UserEidtComment"
+            android:layout_centerHorizontal="true"
+            android:text="提交"
+            android:id="@+id/submitComment"
+            >
+
+        </Button>
+
+    </RelativeLayout>
+</androidx.core.widget.NestedScrollView>

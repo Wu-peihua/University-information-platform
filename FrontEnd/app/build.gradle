@@ -58,7 +58,31 @@ dependencies {
     // 点赞
     implementation 'com.sunbq:iconcountview:1.0.1'
 
+    //Material design Edittext
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
 
+    //Material design RatingBar
+    implementation 'me.zhanghai.android.materialratingbar:library:1.4.0'
+
+    //cardview 依赖
+    implementation "androidx.cardview:cardview:1.0.0"
+
+    //卡片UI
+    implementation 'com.lzy.widget:ninegridview:0.2.0'
+
+    //底部评论 BottomSheet依赖
+    //noinspection GradleCompatible
+    implementation 'com.android.support:design:24.2.1'
+
+    //刷新RecycleView
+    implementation 'com.jcodecraeer:xrecyclerview:1.6.0'
+
+    //alert dialog依赖
+    implementation 'com.github.f0ris.sweetalert:library:1.5.1'
+
+    //刷新加载 smartrefreshlayout
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.2'
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.2'
 
     
 
