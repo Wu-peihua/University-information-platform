@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,18 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.R;
-import com.example.uipfrontend.Utils.GlobalDialog;
 import com.lzy.ninegrid.ImageInfo;
 import com.lzy.ninegrid.NineGridView;
 import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
 import com.lzy.widget.CircleImageView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.OnClick;
 
 public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
 
@@ -92,7 +86,7 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.fragment_student_recruit_item, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_student_recruit, null);
         return new ViewHolder(view);
     }
 
