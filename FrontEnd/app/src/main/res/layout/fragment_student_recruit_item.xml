@@ -63,24 +63,24 @@
                     android:id="@+id/tv_student_group_item_name"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/layoutHeight_s"
-                    android:layout_marginBottom="@dimen/margin"
+                    android:layout_marginBottom="@dimen/margin_s"
                     android:layout_marginTop="@dimen/margin_s"
                     android:layout_weight="1"
                     android:text="发布人"
                     android:layout_gravity="center_vertical"
-                    android:textColor="@color/black"
+                    android:textColor="@color/darkGray"
                     android:textSize="@dimen/fontSize_xs"/>
 
                 <TextView
                     android:id="@+id/tv_student_group_item_contact"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/layoutHeight_s"
-                    android:layout_marginBottom="@dimen/margin"
+                    android:layout_marginBottom="@dimen/margin_s"
                     android:layout_marginTop="@dimen/margin_s"
                     android:layout_marginLeft="@dimen/margin_xl"
                     android:layout_toRightOf="@id/tv_student_group_item_name"
                     android:text="联系方式"
-                    android:textColor="@color/black"
+                    android:textColor="@color/darkGray"
                     android:textSize="@dimen/fontSize_xs"/>
 
             </RelativeLayout>
@@ -114,24 +114,25 @@
                     android:textColor="@color/item_time"
                     android:textSize="@dimen/fontSize_xs"/>
 
-                <TextView
-                    android:id="@+id/tv_student_group_item_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_xl"
-                    android:layout_marginTop="@dimen/margin"
-                    android:layout_toRightOf="@id/tv_student_group_item_time"
-                    android:text="删除"
-                    android:textColor="@color/item_delete"
-                    android:textSize="@dimen/fontSize_xs"/>
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_student_group_item_delete"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="@dimen/margin_xl"-->
+<!--                    android:layout_marginTop="@dimen/margin"-->
+<!--                    android:layout_toRightOf="@id/tv_student_group_item_time"-->
+<!--                    android:text="删除"-->
+<!--                    android:textColor="@color/item_delete"-->
+<!--                    android:textSize="@dimen/fontSize_xs"/>-->
 
                 <ImageView
                     android:id="@+id/more"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/layoutWeight_s"
+                    android:layout_height="@dimen/layoutHeight_s"
+                    android:layout_marginTop="@dimen/margin_l"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:background="@mipmap/feed_more"
+                    android:background="@drawable/report"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 

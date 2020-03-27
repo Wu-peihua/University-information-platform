@@ -31,5 +31,6 @@
     <dimen name="layoutWidth">54dp</dimen>
     <dimen name="layoutHeight">54dp</dimen>
     <dimen name="layoutHeight_s">18dp</dimen>
+    <dimen name="layoutWeight_s">18dp</dimen>
 
 </resources>

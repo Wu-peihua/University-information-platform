@@ -61,30 +61,31 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
             nineGridView = itemView.findViewById(R.id.nineGrid_student_group_item_pic);
         }
 
-        @OnClick(R.id.tv_student_group_item_delete)
-        public void delete(View view) {
-            final GlobalDialog delDialog = new GlobalDialog(context);
-            delDialog.setCanceledOnTouchOutside(true);
-            delDialog.getTitle().setText("提示");
-            delDialog.getContent().setText("确定删除吗?");
-            delDialog.setLeftBtnText("取消");
-            delDialog.setRightBtnText("确定");
-            delDialog.setLeftOnclick(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, "取消", Toast.LENGTH_SHORT).show();
-                    delDialog.dismiss();
-                }
-            });
-            delDialog.setRightOnclick(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, "确定", Toast.LENGTH_SHORT).show();
-                    delDialog.dismiss();
-                }
-            });
-            delDialog.show();
-        }
+
+//        @OnClick(R.id.tv_student_group_item_delete)
+//        public void delete(View view) {
+//            final GlobalDialog delDialog = new GlobalDialog(context);
+//            delDialog.setCanceledOnTouchOutside(true);
+//            delDialog.getTitle().setText("提示");
+//            delDialog.getContent().setText("确定删除吗?");
+//            delDialog.setLeftBtnText("取消");
+//            delDialog.setRightBtnText("确定");
+//            delDialog.setLeftOnclick(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(context, "取消", Toast.LENGTH_SHORT).show();
+//                    delDialog.dismiss();
+//                }
+//            });
+//            delDialog.setRightOnclick(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(context, "确定", Toast.LENGTH_SHORT).show();
+//                    delDialog.dismiss();
+//                }
+//            });
+//            delDialog.show();
+//        }
 
     }
 
@@ -100,18 +101,21 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
 
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
-        viewHolder.contact.setText("13665665676");
-        viewHolder.userName.setText("小红");
+        viewHolder.contact.setText("联系方式："+"13665665676");
+        viewHolder.userName.setText("联系人："+"小红");
         viewHolder.infoDate.setText("2020-03-26 15:30");
         viewHolder.title.setText("比赛组队");
         viewHolder.content.setText("青研杯找队友，要求：认真负责，人数：2");
         //临时图片地址
         setImage(context,viewHolder.portrait,"http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg");
+        viewHolder.portrait.setBorderWidth(0);
         //临时显示组队信息图片
         ArrayList<ImageInfo> imageInfo = new ArrayList<>();
         ImageInfo info = new ImageInfo();
         info.setThumbnailUrl("http://image.biaobaiju.com/uploads/20180111/00/1515601824-VFslzoEJkU.jpg");
-        info.setBigImageUrl("http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg");
+        info.setBigImageUrl("http://image.biaobaiju.com/uploads/20180111/00/1515601824-VFslzoEJkU.jpg");
+        imageInfo.add(info);
+        imageInfo.add(info);
         imageInfo.add(info);
 
         viewHolder.nineGridView.setAdapter(new NineGridViewClickAdapter(context, imageInfo));
