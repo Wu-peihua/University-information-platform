@@ -31,7 +31,7 @@ import java.util.List;
 public class ForumFragment extends Fragment {
 
     private View rootView;
-    
+
     // 搜索高亮
     private ForegroundColorSpan redSpan = new ForegroundColorSpan(Color.rgb(255, 0, 0));
 
@@ -41,7 +41,7 @@ public class ForumFragment extends Fragment {
 
     private XRecyclerView xRecyclerView;
     private ForumListRecyclerViewAdapter adapter;
-    
+
     private List<ForumPosts> posts;
     private List<ForumPosts> whole;
 
@@ -119,7 +119,7 @@ public class ForumFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(editable.length() == 0) {
+                if (editable.length() == 0) {
                     iv_delete.setVisibility(View.GONE);
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
@@ -130,12 +130,12 @@ public class ForumFragment extends Fragment {
 
         // 清空搜索框
         iv_delete.setOnClickListener(view -> et_search.setText(""));
-        
+
         adapter.setOnItemClickListener((view, pos) -> {
             // 跳转Activity
             Toast.makeText(rootView.getContext(), "点击了" + pos, Toast.LENGTH_SHORT).show();
         });
-        
+
         // 刷新和加载更多
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
@@ -150,14 +150,14 @@ public class ForumFragment extends Fragment {
         });
     }
 
-    private void changeTextColor(String text){
+    private void changeTextColor(String text) {
         posts.clear();
-        if(text.equals("")){
+        if (text.equals("")) {
             posts.addAll(whole);
             adapter.setText(null, null);
         } else {
             for (int i = 0; i < whole.size(); i++) {
-                if(whole.get(i).getTitle().contains(text)) {
+                if (whole.get(i).getTitle().contains(text)) {
                     posts.add(whole.get(i));
                 }
             }
@@ -165,9 +165,9 @@ public class ForumFragment extends Fragment {
         }
         refreshUI();
     }
-    
-    private void refreshUI(){
-        if(adapter == null) {
+
+    private void refreshUI() {
+        if (adapter == null) {
             adapter = new ForumListRecyclerViewAdapter(rootView.getContext(), posts);
             xRecyclerView.setAdapter(adapter);
         } else {
@@ -179,7 +179,7 @@ public class ForumFragment extends Fragment {
     private void initView() {
         et_search = rootView.findViewById(R.id.edt_cu_forum_search);
         iv_delete = rootView.findViewById(R.id.imgv_cu_forum_delete);
-        
+
         adapter = new ForumListRecyclerViewAdapter(rootView.getContext(), posts);
 
         xRecyclerView = rootView.findViewById(R.id.rv_cu_forum);
@@ -190,7 +190,7 @@ public class ForumFragment extends Fragment {
         xRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
 
-        LayoutAnimationController animationController = AnimationUtils.loadLayoutAnimation(rootView.getContext(),R.anim.layout_animation);
+        LayoutAnimationController animationController = AnimationUtils.loadLayoutAnimation(rootView.getContext(), R.anim.layout_animation);
         xRecyclerView.setLayoutAnimation(animationController);
     }
 }

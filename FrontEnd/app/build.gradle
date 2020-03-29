@@ -5,11 +5,12 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.example.uipfrontend"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -84,6 +85,7 @@ dependencies {
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.2'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.2'
 
-    
+    //悬浮按钮
+    implementation 'com.google.android.material:material:1.0.0'
 
 }
