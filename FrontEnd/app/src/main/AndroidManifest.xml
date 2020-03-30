@@ -13,13 +13,15 @@
         tools:replace="android:icon">
         <activity android:name=".CommonUser.AddResActivity"></activity>
         <activity android:name=".Student.CourseDetailActivity" />
+        <activity android:name=".Admin.AdminCourseDetailActivity"></activity>
         <activity
             android:name=".Student.StudentActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".CommonUser.CommonUserActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".Admin.AdminHomeActivity" />
+        <activity android:name=".Admin.AdminHomeActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
