@@ -30,6 +30,21 @@
         android:clipToPadding="false">
     </com.jcodecraeer.xrecyclerview.XRecyclerView>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabtn_student_recruit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="@color/blue"
+        app:borderWidth="0dp"
+        app:fabSize="mini"
+        app:maxImageSize="30dp"
+        app:rippleColor="@color/darkBlue"
+        app:srcCompat="@drawable/ic_add" />
+
 
 
 </LinearLayout>

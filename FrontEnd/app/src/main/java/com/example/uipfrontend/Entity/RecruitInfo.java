@@ -1,4 +1,4 @@
-package com.example.uipfrontend.Student.Bean;
+package com.example.uipfrontend.Entity;
 
 
 import android.content.Intent;
