@@ -1,5 +1,6 @@
 package com.example.uipfrontend.Student.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.uipfrontend.CommonUser.AddResActivity;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.StudentRecruitRecyclerViewAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.qlh.dropdownmenu.DropDownMenu;
@@ -33,6 +36,8 @@ public class StudentRecruitFragment extends Fragment {
 
     private List<String> list;   //组队信息实体类数组
     private View rootView;
+
+    FloatingActionButton fab;  //浮动按钮
 
 
 
@@ -98,6 +103,17 @@ public class StudentRecruitFragment extends Fragment {
         });
 
     }
+
+//    public void initFab() {
+//        fab = rootView.findViewById(R.id.fabtn_student_recruit);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Intent intent = new Intent(rootView.getContext(), );
+////                startActivity(intent);
+//            }
+//        });
+//    }
 
     private void getData(){
         list = new ArrayList<>();
