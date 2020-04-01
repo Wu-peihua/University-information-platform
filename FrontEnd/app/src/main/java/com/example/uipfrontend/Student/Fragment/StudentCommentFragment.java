@@ -39,14 +39,26 @@ public class StudentCommentFragment extends Fragment  {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        root = inflater.inflate(R.layout.fragment_student_comment,container,false);
+       // root = inflater.inflate(R.layout.fragment_student_comment,container,false);
 
         /***************************学院与学科分类筛选*************************/
-        dropDownMenu = root.findViewById(R.id.dropDownMenu_student_course);
+        //dropDownMenu = root.findViewById(R.id.dropDownMenu_student_course);
 
-        init();
+       // init();
 
 
+        //return root;
+        if (root != null) {
+            ViewGroup parent = (ViewGroup) root.getParent();
+            if (parent != null) {
+                parent.removeView(root);
+            }
+        } else {
+            root = inflater.inflate(R.layout.fragment_student_comment, null);
+            //recyclerView = root.findViewById(R.id.rv_student_group);
+
+            init();
+        }
         return root;
     }
 
@@ -74,7 +86,7 @@ public class StudentCommentFragment extends Fragment  {
         }
 
         /* 创建设置课程数据适配器 */
-        CourseAdapter adapter = new CourseAdapter(getContext(), R.layout.student_course_carditem, courseList);
+        CourseAdapter adapter = new CourseAdapter(getContext(), R.layout.item_course_card, courseList);
 
         StudentCourseList.setAdapter(adapter);
 
@@ -103,6 +115,7 @@ public class StudentCommentFragment extends Fragment  {
 
     private void initMenus() {
 
+        dropDownMenu = root.findViewById(R.id.dropDownMenu_student_course);
         headers = new String[]{"所属院校"};
         //初始化多级菜单
         final String[] levelOneMenu = {"全部", "华南师范大学", "华南理工大学", "中山大学"};
@@ -121,7 +134,7 @@ public class StudentCommentFragment extends Fragment  {
         multiMenusView = new MultiMenusView(this.getContext(),levelOneMenu,levelTwoMenu);
         popupViews.add(multiMenusView);
         //初始化内容视图
-        View contentView = LayoutInflater.from(this.getContext()).inflate(R.layout.student_course_list,null);
+        View contentView = LayoutInflater.from(this.getContext()).inflate(R.layout.list_sudent_course,null);
         StudentCourseList = contentView.findViewById(R.id.StudentCourseList);
 
         initCourseList();

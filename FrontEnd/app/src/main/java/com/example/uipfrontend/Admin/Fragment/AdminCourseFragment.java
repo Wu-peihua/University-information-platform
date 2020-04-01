@@ -19,7 +19,6 @@ import com.example.uipfrontend.Entity.Course;
 import com.example.uipfrontend.R;
 
 
-import com.example.uipfrontend.Student.CourseDetailActivity;
 import com.qlh.dropdownmenu.DropDownMenu;
 import com.qlh.dropdownmenu.view.MultiMenusView;
 
@@ -119,7 +118,7 @@ public class AdminCourseFragment extends Fragment {
         multiMenusView = new MultiMenusView(this.getContext(),levelOneMenu,levelTwoMenu);
         popupViews.add(multiMenusView);
         //初始化内容视图
-        View contentView = LayoutInflater.from(this.getContext()).inflate(R.layout.student_course_list,null);
+        View contentView = LayoutInflater.from(this.getContext()).inflate(R.layout.list_sudent_course,null);
         StudentCourseList = contentView.findViewById(R.id.StudentCourseList);
 
         initCourseList();

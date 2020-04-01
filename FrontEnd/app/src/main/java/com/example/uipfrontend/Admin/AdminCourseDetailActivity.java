@@ -58,7 +58,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
 
         /***************************添加评论**********************************************/
 
-        View DialogView = getLayoutInflater().inflate(R.layout.student_course_dialog_rating, null);
+        View DialogView = getLayoutInflater().inflate(R.layout.dialog_course_rating, null);
 
         BottomSheetDialog Commentdialog = new BottomSheetDialog(this);
         SubmitBtn = (Button) DialogView.findViewById(R.id.submitComment);
@@ -120,7 +120,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
         }
 
         /* 创建设置课程数据适配器 */
-        CommentAdapter adapter = new CommentAdapter(this, R.layout.student_course_item_comment, commentsList);
+        CommentAdapter adapter = new CommentAdapter(this, R.layout.item_course_comment, commentsList);
 
         CommentList.setAdapter(adapter);
 
