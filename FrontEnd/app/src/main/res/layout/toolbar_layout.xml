@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:background="@color/colorPrimary"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+<!--    <TextView-->
+<!--        android:id="@+id/tv_toolbar_left"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:drawableLeft="@drawable/ic_toolbar_back"-->
+<!--        android:drawablePadding="@dimen/padding_xs"-->
+<!--        android:drawableStart="@drawable/ic_toolbar_back"-->
+<!--        android:gravity="center"-->
+<!--        android:maxLines="1"-->
+<!--        android:paddingLeft="@dimen/padding_xs"-->
+<!--        android:paddingStart="@dimen/padding_xs"-->
+<!--        android:text="返回"-->
+<!--        android:textColor="@color/black"-->
+<!--        android:textSize="@dimen/fontSize_s" />-->
+
+    <TextView
+        android:id="@+id/tv_toolBar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="@dimen/fontSize_l"
+        android:text="标题"
+        android:textStyle="bold"/>
+
+
+
+<!--    <TextView-->
+<!--        android:id="@+id/tv_toolBar_right"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="end"-->
+<!--        android:layout_marginEnd="@dimen/margin_l"-->
+<!--        android:layout_marginRight="@dimen/margin_l"-->
+<!--        android:drawablePadding="@dimen/padding_s"-->
+<!--        android:gravity="center"-->
+<!--        android:maxLines="1"-->
+<!--        android:textColor="@color/black"-->
+<!--        android:textSize="@dimen/fontSize_s"-->
+<!--        android:text="right" />-->
+
+</androidx.appcompat.widget.Toolbar>

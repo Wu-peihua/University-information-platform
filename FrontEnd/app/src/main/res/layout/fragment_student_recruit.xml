@@ -23,7 +23,7 @@
             app:ddunderlineColor="@color/lightGray"
             android:background="@color/white"
             />
-    
+
         <com.jcodecraeer.xrecyclerview.XRecyclerView
             android:id="@+id/rv_student_group"
             android:layout_width="match_parent"

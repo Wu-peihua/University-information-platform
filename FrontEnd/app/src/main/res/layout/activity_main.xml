@@ -5,32 +5,42 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:gravity="center"
     tools:context=".MainActivity">
 
+        <include layout="@layout/toolbar_layout"/>
 
 
-        <Button
-            android:id="@+id/btn_commonUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="普通用户" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <Button
-            android:id="@+id/btn_student"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="高校学生" />
+                <Button
+                    android:id="@+id/btn_commonUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="普通用户" />
+
+                <Button
+                    android:id="@+id/btn_student"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="高校学生" />
 
 
-        <Button
-            android:id="@+id/btn_admin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="高校管理员" />
+                <Button
+                    android:id="@+id/btn_admin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="高校管理员" />
+
+
+
+        </LinearLayout>
 
 
 
