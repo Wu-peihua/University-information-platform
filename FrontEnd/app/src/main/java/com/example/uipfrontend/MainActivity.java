@@ -36,11 +36,11 @@ public class MainActivity extends AppCompatActivity {
         commonUser = findViewById(R.id.btn_commonUser);
         student = findViewById(R.id.btn_student);
         admin = findViewById(R.id.btn_admin);
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-        tv_toolBar_title = findViewById(R.id.tv_toolBar_title);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
-        tv_toolBar_title.setText("高校交流平台");
+//        toolbar = (Toolbar)findViewById(R.id.toolbar);
+//        tv_toolBar_title = findViewById(R.id.tv_toolBar_title);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setTitle("");
+//        tv_toolBar_title.setText("高校交流平台");
 
 
 

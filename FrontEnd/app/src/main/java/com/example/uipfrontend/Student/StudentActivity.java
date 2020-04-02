@@ -1,11 +1,13 @@
 package com.example.uipfrontend.Student;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -20,6 +22,9 @@ public class StudentActivity extends AppCompatActivity {
     StudentViewPager studentViewPager;
 //    @BindView(R.id.bbl_student)
     AHBottomNavigation studentAHBottomNavigation;
+    //自定义顶部标题栏
+//    Toolbar toolbar;
+//    TextView tv_toolbar_title;
 
 
     @Override
@@ -33,6 +38,11 @@ public class StudentActivity extends AppCompatActivity {
     public void init(){
 
         NineGridView.setImageLoader(new PicassoImageLoader());
+
+//        toolbar = findViewById(R.id.tb_student);
+//        tv_toolbar_title = findViewById(R.id.tv_toolBar_title_student);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setTitle("");
 
         studentViewPager = findViewById(R.id.vp_student);
         studentAHBottomNavigation = findViewById(R.id.btmNav_student);
@@ -80,21 +90,21 @@ public class StudentActivity extends AppCompatActivity {
             public boolean onTabSelected(int position, boolean wasSelected) {
                 studentViewPager.setCurrentItem(position);
                 switch (position){
-                    case 0:
-                        setTitle("论坛讨论");
-                        break;
-                    case 1:
-                        setTitle("资源分享");
-                        break;
-                    case 2:
-                        setTitle("组队招聘");
-                        break;
-                    case 3:
-                        setTitle("课程点评");
-                        break;
-                    case 4:
-                        setTitle("我的信息");
-                        break;
+//                    case 0:
+//                        tv_toolbar_title.setText("论坛讨论");
+//                        break;
+//                    case 1:
+//                        tv_toolbar_title.setText("资源分享");
+//                        break;
+//                    case 2:
+//                        tv_toolbar_title.setText("组队招聘");
+//                        break;
+//                    case 3:
+//                        tv_toolbar_title.setText("课程点评");
+//                        break;
+//                    case 4:
+//                        tv_toolbar_title.setText("我的信息");
+//                        break;
                 }
                 return true;
             }
