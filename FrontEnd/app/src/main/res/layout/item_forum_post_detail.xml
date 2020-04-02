@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CommonUser.Activity.PostDetailActivity"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <com.lzy.widget.CircleImageView
+            android:id="@+id/imgv_cu_forum_detail_portrait"
+            android:layout_width="@dimen/layoutWidth"
+            android:layout_height="@dimen/layoutHeight"
+            android:src="@drawable/portrait_default"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_cu_forum_detail_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="标题"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"/>
+
+            <TextView
+                android:id="@+id/tv_cu_forum_detail_poster"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="法外狂徒张三"
+                android:textColor="@color/item_time"
+                android:textSize="@dimen/fontSize_xs"/>
+
+            <TextView
+                android:id="@+id/tv_cu_forum_detail_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="5dp"
+                android:text="内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
+                android:textColor="@color/item_text"
+                android:textSize="@dimen/fontSize_s"/>
+
+            <com.lzy.ninegrid.NineGridView
+                android:id="@+id/nineGrid_cu_forum_detail_pic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_cu_forum_detail_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="2020-3-26 12:30"
+                    android:textColor="@color/item_time"
+                    android:textSize="@dimen/fontSize_xs" />
+
+                <com.sunbinqiang.iconcountview.IconCountView
+                    android:id="@+id/praise_view_cu_forum_detail_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/imgv_cu_forum_detail_more"
+                    android:layout_centerVertical="true"
+                    app:count="0"
+                    app:state="false"
+                    app:zeroText="赞"
+                    app:textNormalColor="@color/darkGray"
+                    app:textSelectedColor="#FF0000"
+                    app:textSize="12sp"
+                    app:normalRes="@drawable/icon_praise_normal"
+                    app:selectedRes="@drawable/icon_praise_selected"/>
+
+                <ImageView
+                    android:id="@+id/imgv_cu_forum_detail_more"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/report" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGray"/>
+
+    <!--    <com.lzy.widget.ExpandListView-->
+    <!--        android:id="@+id/lv_comments"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginRight="5dp"-->
+    <!--        android:layout_marginTop="9.5dp"-->
+    <!--        android:background="@drawable/event_di"-->
+    <!--        android:divider="@null"-->
+    <!--        android:dividerHeight="0dp"-->
+    <!--        android:orientation="vertical"-->
+    <!--        android:paddingBottom="5dp"-->
+    <!--        android:paddingLeft="8dp"-->
+    <!--        android:paddingRight="8dp"-->
+    <!--        android:paddingTop="16dp"/>-->
+
+</LinearLayout>
