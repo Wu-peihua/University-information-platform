@@ -1,5 +1,6 @@
 package com.example.uipfrontend.CommonUser.Fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,13 +13,14 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.uipfrontend.CommonUser.Activity.PostDetailActivity;
+import com.example.uipfrontend.CommonUser.Activity.WritePostActivity;
 import com.example.uipfrontend.CommonUser.Adapter.ForumListRecyclerViewAdapter;
 import com.example.uipfrontend.Entity.ForumPosts;
 import com.example.uipfrontend.R;
@@ -31,17 +33,18 @@ import java.util.List;
 public class ForumFragment extends Fragment {
 
     private View rootView;
-
+    
     // 搜索高亮
     private ForegroundColorSpan redSpan = new ForegroundColorSpan(Color.rgb(255, 0, 0));
 
     // 搜索栏
     private EditText et_search;
     private ImageView iv_delete;
+    private ImageView iv_new;
 
     private XRecyclerView xRecyclerView;
     private ForumListRecyclerViewAdapter adapter;
-
+    
     private List<ForumPosts> posts;
     private List<ForumPosts> whole;
 
@@ -58,7 +61,7 @@ public class ForumFragment extends Fragment {
             rootView = inflater.inflate(R.layout.fragment_cu_forum, null);
             initData();
             initView();
-            setSearchListener();
+            setListener();
         }
         return rootView;
     }
@@ -66,46 +69,46 @@ public class ForumFragment extends Fragment {
     private void initData() {
         posts = new ArrayList<>();
         whole = new ArrayList<>();
-        posts.add(new ForumPosts("震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("生死极限!他竟和一个陌生男人在孤岛生活28年!",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("生死极限!他竟和一个陌生男人在孤岛生活28年!",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("生死极限!他竟和一个陌生男人在孤岛生活28年!",
-                "法外狂徒张三", "2020/3/26", 666, 6));
-        posts.add(new ForumPosts("震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
-                "法外狂徒张三", "2020/3/26", 666, 6));
+        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
+                "法外狂徒张三", "2020/3/26", 0));
+        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
+                "法外狂徒张三", "2020/3/26", 666));
+        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
+                "法外狂徒张三", "2020/3/26", 666));
         whole.addAll(posts);
     }
 
-    private void setSearchListener() {
+    private void setListener() {
         et_search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -119,7 +122,7 @@ public class ForumFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editable.length() == 0) {
+                if(editable.length() == 0) {
                     iv_delete.setVisibility(View.GONE);
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
@@ -130,12 +133,18 @@ public class ForumFragment extends Fragment {
 
         // 清空搜索框
         iv_delete.setOnClickListener(view -> et_search.setText(""));
-
+        
         adapter.setOnItemClickListener((view, pos) -> {
-            // 跳转Activity
-            Toast.makeText(rootView.getContext(), "点击了" + pos, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(rootView.getContext(), PostDetailActivity.class);
+            intent.putExtra("detail", posts.get(pos));
+            startActivity(intent);
         });
-
+        
+        iv_new.setOnClickListener(view -> {
+            Intent intent = new Intent(rootView.getContext(), WritePostActivity.class);
+            startActivity(intent);
+        });
+        
         // 刷新和加载更多
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
@@ -150,14 +159,14 @@ public class ForumFragment extends Fragment {
         });
     }
 
-    private void changeTextColor(String text) {
+    private void changeTextColor(String text){
         posts.clear();
-        if (text.equals("")) {
+        if(text.equals("")){
             posts.addAll(whole);
             adapter.setText(null, null);
         } else {
             for (int i = 0; i < whole.size(); i++) {
-                if (whole.get(i).getTitle().contains(text)) {
+                if(whole.get(i).getTitle().contains(text)) {
                     posts.add(whole.get(i));
                 }
             }
@@ -165,9 +174,9 @@ public class ForumFragment extends Fragment {
         }
         refreshUI();
     }
-
-    private void refreshUI() {
-        if (adapter == null) {
+    
+    private void refreshUI(){
+        if(adapter == null) {
             adapter = new ForumListRecyclerViewAdapter(rootView.getContext(), posts);
             xRecyclerView.setAdapter(adapter);
         } else {
@@ -179,7 +188,8 @@ public class ForumFragment extends Fragment {
     private void initView() {
         et_search = rootView.findViewById(R.id.edt_cu_forum_search);
         iv_delete = rootView.findViewById(R.id.imgv_cu_forum_delete);
-
+        iv_new = rootView.findViewById(R.id.imgv_cu_forum_new);
+        
         adapter = new ForumListRecyclerViewAdapter(rootView.getContext(), posts);
 
         xRecyclerView = rootView.findViewById(R.id.rv_cu_forum);
@@ -190,7 +200,7 @@ public class ForumFragment extends Fragment {
         xRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
 
-        LayoutAnimationController animationController = AnimationUtils.loadLayoutAnimation(rootView.getContext(), R.anim.layout_animation);
+        LayoutAnimationController animationController = AnimationUtils.loadLayoutAnimation(rootView.getContext(),R.anim.layout_animation);
         xRecyclerView.setLayoutAnimation(animationController);
     }
 }

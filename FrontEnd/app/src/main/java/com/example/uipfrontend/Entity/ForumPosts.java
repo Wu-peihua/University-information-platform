@@ -1,7 +1,9 @@
 package com.example.uipfrontend.Entity;
 
-public class ForumPosts {
-    private String postId;
+import java.io.Serializable;
+
+public class ForumPosts implements Serializable {
+    private Integer postId;
     private String title;
     private String content;
     private String poster;
@@ -9,20 +11,20 @@ public class ForumPosts {
     private int likeNum;
     private int reportNum;
 
-    public ForumPosts(String title, String poster, String postTime,
-                      int likeNum, int reportNum) {
+    public ForumPosts(Integer postId, String title, String poster, String postTime,
+                      int likeNum) {
+        this.postId = postId;
         this.title = title;
         this.poster = poster;
         this.postTime = postTime;
         this.likeNum = likeNum;
-        this.reportNum = reportNum;
     }
 
-    public String getPostId() {
+    public Integer getPostId() {
         return postId;
     }
 
-    public void setPostId(String postId) {
+    public void setPostId(Integer postId) {
         this.postId = postId;
     }
 
