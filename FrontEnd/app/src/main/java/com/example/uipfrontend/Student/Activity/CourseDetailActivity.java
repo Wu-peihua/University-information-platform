@@ -1,4 +1,4 @@
-package com.example.uipfrontend.Student;
+package com.example.uipfrontend.Student.Activity;
 
 import android.os.Bundle;
 import android.util.Log;

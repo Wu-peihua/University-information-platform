@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Entity.Course;
 import com.example.uipfrontend.Student.Adapter.CourseAdapter;
-import com.example.uipfrontend.Student.CourseDetailActivity;
+import com.example.uipfrontend.Student.Activity.CourseDetailActivity;
 import com.qlh.dropdownmenu.DropDownMenu;
 import com.qlh.dropdownmenu.view.MultiMenusView;
 

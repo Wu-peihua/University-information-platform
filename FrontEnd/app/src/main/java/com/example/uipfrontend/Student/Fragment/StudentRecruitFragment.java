@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -37,10 +39,6 @@ public class StudentRecruitFragment extends Fragment {
     private List<String> list;   //组队信息实体类数组
     private View rootView;
 
-    FloatingActionButton fab;  //浮动按钮
-
-
-
 
 
     @Nullable
@@ -66,6 +64,11 @@ public class StudentRecruitFragment extends Fragment {
         initListener();
         getData();
         initRecyclerView();
+        initToolBar();
+
+    }
+
+    private void initToolBar(){
 
     }
 
@@ -104,16 +107,7 @@ public class StudentRecruitFragment extends Fragment {
 
     }
 
-//    public void initFab() {
-//        fab = rootView.findViewById(R.id.fabtn_student_recruit);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                Intent intent = new Intent(rootView.getContext(), );
-////                startActivity(intent);
-//            }
-//        });
-//    }
+
 
     private void getData(){
         list = new ArrayList<>();

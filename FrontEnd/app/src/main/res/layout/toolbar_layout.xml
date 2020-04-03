@@ -8,6 +8,8 @@
     android:layout_height="wrap_content">
 
 
+    <!--自定义toolbarxml示例-->
+
 <!--    <TextView-->
 <!--        android:id="@+id/tv_toolbar_left"-->
 <!--        android:layout_width="wrap_content"-->
@@ -29,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:maxLines="1"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="@dimen/fontSize_l"
         android:text="标题"
         android:textStyle="bold"/>

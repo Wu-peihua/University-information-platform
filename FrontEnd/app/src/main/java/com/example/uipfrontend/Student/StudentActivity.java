@@ -23,7 +23,7 @@ public class StudentActivity extends AppCompatActivity {
 //    @BindView(R.id.bbl_student)
     AHBottomNavigation studentAHBottomNavigation;
     //自定义顶部标题栏
-//    Toolbar toolbar;
+    Toolbar toolbar;
 //    TextView tv_toolbar_title;
 
 
@@ -31,6 +31,7 @@ public class StudentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
+        getSupportActionBar().hide();
 
         init();
     }
@@ -39,7 +40,9 @@ public class StudentActivity extends AppCompatActivity {
 
         NineGridView.setImageLoader(new PicassoImageLoader());
 
-//        toolbar = findViewById(R.id.tb_student);
+        toolbar = findViewById(R.id.tb_student);
+        toolbar.setTitle("论坛讨论");
+
 //        tv_toolbar_title = findViewById(R.id.tv_toolBar_title_student);
 //        setSupportActionBar(toolbar);
 //        getSupportActionBar().setTitle("");
@@ -90,21 +93,21 @@ public class StudentActivity extends AppCompatActivity {
             public boolean onTabSelected(int position, boolean wasSelected) {
                 studentViewPager.setCurrentItem(position);
                 switch (position){
-//                    case 0:
-//                        tv_toolbar_title.setText("论坛讨论");
-//                        break;
-//                    case 1:
-//                        tv_toolbar_title.setText("资源分享");
-//                        break;
-//                    case 2:
-//                        tv_toolbar_title.setText("组队招聘");
-//                        break;
-//                    case 3:
-//                        tv_toolbar_title.setText("课程点评");
-//                        break;
-//                    case 4:
-//                        tv_toolbar_title.setText("我的信息");
-//                        break;
+                    case 0:
+                        toolbar.setTitle("论坛讨论");
+                        break;
+                    case 1:
+                        toolbar.setTitle("资源分享");
+                        break;
+                    case 2:
+                        toolbar.setTitle("组队招聘");
+                        break;
+                    case 3:
+                        toolbar.setTitle("课程点评");
+                        break;
+                    case 4:
+                        toolbar.setTitle("我的信息");
+                        break;
                 }
                 return true;
             }
