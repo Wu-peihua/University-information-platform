@@ -18,6 +18,7 @@ import com.example.uipfrontend.Admin.Adapter.CommentAdapter;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class AdminCourseDetailActivity extends AppCompatActivity {
 
@@ -61,7 +62,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
         View DialogView = getLayoutInflater().inflate(R.layout.dialog_course_rating, null);
 
         BottomSheetDialog Commentdialog = new BottomSheetDialog(this);
-        SubmitBtn = (Button) DialogView.findViewById(R.id.submitComment);
+        SubmitBtn = (Button) DialogView.findViewById(R.id.fbtn_submitComment);
         CommentEidt = (EditText) DialogView.findViewById(R.id.UserEidtComment);
         UserRating = (RatingBar) DialogView.findViewById(R.id.SetRating);
 
@@ -114,9 +115,9 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
 
         //添加list数据项
         for(int i = 1;i<=3;i++) {
-            commentsList.add(new CourseComment("Yuzz", "2019-12-31", "学到了好多", 2.50));
-            commentsList.add(new CourseComment("LinussLu", "2020-01-03", "Linux有趣", 3.50));
-            commentsList.add(new CourseComment("NetworkGo", "2020-02-02", "噢秃头！", 4.50));
+            commentsList.add(new CourseComment("Yuzz", new Date(2020-12-12), "学到了好多", 2.50));
+            commentsList.add(new CourseComment("LinussLu", new Date(2019-12-9), "Linux有趣", 3.50));
+            commentsList.add(new CourseComment("NetworkGo",  new Date(2020-3-1),"噢秃头！", 4.50));
         }
 
         /* 创建设置课程数据适配器 */

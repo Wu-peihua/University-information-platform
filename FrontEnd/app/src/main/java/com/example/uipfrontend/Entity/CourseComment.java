@@ -1,21 +1,26 @@
 package com.example.uipfrontend.Entity;
 
+import java.util.Date;
+
 public class CourseComment {
+    private Integer CommentId;
     private Integer UserId;
     private String UserName;
     private String UserImg;
-    private String CommentDate;
+    private Date CommentDate;
     private String Content;
     private double Score;
     private static int BadReportCount=0;//举报次数
     private static int LikeCount=0;//点赞次数
 
-    public CourseComment(String _name, String _commentdate,String _content,double _score){
+    public CourseComment(String _name, Date _commentdate,String _content,double _score){
         this.UserName = _name;
         this.CommentDate = _commentdate;
         this.Content = _content;
         this.Score = _score;
     }
+
+    public void setCommentId(Integer commentId){ this.CommentId = commentId;}
 
     public  void setUserName(String _name) {
         this.UserName = _name;
@@ -33,7 +38,7 @@ public class CourseComment {
         this.UserImg = urlImg;
     }
 
-    public void setCommentDate(String commentDate) {
+    public void setCommentDate(Date commentDate) {
         this.CommentDate = commentDate;
     }
 
@@ -57,7 +62,7 @@ public class CourseComment {
         return this.UserImg;
     }
 
-    public  String getCommentDate() {
+    public Date getCommentDate() {
         return this.CommentDate;
     }
 
@@ -75,5 +80,16 @@ public class CourseComment {
 
     public double getScore(){
         return this.Score;
+    }
+
+    public Integer getCommentId() {
+        return this.CommentId;
+    }
+
+    @Override
+    public String toString(){
+        return "CourseComment[ commentId:" + CommentId + ",UserId:" + UserId + ",UserImg:" + UserImg + ",Content:" + Content + ",CommentDate:" + CommentDate
+                + ",userName:" + UserName +
+                ",score:" + Score + "]";
     }
 }

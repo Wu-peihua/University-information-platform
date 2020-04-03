@@ -81,9 +81,8 @@ dependencies {
     //alert dialog依赖
     implementation 'com.github.f0ris.sweetalert:library:1.5.1'
 
-    //刷新加载 smartrefreshlayout
-    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.2'
-    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.2'
+    //扁平化按钮
+    implementation  'com.github.jd-alexander:android-flat-button:v1.1'
 
     //悬浮按钮
     implementation 'com.google.android.material:material:1.0.0'
