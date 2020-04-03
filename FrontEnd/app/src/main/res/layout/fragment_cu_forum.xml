@@ -6,47 +6,69 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_gravity="center"
-        android:background="@drawable/shape_search"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="3dp"
-            android:layout_marginStart="3dp"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@drawable/search" />
-
-        <EditText
-            android:id="@+id/edt_cu_forum_search"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="28dp"
-            android:layout_weight="1"
+            android:layout_height="35dp"
+            android:layout_weight="49"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
-            android:background="@null"
-            android:imeOptions="actionSearch"
-            android:maxLines="1"
-            android:singleLine="true" />
+            android:background="@drawable/shape_search"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal">
 
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="3dp"
+                android:layout_marginStart="3dp"
+                android:layout_gravity="center"
+                android:scaleType="centerInside"
+                android:src="@drawable/search" />
+
+            <EditText
+                android:id="@+id/edt_cu_forum_search"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_weight="28"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:background="@null"
+                android:imeOptions="actionSearch"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:hint="搜搜看"/>
+
+            <ImageView
+                android:id="@+id/imgv_cu_forum_delete"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_weight="1"
+                android:layout_marginRight="3dp"
+                android:layout_marginEnd="3dp"
+                android:layout_gravity="center"
+                android:scaleType="centerInside"
+                android:src="@drawable/delete"
+                android:visibility="gone"/>
+        </LinearLayout>
+        
         <ImageView
-            android:id="@+id/imgv_cu_forum_delete"
+            android:id="@+id/imgv_cu_forum_new"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginRight="3dp"
-            android:layout_marginEnd="3dp"
+            android:layout_weight="1"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
             android:layout_gravity="center"
             android:scaleType="centerInside"
-            android:src="@drawable/delete"
-            android:visibility="gone"/>
+            android:src="@drawable/new_post"/>
     </LinearLayout>
 
     <com.jcodecraeer.xrecyclerview.XRecyclerView

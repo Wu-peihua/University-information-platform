@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -49,7 +48,6 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
         TextView tv_poster;
         TextView tv_time;
         TextView tv_like;
-        TextView tv_report;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -58,14 +56,13 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
             tv_poster = itemView.findViewById(R.id.tv_cu_forum_poster);
             tv_time = itemView.findViewById(R.id.tv_cu_forum_time);
             tv_like = itemView.findViewById(R.id.tv_cu_forum_like);
-            tv_report = itemView.findViewById(R.id.tv_cu_forum_report);
         }
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_cu_forum, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_forum_post_brief, null);
         return new ViewHolder(view);
     }
 
@@ -85,7 +82,6 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
         viewHolder.tv_poster.setText(list.get(position).getPoster());
         viewHolder.tv_time.setText(list.get(position).getPostTime());
         viewHolder.tv_like.setText(String.valueOf(list.get(position).getLikeNum()));
-        viewHolder.tv_report.setText(String.valueOf(list.get(position).getReportNum()));
         viewHolder.ll_item.setOnClickListener(view -> itemClickListener.onClick(view, position));
     }
 

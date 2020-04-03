@@ -1,7 +1,8 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:id="@+id/AddCommentArea"
@@ -52,7 +53,7 @@
             android:layout_margin="@dimen/margin_xl"
             android:layout_below="@+id/UserEditTitle"
             android:hint="写下你的评论吧"/>
-        <Button
+        <!--Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_s"
@@ -62,7 +63,23 @@
             android:id="@+id/submitComment"
             >
 
-        </Button>
+        </Button-->
+
+        <info.hoang8f.widget.FButton
+            android:id="@+id/fbtn_submitComment"
+            android:layout_margin="@dimen/margin_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="提交"
+            android:layout_below="@+id/UserEidtComment"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            fbutton:fButtonColor="@color/colorPrimary"
+            fbutton:shadowEnabled="true"
+            fbutton:shadowHeight="5dp"
+            fbutton:cornerRadius="10dp"
+
+            />
 
     </RelativeLayout>
 </androidx.core.widget.NestedScrollView>

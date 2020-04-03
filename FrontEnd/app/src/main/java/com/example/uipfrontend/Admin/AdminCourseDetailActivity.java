@@ -18,6 +18,7 @@ import com.example.uipfrontend.Admin.Adapter.CommentAdapter;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class AdminCourseDetailActivity extends AppCompatActivity {
 
@@ -61,7 +62,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
         View DialogView = getLayoutInflater().inflate(R.layout.dialog_course_rating, null);
 
         BottomSheetDialog Commentdialog = new BottomSheetDialog(this);
-        SubmitBtn = (Button) DialogView.findViewById(R.id.submitComment);
+        SubmitBtn = (Button) DialogView.findViewById(R.id.fbtn_submitComment);
         CommentEidt = (EditText) DialogView.findViewById(R.id.UserEidtComment);
         UserRating = (RatingBar) DialogView.findViewById(R.id.SetRating);
 
@@ -113,11 +114,16 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
 
 
         //添加list数据项
-        for(int i = 1;i<=3;i++) {
-            commentsList.add(new CourseComment("Yuzz", "2019-12-31", "学到了好多", 2.50));
-            commentsList.add(new CourseComment("LinussLu", "2020-01-03", "Linux有趣", 3.50));
-            commentsList.add(new CourseComment("NetworkGo", "2020-02-02", "噢秃头！", 4.50));
-        }
+
+            commentsList.add (new CourseComment(2001,"LinussPP", new Date(), "有趣", 4.50,10));
+            commentsList.add (new CourseComment(2002,"ZhouKK", new Date(), "学到了很多", 4.50,12));
+            commentsList.add (new CourseComment(2003,"MandyWong", new Date(), "没意思", 3.50,13));
+            commentsList.add (new CourseComment(3008,"LarryChen", new Date(), "课程难度大", 3.50,20));
+            commentsList.add (new CourseComment(4010,"LinYii", new Date(), "作业量惊人", 2.50,12));
+            commentsList.add (new CourseComment(2020,"Oliver", new Date(), "不推荐", 1.50,10));
+            commentsList.add (new CourseComment(2034,"Patric", new Date(), "推荐", 4.50,2));
+
+
 
         /* 创建设置课程数据适配器 */
         CommentAdapter adapter = new CommentAdapter(this, R.layout.item_course_comment, commentsList);

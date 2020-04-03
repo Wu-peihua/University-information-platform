@@ -89,6 +89,7 @@ public class RecruitInfo {
         this.contact = contact;
     }
 
+
     @Override
     public String toString(){
         return "RecruitInfo[ infoId:" + infoId + ",title:" + title + ",content:" + content + ",pictures:" + pictures + ",infoDate:" + infoDate + ",userName:" + userName +

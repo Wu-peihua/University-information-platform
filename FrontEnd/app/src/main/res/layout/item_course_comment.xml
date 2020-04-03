@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical"
+    >
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="5dp">
-        <ImageView
+
+        <com.lzy.widget.CircleImageView
+            android:id="@+id/UserImg"
+            android:layout_width="@dimen/layoutWidth"
+            android:layout_height="@dimen/layoutHeight"
+            android:layout_margin="@dimen/margin_s"
+            android:src="@drawable/ic_student_img"/>
+        <!--ImageView
             android:id="@+id/UserImg"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
-            android:background="@drawable/ic_student_img"/>
+            android:background="@drawable/ic_student_img"/-->
         <LinearLayout
             android:id="@+id/Usercenter"
-            android:layout_width="220dp"
+            android:layout_width="180dp"
             android:layout_height="60dp"
             android:layout_toRightOf="@+id/UserImg"
             android:layout_margin="5dp"
@@ -26,7 +42,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/blue"
-                android:layout_margin="@dimen/margin_xs"
+                android:layout_marginTop="@dimen/margin_xs"
+                android:layout_marginBottom="@dimen/margin_xs"
+                android:layout_marginLeft="0dp"
                 android:text="Yuzz"
                 android:layout_centerVertical="true"
                 android:textSize="@dimen/fontSize_s" />
@@ -36,7 +54,9 @@
                 android:id="@+id/CommentDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_xs"
+                android:layout_marginTop="@dimen/margin_xs"
+                android:layout_marginBottom="@dimen/margin_xs"
+                android:layout_marginLeft="0dp"
                 android:text="2019-12-08"
                 android:layout_centerVertical="true"
                 android:textColor="@color/black"
@@ -44,14 +64,15 @@
 
         </LinearLayout>
 
-        <Button
+        <!--Button
             android:layout_toRightOf="@+id/Usercenter"
             android:id="@+id/BtnLike"
             android:background="@drawable/ic_like"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_margin="@dimen/margin_xs"
-            android:onClick="onClick"></Button>
+            android:onClick="onClick"
+            ></Button>
         <TextView
             android:layout_toRightOf="@+id/BtnLike"
             android:id="@+id/LikeCounts"
@@ -59,16 +80,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             >
-        </TextView>
+        </TextView-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/Usercenter">
+
+        <com.sunbinqiang.iconcountview.IconCountView
+            android:id="@+id/btnlike_student_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/margin_xs"
+            android:layout_marginTop="@dimen/margin_xs"
+            android:layout_marginEnd="@dimen/margin_xs"
+            android:layout_marginBottom="@dimen/margin_xs"
+            android:clickable="true"
+            android:duplicateParentState="false"
+            app:count="0"
+            app:normalRes="@drawable/icon_praise_normal"
+            app:selectedRes="@drawable/icon_praise_selected"
+            app:state="false"
+            app:textNormalColor="@color/darkGray"
+            app:textSelectedColor="#FF0000"
+            app:textSize="12sp"
+            app:zeroText="赞" />
 
         <Button
-            android:layout_toRightOf="@+id/LikeCounts"
+            android:layout_toRightOf="@+id/btnlike_student_comment"
             android:id="@+id/BtnBadReport"
             android:background="@drawable/report"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_margin="@dimen/margin_xs"
-            android:onClick="onClick"></Button>
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:onClick="onClick"
+            android:focusableInTouchMode="false"></Button>
+    </RelativeLayout>
 
         <RatingBar
             android:layout_toRightOf="@+id/UserImg"
@@ -101,5 +148,7 @@
 
 
     </RelativeLayout>
+</LinearLayout>
 
-</RelativeLayout>
+
+</LinearLayout>

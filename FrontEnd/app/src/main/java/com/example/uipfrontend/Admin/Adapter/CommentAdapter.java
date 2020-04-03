@@ -44,7 +44,7 @@ public class CommentAdapter extends ArrayAdapter<CourseComment> {
 
         //courseImage.setImageResource(course.getImageurl());
         userName.setText(comment.getUserName());
-        commentDate.setText(comment.getCommentDate());
+        commentDate.setText(comment.getCommentDate().toString());
         commentContent.setText(comment.getContent());
         score.setRating((float) comment.getScore());
 

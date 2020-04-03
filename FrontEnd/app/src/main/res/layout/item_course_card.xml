@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:descendantFocusability="blocksDescendants"
     >
 
-    <!--课程卡片设计-->
+
     <androidx.cardview.widget.CardView
         tools:targetApi="lollipop"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="@dimen/margin_s"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_xs"
+        android:padding="@dimen/padding_s"
         android:clickable="false"
         android:foreground="?android:attr/selectableItemBackground"
-        app:cardCornerRadius="10dp"
+        app:cardCornerRadius="5dp"
         app:cardUseCompatPadding="true"
-        app:cardPreventCornerOverlap="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false">
-
+        app:cardPreventCornerOverlap="false">
+    android:focusable="false"
+    android:focusableInTouchMode="false">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -28,14 +29,15 @@
             <ImageView
                 android:id="@+id/courseImage"
                 android:layout_width="150dp"
-                android:layout_height="80dp"
+                android:layout_height="90dp"
                 android:layout_margin="5dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/coding_class"
+                android:layout_centerVertical="true"
                 android:focusable="false"
                 android:clickable="false"/>
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_toRightOf="@id/courseImage"
@@ -46,7 +48,9 @@
                     android:id="@+id/coursename"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_xs"
                     android:text="数据库"
+                    android:textSize="@dimen/margin_l"
                     android:focusable="false"
                     android:clickable="false">
 
@@ -55,7 +59,9 @@
                     android:id="@+id/Teacher"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_xs"
                     android:text="Mr.Lee"
+                    android:textSize="@dimen/margin_l"
                     android:focusable="false"
                     android:clickable="false">
 
@@ -64,16 +70,20 @@
                     android:id="@+id/RatingScore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_xs"
                     android:text="4.5"
+                    android:textSize="@dimen/margin_l"
                     android:focusable="false"
                     android:clickable="false">
 
                 </TextView>
                 <TextView
                     android:id="@+id/courseDescription"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_xs"
                     android:text="了解数据库基础,分布式数据库入门"
+                    android:textSize="@dimen/margin_l"
                     android:focusable="false"
                     android:clickable="false">
 
@@ -83,4 +93,5 @@
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
+
 </LinearLayout>
