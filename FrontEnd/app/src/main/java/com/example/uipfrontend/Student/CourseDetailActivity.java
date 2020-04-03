@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 
+import com.example.uipfrontend.Entity.Course;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Entity.CourseComment;
 
@@ -25,6 +26,9 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+
 import info.hoang8f.widget.FButton;
 
 public class CourseDetailActivity extends AppCompatActivity {
@@ -54,11 +58,13 @@ public class CourseDetailActivity extends AppCompatActivity {
         setContentView(R.layout.item_course_details);
 
         //接受点击事件传参数
-        Bundle bundle = getIntent().getExtras();
-        String nameID = bundle.getString("name");
+        Course course = (Course) Objects.requireNonNull(getIntent().getExtras()).get("coursedetail");
+
+        //Bundle bundle = getIntent().getExtras();
+        //String nameID = bundle.getString("name");
 
         //课程卡片详情
-        initCardView(nameID);
+        initCardView(course);
         //评论列表初始化
         initCommentData();
         initRecyclerView();
@@ -68,17 +74,17 @@ public class CourseDetailActivity extends AppCompatActivity {
 
     }
 
-    private  void initCardView(String nameID) {
+    private  void initCardView(Course course) {
 
         Name = (TextView)this.findViewById(R.id.coursename);
-        Teacher = (TextView)this.findViewById(R.id.Teacher);
+        Teacher = (TextView)this.findViewById(R.id.TeacherName);
         Description = (TextView)this.findViewById(R.id.courseDescription);
         Score = (TextView)this.findViewById(R.id.RatingScore);
 
-        Name.setText(nameID);
-        Teacher.setText("Mr.ZHANG");
-        Description.setText("大数据与云计算入门，平台使用");
-        Score.setText("3.5");
+        Name.setText(course.getName());
+        Teacher.setText(course.getTeacher());
+        Description.setText(course.getDescription());
+        Score.setText(String.valueOf(course.getScore()));
 
         //CommentList = (ListView) findViewById(R.id.CommentList);
         AddComment = (FButton) findViewById(R.id.fbtn_Addcomment);
@@ -108,24 +114,33 @@ public class CourseDetailActivity extends AppCompatActivity {
 
 
         UserRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener()
-                                                {
-                                                    @Override
-                                                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                                                        UserRating.setRating(rating);
-                                                        Log.i("set","修改ratingbar");
-                                                    }
-                                                }
+        {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                UserRating.setRating(rating);
+                Log.i("set","修改ratingbar");
+            }
+        }
         );
 
         /*************提交评论************************************************************/
         SubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //添加到列表中
-                System.out.println("用户评分"+UserRating.getRating());
 
+
+                //添加到列表中
+                Integer commentid = (int) Math.random()*1000;
+                String UserName = "LIZZ";
+                CourseComment newcomment = new CourseComment(commentid,UserName,new Date(),CommentEidt.getText().toString(),UserRating.getRating(),0);
+                mTags.add(newcomment);
+                commentAdapter.notifyDataSetChanged();
+
+                System.out.println("用户评分"+UserRating.getRating());
                 System.out.println("用户描述内容"+CommentEidt.getText().toString());
                 Log.i("submit","成功添加评分");
+
+
                 //mTags.add(userid,rating)
                 Commentdialog.dismiss();
                 Toast.makeText(getApplicationContext(), "提交成功", Toast.LENGTH_SHORT).show();
@@ -139,11 +154,14 @@ public class CourseDetailActivity extends AppCompatActivity {
 
 
     public void initCommentData() {
-        for (int i = 0; i < 12; i++) {
-            CourseComment comment = new CourseComment("LinussPP", new Date(), "Linux有趣", 3.50);
-            mTags.add(comment);
-        }
 
+            mTags.add (new CourseComment(2001,"LinussPP", new Date(), "有趣", 4.50,10));
+            mTags.add (new CourseComment(2002,"ZhouKK", new Date(), "学到了很多", 4.50,12));
+            mTags.add (new CourseComment(2003,"MandyWong", new Date(), "没意思", 3.50,13));
+            mTags.add (new CourseComment(3008,"LarryChen", new Date(), "课程难度大", 3.50,20));
+            mTags.add (new CourseComment(4010,"LinYii", new Date(), "作业量惊人", 2.50,12));
+            mTags.add (new CourseComment(2020,"Oliver", new Date(), "不推荐", 1.50,10));
+            mTags.add (new CourseComment(2034,"Patric", new Date(), "推荐", 4.50,2));
 
         //count = mTags.size();
     }

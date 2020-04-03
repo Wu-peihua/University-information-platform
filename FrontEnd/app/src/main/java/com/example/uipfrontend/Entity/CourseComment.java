@@ -10,14 +10,16 @@ public class CourseComment {
     private Date CommentDate;
     private String Content;
     private double Score;
-    private static int BadReportCount=0;//举报次数
-    private static int LikeCount=0;//点赞次数
+    private int BadReportCount;//举报次数
+    private int LikeCount;//点赞次数
 
-    public CourseComment(String _name, Date _commentdate,String _content,double _score){
+    public CourseComment(Integer commentId, String _name, Date _commentdate,String _content,double _score,int likeCount){
+        this.CommentId = commentId;
         this.UserName = _name;
         this.CommentDate = _commentdate;
         this.Content = _content;
         this.Score = _score;
+        this.LikeCount=likeCount;
     }
 
     public void setCommentId(Integer commentId){ this.CommentId = commentId;}

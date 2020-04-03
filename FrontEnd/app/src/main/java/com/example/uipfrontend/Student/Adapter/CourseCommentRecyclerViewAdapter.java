@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uipfrontend.Entity.CourseComment;
 import com.example.uipfrontend.R;
+import com.sunbinqiang.iconcountview.IconCountView;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -40,10 +41,11 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
         TextView commentDate;
         TextView commentContent;
         RatingBar score;
-        Button BtnLike;
+        //Button BtnLike;
         Button BtnBadReport;
-        TextView LikeCounts;
+        //TextView LikeCounts;
         ImageView userimg;
+        private IconCountView BtnLike;//重写点赞按钮
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -53,11 +55,12 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
             commentDate = (TextView) itemView.findViewById(R.id.CommentDate);
             commentContent = (TextView) itemView.findViewById(R.id.CommentContent);
             score = (RatingBar) itemView.findViewById(R.id.userRatingBar);
-            BtnLike = (Button) itemView.findViewById(R.id.BtnLike);
+            //BtnLike = (Button) itemView.findViewById(R.id.BtnLike);
             BtnBadReport = (Button) itemView.findViewById(R.id.BtnBadReport);
-            LikeCounts = (TextView) itemView.findViewById(R.id.LikeCounts);
+            //LikeCounts = (TextView) itemView.findViewById(R.id.LikeCounts);
             userimg = (ImageView) itemView.findViewById(R.id.UserImg);
 
+            BtnLike = itemView.findViewById(R.id.btnlike_student_comment);
 
         }
     }
@@ -114,8 +117,12 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
         viewHolder.commentContent.setText(mTags.get(pos).getContent());
         viewHolder.score.setRating((float) mTags.get(pos).getScore());
 
+        //viewHolder.LikeCounts.setText(String.valueOf(mTags.get(pos).getLikeCount()));
 
+        viewHolder.BtnLike.setCount(mTags.get(pos).getLikeCount());
+        Log.i("当前点赞pos",String.valueOf(mTags.get(pos)));
         //点赞按钮与举报按钮
+        /*
         viewHolder.BtnLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,6 +133,8 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
             }
         });
+
+         */
 
         //举报提示框
         viewHolder.BtnBadReport.setOnClickListener(new View.OnClickListener() {

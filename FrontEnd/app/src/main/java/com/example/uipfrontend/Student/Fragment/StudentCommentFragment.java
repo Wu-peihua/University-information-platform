@@ -37,8 +37,8 @@ public class StudentCommentFragment extends Fragment {
     private StudentCourseRecyclerViewAdapter studentCourseRecyclerViewAdapter;     //课程内容适配器
 
     private View rootView;
-    private List<Course> mTags=new ArrayList<>();//课程实体数组
-
+    private List<Course> courses =new ArrayList<>();//课程实体数组
+    //private List<Course> AllCourses = new ArrayList<>();
 
     @Nullable
     @Override
@@ -59,10 +59,11 @@ public class StudentCommentFragment extends Fragment {
     }
 
     private void init() {
-        initMenus();
-        initListener();
+
         initData();
+        initMenus();
         initRecyclerView();
+        initListener();
 
     }
 
@@ -104,15 +105,69 @@ public class StudentCommentFragment extends Fragment {
             }
         });
 
+
+        //设置item 点击跳转至课程详情页面
+        studentCourseRecyclerViewAdapter.setOnItemClickListener(new StudentCourseRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+                Integer courseID = courses.get(position).getCourseID();
+                Log.i("点击了","courseId:"+courseID.toString());
+                Log.e("course位置", "" + position + "被点击了！");
+
+                Intent intent = new Intent(getContext(), CourseDetailActivity.class);
+                intent.putExtra("coursedetail",courses.get(position));
+
+                startActivity(intent);
+
+            }
+        });
+
+
+        recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+                recyclerView.refreshComplete();
+
+            }
+            @Override
+            public void onLoadMore() {
+                recyclerView.setNoMore(true);
+            }
+        });
+
+
     }
 
 
     public void initData() {
-        for (int i = 0; i < 10; i++) {
-            Course course = new Course("大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 2.50);
-            mTags.add(course);
-        }
 
+        courses.add(new Course(1001,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4.50));
+
+        courses.add(new Course(1002,"计算机网络", "Mr.ZHU", "了解互联网基础", 3.50));
+
+        courses.add(new Course(1010,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
+
+
+        courses.add(new Course(1028,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
+
+
+        courses.add(new Course(2019,"算法设计", "Mr.LIN", "基础算法与数据结构", 2.50));
+
+        courses.add(new Course(1003,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4.50));
+
+        courses.add(new Course(1004,"计算机网络", "Mr.ZHU", "了解互联网基础", 3.50));
+
+        courses.add(new Course(1015,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
+
+
+        courses.add(new Course(1022,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
+
+
+        courses.add(new Course(2023,"算法设计", "Mr.LIN", "基础算法与数据结构", 2.50));
+
+
+        //AllCourses.addAll(courses);
 
         //count = mTags.size();
     }
@@ -123,14 +178,15 @@ public class StudentCommentFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        studentCourseRecyclerViewAdapter = new StudentCourseRecyclerViewAdapter(this.getContext(), mTags);
+        studentCourseRecyclerViewAdapter = new StudentCourseRecyclerViewAdapter(this.getContext(), courses);
         recyclerView.setAdapter(studentCourseRecyclerViewAdapter);
 
+
         //设置item 点击跳转至课程详情页面
-        studentCourseRecyclerViewAdapter.setOnItemClickListener(new StudentCourseRecyclerViewAdapter.OnItemClickListener() {
+        /*studentCourseRecyclerViewAdapter.setOnItemClickListener(new StudentCourseRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Course course = (Course) mTags.get(position);
+                Course course = (Course) AllCourses.get(position);
                 String name = course.getName();
                 Log.i("点击了","name:"+name);
                 Intent intent = new Intent(getContext(), CourseDetailActivity.class);
@@ -143,144 +199,31 @@ public class StudentCommentFragment extends Fragment {
             }
         });
 
+         */
+
 
 
         recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-
+/*
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-//                new Handler().postDelayed(() -> {
-//                    @SuppressLint("HandlerLeak")
-//                    Handler handler = new Handler(){
-//                        @Override
-//                        public void handleMessage(Message msg){
-//                            switch (msg.what){
-//                                case SUCCESS:
-//                                    Log.i("刷新", "成功");
-//                                    adapter.setList(infoList);
-//                                    adapter.notifyDataSetChanged();
-//                                    break;
-//                                case FAIL:
-//                                    Log.i("刷新", "失败");
-//                                    break;
-//                                case ZERO:
-//                                    Log.i("刷新", "0");
-//                                    break;
-//                            }
-//                            recyclerView.refreshComplete();
-//                        }
-//                    };
-
-//                    new Thread(()->{
-//                        CUR_PAGE_NUM = 1;
-//                        Request request = new Request.Builder()
-//                                .url(getResources().getString(R.string.serverBasePath) +
-//                                        getResources().getString(R.string.getAdoptMessage)
-//                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE +"&state=0")
-//                                .get()
-//                                .build();
-//                        Message msg = new Message();
-//                        OkHttpClient okHttpClient = new OkHttpClient();
-//                        Call call = okHttpClient.newCall(request);
-//                        call.enqueue(new Callback() {
-//                            @Override
-//                            public void onFailure(Call call, IOException e) {
-//                                Log.i("获取: ", e.getMessage());
-//                                msg.what = FAIL;
-//                                handler.sendMessage(msg);
-//                            }
-//
-//                            @Override
-//                            public void onResponse(Call call, Response response) throws IOException {
-//
-//                                ResponseAdoptInfo adoptMessage = new Gson().fromJson(response.body().string(),
-//                                        ResponseAdoptInfo.class);
-//                                infoList = adoptMessage.getAdoptInfoList();
-//                                if(infoList.size() == 0) {
-//                                    msg.what = ZERO;
-//                                } else {
-//                                    msg.what = SUCCESS;
-//                                }
-//                                handler.sendMessage(msg);
-//                                Log.i("获取: ", String.valueOf(infoList.size()));
-//                            }
-//                        });
-//                    }).start();
-//                }, 1500);
                 recyclerView.refreshComplete();
 
             }
-
             @Override
             public void onLoadMore() {
-//                new Handler().postDelayed(() -> {
-//                    @SuppressLint("HandlerLeak")
-//                    Handler handler = new Handler(){
-//                        @Override
-//                        public void handleMessage(Message msg){
-//                            switch (msg.what){
-//                                case SUCCESS:
-//                                    Log.i("加载", "成功");
-//                                    recyclerView.refreshComplete();
-//                                    adapter.notifyDataSetChanged();
-//                                    break;
-//                                case FAIL:
-//                                    Log.i("加载", "失败");
-//                                    break;
-//                                case ZERO:
-//                                    Log.i("加载", "0");
-//                                    recyclerView.setNoMore(true);
-//                                    break;
-//                            }
-//                        }
-//                    };
-
-//                    new Thread(()->{
-//                        CUR_PAGE_NUM++;
-//                        Request request = new Request.Builder()
-//                                .url(getResources().getString(R.string.serverBasePath) +
-//                                        getResources().getString(R.string.getAdoptMessage)
-//                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize=" + PAGE_SIZE + "&state=0")
-//                                .get()
-//                                .build();
-//                        Message msg = new Message();
-//                        OkHttpClient okHttpClient = new OkHttpClient();
-//                        Call call = okHttpClient.newCall(request);
-//                        call.enqueue(new Callback() {
-//                            @Override
-//                            public void onFailure(Call call, IOException e) {
-//                                Log.i("获取: ", e.getMessage());
-//                                msg.what = FAIL;
-//                                handler.sendMessage(msg);
-//                            }
-//
-//                            @Override
-//                            public void onResponse(Call call, Response response) throws IOException {
-//
-//                                ResponseAdoptInfo adoptMessage = new Gson().fromJson(response.body().string(),
-//                                        ResponseAdoptInfo.class);
-//                                infoList.addAll(adoptMessage.getAdoptInfoList());
-//                                if((CUR_PAGE_NUM - 2) * PAGE_SIZE + adoptMessage.getPageSize() <
-//                                        adoptMessage.getTotal() ){
-//                                    msg.what = ZERO;
-//                                } else {
-//                                    msg.what = SUCCESS;
-//                                }
-//                                handler.sendMessage(msg);
-//                                Log.i("获取: ", String.valueOf(infoList.size()));
-//                            }
-//                        });
-//                    }).start();
-//                }, 1500);
                 recyclerView.setNoMore(true);
             }
         });
 
+ */
+
     }
+
 
 
 }

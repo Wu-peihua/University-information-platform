@@ -114,11 +114,16 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
 
 
         //添加list数据项
-        for(int i = 1;i<=3;i++) {
-            commentsList.add(new CourseComment("Yuzz", new Date(2020-12-12), "学到了好多", 2.50));
-            commentsList.add(new CourseComment("LinussLu", new Date(2019-12-9), "Linux有趣", 3.50));
-            commentsList.add(new CourseComment("NetworkGo",  new Date(2020-3-1),"噢秃头！", 4.50));
-        }
+
+            commentsList.add (new CourseComment(2001,"LinussPP", new Date(), "有趣", 4.50,10));
+            commentsList.add (new CourseComment(2002,"ZhouKK", new Date(), "学到了很多", 4.50,12));
+            commentsList.add (new CourseComment(2003,"MandyWong", new Date(), "没意思", 3.50,13));
+            commentsList.add (new CourseComment(3008,"LarryChen", new Date(), "课程难度大", 3.50,20));
+            commentsList.add (new CourseComment(4010,"LinYii", new Date(), "作业量惊人", 2.50,12));
+            commentsList.add (new CourseComment(2020,"Oliver", new Date(), "不推荐", 1.50,10));
+            commentsList.add (new CourseComment(2034,"Patric", new Date(), "推荐", 4.50,2));
+
+
 
         /* 创建设置课程数据适配器 */
         CommentAdapter adapter = new CommentAdapter(this, R.layout.item_course_comment, commentsList);

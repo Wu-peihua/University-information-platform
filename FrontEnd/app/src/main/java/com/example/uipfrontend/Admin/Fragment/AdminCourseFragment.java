@@ -65,9 +65,20 @@ public class AdminCourseFragment extends Fragment {
 
         //添加list数据项
         for(int i = 1;i<=3;i++) {
-            courseList.add(new Course("BIgdata", "Mr.ZHANGJIA", "BIg data", 2.50));
-            courseList.add(new Course("Operating system", "Mr.ZHU", "Linux", 3.50));
-            courseList.add(new Course("Network", "Mr.ZHOU", "NET", 4.50));
+
+            courseList.add(new Course(1001,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4.50));
+
+            courseList.add(new Course(1002,"计算机网络", "Mr.ZHU", "了解互联网基础", 3.50));
+
+            courseList.add(new Course(1010,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
+
+
+            courseList.add(new Course(1028,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
+
+
+            courseList.add(new Course(2019,"算法设计", "Mr.LIN", "基础算法与数据结构", 2.50));
+
+
         }
 
         /* 创建设置课程数据适配器 */

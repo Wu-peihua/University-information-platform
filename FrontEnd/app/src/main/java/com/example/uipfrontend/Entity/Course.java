@@ -1,6 +1,8 @@
 package com.example.uipfrontend.Entity;
 
-public class Course {
+import java.io.Serializable;
+
+public class Course implements Serializable {
 
     private Integer courseID;//课程唯一标识
     private String courseName;//课程名称
@@ -11,13 +13,25 @@ public class Course {
     private String teacher;//教师名
     private double score;//总评分
 
-    public Course(String _name, String _teacher,String _description,double _score){
+    public Course(Integer courseID,String _name, String _teacher,String _description,double _score){
+        this.courseID = courseID;
         this.courseName = _name;
         this.teacher = _teacher;
         this.description = _description;
         this.score = _score;
     }
 
+    public Integer getCourseID(){
+        return this.courseID;
+    }
+
+    public Integer getSchoolId() {
+        return this.schoolId;
+    }
+
+    public  Integer getAcademyId() {
+        return this.academyId;
+    }
 
     public String getImageurl(){
         return this.imageUrl;
