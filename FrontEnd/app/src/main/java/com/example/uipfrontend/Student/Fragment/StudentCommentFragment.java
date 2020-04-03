@@ -14,10 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Entity.Course;
-import com.example.uipfrontend.Student.Adapter.CourseAdapter;
 import com.example.uipfrontend.Student.Activity.CourseDetailActivity;
 import com.example.uipfrontend.Student.Adapter.StudentCourseRecyclerViewAdapter;
-import com.example.uipfrontend.Student.CourseDetailActivity;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.qlh.dropdownmenu.DropDownMenu;
