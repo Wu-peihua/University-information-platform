@@ -94,4 +94,8 @@ dependencies {
     //带字符数统计TextView
     implementation 'com.github.FJ917:FJEditTextCount:1.0.4'
 
+    //多条件下拉筛选另外测试
+    implementation 'com.github.JayFang1993:DropDownMenu:v0.9'
+
+
 }

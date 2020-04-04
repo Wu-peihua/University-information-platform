@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,21 +9,28 @@
 
 
 
-                <com.qlh.dropdownmenu.DropDownMenu
-                    android:id="@+id/dropDownMenu_student_group"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:dddividerColor="@color/gray"
-                    app:ddmaskColor="@color/lightGray"
-                    app:ddmenuBackgroundColor="@color/white"
-                    app:ddmenuSelectedIcon="@drawable/drop_down_selected_icon"
-                    app:ddmenuTextSize="@dimen/fontSize_s"
-                    app:ddmenuUnselectedIcon="@drawable/drop_down_unselected_icon"
-                    app:ddtextSelectedColor="@color/blue"
-                    app:ddtextUnselectedColor="@color/gray"
-                    app:ddunderlineColor="@color/lightGray"
-                    android:background="@color/white"
-                    />
+<!--        <com.qlh.dropdownmenu.DropDownMenu-->
+<!--            android:id="@+id/dropDownMenu_student_group"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:dddividerColor="@color/gray"-->
+<!--            app:ddmaskColor="@color/lightGray"-->
+<!--            app:ddmenuBackgroundColor="@color/white"-->
+<!--            app:ddmenuSelectedIcon="@drawable/drop_down_selected_icon"-->
+<!--            app:ddmenuTextSize="@dimen/fontSize_s"-->
+<!--            app:ddmenuUnselectedIcon="@drawable/drop_down_unselected_icon"-->
+<!--            app:ddtextSelectedColor="@color/blue"-->
+<!--            app:ddtextUnselectedColor="@color/gray"-->
+<!--            app:ddunderlineColor="@color/lightGray"-->
+<!--            android:background="@color/white"-->
+<!--            />-->
+
+    <com.jayfang.dropdownmenu.DropDownMenu
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:id="@+id/dropDownMenu_student_group"
+        android:background="@color/lightGray"
+        android:layout_height="40dp"/>
 
 
         <com.jcodecraeer.xrecyclerview.XRecyclerView
@@ -31,7 +38,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipChildren="false"
-            android:clipToPadding="false">
+            android:clipToPadding="false"
+            android:layout_below="@+id/dropDownMenu_student_group">
         </com.jcodecraeer.xrecyclerview.XRecyclerView>
 
 
@@ -39,20 +47,20 @@
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content">-->
 
-<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--            android:id="@+id/fabtn_student_recruit"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:layout_alignParentBottom="true"-->
-<!--            android:layout_marginRight="@dimen/margin_l"-->
-<!--            android:layout_marginBottom="@dimen/margin_l"-->
-<!--            android:backgroundTint="@color/blue"-->
-<!--            app:borderWidth="0dp"-->
-<!--            app:fabSize="mini"-->
-<!--            app:maxImageSize="40dp"-->
-<!--            app:rippleColor="@color/darkBlue"-->
-<!--            app:srcCompat="@drawable/ic_add" />-->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabtn_student_recruit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="@dimen/margin_l"
+            android:layout_marginBottom="@dimen/margin_l"
+            android:backgroundTint="@color/blue"
+            app:borderWidth="0dp"
+            app:fabSize="mini"
+            app:maxImageSize="40dp"
+            app:rippleColor="@color/darkBlue"
+            app:srcCompat="@drawable/ic_add" />
 
 
 
@@ -60,4 +68,4 @@
 <!--    </RelativeLayout>-->
 
 
-</LinearLayout>
+</RelativeLayout>

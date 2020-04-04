@@ -1,6 +1,7 @@
 package com.example.uipfrontend.Student.Fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.example.uipfrontend.CommonUser.AddResActivity;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.StudentRecruitRecyclerViewAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jayfang.dropdownmenu.OnMenuSelectedListener;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.qlh.dropdownmenu.DropDownMenu;
@@ -25,6 +27,8 @@ import com.qlh.dropdownmenu.view.MultiMenusView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static android.net.wifi.WifiConfiguration.Status.strings;
 
 
 public class StudentRecruitFragment extends Fragment {
@@ -38,6 +42,17 @@ public class StudentRecruitFragment extends Fragment {
 
     private List<String> list;   //组队信息实体类数组
     private View rootView;
+
+    private com.jayfang.dropdownmenu.DropDownMenu mMenu;
+
+
+    //测试下拉筛选控件选择值
+    final String[] arr1=new String[]{"全部", "华南师范大学", "华南理工大学", "中山大学"};
+    final String[] arr2=new String[]{"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"};
+    final String[] arr3=new String[]{"全部年龄","10","20","30","40","50","60","70"};
+
+    final String[] strings=new String[]{"所属院校","所属专业","选择年龄"};
+
 
 
 
@@ -60,8 +75,9 @@ public class StudentRecruitFragment extends Fragment {
     }
 
     private void init() {
-        initMenus();
-        initListener();
+//        initMenus();
+        initMenus2();
+//        initListener();
         getData();
         initRecyclerView();
         initToolBar();
@@ -91,6 +107,38 @@ public class StudentRecruitFragment extends Fragment {
         View contentView = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_student_recruit,null);
         //装载
         dropDownMenu.setDropDownMenu(Arrays.asList(headers),popupViews,contentView);
+
+    }
+
+    private void initMenus2(){
+        mMenu=(com.jayfang.dropdownmenu.DropDownMenu) rootView.findViewById(R.id.dropDownMenu_student_group);
+        mMenu.setmMenuCount(3);//Menu的个数
+        mMenu.setmShowCount(6);//Menu展开list数量太多时只显示的个数
+        mMenu.setShowCheck(true);//是否显示展开list的选中项
+        mMenu.setmMenuTitleTextSize(12);//Menu的文字大小
+        mMenu.setmMenuTitleTextColor(Color.BLACK);//Menu的文字颜色
+        mMenu.setmMenuListTextSize(12);//Menu展开list的文字大小
+        mMenu.setmMenuListTextColor(Color.BLACK);//Menu展开list的文字颜色
+        mMenu.setmMenuBackColor(getResources().getColor(R.color.lightGray));//Menu的背景颜色
+        mMenu.setmMenuPressedBackColor(Color.WHITE);//Menu按下的背景颜色
+        mMenu.setmCheckIcon(R.drawable.ico_make);//Menu展开list的勾选图片
+        mMenu.setmUpArrow(R.drawable.arrow_up);//Menu默认状态的箭头
+        mMenu.setmDownArrow(R.drawable.arrow_down);//Menu按下状态的箭头
+        mMenu.setDefaultMenuTitle(strings);//默认未选择任何过滤的Menu title
+        mMenu.setMenuSelectedListener(new OnMenuSelectedListener() {
+            @Override
+            //Menu展开的list点击事件  RowIndex：list的索引  ColumnIndex：menu的索引
+            public void onSelected(View listview, int RowIndex, int ColumnIndex) {
+
+
+            }
+        });
+
+        List<String[]> items = new ArrayList<>();
+        items.add(arr1);
+        items.add(arr2);
+        items.add(arr3);
+        mMenu.setmMenuItems(items);
 
     }
 
