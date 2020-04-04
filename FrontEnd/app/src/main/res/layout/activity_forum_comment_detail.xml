@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".CommonUser.Activity.CommentDetailActivity">
+
+    <include layout="@layout/item_forum_post_comment" />
+    
+    <TextView
+        android:id="@+id/tv_cu_forum_comment_sum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:background="@color/lightGray"
+        android:text="32条回复"
+        android:textSize="@dimen/fontSize_s"/>
+</LinearLayout>

@@ -7,14 +7,15 @@ import android.os.Bundle;
 import com.example.uipfrontend.R;
 
 /*
- * 点击搜索框旁边的+号跳转到这个Activity
- * 跳转时携带用户ID
+ * 当某条评论被点击时跳转到这个Activity
+ * 跳转时携带该条评论对象
  */
-public class WritePostActivity extends AppCompatActivity {
+
+public class CommentDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forum_write_post);
+        setContentView(R.layout.activity_forum_comment_detail);
     }
 }

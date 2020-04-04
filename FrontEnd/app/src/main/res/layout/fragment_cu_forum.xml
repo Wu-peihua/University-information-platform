@@ -7,30 +7,29 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:orientation="horizontal">
+        
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_weight="49"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
             android:layout_gravity="center"
             android:background="@drawable/shape_search"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:orientation="horizontal">
 
+<!--            搜索图标 -->
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_weight="1"
-                android:layout_marginLeft="3dp"
-                android:layout_marginStart="3dp"
                 android:layout_gravity="center"
                 android:scaleType="centerInside"
                 android:src="@drawable/search" />
 
+<!--            搜索栏 -->
             <EditText
                 android:id="@+id/edt_cu_forum_search"
                 android:layout_width="0dp"
@@ -45,6 +44,7 @@
                 android:singleLine="true"
                 android:hint="搜搜看"/>
 
+<!--            清除所有文字 -->
             <ImageView
                 android:id="@+id/imgv_cu_forum_delete"
                 android:layout_width="16dp"
@@ -58,17 +58,16 @@
                 android:visibility="gone"/>
         </LinearLayout>
         
+<!--        加号按钮 -->
         <ImageView
             android:id="@+id/imgv_cu_forum_new"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_weight="1"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
             android:layout_gravity="center"
             android:scaleType="centerInside"
             android:src="@drawable/new_post"/>
+        
     </LinearLayout>
 
     <com.jcodecraeer.xrecyclerview.XRecyclerView

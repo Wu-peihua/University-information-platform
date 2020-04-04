@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".CommonUser.Activity.PostDetailActivity">
+    
+    <!-- 帖子评论 -->
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/rv_cu_forum_post_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_cu_forum_post_detail_comment_bar"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:scrollbars="none" />
+
+    <!-- 底部编辑框 -->
+    <LinearLayout
+        android:id="@+id/ll_cu_forum_post_detail_comment_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_cu_forum_detail_write_comment"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_weight="28"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/shape_round_rect"
+            android:gravity="center_vertical"
+            android:hint="写下你的看法..."
+            android:imeOptions="actionSearch"
+            android:paddingLeft="10dp" />
+
+        <ImageView
+            android:id="@+id/imgv_cu_forum_detail_write_comment"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="2"
+            android:scaleType="centerInside"
+            android:src="@drawable/comment" />
+
+    </LinearLayout>
+
+</RelativeLayout>
+
+    <!--    <com.lzy.widget.ExpandListView-->
+    <!--        android:id="@+id/lv_comments"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginTop="10dp"-->
+    <!--        android:divider="@null"-->
+    <!--        android:dividerHeight="0dp"-->
+    <!--        android:orientation="vertical"-->
+    <!--        android:paddingBottom="5dp"-->
+    <!--        android:paddingLeft="8dp"-->
+    <!--        android:paddingRight="8dp"-->
+    <!--        android:paddingTop="16dp"/>-->

@@ -23,10 +23,9 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
     private Context context;
     private List<ForumPosts> list;
     private onItemClickListener itemClickListener;
-    
-    private int beginPos;
-    private String text;
-    private ForegroundColorSpan span;
+
+    private String keyWord;           // 搜索框关键字
+    private ForegroundColorSpan span; // 关键字颜色
 
     public ForumListRecyclerViewAdapter(Context context, List<ForumPosts> list) {
         this.context = context;
@@ -37,17 +36,18 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
         this.itemClickListener = clickListener;
     }
 
-    public void setText(String text, ForegroundColorSpan span) {
-        this.text = text;
+    public void setKeyWordColor(String keyWord, ForegroundColorSpan span) {
+        this.keyWord = keyWord;
         this.span = span;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        LinearLayout ll_item;
-        TextView tv_title;
-        TextView tv_poster;
-        TextView tv_time;
-        TextView tv_like;
+        
+        LinearLayout ll_item;  // 对帖子设置监听
+        TextView tv_title;     // 帖子标题
+        TextView tv_poster;    // 发布者
+        TextView tv_time;      // 发布时间
+        TextView tv_like;      // 点赞数
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -69,13 +69,14 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
-        if(text == null){
+        if(keyWord == null){
             viewHolder.tv_title.setText(list.get(position).getTitle());
         } else {
-            beginPos = list.get(position).getTitle().indexOf(text);
+            // 关键字开始位置
+            int beginPos = list.get(position).getTitle().indexOf(keyWord);
             if(beginPos != -1){
                 SpannableStringBuilder builder = new SpannableStringBuilder(list.get(position).getTitle());
-                builder.setSpan(span, beginPos, beginPos + text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                builder.setSpan(span, beginPos, beginPos + keyWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 viewHolder.tv_title.setText(builder);
             }
         }

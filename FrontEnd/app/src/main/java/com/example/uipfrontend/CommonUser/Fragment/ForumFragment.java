@@ -34,13 +34,12 @@ public class ForumFragment extends Fragment {
 
     private View rootView;
     
-    // 搜索高亮
+    // 搜索高亮字体颜色
     private ForegroundColorSpan redSpan = new ForegroundColorSpan(Color.rgb(255, 0, 0));
-
-    // 搜索栏
-    private EditText et_search;
-    private ImageView iv_delete;
-    private ImageView iv_new;
+    
+    private EditText et_search;   // 搜索栏
+    private ImageView iv_delete;  // 清除输入按钮
+    private ImageView iv_new;     // 新建帖子按钮
 
     private XRecyclerView xRecyclerView;
     private ForumListRecyclerViewAdapter adapter;
@@ -127,19 +126,21 @@ public class ForumFragment extends Fragment {
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
                 }
-                changeTextColor(editable.toString().trim());
+                changeKeyWordColor(editable.toString().trim());
             }
         });
 
         // 清空搜索框
         iv_delete.setOnClickListener(view -> et_search.setText(""));
         
+        // 进入帖子详情页面
         adapter.setOnItemClickListener((view, pos) -> {
             Intent intent = new Intent(rootView.getContext(), PostDetailActivity.class);
             intent.putExtra("detail", posts.get(pos));
             startActivity(intent);
         });
         
+        // 进入新建帖子页面
         iv_new.setOnClickListener(view -> {
             Intent intent = new Intent(rootView.getContext(), WritePostActivity.class);
             startActivity(intent);
@@ -159,18 +160,19 @@ public class ForumFragment extends Fragment {
         });
     }
 
-    private void changeTextColor(String text){
+    private void changeKeyWordColor(String keyWord){
+        // 搜索帖子标题，关键词：keyWord
         posts.clear();
-        if(text.equals("")){
+        if(keyWord.equals("")){
             posts.addAll(whole);
-            adapter.setText(null, null);
+            adapter.setKeyWordColor(null, null);
         } else {
             for (int i = 0; i < whole.size(); i++) {
-                if(whole.get(i).getTitle().contains(text)) {
+                if(whole.get(i).getTitle().contains(keyWord)) {
                     posts.add(whole.get(i));
                 }
             }
-            adapter.setText(text, redSpan);
+            adapter.setKeyWordColor(keyWord, redSpan);
         }
         refreshUI();
     }
@@ -193,14 +195,15 @@ public class ForumFragment extends Fragment {
         adapter = new ForumListRecyclerViewAdapter(rootView.getContext(), posts);
 
         xRecyclerView = rootView.findViewById(R.id.rv_cu_forum);
+        xRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         xRecyclerView.setAdapter(adapter);
         xRecyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
-        xRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         xRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         xRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
 
-        LayoutAnimationController animationController = AnimationUtils.loadLayoutAnimation(rootView.getContext(),R.anim.layout_animation);
+        LayoutAnimationController animationController = AnimationUtils
+                .loadLayoutAnimation(rootView.getContext(),R.anim.layout_animation);
         xRecyclerView.setLayoutAnimation(animationController);
     }
 }

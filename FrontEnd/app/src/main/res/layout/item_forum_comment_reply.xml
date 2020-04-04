@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".CommonUser.Activity.PostDetailActivity"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
@@ -115,20 +113,5 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/lightGray"/>
-
-    <!--    <com.lzy.widget.ExpandListView-->
-    <!--        android:id="@+id/lv_comments"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginRight="5dp"-->
-    <!--        android:layout_marginTop="9.5dp"-->
-    <!--        android:background="@drawable/event_di"-->
-    <!--        android:divider="@null"-->
-    <!--        android:dividerHeight="0dp"-->
-    <!--        android:orientation="vertical"-->
-    <!--        android:paddingBottom="5dp"-->
-    <!--        android:paddingLeft="8dp"-->
-    <!--        android:paddingRight="8dp"-->
-    <!--        android:paddingTop="16dp"/>-->
 
 </LinearLayout>

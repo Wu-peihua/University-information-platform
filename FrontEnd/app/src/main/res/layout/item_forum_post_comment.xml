@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".CommonUser.Activity.PostDetailActivity"
+    android:layout_height="wrap_content"
+    android:id="@+id/item_cu_forum_comment"
     android:orientation="vertical">
 
     <LinearLayout
@@ -18,8 +17,8 @@
 
         <com.lzy.widget.CircleImageView
             android:id="@+id/imgv_cu_forum_comment_portrait"
-            android:layout_width="@dimen/layoutWidth"
-            android:layout_height="@dimen/layoutHeight"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:src="@drawable/portrait_default"/>
 
         <LinearLayout
@@ -32,7 +31,7 @@
                 android:id="@+id/tv_cu_forum_comment_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:text="法外狂徒张三"
                 android:textColor="@color/black"
                 android:textSize="@dimen/fontSize_s"/>
@@ -94,20 +93,5 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/lightGray"/>
-
-    <!--    <com.lzy.widget.ExpandListView-->
-    <!--        android:id="@+id/lv_comments"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginRight="5dp"-->
-    <!--        android:layout_marginTop="9.5dp"-->
-    <!--        android:background="@drawable/event_di"-->
-    <!--        android:divider="@null"-->
-    <!--        android:dividerHeight="0dp"-->
-    <!--        android:orientation="vertical"-->
-    <!--        android:paddingBottom="5dp"-->
-    <!--        android:paddingLeft="8dp"-->
-    <!--        android:paddingRight="8dp"-->
-    <!--        android:paddingTop="16dp"/>-->
 
 </LinearLayout>

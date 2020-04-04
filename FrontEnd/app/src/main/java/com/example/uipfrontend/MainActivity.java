@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 //        tv_toolBar_title = findViewById(R.id.tv_toolBar_title);
 //        setSupportActionBar(toolbar);
 //        getSupportActionBar().setTitle("");
-//        tv_toolBar_title.setText("高校交流平台");
+//        tv_toolBar_title.setTextColor("高校交流平台");
 
 
 
