@@ -30,6 +30,10 @@
     <color name="btn_save_normal">#04BE02</color>
     <!--保存按钮正常情况下背景色-->
     <color name="btn_save_press">#008B00</color>
+    <!--普通背景颜色-->
+    <color name="background">#f6f6f6</color>
+    <!--照片选择背景-->
+    <color name="imgBackground">#f6f6f6</color>
 
 
 

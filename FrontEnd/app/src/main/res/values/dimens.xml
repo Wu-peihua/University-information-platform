@@ -34,4 +34,7 @@
     <dimen name="layoutHeight_s">18dp</dimen>
     <dimen name="layoutWeight_s">18dp</dimen>
 
+    <!--自定义顶部标题文字大小-->
+    <dimen name="toolBarTitle">20sp</dimen>
+
 </resources>

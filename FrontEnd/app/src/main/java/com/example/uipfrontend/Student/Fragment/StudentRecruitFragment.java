@@ -6,16 +6,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.uipfrontend.CommonUser.AddResActivity;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Student.Activity.RecruitReleaseActivity;
 import com.example.uipfrontend.Student.Adapter.StudentRecruitRecyclerViewAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jayfang.dropdownmenu.OnMenuSelectedListener;
@@ -28,8 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static android.net.wifi.WifiConfiguration.Status.strings;
-
 
 public class StudentRecruitFragment extends Fragment {
 
@@ -41,9 +41,13 @@ public class StudentRecruitFragment extends Fragment {
     private StudentRecruitRecyclerViewAdapter studentRecruitRecyclerViewAdapter;     //每条组队信息内容适配器
 
     private List<String> list;   //组队信息实体类数组
-    private View rootView;
+    private View rootView;  //根视图（下拉筛选框）
+    private View rootContentView;    //根视图内容
 
-    private com.jayfang.dropdownmenu.DropDownMenu mMenu;
+    private FloatingActionButton fabtn;  //浮动按钮，发布新的组队信息
+
+
+
 
 
     //测试下拉筛选控件选择值
@@ -67,26 +71,28 @@ public class StudentRecruitFragment extends Fragment {
             }
         } else {
             rootView = inflater.inflate(R.layout.fragment_student_recruit, null);
-            recyclerView = rootView.findViewById(R.id.rv_student_group);
-
+//            recyclerView = rootView.findViewById(R.id.rv_student_group);
+            rootContentView = inflater.inflate(R.layout.fragment_student_recruit_content,null);
             init();
         }
         return rootView;
     }
 
     private void init() {
-//        initMenus();
-        initMenus2();
-//        initListener();
+        //初始化下拉筛选
+        initMenus();
+        initListener();
+
+        //获取列表数据
         getData();
+        //初始化列表
         initRecyclerView();
-        initToolBar();
+        //初始化浮动按钮
+        initFAB();
+
 
     }
 
-    private void initToolBar(){
-
-    }
 
     private void initMenus() {
 
@@ -104,41 +110,9 @@ public class StudentRecruitFragment extends Fragment {
         multiMenusView = new MultiMenusView(this.getContext(),levelOneMenu,levelTwoMenu);
         popupViews.add(multiMenusView);
         //初始化内容视图
-        View contentView = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_student_recruit,null);
+        RelativeLayout contentView = rootContentView.findViewById(R.id.rl_student_recruit_recruit);
         //装载
         dropDownMenu.setDropDownMenu(Arrays.asList(headers),popupViews,contentView);
-
-    }
-
-    private void initMenus2(){
-        mMenu=(com.jayfang.dropdownmenu.DropDownMenu) rootView.findViewById(R.id.dropDownMenu_student_group);
-        mMenu.setmMenuCount(3);//Menu的个数
-        mMenu.setmShowCount(6);//Menu展开list数量太多时只显示的个数
-        mMenu.setShowCheck(true);//是否显示展开list的选中项
-        mMenu.setmMenuTitleTextSize(12);//Menu的文字大小
-        mMenu.setmMenuTitleTextColor(Color.BLACK);//Menu的文字颜色
-        mMenu.setmMenuListTextSize(12);//Menu展开list的文字大小
-        mMenu.setmMenuListTextColor(Color.BLACK);//Menu展开list的文字颜色
-        mMenu.setmMenuBackColor(getResources().getColor(R.color.lightGray));//Menu的背景颜色
-        mMenu.setmMenuPressedBackColor(Color.WHITE);//Menu按下的背景颜色
-        mMenu.setmCheckIcon(R.drawable.ico_make);//Menu展开list的勾选图片
-        mMenu.setmUpArrow(R.drawable.arrow_up);//Menu默认状态的箭头
-        mMenu.setmDownArrow(R.drawable.arrow_down);//Menu按下状态的箭头
-        mMenu.setDefaultMenuTitle(strings);//默认未选择任何过滤的Menu title
-        mMenu.setMenuSelectedListener(new OnMenuSelectedListener() {
-            @Override
-            //Menu展开的list点击事件  RowIndex：list的索引  ColumnIndex：menu的索引
-            public void onSelected(View listview, int RowIndex, int ColumnIndex) {
-
-
-            }
-        });
-
-        List<String[]> items = new ArrayList<>();
-        items.add(arr1);
-        items.add(arr2);
-        items.add(arr3);
-        mMenu.setmMenuItems(items);
 
     }
 
@@ -155,8 +129,6 @@ public class StudentRecruitFragment extends Fragment {
 
     }
 
-
-
     private void getData(){
         list = new ArrayList<>();
         list.add("1");
@@ -166,6 +138,9 @@ public class StudentRecruitFragment extends Fragment {
     }
 
     private void initRecyclerView() {
+
+        recyclerView = rootContentView.findViewById(R.id.rv_student_group);
+
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -309,6 +284,17 @@ public class StudentRecruitFragment extends Fragment {
             }
         });
 
+    }
+
+    private void initFAB(){
+        fabtn = rootContentView.findViewById(R.id.fabtn_student_recruit);
+        fabtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(rootContentView.getContext(), RecruitReleaseActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 }

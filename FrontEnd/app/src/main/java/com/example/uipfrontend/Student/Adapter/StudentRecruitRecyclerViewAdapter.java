@@ -1,19 +1,25 @@
 package com.example.uipfrontend.Student.Adapter;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bigkoo.alertview.AlertView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Student.Activity.RecruitReleaseActivity;
+import com.example.uipfrontend.Utils.GlobalDialog;
 import com.lzy.ninegrid.ImageInfo;
 import com.lzy.ninegrid.NineGridView;
 import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
@@ -21,6 +27,8 @@ import com.lzy.widget.CircleImageView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.OnClick;
 
 public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
 
@@ -33,7 +41,7 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView title;
         TextView content;
@@ -42,19 +50,48 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
         TextView userName;
         TextView contact;
         NineGridView nineGridView;
+        ImageView imageView;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            title = itemView.findViewById(R.id.tv_student_group_item_title);
-            content = itemView.findViewById(R.id.tv_student_group_item_content);
-            portrait = itemView.findViewById(R.id.iv_student_group_item_portrait);
-            infoDate = itemView.findViewById(R.id.tv_student_group_item_time);
-            userName = itemView.findViewById(R.id.tv_student_group_item_name);
-            contact = itemView.findViewById(R.id.tv_student_group_item_contact);
-            nineGridView = itemView.findViewById(R.id.nineGrid_student_group_item_pic);
+            this.title = itemView.findViewById(R.id.tv_student_group_item_title);
+            this.content = itemView.findViewById(R.id.tv_student_group_item_content);
+            this.portrait = itemView.findViewById(R.id.iv_student_group_item_portrait);
+            this.infoDate = itemView.findViewById(R.id.tv_student_group_item_time);
+            this.userName = itemView.findViewById(R.id.tv_student_group_item_name);
+            this.contact = itemView.findViewById(R.id.tv_student_group_item_contact);
+            this.nineGridView = itemView.findViewById(R.id.nineGrid_student_group_item_pic);
+            this.imageView = (ImageView) itemView.findViewById(R.id.iv_student_recruit_report);
+
+            this.imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //弹出对话框 选择拍照或从相册选择
+                    new AlertView.Builder().setContext(view.getContext())
+                            .setStyle(AlertView.Style.ActionSheet)
+                            .setTitle("确定举报？")
+//                            .setCancelText("取消")
+                            .setDestructive("取消", "确定")
+                            .setOthers(null)
+                            .setOnItemClickListener((object, position) -> {
+                                switch (position) {
+                                    case 0:
+                                        Toast.makeText(context,"取消举报",Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 1:
+                                        Toast.makeText(context,"确定举报",Toast.LENGTH_SHORT).show();
+                                        break;
+                                }
+                            })
+                            .build()
+                            .show();
+                }
+            });
         }
 
+
+    }
 
 //        @OnClick(R.id.tv_student_group_item_delete)
 //        public void delete(View view) {
@@ -81,7 +118,7 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
 //            delDialog.show();
 //        }
 
-    }
+
 
     @NonNull
     @Override

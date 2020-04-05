@@ -96,6 +96,13 @@ dependencies {
 
     //多条件下拉筛选另外测试
     implementation 'com.github.JayFang1993:DropDownMenu:v0.9'
+    implementation 'com.github.dongjunkun:DropDownMenu:1.0.4'
+    //照片上传
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.9'
+    //dialog弹框
+    implementation 'com.github.sd6352051:NiftyDialogEffects:v1.0.3'
+    //底部弹窗
+    implementation 'com.bigkoo:alertview:1.0.3'
 
 
 }

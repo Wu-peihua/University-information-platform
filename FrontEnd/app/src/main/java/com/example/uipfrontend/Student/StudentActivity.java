@@ -24,7 +24,6 @@ public class StudentActivity extends AppCompatActivity {
     AHBottomNavigation studentAHBottomNavigation;
     //自定义顶部标题栏
     Toolbar toolbar;
-//    TextView tv_toolbar_title;
 
 
     @Override

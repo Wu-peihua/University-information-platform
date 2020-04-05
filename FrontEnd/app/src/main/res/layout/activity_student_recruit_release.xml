@@ -3,60 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
-
-    <!--顶部toolbar-->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tb_student_recruit_release"
-        app:titleTextColor="@color/white"
-        android:background="@color/colorPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-            <TextView
-                android:id="@+id/tv_toolbar_left"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:drawableLeft="@drawable/ic_toolbar_back"
-                android:drawablePadding="@dimen/padding_xs"
-                android:drawableStart="@drawable/ic_toolbar_back"
-                android:gravity="center"
-                android:maxLines="1"
-                android:paddingLeft="@dimen/padding_xs"
-                android:paddingStart="@dimen/padding_xs"
-                android:text="返回"
-                android:textColor="@color/white"
-                android:textSize="@dimen/fontSize_s" />
-
-        <TextView
-            android:id="@+id/tv_toolBar_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:maxLines="1"
-            android:textColor="@color/white"
-            android:textSize="@dimen/fontSize_l"
-            android:text="发布组队信息"
-            android:textStyle="bold"/>
-
-
-
-<!--            <TextView-->
-<!--                android:id="@+id/tv_toolBar_right"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="end"-->
-<!--                android:layout_marginEnd="@dimen/margin_l"-->
-<!--                android:layout_marginRight="@dimen/margin_l"-->
-<!--                android:drawablePadding="@dimen/padding_s"-->
-<!--                android:gravity="center"-->
-<!--                android:maxLines="1"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:textSize="@dimen/fontSize_s"-->
-<!--                android:text="发布" />-->
-    </androidx.appcompat.widget.Toolbar>
 
     <!--发布信息表单-->
     <ScrollView
@@ -67,7 +16,8 @@
             android:id="@+id/ll_student_recruit_release"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:focusableInTouchMode="true">
 
 
             <!--组队学校-->
@@ -82,12 +32,13 @@
                     android:id="@+id/et_recruit_school"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin"
+                    android:layout_marginHorizontal="@dimen/margin_s"
                     android:hint="所在学校"
                     app:met_iconLeft="@drawable/ic_school"
                     app:met_baseColor="@color/darkBlue"
                     app:met_primaryColor="@color/darkBlue"
                     app:met_textColor="@color/black"
+                    android:textSize="@dimen/fontSize_s"
                     android:maxLines="1"/>
 
             </FrameLayout>
@@ -104,7 +55,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="所属学科"
-                    android:layout_marginHorizontal="@dimen/margin"
+                    android:textSize="@dimen/fontSize_s"
+                    android:layout_marginHorizontal="@dimen/margin_s"
                     app:met_iconLeft="@drawable/ic_subject"
                     app:met_baseColor="@color/darkBlue"
                     app:met_primaryColor="@color/darkBlue"
@@ -124,9 +76,10 @@
                     android:id="@+id/et_recruit_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontSize_s"
                     android:hint="信息标题"
-                    android:layout_marginHorizontal="@dimen/margin"
-                    app:met_iconLeft="@drawable/ic_subject"
+                    android:layout_marginHorizontal="@dimen/margin_s"
+                    app:met_iconLeft="@drawable/ic_title"
                     app:met_baseColor="@color/darkBlue"
                     app:met_primaryColor="@color/darkBlue"
                     app:met_textColor="@color/black"
@@ -134,7 +87,27 @@
 
             </FrameLayout>
 
+            <!--组队联系电话-->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin"
+                android:background="@color/white">
 
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/et_recruit_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/fontSize_s"
+                    android:hint="联系电话"
+                    android:layout_marginHorizontal="@dimen/margin_s"
+                    app:met_iconLeft="@drawable/ic_phone"
+                    app:met_baseColor="@color/darkBlue"
+                    app:met_primaryColor="@color/darkBlue"
+                    app:met_textColor="@color/black"
+                    android:maxLines="1"/>
+
+            </FrameLayout>
 
 
 
@@ -158,7 +131,7 @@
                     app:etPromptTextColor="@color/colorAccent"
                     app:etPromptTextSize="16sp"
                     app:etTextColor="@color/black"
-                    app:etTextSize="16sp"
+                    app:etTextSize="@dimen/fontSize_s"
                     app:etType="singular"
                     />
 
@@ -187,7 +160,7 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:src="@drawable/ic_picture"/>
+                            android:src="@drawable/ic_photo"/>
                     </FrameLayout>
 
                     <TextView
@@ -234,11 +207,11 @@
                 <Button
                     android:id="@+id/btn_recruit_submit"
                     android:layout_gravity="center"
-                    android:layout_margin="@dimen/margin"
+                    android:layout_margin="@dimen/margin_s"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="发布"
-                    android:textSize="@dimen/fontSize_l"
+                    android:textSize="@dimen/fontSize_s"
                     android:textColor="@color/white"
                     android:background="@drawable/btn_selector"/>
 
