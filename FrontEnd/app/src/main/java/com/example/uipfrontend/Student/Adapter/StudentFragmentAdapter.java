@@ -4,6 +4,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.example.uipfrontend.CommonUser.Fragment.ForumFragment;
+import com.example.uipfrontend.CommonUser.Fragment.ResourceFragment;
 import com.example.uipfrontend.Student.Fragment.StudentCommentFragment;
 import com.example.uipfrontend.Student.Fragment.StudentForumFragment;
 import com.example.uipfrontend.Student.Fragment.StudentRecruitFragment;
@@ -23,8 +25,9 @@ public class StudentFragmentAdapter extends FragmentPagerAdapter {
         super(fm);
 
         fragmentList = new ArrayList<>();
-        fragmentList.add(0, new StudentForumFragment());
-        fragmentList.add(1, new StudentResourceFragment());
+        //前两个fragment与普通用户端相同
+        fragmentList.add(0, new ForumFragment());
+        fragmentList.add(1, new ResourceFragment());
         fragmentList.add(2, new StudentRecruitFragment());
         fragmentList.add(3, new StudentCommentFragment());
         fragmentList.add(4, new StudentHomeFragment());

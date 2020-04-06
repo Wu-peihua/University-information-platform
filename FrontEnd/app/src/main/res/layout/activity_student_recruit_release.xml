@@ -170,7 +170,7 @@
                         android:text="选择图片："
                         android:layout_gravity="center"
                         android:textSize="@dimen/fontSize_s"
-                        android:textColor="@color/darkBlue"/>
+                        android:textColor="@color/blue"/>
 
 
                 </LinearLayout>

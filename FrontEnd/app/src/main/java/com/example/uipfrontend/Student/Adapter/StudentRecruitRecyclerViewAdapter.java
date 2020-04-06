@@ -93,31 +93,6 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
 
     }
 
-//        @OnClick(R.id.tv_student_group_item_delete)
-//        public void delete(View view) {
-//            final GlobalDialog delDialog = new GlobalDialog(context);
-//            delDialog.setCanceledOnTouchOutside(true);
-//            delDialog.getTitle().setText("提示");
-//            delDialog.getContent().setText("确定删除吗?");
-//            delDialog.setLeftBtnText("取消");
-//            delDialog.setRightBtnText("确定");
-//            delDialog.setLeftOnclick(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(context, "取消", Toast.LENGTH_SHORT).show();
-//                    delDialog.dismiss();
-//                }
-//            });
-//            delDialog.setRightOnclick(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(context, "确定", Toast.LENGTH_SHORT).show();
-//                    delDialog.dismiss();
-//                }
-//            });
-//            delDialog.show();
-//        }
-
 
 
     @NonNull
