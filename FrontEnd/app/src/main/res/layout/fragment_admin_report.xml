@@ -6,7 +6,7 @@
     android:background="#FFFFFF"
     android:orientation="vertical" >
 
-    <include layout="@layout/top_sub_tab" />
+    <include layout="@layout/item_admin_top" />
 
     <FrameLayout
         android:id="@+id/id_content"
