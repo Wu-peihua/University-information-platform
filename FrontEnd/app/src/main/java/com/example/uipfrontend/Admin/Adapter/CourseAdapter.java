@@ -1,48 +1,164 @@
 package com.example.uipfrontend.Admin.Adapter;
 
+
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.Course;
 import com.example.uipfrontend.R;
+import com.lzy.ninegrid.ImageInfo;
+import com.lzy.ninegrid.NineGridView;
+import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
+import com.lzy.widget.CircleImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class CourseAdapter extends ArrayAdapter<Course> {
-    private int resourceId;
+public class CourseAdapter extends RecyclerView.Adapter {
+
+    private Context context;
+    private List<Course> mTags = new ArrayList<>();
+
+    public CourseAdapter(Context context, List<Course> list) {
+        this.context = context;
+        this.mTags = list;
+    }
+
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView name;//课程名称
+        TextView content;//课程内容
+        TextView teacher;//教师
+        TextView score;//总评分
+        ImageView img;//课程图片
+
+        ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            img = itemView.findViewById(R.id.admincourseImage);
+            name = itemView.findViewById(R.id.admincoursename);
+            content = itemView.findViewById(R.id.admincourseDescription);
+            teacher = itemView.findViewById(R.id.adminTeacher);
+            score = itemView.findViewById(R.id.adminRatingScore);
+
+        }
+    }
+
+
+//        @OnClick(R.id.tv_student_group_item_delete)
+//        public void delete(View view) {
+//            final GlobalDialog delDialog = new GlobalDialog(context);
+//            delDialog.setCanceledOnTouchOutside(true);
+//            delDialog.getTitle().setText("提示");
+//            delDialog.getContent().setText("确定删除吗?");
+//            delDialog.setLeftBtnText("取消");
+//            delDialog.setRightBtnText("确定");
+//            delDialog.setLeftOnclick(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(context, "取消", Toast.LENGTH_SHORT).show();
+//                    delDialog.dismiss();
+//                }
+//            });
+//            delDialog.setRightOnclick(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(context, "确定", Toast.LENGTH_SHORT).show();
+//                    delDialog.dismiss();
+//                }
+//            });
+//            delDialog.show();
+//        }
 
 
 
-    public CourseAdapter(Context context, int textViewResourceId, List<Course> fruits){
-        super(context, textViewResourceId, fruits);
-        this.resourceId = textViewResourceId;
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_admin_course_card, parent, false);
+
+
+
+        ViewHolder holder = new ViewHolder(view);
+
+
+        return holder;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
-        Course course = getItem(position);
-        View view = LayoutInflater.from(this.getContext()).inflate(resourceId, null);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int pos) {
 
-        //ImageView courseImage = (ImageView)view.findViewById(R.id.courseImage);
+        ViewHolder viewHolder = new ViewHolder(holder.itemView);
+
+        viewHolder.name.setText(mTags.get(pos).getName());
+        viewHolder.teacher.setText(mTags.get(pos).getTeacher());
+        viewHolder.score.setText(String.valueOf(mTags.get(pos).getScore()));
+        viewHolder.content.setText(mTags.get(pos).getDescription());
+
+        //设置点击监听器
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (itemClickListener != null) {
+                    //Log.e("click", "!");
+                    itemClickListener.onItemClick(pos);
+                }
+            }
+        });
+
+        /*
+        * holder.tvName.setText(mTags.get(position).getName());
+        holder.tvTeacher.setText(mTags.get(position).getTeacher());
+        holder.tvScore.setText(String.valueOf(mTags.get(position).getScore()));
+        holder.tvContent.setText(mTags.get(position).getDescription());
 
 
-        TextView courseName = (TextView)view.findViewById(R.id.admin_coursename);
-        TextView teacher = (TextView)view.findViewById(R.id.admin_Teacher);
-        TextView description = (TextView)view.findViewById(R.id.admin_courseDescription);
-        TextView score = (TextView)view.findViewById(R.id.admin_RatingScore);
+        //holder.bindData(mTags.get(position));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (itemClickListener != null) {
+                    Log.e("click", "!");
+                    itemClickListener.onItemClick(position);
+                }
+            }
+        });
+        * */
 
 
-        //courseImage.setImageResource(course.getImageurl());
-        courseName.setText(course.getName());
-        teacher.setText(course.getTeacher());
-        description.setText(course.getDescription());
-        score.setText(String.valueOf(course.getScore()));
-
-
-        return view;
     }
+
+
+    /*设置item 监听接口*/
+    private OnItemClickListener itemClickListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listenser) {
+        this.itemClickListener = listenser;
+    }
+
+
+    @Override
+    public int getItemCount() {
+
+//        return list.size();
+
+        return mTags.size();
+    }
+
+
 }
