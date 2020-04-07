@@ -23,16 +23,16 @@ import com.sunbinqiang.iconcountview.IconCountView;
 import java.util.List;
 
 /*
- * 这是帖子详情页的评论列表的adapter
+ * 这是评论详情下的回复列表的adapter
  */
 
-public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
-
+public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter  {
+    
     private Context context;
     private List<PostComment> list;
     private onItemClickListener itemClickListener;
     
-    public CommentRecyclerViewAdapter(Context context, List<PostComment> list) {
+    public ReplyRecyclerViewAdapter(Context context, List<PostComment> list) {
         this.context = context;
         this.list = list;
     }
@@ -41,31 +41,37 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
         this.itemClickListener = clickListener;
     }
     
-    private class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
-        LinearLayout ll_item;            // 评论布局: 点击跳转到评论详情
-        LinearLayout ll_click_write;     // 点击回复按钮
+        LinearLayout ll_item;            // 评论布局: 点击回复该评论
+        LinearLayout ll_reply_to;        // 当是'评论给'时显示，否则隐藏
+        LinearLayout ll_click_wirte;     // 点击回复按钮
         CircleImageView portrait;        // 评论者头像
-        TextView tv_userName;            // 评论者
+        TextView tv_fromUserName;        // 评论者
+        TextView tv_toUserName;          // 评论给
+        TextView tv_reference;           // 原内容
         TextView tv_content;             // 评论内容
         TextView tv_time;                // 评论时间
         IconCountView praise;            // 点赞按钮
         ImageView iv_report;             // 举报按钮
-
+        
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            
+
             ll_item = itemView.findViewById(R.id.item_cu_forum_comment);
-            ll_click_write = itemView.findViewById(R.id.ll_cu_forum_comment_write);
+            ll_reply_to = itemView.findViewById(R.id.ll_cu_forum_reply_to);
+            ll_click_wirte = itemView.findViewById(R.id.ll_cu_forum_comment_write);
             portrait = itemView.findViewById(R.id.imgv_cu_forum_comment_portrait);
-            tv_userName = itemView.findViewById(R.id.tv_cu_forum_comment_from);
+            tv_fromUserName = itemView.findViewById(R.id.tv_cu_forum_comment_from);
+            tv_toUserName = itemView.findViewById(R.id.tv_cu_forum_comment_to);
+            tv_reference = itemView.findViewById(R.id.tv_cu_forum_comment_reference);
             tv_content = itemView.findViewById(R.id.tv_cu_forum_comment_content);
             tv_time = itemView.findViewById(R.id.tv_cu_forum_comment_time);
             praise = itemView.findViewById(R.id.praise_view_cu_forum_comment_like);
             iv_report = itemView.findViewById(R.id.imgv_cu_forum_comment_more);
         }
     }
-    
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -76,9 +82,9 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
-        
+
         // 评论 点击监听
-        viewHolder.ll_click_write.setOnClickListener(view -> itemClickListener.onClick(view, position));
+        viewHolder.ll_click_wirte.setOnClickListener(view -> itemClickListener.onClick(view, position));
 //        viewHolder.ll_item.setOnClickListener(view -> itemClickListener.onClick(view, position));
 
         String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
@@ -89,12 +95,22 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(viewHolder.portrait);
         viewHolder.portrait.setBorderWidth(0);
+
+        viewHolder.tv_fromUserName.setText(list.get(position).getFromName());
         
-        viewHolder.tv_userName.setText(list.get(position).getFromName());
+        String toName = list.get(position).getToName();
+        if(toName != null) {
+            viewHolder.ll_reply_to.setVisibility(View.VISIBLE);
+            viewHolder.tv_toUserName.setText(toName);
+            viewHolder.tv_reference.setText(list.get(position).getReference());
+        } else {
+            viewHolder.ll_reply_to.setVisibility(View.GONE);
+        }
+        
         viewHolder.tv_content.setText(list.get(position).getContent());
         viewHolder.tv_time.setText(list.get(position).getDate());
         viewHolder.praise.setCount(list.get(position).getLikeNum());
-        
+
         viewHolder.iv_report.setOnClickListener(view -> {
             // 
             Toast.makeText(context, "弹出提示,询问是否举报", Toast.LENGTH_SHORT).show();
@@ -110,5 +126,4 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
     public interface onItemClickListener {
         void onClick(View view, int pos);
     }
-    
 }

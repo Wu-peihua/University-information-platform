@@ -1,7 +1,9 @@
 package com.example.uipfrontend.Entity;
 
+import java.io.Serializable;
+
 // 评论：包括帖子的评论和评论的评论
-public class PostComment {
+public class PostComment implements Serializable {
     private Integer id;        // 评论ID
     private String content;    // 评论内容
     private String date;       // 发表时间
@@ -12,6 +14,7 @@ public class PostComment {
     private String portrait;   // 评论者头像
     private Integer to;        // 所评论的帖子或评论的ID
     private String toName;     // 被评论者用户名
+    private String reference;  // 被评论的内容
 
     public Integer getId() {
         return id;
@@ -94,5 +97,13 @@ public class PostComment {
 
     public void setToName(String toName) {
         this.toName = toName;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }

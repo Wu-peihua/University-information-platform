@@ -5,6 +5,10 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <!-- item_forum_post_detail
+         是 activity_forum_post_detail
+         的 headView -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

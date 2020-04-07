@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_cu_forum_comment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/item_cu_forum_comment"
     android:orientation="vertical">
+
+    <!-- item_forum_post_comment
+         1、是 activity_forum_post_detail
+         的 itemView
+         2、是 activity_forum_comment_detail
+         的 headView 和 itemView -->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal">
 
+        <!-- 评论者头像 -->
         <com.lzy.widget.CircleImageView
             android:id="@+id/imgv_cu_forum_comment_portrait"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:src="@drawable/portrait_default"/>
+            android:src="@drawable/portrait_default" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,15 +33,93 @@
             android:layout_marginLeft="10dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_cu_forum_comment_username"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- 评论者 -->
+                <TextView
+                    android:id="@+id/tv_cu_forum_comment_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="法外狂徒张三"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fontSize_s" />
+
+                <!-- 举报按钮 -->
+                <ImageView
+                    android:id="@+id/imgv_cu_forum_comment_more"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/more" />
+
+            </RelativeLayout>
+
+
+            <!-- 评论给
+                在帖子详情的itemView下隐藏 
+                在评论详情的headView下隐藏-->
+            <LinearLayout
+                android:id="@+id/ll_cu_forum_reply_to"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="法外狂徒张三"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fontSize_s"/>
+                android:orientation="vertical"
+                android:visibility="gone">
+                
+                <!-- 被评论人 -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="\@ "
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fontSize_s" />
 
+                    <TextView
+                        android:id="@+id/tv_cu_forum_comment_to"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="你好漂亮李四"
+                        android:textSize="@dimen/fontSize_s" />
+                </LinearLayout>
+
+                <!-- 评论引用内容 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/reference" />
+
+                    <TextView
+                        android:id="@+id/tv_cu_forum_comment_reference"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/lightGray"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text=""
+                        android:textStyle="italic" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- 评论内容 -->
             <TextView
                 android:id="@+id/tv_cu_forum_comment_content"
                 android:layout_width="match_parent"
@@ -44,12 +128,13 @@
                 android:lineSpacingExtra="5dp"
                 android:text="内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
                 android:textColor="@color/item_text"
-                android:textSize="@dimen/fontSize_s"/>
+                android:textSize="@dimen/fontSize_s" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <!-- 评论时间 -->
                 <TextView
                     android:id="@+id/tv_cu_forum_comment_time"
                     android:layout_width="wrap_content"
@@ -59,39 +144,64 @@
                     android:textColor="@color/item_time"
                     android:textSize="@dimen/fontSize_xs" />
 
+                <!-- 点赞按钮 -->
                 <com.sunbinqiang.iconcountview.IconCountView
                     android:id="@+id/praise_view_cu_forum_comment_like"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:layout_toLeftOf="@+id/imgv_cu_forum_comment_more"
-                    android:layout_centerVertical="true"
-                    app:count="0"
+                    android:layout_marginRight="8dp"
+                    android:layout_toLeftOf="@id/ll_cu_forum_comment_write"
+                    app:count="100"
+                    app:normalRes="@drawable/icon_praise_normal"
+                    app:selectedRes="@drawable/icon_praise_selected"
                     app:state="false"
-                    app:zeroText="赞"
                     app:textNormalColor="@color/darkGray"
                     app:textSelectedColor="#FF0000"
                     app:textSize="12sp"
-                    app:normalRes="@drawable/icon_praise_normal"
-                    app:selectedRes="@drawable/icon_praise_selected"/>
+                    app:zeroText="赞" />
 
-                <ImageView
-                    android:id="@+id/imgv_cu_forum_comment_more"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                <!-- 回复按钮 -->
+                <LinearLayout
+                    android:id="@+id/ll_cu_forum_comment_write"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/report" />
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/forum" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="5dp"
+                        android:text="点击回复"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
             </RelativeLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
+    <!-- headView分隔 -->
+    <View
+        android:id="@+id/view_cu_forum_comment_division"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/lightGray"
+        android:visibility="gone" />
+    
+    <!-- item分隔 -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/lightGray"/>
+        android:background="@color/lightGray" />
 
 </LinearLayout>

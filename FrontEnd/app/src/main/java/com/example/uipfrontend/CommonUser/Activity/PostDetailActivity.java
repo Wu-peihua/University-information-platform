@@ -127,6 +127,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private void setListener() {
         adapter.setOnItemClickListener((view, pos) -> {
             Intent intent = new Intent(PostDetailActivity.this, CommentDetailActivity.class);
+            intent.putExtra("comment", list.get(pos));
             startActivity(intent);
         });
 
@@ -211,6 +212,13 @@ public class PostDetailActivity extends AppCompatActivity {
 //            }
 //        });
     }
+
+    private List getComment() {
+//        Integer id = post.getPostId();
+//        根据帖子id从评论表中获取该条帖子的评论
+        List<PostComment> res = null;
+        return res;
+    }
   
     private void setPostDetail() {
         initPostDetail();
@@ -260,13 +268,6 @@ public class PostDetailActivity extends AppCompatActivity {
             commentSum.setText("还没有人评论，快留下你的高见吧。");
         else
             commentSum.setText(list.size() + "条评论");
-    }
-   
-    private List getComment() {
-//        Integer id = post.getPostId();
-//        根据帖子id从评论表中获取该条帖子的评论
-        List<PostComment> res = null;
-        return res;
     }
 
     private void initPostDetail() {
