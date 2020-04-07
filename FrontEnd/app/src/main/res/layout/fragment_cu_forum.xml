@@ -42,7 +42,8 @@
                 android:imeOptions="actionSearch"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:hint="搜搜看"/>
+                android:hint="搜搜看"
+                android:textSize="14sp"/>
 
 <!--            清除所有文字 -->
             <ImageView

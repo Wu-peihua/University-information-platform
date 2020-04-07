@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/padding"
+        android:paddingLeft="@dimen/padding_l"
+        android:paddingRight="@dimen/padding_xl"
+        android:paddingTop="@dimen/padding_l">
+
+        <com.lzy.widget.CircleImageView
+            android:id="@+id/adminiv_student_group_item_portrait"
+            android:layout_width="@dimen/layoutWidth"
+            android:layout_height="@dimen/layoutHeight"
+            android:src="@drawable/portrait_default"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/admintv_student_group_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="组队标题"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"/>
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/admintv_student_group_item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/layoutHeight_s"
+                    android:layout_marginBottom="@dimen/margin_s"
+                    android:layout_marginTop="@dimen/margin_s"
+                    android:layout_weight="1"
+                    android:text="发布人"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/darkGray"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+                <TextView
+                    android:id="@+id/admintv_student_group_item_contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/layoutHeight_s"
+                    android:layout_marginBottom="@dimen/margin_s"
+                    android:layout_marginTop="@dimen/margin_s"
+                    android:layout_marginLeft="@dimen/margin_xl"
+                    android:layout_toRightOf="@id/admintv_student_group_item_name"
+                    android:text="联系方式"
+                    android:textColor="@color/darkGray"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/admintv_student_group_item_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
+                android:textColor="@color/item_text"
+                android:textSize="@dimen/fontSize_s"/>
+
+            <com.lzy.ninegrid.NineGridView
+                android:id="@+id/adminnineGrid_student_group_item_pic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/padding_s"
+                android:paddingTop="@dimen/padding_s"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/admintv_student_group_item_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:text="2020-3-26 12:30"
+                    android:textColor="@color/item_time"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_student_group_item_delete"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="@dimen/margin_xl"-->
+<!--                    android:layout_marginTop="@dimen/margin"-->
+<!--                    android:layout_toRightOf="@id/tv_student_group_item_time"-->
+<!--                    android:text="删除"-->
+<!--                    android:textColor="@color/item_delete"-->
+<!--                    android:textSize="@dimen/fontSize_xs"/>-->
+
+                <info.hoang8f.widget.FButton
+                    android:id="@+id/admin_btn_pass_recruit"
+                    android:layout_margin="@dimen/margin_s"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:text="通过"
+                    android:layout_toLeftOf="@id/admin_btn_unpass_recruit"
+                    android:textColor="@color/white"
+                    fbutton:fButtonColor="@color/colorPrimary"
+                    fbutton:shadowEnabled="true"
+                    fbutton:shadowHeight="3dp"
+                    fbutton:cornerRadius="7dp"
+                    />
+                <info.hoang8f.widget.FButton
+                    android:id="@+id/admin_btn_unpass_recruit"
+                    android:layout_margin="@dimen/margin_s"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+
+                    android:layout_alignParentRight="true"
+                    android:text="不通过"
+                    android:textSize="12sp"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/white"
+                    fbutton:fButtonColor="@color/colorPrimary"
+                    fbutton:shadowEnabled="true"
+                    fbutton:shadowHeight="3dp"
+                    fbutton:cornerRadius="7dp"
+                    />
+            </RelativeLayout>
+
+            <!--评论UI控件-->
+<!--            <com.lzy.widget.ExpandListView-->
+<!--                android:id="@+id/lv_comments"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginRight="5dp"-->
+<!--                android:layout_marginTop="9.5dp"-->
+<!--                android:background="@drawable/event_di"-->
+<!--                android:divider="@null"-->
+<!--                android:dividerHeight="0dp"-->
+<!--                android:orientation="vertical"-->
+<!--                android:paddingBottom="5dp"-->
+<!--                android:paddingLeft="8dp"-->
+<!--                android:paddingRight="8dp"-->
+<!--                android:paddingTop="16dp"/>-->
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGray"/>
+
+</LinearLayout>

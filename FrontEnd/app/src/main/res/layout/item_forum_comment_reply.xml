@@ -16,8 +16,8 @@
 
         <com.lzy.widget.CircleImageView
             android:id="@+id/imgv_cu_forum_reply_portrait"
-            android:layout_width="@dimen/layoutWidth"
-            android:layout_height="@dimen/layoutHeight"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:src="@drawable/portrait_default"/>
 
         <LinearLayout
@@ -30,12 +30,13 @@
                 android:id="@+id/tv_cu_forum_reply_from"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:text="法外狂徒张三"
                 android:textColor="@color/black"
                 android:textSize="@dimen/fontSize_s"/>
 
             <LinearLayout
+                android:id="@+id/ll_cu_forum_reply_to"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -52,7 +53,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="你好漂亮李四"
-                    android:textColor="@color/black"
                     android:textSize="@dimen/fontSize_s"/>
             </LinearLayout>
 

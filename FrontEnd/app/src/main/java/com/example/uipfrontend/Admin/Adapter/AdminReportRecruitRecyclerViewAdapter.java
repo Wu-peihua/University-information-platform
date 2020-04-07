@@ -1,9 +1,7 @@
-package com.example.uipfrontend.Student.Adapter;
+package com.example.uipfrontend.Admin.Adapter;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +16,6 @@ import com.bigkoo.alertview.AlertView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.R;
-import com.example.uipfrontend.Student.Activity.RecruitReleaseActivity;
-import com.example.uipfrontend.Utils.GlobalDialog;
 import com.lzy.ninegrid.ImageInfo;
 import com.lzy.ninegrid.NineGridView;
 import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
@@ -28,14 +24,14 @@ import com.lzy.widget.CircleImageView;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.OnClick;
+import info.hoang8f.widget.FButton;
 
-public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
+public class AdminReportRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List list;
 
-    public StudentRecruitRecyclerViewAdapter(Context context, List list) {
+    public AdminReportRecruitRecyclerViewAdapter(Context context, List list) {
         this.context = context;
         this.list = list;
     }
@@ -50,55 +46,59 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
         TextView userName;
         TextView contact;
         NineGridView nineGridView;
-        ImageView imageView;
+        FButton pass;
+        FButton unpass;
+
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            this.title = itemView.findViewById(R.id.tv_student_group_item_title);
-            this.content = itemView.findViewById(R.id.tv_student_group_item_content);
-            this.portrait = itemView.findViewById(R.id.iv_student_group_item_portrait);
-            this.infoDate = itemView.findViewById(R.id.tv_student_group_item_time);
-            this.userName = itemView.findViewById(R.id.tv_student_group_item_name);
-            this.contact = itemView.findViewById(R.id.tv_student_group_item_contact);
-            this.nineGridView = itemView.findViewById(R.id.nineGrid_student_group_item_pic);
-            this.imageView = (ImageView) itemView.findViewById(R.id.iv_student_recruit_report);
+            this.title = itemView.findViewById(R.id.admintv_student_group_item_title);
+            this.content = itemView.findViewById(R.id.admintv_student_group_item_content);
+            this.portrait = itemView.findViewById(R.id.adminiv_student_group_item_portrait);
+            this.infoDate = itemView.findViewById(R.id.admintv_student_group_item_time);
+            this.userName = itemView.findViewById(R.id.admintv_student_group_item_name);
+            this.contact = itemView.findViewById(R.id.admintv_student_group_item_contact);
+            this.nineGridView = itemView.findViewById(R.id.adminnineGrid_student_group_item_pic);
+            this.pass=itemView.findViewById(R.id.admin_btn_pass_recruit);
+            this.unpass=itemView.findViewById(R.id.admin_btn_unpass_recruit);
 
-            this.imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //弹出对话框 选择拍照或从相册选择
-                    new AlertView.Builder().setContext(view.getContext())
-                            .setStyle(AlertView.Style.ActionSheet)
-                            .setTitle("确定举报？")
-//                            .setCancelText("取消")
-                            .setDestructive("取消", "确定")
-                            .setOthers(null)
-                            .setOnItemClickListener((object, position) -> {
-                                switch (position) {
-                                    case 0:
-                                        Toast.makeText(context,"取消举报",Toast.LENGTH_SHORT).show();
-                                        break;
-                                    case 1:
-                                        Toast.makeText(context,"确定举报",Toast.LENGTH_SHORT).show();
-                                        break;
-                                }
-                            })
-                            .build()
-                            .show();
-                }
-            });
         }
 
 
     }
+
+//        @OnClick(R.id.tv_student_group_item_delete)
+//        public void delete(View view) {
+//            final GlobalDialog delDialog = new GlobalDialog(context);
+//            delDialog.setCanceledOnTouchOutside(true);
+//            delDialog.getTitle().setText("提示");
+//            delDialog.getContent().setText("确定删除吗?");
+//            delDialog.setLeftBtnText("取消");
+//            delDialog.setRightBtnText("确定");
+//            delDialog.setLeftOnclick(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(context, "取消", Toast.LENGTH_SHORT).show();
+//                    delDialog.dismiss();
+//                }
+//            });
+//            delDialog.setRightOnclick(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(context, "确定", Toast.LENGTH_SHORT).show();
+//                    delDialog.dismiss();
+//                }
+//            });
+//            delDialog.show();
+//        }
 
 
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_student_recruit, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_admin_report_recruit, null);
         return new ViewHolder(view);
     }
 
