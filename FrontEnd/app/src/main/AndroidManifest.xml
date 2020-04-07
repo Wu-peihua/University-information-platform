@@ -19,7 +19,7 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".Student.Activity.CourseDetailActivity" />
         <activity android:name=".Student.Activity.RecruitReleaseActivity" />
-        <activity android:name=".Admin.AdminCourseDetailActivity"></activity>
+        <activity android:name=".Admin.Activity.AdminCourseDetailActivity"></activity>
         <activity
             android:name=".Student.StudentActivity"
             android:windowSoftInputMode="adjustPan" />
