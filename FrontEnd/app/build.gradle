@@ -104,5 +104,10 @@ dependencies {
     //底部弹窗
     implementation 'com.bigkoo:alertview:1.0.3'
 
-
+    //发布资源的editText
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+    //选择器
+    implementation 'com.contrarywind:Android-PickerView:4.1.9'
+    //可扩展文本框
+    implementation 'com.github.ParfoisMeng:ExpandableTextView:1.0.1'
 }

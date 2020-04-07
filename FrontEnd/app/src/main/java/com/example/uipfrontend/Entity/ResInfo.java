@@ -1,20 +1,38 @@
 package com.example.uipfrontend.Entity;
 
-public class ResInfo {
+import java.io.Serializable;
+
+public class ResInfo implements Serializable {
+    //用整数代表类型
+    private int type1;
+    private int type2;
     private String portraitUri;
     private String username;
     private String title;
     private String description;
     private String link;
     private String time;
+    private int likeNum;
 
-    public ResInfo(String portraitUri, String username, String title, String description, String link, String time) {
+    public ResInfo(int type1, int type2, String portraitUri, String username,
+                   String title, String description, String link, String time, int likeNum) {
+        this.type1 = type1;
+        this.type2 = type2;
         this.portraitUri = portraitUri;
         this.username = username;
         this.title = title;
         this.description = description;
         this.link = link;
         this.time = time;
+        this.likeNum = likeNum;
+    }
+
+    public int getType1() {
+        return type1;
+    }
+
+    public int getType2() {
+        return type2;
     }
 
     public String getPortraitUri() {
@@ -41,6 +59,18 @@ public class ResInfo {
         return time;
     }
 
+    public int getLikeNum() {
+        return likeNum;
+    }
+
+    public void setType1(int type1) {
+        this.type1 = type1;
+    }
+
+    public void setType2(int type2) {
+        this.type2 = type2;
+    }
+
     public void setPortraitUri(String portraitUri) {
         this.portraitUri = portraitUri;
     }
@@ -63,5 +93,9 @@ public class ResInfo {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public void setLikeNum(int likeNum) {
+        this.likeNum = likeNum;
     }
 }

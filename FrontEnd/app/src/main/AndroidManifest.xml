@@ -14,9 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <activity android:name=".CommonUser.AddResActivity"></activity>
+        <activity
+            android:name=".CommonUser.Activity.AddResActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".Student.Activity.CourseDetailActivity" />
-        <activity android:name=".Student.Activity.RecruitReleaseActivity"/>
+        <activity android:name=".Student.Activity.RecruitReleaseActivity" />
         <activity android:name=".Admin.AdminCourseDetailActivity"></activity>
         <activity
             android:name=".Student.StudentActivity"
@@ -24,9 +26,12 @@
         <activity
             android:name=".CommonUser.CommonUserActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".Admin.AdminHomeActivity"
+        <activity
+            android:name=".Admin.AdminHomeActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".MainActivity" android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

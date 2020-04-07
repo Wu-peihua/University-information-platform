@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -11,7 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="15dp"
-        android:paddingTop="18dp"
+        android:paddingTop="15dp"
         android:paddingRight="20dp">
 
         <com.lzy.widget.CircleImageView
@@ -28,55 +31,65 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_cu_resItem_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:layout_weight="1"
-                android:maxLines="1"
-                android:text="用户名"
-                android:textColor="@color/blue"
-                android:textSize="@dimen/fontSize_s"
-                android:textStyle="bold"
-                android:typeface="serif" />
-
-            <TextView
                 android:id="@+id/tv_cu_resItem_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
+                android:layout_marginBottom="5dp"
                 android:text="资源标题"
                 android:textColor="@color/black"
                 android:textIsSelectable="true"
                 android:textSize="@dimen/fontSize_s" />
 
             <TextView
-                android:id="@+id/tv_cu_resItem_description"
+                android:id="@+id/tv_cu_resItem_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:maxLines="2"
-                android:text="内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
-                android:textIsSelectable="true"
-                android:textSize="@dimen/fontSize_s" />
+                android:layout_marginBottom="12dp"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:text="用户名"
+                android:textSize="10sp"
+                android:typeface="serif" />
 
-            <TextView
-                android:id="@+id/tv_cu_resItem_link"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:autoLink="web"
-                android:text="www.baidu.com"
-                android:textIsSelectable="true"
-                android:textSize="@dimen/fontSize_s"
-                android:textStyle="italic" />
+                android:layout_marginBottom="2.5dp"
+                android:orientation="horizontal">
 
-            <!--            <com.lzy.ninegrid.NineGridView-->
-            <!--                android:id="@+id/nineGrid_student_group_item_pic"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:paddingTop="@dimen/padding_s"-->
-            <!--                android:paddingRight="@dimen/padding_s" />-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="地址:"
+                    android:textColor="@color/item_text"
+                    android:textSize="@dimen/fontSize_s" />
+
+                <TextView
+                    android:id="@+id/tv_cu_resItem_link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoLink="web"
+                    android:text="www.baidu.com"
+                    android:textColorLink="@color/blue"
+                    android:textIsSelectable="true"
+                    android:textSize="@dimen/fontSize_s" />
+
+            </LinearLayout>
+
+            <com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView
+                android:id="@+id/etv_cu_resItem_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:animDuration="150"
+                app:contentMaxLine="4"
+                app:contentTextColor="@color/item_text"
+                app:contentTextSize="@dimen/fontSize_s"
+                app:labelCollapseText="收起"
+                app:labelExpandText="全文"
+                app:labelTextColor="@color/blue"
+                app:labelTextSize="@dimen/fontSize_s"
+                app:middlePadding="6dp"
+                tools:contentText="测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -86,10 +99,27 @@
                     android:id="@+id/tv_cu_resItem_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="8dp"
                     android:text="2020-02-02 00:00"
-                    android:textColor="@color/item_time"
-                    android:textSize="@dimen/fontSize_xs" />
+                    android:textSize="10sp" />
+
+                <com.sunbinqiang.iconcountview.IconCountView
+                    android:id="@+id/icv_cu_resItem_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/iv_cu_resItem_report"
+                    android:paddingBottom="2.5dp"
+                    app:count="0"
+                    app:normalRes="@drawable/icon_praise_normal"
+                    app:selectedRes="@drawable/icon_praise_selected"
+                    app:state="false"
+                    app:textNormalColor="@color/darkGray"
+                    app:textSelectedColor="#FF0000"
+                    app:textSize="12sp"
+                    app:zeroText="赞" />
 
                 <ImageView
                     android:id="@+id/iv_cu_resItem_report"
@@ -98,8 +128,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginTop="@dimen/margin_l"
-                    android:background="@drawable/report" />
+                    android:src="@drawable/report" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
