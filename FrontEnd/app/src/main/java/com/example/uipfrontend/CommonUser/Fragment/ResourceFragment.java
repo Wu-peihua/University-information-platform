@@ -13,15 +13,14 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.uipfrontend.CommonUser.Adapter.ResInfoAdapter;
 import com.example.uipfrontend.CommonUser.Activity.AddResActivity;
+import com.example.uipfrontend.CommonUser.Adapter.ResInfoAdapter;
 import com.example.uipfrontend.Entity.ResInfo;
 import com.example.uipfrontend.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

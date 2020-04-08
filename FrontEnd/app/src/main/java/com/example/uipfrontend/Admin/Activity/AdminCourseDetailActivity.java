@@ -4,25 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-
 import com.example.uipfrontend.Admin.Adapter.AdminCourseCommentRecyclerViewAdapter;
-import com.example.uipfrontend.CommonUser.AddResActivity;
 import com.example.uipfrontend.Entity.Course;
-import com.example.uipfrontend.R;
 import com.example.uipfrontend.Entity.CourseComment;
-
-//import com.example.uipfrontend.Student.Adapter.CourseCommentRecyclerViewAdapter;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.example.uipfrontend.R;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
@@ -30,9 +20,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 import info.hoang8f.widget.FButton;
+
+//import com.example.uipfrontend.Student.Adapter.CourseCommentRecyclerViewAdapter;
 
 public class AdminCourseDetailActivity extends AppCompatActivity {
 
