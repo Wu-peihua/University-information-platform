@@ -149,7 +149,6 @@
 
         </RelativeLayout>
 
-
         <RelativeLayout
             android:id="@+id/rl_student_home_password"
             android:layout_width="match_parent"
