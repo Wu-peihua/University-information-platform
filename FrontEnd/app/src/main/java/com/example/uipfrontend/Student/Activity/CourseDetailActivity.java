@@ -34,6 +34,7 @@ import info.hoang8f.widget.FButton;
 public class CourseDetailActivity extends AppCompatActivity {
 
     //private ListView CommentList;
+    private TextView commentSum;//评论数目
     private FButton AddComment;//添加评论按钮
     private FButton SubmitBtn;//提交评论按钮
     private EditText CommentEidt ;//编辑评论框
@@ -63,10 +64,11 @@ public class CourseDetailActivity extends AppCompatActivity {
         //Bundle bundle = getIntent().getExtras();
         //String nameID = bundle.getString("name");
 
-        //课程卡片详情
-        initCardView(course);
         //评论列表初始化
         initCommentData();
+        //课程卡片详情
+        initCardView(course);
+
         initRecyclerView();
 
         //initCommmentLists();
@@ -88,6 +90,9 @@ public class CourseDetailActivity extends AppCompatActivity {
 
         //CommentList = (ListView) findViewById(R.id.CommentList);
         AddComment = (FButton) findViewById(R.id.fbtn_Addcomment);
+        commentSum = (TextView) findViewById(R.id.course_comment_sum);
+
+        commentSum.setText(mTags.size() + "条评论");
 
 
         /***************************添加评论**********************************************/
@@ -135,6 +140,7 @@ public class CourseDetailActivity extends AppCompatActivity {
                 CourseComment newcomment = new CourseComment(commentid,UserName,new Date(),CommentEidt.getText().toString(),UserRating.getRating(),0);
                 mTags.add(newcomment);
                 commentAdapter.notifyDataSetChanged();
+                commentSum.setText(mTags.size() + "条评论");
 
                 System.out.println("用户评分"+UserRating.getRating());
                 System.out.println("用户描述内容"+CommentEidt.getText().toString());

@@ -32,7 +32,7 @@
             android:id="@+id/SetRating"
             style="@style/Widget.MaterialRatingBar.RatingBar" />
 
-        <TextView
+        <!--TextView
             android:layout_below="@+id/SetRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             android:id="@+id/UserEditTitle"
             android:text="详细描述"
             android:textSize="@dimen/fontSize_s">
-        </TextView>
+        </TextView-->
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:layout_width="match_parent"
@@ -51,7 +51,7 @@
             app:met_maxCharacters="100"
             app:met_singleLineEllipsis="false"
             android:layout_margin="@dimen/margin_xl"
-            android:layout_below="@+id/UserEditTitle"
+            android:layout_below="@+id/SetRating"
             android:hint="写下你的评论吧"/>
         <!--Button
             android:layout_width="wrap_content"
@@ -67,7 +67,7 @@
 
         <info.hoang8f.widget.FButton
             android:id="@+id/fbtn_submitComment"
-            android:layout_margin="@dimen/margin_s"
+            android:layout_margin="@dimen/margin_xs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="提交"
@@ -75,7 +75,7 @@
             android:layout_centerHorizontal="true"
             android:textColor="@color/white"
             fbutton:fButtonColor="@color/colorPrimary"
-            fbutton:shadowEnabled="true"
+            fbutton:shadowEnabled="false"
             fbutton:shadowHeight="5dp"
             fbutton:cornerRadius="10dp"
 

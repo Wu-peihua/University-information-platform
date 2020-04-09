@@ -64,30 +64,6 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
             this.nineGridView = itemView.findViewById(R.id.nineGrid_student_group_item_pic);
             this.imageView = (ImageView) itemView.findViewById(R.id.iv_student_recruit_report);
 
-            this.imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //弹出对话框 选择拍照或从相册选择
-                    new AlertView.Builder().setContext(view.getContext())
-                            .setStyle(AlertView.Style.ActionSheet)
-                            .setTitle("确定举报？")
-//                            .setCancelText("取消")
-                            .setDestructive("取消", "确定")
-                            .setOthers(null)
-                            .setOnItemClickListener((object, position) -> {
-                                switch (position) {
-                                    case 0:
-                                        Toast.makeText(context,"取消举报",Toast.LENGTH_SHORT).show();
-                                        break;
-                                    case 1:
-                                        Toast.makeText(context,"确定举报",Toast.LENGTH_SHORT).show();
-                                        break;
-                                }
-                            })
-                            .build()
-                            .show();
-                }
-            });
         }
 
 
@@ -115,6 +91,34 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
         //临时图片地址
         setImage(context,viewHolder.portrait,"http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg");
         viewHolder.portrait.setBorderWidth(0);
+
+        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //弹出对话框 选择拍照或从相册选择
+                //弹出对话框 选择拍照或从相册选择
+                new AlertView.Builder().setContext(view.getContext())
+                        .setStyle(AlertView.Style.ActionSheet)
+                        .setTitle("确定举报？")
+                        .setCancelText("取消")
+                        .setDestructive("确定")
+                        .setOthers(null)
+                        .setOnItemClickListener((object, position) -> {
+                            switch (position) {
+                                case 0:
+                                    //前端设置只允许举报一次
+                                    viewHolder.imageView.setColorFilter(context.getResources().getColor(R.color.blue));
+                                    viewHolder.imageView.setEnabled(false);
+                                    Toast.makeText(context, "举报成功", Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+                        })
+                        .build()
+                        .show();
+            }
+        });
+
+
         //临时显示组队信息图片
         ArrayList<ImageInfo> imageInfo = new ArrayList<>();
         ImageInfo info = new ImageInfo();

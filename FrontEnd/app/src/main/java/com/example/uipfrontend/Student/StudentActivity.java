@@ -22,8 +22,7 @@ public class StudentActivity extends AppCompatActivity {
     StudentViewPager studentViewPager;
 //    @BindView(R.id.bbl_student)
     AHBottomNavigation studentAHBottomNavigation;
-    //自定义顶部标题栏
-    Toolbar toolbar;
+
 
 
     @Override
@@ -39,19 +38,14 @@ public class StudentActivity extends AppCompatActivity {
 
         NineGridView.setImageLoader(new PicassoImageLoader());
 
-        toolbar = findViewById(R.id.tb_student);
-        toolbar.setTitle("论坛讨论");
 
-//        tv_toolbar_title = findViewById(R.id.tv_toolBar_title_student);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setTitle("");
 
         studentViewPager = findViewById(R.id.vp_student);
         studentAHBottomNavigation = findViewById(R.id.btmNav_student);
 
         studentViewPager.setAdapter(new StudentFragmentAdapter(getSupportFragmentManager()));
         studentViewPager.setCurrentItem(0);
-        studentViewPager.setScanScroll(false);
+        studentViewPager.setScanScroll(true);
 
         //创建items，3个参数分别是item的文字，item的icon，选中item时的整体颜色（该项需要开启）
         AHBottomNavigationItem item1 = new AHBottomNavigationItem("论坛讨论", R.drawable.forum_ed, R.color.lightBlue);
@@ -93,19 +87,14 @@ public class StudentActivity extends AppCompatActivity {
                 studentViewPager.setCurrentItem(position);
                 switch (position){
                     case 0:
-                        toolbar.setTitle("论坛讨论");
                         break;
                     case 1:
-                        toolbar.setTitle("资源分享");
                         break;
                     case 2:
-                        toolbar.setTitle("组队招聘");
                         break;
                     case 3:
-                        toolbar.setTitle("课程点评");
                         break;
                     case 4:
-                        toolbar.setTitle("我的信息");
                         break;
                 }
                 return true;
