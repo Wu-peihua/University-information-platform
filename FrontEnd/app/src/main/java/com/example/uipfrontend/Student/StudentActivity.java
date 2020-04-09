@@ -22,8 +22,7 @@ public class StudentActivity extends AppCompatActivity {
     StudentViewPager studentViewPager;
 //    @BindView(R.id.bbl_student)
     AHBottomNavigation studentAHBottomNavigation;
-    //自定义顶部标题栏
-    Toolbar toolbar;
+
 
 
     @Override
@@ -39,12 +38,7 @@ public class StudentActivity extends AppCompatActivity {
 
         NineGridView.setImageLoader(new PicassoImageLoader());
 
-        toolbar = findViewById(R.id.tb_student);
-        toolbar.setTitle("论坛讨论");
 
-//        tv_toolbar_title = findViewById(R.id.tv_toolBar_title_student);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setTitle("");
 
         studentViewPager = findViewById(R.id.vp_student);
         studentAHBottomNavigation = findViewById(R.id.btmNav_student);
@@ -93,19 +87,14 @@ public class StudentActivity extends AppCompatActivity {
                 studentViewPager.setCurrentItem(position);
                 switch (position){
                     case 0:
-                        toolbar.setTitle("论坛讨论");
                         break;
                     case 1:
-                        toolbar.setTitle("资源分享");
                         break;
                     case 2:
-                        toolbar.setTitle("组队招聘");
                         break;
                     case 3:
-                        toolbar.setTitle("课程点评");
                         break;
                     case 4:
-                        toolbar.setTitle("我的信息");
                         break;
                 }
                 return true;

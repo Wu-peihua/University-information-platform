@@ -1,5 +1,6 @@
 package com.example.uipfrontend.Student.Activity;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -14,10 +16,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bigkoo.alertview.AlertView;
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.example.uipfrontend.CommonUser.Activity.AddResActivity;
 import com.example.uipfrontend.Entity.ResInfo;
 import com.example.uipfrontend.R;
@@ -28,22 +35,24 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import fj.edittextcount.lib.FJEditTextCount;
+
 import static androidx.constraintlayout.widget.Constraints.TAG;
+import static com.example.uipfrontend.CommonUser.Activity.AddResActivity.hideSystemKeyboard;
 
 public class RecruitReleaseActivity extends AppCompatActivity {
 
     //上传图片控件
     RecyclerView recyclerView;
     private GridImageAdapter adapter;
-
-    //弹出对话框 选择照片选择方式
-    NiftyDialogBuilder dialogBuilderSelect;
 
     private List<LocalMedia> selectList = new ArrayList<>();   //照片存储列表
     //记录用户选择，拍照或从相册选择
@@ -58,6 +67,19 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     private int upResId,downResId;
     private int chooseMode = PictureMimeType.ofAll();
 
+    private OptionsPickerView pvNoLinkOptions;
+    //发布组队信息面向的学校
+    private MaterialEditText school;
+    private int schoolOption;
+    private int subjectOption;
+    //发布组队信息的标题
+    private MaterialEditText title;
+    //组队信息发布人联系方式
+    private MaterialEditText contact;
+    //组队信息描述
+    private FJEditTextCount description;
+
+
 
 
 
@@ -65,39 +87,33 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_recruit_release);
-//        getSupportActionBar().hide();
 
 
-        setTitle("发布组队信息");
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().setStatusBarColor(getResources().getColor(R.color.blue));
+
+        initToolBar();
+        initRecyclerView();
+        initView();
+
+        initNoLinkOptionsPicker();
+
+    }
+
+    public void initToolBar() {
+
+        setTitle("");
+        Toolbar toolbar = findViewById(R.id.toolbar_student_recruit_release);
+        setSupportActionBar(toolbar);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        initRecyclerView();
     }
 
-    //toolbar带有保存按钮
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.submit_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void initRecyclerView(){
+    public void initRecyclerView(){
         recyclerView = findViewById(R.id.rv_recruit_picture);
 
         //主题风格id设置
@@ -142,6 +158,142 @@ public class RecruitReleaseActivity extends AppCompatActivity {
 
 
     }
+
+    public void initView(){
+        school = findViewById(R.id.et_recruit_school);
+        title = findViewById(R.id.et_recruit_title);
+        contact = findViewById(R.id.et_recruit_contact);
+        description = findViewById(R.id.et_recruit_description);
+    }
+
+    //toolbar带有保存按钮
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.submit_menu, menu);
+        return true;
+    }
+
+    //toolbar的操作
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            /*
+             * 将actionBar的HomeButtonEnabled设为ture，
+             *
+             * 将会执行此case
+             */
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.submit:
+                if (TextUtils.isEmpty(school.getText().toString().trim())) {
+                    school.requestFocus();
+                    hideSystemKeyboard(RecruitReleaseActivity.this, school);
+                    Toast.makeText(this, "请选择发布面向的学校及学科！", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(title.getText().toString().trim())) {
+                    title.requestFocus();
+                    Toast.makeText(this, "请输入组队信息的标题！", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(contact.getText().toString().trim())) {
+                    contact.requestFocus();
+                    Toast.makeText(this, "请输入您的联系方式！", Toast.LENGTH_SHORT).show();
+                }else if(TextUtils.isEmpty(description.getText().trim())) {
+                    description.requestFocus();
+                    Toast.makeText(this, "请输入组队信息的描述！", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    DialogInterface.OnClickListener dialog_OL = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                //确定
+                                case -1:
+                                    Intent intent = new Intent();
+                                    String username = "张咩阿";
+                                    String strTitle = title.getText().toString().trim();
+                                    String strDescription = description.getText().trim();
+                                    String strContact = contact.getText().toString();
+                                    Date date = new Date(System.currentTimeMillis());
+                                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+                                    String strTime = format.format(date);
+
+                                    setResult(1, intent);
+                                    Toast.makeText(RecruitReleaseActivity.this, "组队信息发布成功", Toast.LENGTH_SHORT).show();
+
+                                    RecruitReleaseActivity.this.finish();
+                                    break;
+                                //取消
+                                case -2:
+                                    dialog.dismiss();
+                                    break;
+                                //其他
+                                case -3:
+                                    dialog.dismiss();
+                                    break;
+                            }
+                        }
+                    };
+                    AlertDialog dialog = new AlertDialog.Builder(RecruitReleaseActivity.this)
+                            .setTitle("提示")
+                            .setMessage("是否确认发布该组队信息？")
+                            .setPositiveButton("确定", dialog_OL)
+                            .setNegativeButton("取消", dialog_OL)
+                            .setCancelable(false)
+                            .create();
+                    dialog.show();
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    //不联动的多级选项
+    @SuppressLint("ClickableViewAccessibility")
+    private void initNoLinkOptionsPicker() {
+        String[] option1 = {"全部", "华南师范大学", "华南理工大学", "中山大学", "暨南大学", "华南农业大学", "广州大学"};
+        String[] option2 = {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"};
+
+        pvNoLinkOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                schoolOption = options1;
+                subjectOption = options2;
+                String str = option1[options1] + "-" + option2[options2];
+                school.setText(str);
+            }
+        })
+                .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
+                    @Override
+                    public void onOptionsSelectChanged(int options1, int options2, int options3) {
+                    }
+                })
+                .setSelectOptions(0, 0)
+                .isRestoreItem(false)
+                .setSubmitColor(getResources().getColor(R.color.blue))
+                .setCancelColor(getResources().getColor(R.color.blue))
+                .setTextColorCenter(getResources().getColor(R.color.blue))
+                .setItemVisibleCount(8)
+                .setLineSpacingMultiplier((float) 2.3)
+                .setOutSideCancelable(false)
+                .build();
+
+        //将数组类型转换成参数所需的Arraylist类型再传参
+        pvNoLinkOptions.setNPicker(new ArrayList(Arrays.asList(option1)), new ArrayList(Arrays.asList(option2)),null);
+
+        school.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                school.requestFocus();
+                hideSystemKeyboard(RecruitReleaseActivity.this, v);
+                if (pvNoLinkOptions != null)
+                    pvNoLinkOptions.show();
+                return false;
+            }
+        });
+    }
+
 
     //选择图片
     public void selectPhotos(){

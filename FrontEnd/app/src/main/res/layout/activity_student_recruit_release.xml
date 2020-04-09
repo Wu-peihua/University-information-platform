@@ -7,6 +7,33 @@
     android:background="@color/background">
 
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_student_recruit_release"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:textAlignment="center"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:maxLines="1"
+                android:text="发布组队信息"
+                android:textColor="@color/white"
+                android:textSize="@dimen/fontSize_l" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
     <!--发布信息表单-->
     <ScrollView
         android:layout_width="match_parent"
@@ -28,42 +55,58 @@
                 android:layout_marginTop="@dimen/margin">
 
 
+<!--                <com.rengwuxian.materialedittext.MaterialEditText-->
+<!--                    android:id="@+id/et_recruit_school"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginHorizontal="@dimen/margin_s"-->
+<!--                    android:hint="所在学校"-->
+<!--                    app:met_iconLeft="@drawable/ic_school"-->
+<!--                    app:met_baseColor="@color/darkBlue"-->
+<!--                    app:met_primaryColor="@color/darkBlue"-->
+<!--                    app:met_textColor="@color/black"-->
+<!--                    android:textSize="@dimen/fontSize_s"-->
+<!--                    android:maxLines="1"/>-->
+
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/et_recruit_school"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_s"
                     android:layout_marginHorizontal="@dimen/margin_s"
-                    android:hint="所在学校"
-                    app:met_iconLeft="@drawable/ic_school"
-                    app:met_baseColor="@color/darkBlue"
-                    app:met_primaryColor="@color/darkBlue"
-                    app:met_textColor="@color/black"
+                    android:editable="false"
+                    android:hint="发布面向学校及学科"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    app:met_floatingLabel="highlight"
+                    app:met_floatingLabelText="学校及学科"
+                    app:met_floatingLabelTextSize="@dimen/fontSize_xs"
                     android:textSize="@dimen/fontSize_s"
-                    android:maxLines="1"/>
+                    app:met_iconLeft="@drawable/ic_school" />
 
             </FrameLayout>
 
             <!--组队学科-->
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:background="@color/white">
+<!--            <FrameLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="@dimen/margin"-->
+<!--                android:background="@color/white">-->
 
-                <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/et_recruit_subject"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="所属学科"
-                    android:textSize="@dimen/fontSize_s"
-                    android:layout_marginHorizontal="@dimen/margin_s"
-                    app:met_iconLeft="@drawable/ic_subject"
-                    app:met_baseColor="@color/darkBlue"
-                    app:met_primaryColor="@color/darkBlue"
-                    app:met_textColor="@color/black"
-                    android:maxLines="1"/>
+<!--                <com.rengwuxian.materialedittext.MaterialEditText-->
+<!--                    android:id="@+id/et_recruit_subject"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:hint="所属学科"-->
+<!--                    android:textSize="@dimen/fontSize_s"-->
+<!--                    android:layout_marginHorizontal="@dimen/margin_s"-->
+<!--                    app:met_iconLeft="@drawable/ic_subject"-->
+<!--                    app:met_baseColor="@color/darkBlue"-->
+<!--                    app:met_primaryColor="@color/darkBlue"-->
+<!--                    app:met_textColor="@color/black"-->
+<!--                    android:maxLines="1"/>-->
 
-            </FrameLayout>
+<!--            </FrameLayout>-->
 
             <!--组队信息标题-->
             <FrameLayout
@@ -80,9 +123,9 @@
                     android:hint="信息标题"
                     android:layout_marginHorizontal="@dimen/margin_s"
                     app:met_iconLeft="@drawable/ic_title"
-                    app:met_baseColor="@color/darkBlue"
-                    app:met_primaryColor="@color/darkBlue"
+                    app:met_primaryColor="@color/blue"
                     app:met_textColor="@color/black"
+                    android:padding="@dimen/padding_s"
                     android:maxLines="1"/>
 
             </FrameLayout>
@@ -95,16 +138,16 @@
                 android:background="@color/white">
 
                 <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/et_recruit_phone"
+                    android:id="@+id/et_recruit_contact"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/fontSize_s"
-                    android:hint="联系电话"
+                    android:hint="联系方式"
                     android:layout_marginHorizontal="@dimen/margin_s"
                     app:met_iconLeft="@drawable/ic_phone"
-                    app:met_baseColor="@color/darkBlue"
-                    app:met_primaryColor="@color/darkBlue"
+                    app:met_primaryColor="@color/blue"
                     app:met_textColor="@color/black"
+                    android:padding="@dimen/padding_s"
                     android:maxLines="1"/>
 
             </FrameLayout>
@@ -143,7 +186,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@color/white"
-                android:layout_marginTop="@dimen/margin">
+                android:layout_marginTop="@dimen/margin"
+                android:paddingBottom="@dimen/padding">
 
 
                 <LinearLayout

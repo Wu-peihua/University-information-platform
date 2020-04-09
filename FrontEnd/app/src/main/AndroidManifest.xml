@@ -18,7 +18,8 @@
             android:name=".CommonUser.Activity.AddResActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".Student.Activity.CourseDetailActivity" />
-        <activity android:name=".Student.Activity.RecruitReleaseActivity" />
+        <activity android:name=".Student.Activity.RecruitReleaseActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Admin.Activity.AdminCourseDetailActivity"></activity>
         <activity
             android:name=".Student.StudentActivity"
@@ -29,6 +30,10 @@
         <activity
             android:name=".Admin.AdminHomeActivity"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Student.Activity.StudentMyReleaseActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme">
