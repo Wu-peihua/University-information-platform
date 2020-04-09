@@ -8,11 +8,10 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.StudentMyReleaseRecruitRecyclerAdapter;
-import com.example.uipfrontend.Utils.DividerItemDecoration;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
@@ -40,7 +39,6 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
         xrv_studentReleaseRecruit = rootView.findViewById(R.id.xrv_studentReleaseRecruit);
 
         init();
-        initData();
         initView();
         return rootView;
     }
@@ -49,56 +47,157 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
 
     }
 
-    // 初始化显示的数据
-    public void initData(){
-        listItem = new ArrayList<HashMap<String, Object>>();/*在数组中存放数据*/
-
-        HashMap<String, Object> map1 = new HashMap<String, Object>();
-        HashMap<String, Object> map2 = new HashMap<String, Object>();
-        HashMap<String, Object> map3 = new HashMap<String, Object>();
-        HashMap<String, Object> map4 = new HashMap<String, Object>();
-        HashMap<String, Object> map5 = new HashMap<String, Object>();
-        HashMap<String, Object> map6 = new HashMap<String, Object>();
-
-        map1.put("ItemTitle", "美国谷歌公司已发出");
-        map1.put("ItemText", "发件人:谷歌 CEO Sundar Pichai");
-        listItem.add(map1);
-
-        map2.put("ItemTitle", "国际顺丰已收入");
-        map2.put("ItemText", "等待中转");
-        listItem.add(map2);
-
-        map3.put("ItemTitle", "国际顺丰转件中");
-        map3.put("ItemText", "下一站中国");
-        listItem.add(map3);
-
-        map4.put("ItemTitle", "中国顺丰已收入");
-        map4.put("ItemText", "下一站广州华南理工大学");
-        listItem.add(map4);
-
-        map5.put("ItemTitle", "中国顺丰派件中");
-        map5.put("ItemText", "等待派件");
-        listItem.add(map5);
-
-        map6.put("ItemTitle", "华南理工大学已签收");
-        map6.put("ItemText", "收件人:Carson");
-        listItem.add(map6);
-    }
 
     // 绑定数据到RecyclerView
     public void initView(){
+
+
         recyclerView = (XRecyclerView) rootView.findViewById(R.id.xrv_studentReleaseRecruit);
         //使用线性布局
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-
-        //用自定义分割线类设置分割线
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
 
         //为ListView绑定适配器
-        myAdapter = new StudentMyReleaseRecruitRecyclerAdapter(getContext(),listItem);
+        myAdapter = new StudentMyReleaseRecruitRecyclerAdapter(this.getContext(),listItem);
         recyclerView.setAdapter(myAdapter);
+
+
+        recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
+
+        recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+//                new Handler().postDelayed(() -> {
+//                    @SuppressLint("HandlerLeak")
+//                    Handler handler = new Handler(){
+//                        @Override
+//                        public void handleMessage(Message msg){
+//                            switch (msg.what){
+//                                case SUCCESS:
+//                                    Log.i("刷新", "成功");
+//                                    adapter.setList(infoList);
+//                                    adapter.notifyDataSetChanged();
+//                                    break;
+//                                case FAIL:
+//                                    Log.i("刷新", "失败");
+//                                    break;
+//                                case ZERO:
+//                                    Log.i("刷新", "0");
+//                                    break;
+//                            }
+//                            recyclerView.refreshComplete();
+//                        }
+//                    };
+
+//                    new Thread(()->{
+//                        CUR_PAGE_NUM = 1;
+//                        Request request = new Request.Builder()
+//                                .url(getResources().getString(R.string.serverBasePath) +
+//                                        getResources().getString(R.string.getAdoptMessage)
+//                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE +"&state=0")
+//                                .get()
+//                                .build();
+//                        Message msg = new Message();
+//                        OkHttpClient okHttpClient = new OkHttpClient();
+//                        Call call = okHttpClient.newCall(request);
+//                        call.enqueue(new Callback() {
+//                            @Override
+//                            public void onFailure(Call call, IOException e) {
+//                                Log.i("获取: ", e.getMessage());
+//                                msg.what = FAIL;
+//                                handler.sendMessage(msg);
+//                            }
+//
+//                            @Override
+//                            public void onResponse(Call call, Response response) throws IOException {
+//
+//                                ResponseAdoptInfo adoptMessage = new Gson().fromJson(response.body().string(),
+//                                        ResponseAdoptInfo.class);
+//                                infoList = adoptMessage.getAdoptInfoList();
+//                                if(infoList.size() == 0) {
+//                                    msg.what = ZERO;
+//                                } else {
+//                                    msg.what = SUCCESS;
+//                                }
+//                                handler.sendMessage(msg);
+//                                Log.i("获取: ", String.valueOf(infoList.size()));
+//                            }
+//                        });
+//                    }).start();
+//                }, 1500);
+                recyclerView.refreshComplete();
+
+            }
+
+            @Override
+            public void onLoadMore() {
+//                new Handler().postDelayed(() -> {
+//                    @SuppressLint("HandlerLeak")
+//                    Handler handler = new Handler(){
+//                        @Override
+//                        public void handleMessage(Message msg){
+//                            switch (msg.what){
+//                                case SUCCESS:
+//                                    Log.i("加载", "成功");
+//                                    recyclerView.refreshComplete();
+//                                    adapter.notifyDataSetChanged();
+//                                    break;
+//                                case FAIL:
+//                                    Log.i("加载", "失败");
+//                                    break;
+//                                case ZERO:
+//                                    Log.i("加载", "0");
+//                                    recyclerView.setNoMore(true);
+//                                    break;
+//                            }
+//                        }
+//                    };
+
+//                    new Thread(()->{
+//                        CUR_PAGE_NUM++;
+//                        Request request = new Request.Builder()
+//                                .url(getResources().getString(R.string.serverBasePath) +
+//                                        getResources().getString(R.string.getAdoptMessage)
+//                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize=" + PAGE_SIZE + "&state=0")
+//                                .get()
+//                                .build();
+//                        Message msg = new Message();
+//                        OkHttpClient okHttpClient = new OkHttpClient();
+//                        Call call = okHttpClient.newCall(request);
+//                        call.enqueue(new Callback() {
+//                            @Override
+//                            public void onFailure(Call call, IOException e) {
+//                                Log.i("获取: ", e.getMessage());
+//                                msg.what = FAIL;
+//                                handler.sendMessage(msg);
+//                            }
+//
+//                            @Override
+//                            public void onResponse(Call call, Response response) throws IOException {
+//
+//                                ResponseAdoptInfo adoptMessage = new Gson().fromJson(response.body().string(),
+//                                        ResponseAdoptInfo.class);
+//                                infoList.addAll(adoptMessage.getAdoptInfoList());
+//                                if((CUR_PAGE_NUM - 2) * PAGE_SIZE + adoptMessage.getPageSize() <
+//                                        adoptMessage.getTotal() ){
+//                                    msg.what = ZERO;
+//                                } else {
+//                                    msg.what = SUCCESS;
+//                                }
+//                                handler.sendMessage(msg);
+//                                Log.i("获取: ", String.valueOf(infoList.size()));
+//                            }
+//                        });
+//                    }).start();
+//                }, 1500);
+                recyclerView.setNoMore(true);
+            }
+        });
+
     }
 
 }

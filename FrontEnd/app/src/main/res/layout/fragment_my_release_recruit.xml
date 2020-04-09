@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="阿斯蒂芬">
-
-    </TextView>
 
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/xrv_studentReleaseRecruit"
@@ -19,8 +14,8 @@
         android:layout_height="match_parent"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:padding="@dimen/padding" />
+        android:paddingHorizontal="@dimen/padding"/>
 
 
 
-</RelativeLayout>
+</LinearLayout>

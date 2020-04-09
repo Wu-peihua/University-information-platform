@@ -5,10 +5,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.example.uipfrontend.CommonUser.Fragment.ForumFragment;
+import com.example.uipfrontend.CommonUser.Fragment.ResourceFragment;
+import com.example.uipfrontend.Student.Fragment.StudentCommentFragment;
 import com.example.uipfrontend.Student.Fragment.StudentForumFragment;
+import com.example.uipfrontend.Student.Fragment.StudentHomeFragment;
 import com.example.uipfrontend.Student.Fragment.StudentMyReleaseCourseFragment;
 import com.example.uipfrontend.Student.Fragment.StudentMyReleaseForumFragment;
+import com.example.uipfrontend.Student.Fragment.StudentMyReleaseRecruitFragment;
 import com.example.uipfrontend.Student.Fragment.StudentMyReleaseResFragment;
+import com.example.uipfrontend.Student.Fragment.StudentRecruitFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,20 +24,20 @@ public class StudentMyReleaseViewPagerAdapter extends FragmentPagerAdapter {
     /**
      * The m fragment list.
      */
-    private List<Fragment> mFragmentList = null;
+    private List<Fragment> fragmentList = null;
 
     private String[] titles;
 
     private final int PAGER_COUNT = 4;
 
-    public StudentMyReleaseViewPagerAdapter(FragmentManager mFragmentManager, ArrayList<Fragment> fragmentList) {
-        super(mFragmentManager);
-        mFragmentList = fragmentList;
-    }
-
-    public StudentMyReleaseViewPagerAdapter(FragmentManager mFragmentManager) {
-        super(mFragmentManager);
-    }
+//    public StudentMyReleaseViewPagerAdapter(FragmentManager mFragmentManager, ArrayList<Fragment> fragmentList) {
+//        super(mFragmentManager);
+//        mFragmentList = fragmentList;
+//    }
+//
+//    public StudentMyReleaseViewPagerAdapter(FragmentManager mFragmentManager) {
+//        super(mFragmentManager);
+//    }
 
     /**
      * titles是给TabLayout设置title用的
@@ -42,6 +48,13 @@ public class StudentMyReleaseViewPagerAdapter extends FragmentPagerAdapter {
     public StudentMyReleaseViewPagerAdapter(FragmentManager mFragmentManager, String[] titles) {
         super(mFragmentManager);
         this.titles = titles;
+
+        fragmentList = new ArrayList<>();
+        fragmentList.add(0, new StudentMyReleaseForumFragment());
+        fragmentList.add(1, new StudentMyReleaseResFragment());
+        fragmentList.add(2, new StudentMyReleaseRecruitFragment());
+        fragmentList.add(3, new StudentMyReleaseCourseFragment());
+
     }
     /**
      * 描述：获取数量.
@@ -63,18 +76,10 @@ public class StudentMyReleaseViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         Fragment fragment = null;
-        switch (position) {
-            case 0:
-                fragment = new StudentMyReleaseForumFragment();
-                break;
-            case 1:
-                fragment = new StudentMyReleaseResFragment();
-                break;
-            case 2:
-                fragment = new StudentMyReleaseResFragment();
-                break;
-            case 3:
-                fragment = new StudentMyReleaseCourseFragment();
+        if (position < fragmentList.size()) {
+            fragment = fragmentList.get(position);
+        } else {
+            fragment = fragmentList.get(0);
         }
         return fragment;
     }

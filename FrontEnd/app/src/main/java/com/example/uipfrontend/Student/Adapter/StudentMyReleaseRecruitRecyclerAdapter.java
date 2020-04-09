@@ -63,12 +63,13 @@ public class StudentMyReleaseRecruitRecyclerAdapter extends RecyclerView.Adapter
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder vh = (ViewHolder) holder;
         // 绑定数据到ViewHolder里面
-        vh.Title.setText((String) listItem.get(position).get("ItemTitle"));
-        vh.Text.setText((String) listItem.get(position).get("ItemText"));
+        vh.Title.setText("title");
+        vh.Text.setText("content");
     }
 
     @Override
     public int getItemCount() {
-        return listItem.size();
+//        return listItem.size();
+        return 10;
     }
 }
