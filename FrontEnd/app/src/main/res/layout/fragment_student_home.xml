@@ -19,13 +19,14 @@
             android:paddingTop="@dimen/padding_xxxl"
             android:paddingBottom="@dimen/padding_xxl">
 
-            <com.zuowei.circleimageview.CircleImageView
+            <com.lzy.widget.CircleImageView
                 android:id="@+id/iv_student_home_portrait"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_alignParentRight="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_default_portrait" />
+                android:src="@drawable/ic_default_portrait"
+                app:civ_BorderWidth="0dp" />
 
             <TextView
                 android:id="@+id/tv_student_home_name"
@@ -59,10 +60,10 @@
 
         </RelativeLayout>
         <!--        分割线-->
-<!--        <ImageView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="1dp"-->
-<!--            android:background="@color/divider" />-->
+        <!--        <ImageView-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="1dp"-->
+        <!--            android:background="@color/divider" />-->
 
         <RelativeLayout
             android:id="@+id/rl_student_home_vertify"
@@ -100,12 +101,12 @@
                 android:layout_marginRight="@dimen/margin_xxl"
                 android:src="@drawable/ic_back" />
 
-<!--            <ImageView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="0.5dp"-->
-<!--                android:layout_alignLeft="@+id/tv_student_home_vertifyLable"-->
-<!--                android:layout_alignParentBottom="true"-->
-<!--                android:background="@color/divider" />-->
+            <!--            <ImageView-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="0.5dp"-->
+            <!--                android:layout_alignLeft="@+id/tv_student_home_vertifyLable"-->
+            <!--                android:layout_alignParentBottom="true"-->
+            <!--                android:background="@color/divider" />-->
 
         </RelativeLayout>
 

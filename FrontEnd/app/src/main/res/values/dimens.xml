@@ -44,5 +44,7 @@
 
     <!--个人主页-->
     <dimen name="maxWidth">190dp</dimen>
+    <!--顶部导航栏下划线高度-->
+    <dimen name="tabIndicatorHeight">2dp</dimen>
 
 </resources>
