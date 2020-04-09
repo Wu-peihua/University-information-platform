@@ -87,7 +87,7 @@
                     android:layout_toLeftOf="@+id/imgv_cu_forum_reply_more"
                     android:layout_centerVertical="true"
                     app:count="0"
-                    app:state="false"
+                    app:checked="false"
                     app:zeroText="赞"
                     app:textNormalColor="@color/darkGray"
                     app:textSelectedColor="#FF0000"

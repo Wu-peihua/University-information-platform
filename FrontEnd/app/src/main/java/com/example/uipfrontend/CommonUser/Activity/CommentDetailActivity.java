@@ -46,26 +46,26 @@ public class CommentDetailActivity extends AppCompatActivity {
     private View headView; // 评论作为 RecyclerView 的头部
 
     private CircleImageView portrait;  // 评论者头像
-    private TextView commentator;      // 评论者
-    private TextView content;          // 评论内容
-    private TextView time;             // 发布时间
-    private IconCountView praise;      // 点赞按钮
-    private ImageView report;          // 举报按钮
-    private View division;             // 分割线
-    private LinearLayout click_write;  // 点击回复
-    
+    private TextView        commentator;      // 评论者
+    private TextView        content;          // 评论内容
+    private TextView        time;             // 发布时间
+    private IconCountView   praise;      // 点赞按钮
+    private ImageView       report;          // 举报按钮
+    private View            division;             // 分割线
+    private LinearLayout    click_write;  // 点击回复
+
     private String toName;             // 评论的对象
     private String reference;          // 评论引用的内容
 
-    private LinearLayout commentBar;   // 底部评论栏
+    private LinearLayout      commentBar;   // 底部评论栏
     private BottomSheetDialog commentDialog;
-    private EditText commentText;
+    private EditText          commentText;
 
-    private XRecyclerView xRecyclerView;
+    private XRecyclerView            xRecyclerView;
     private ReplyRecyclerViewAdapter adapter;
 
     private List<PostComment> list; // 评论列表
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,14 +73,14 @@ public class CommentDetailActivity extends AppCompatActivity {
         initReplyData(); // 回复测试数据
         init();
     }
-    
+
     private void init() {
         commentBar = findViewById(R.id.ll_cu_forum_comment_detail_comment_bar);
-        
+
         comment = (PostComment) Objects.requireNonNull(getIntent().getExtras()).get("comment");
-        
+
         adapter = new ReplyRecyclerViewAdapter(this, list);
-        
+
         xRecyclerView = findViewById(R.id.rv_cu_forum_comment_reply);
         xRecyclerView.setAdapter(adapter);
         xRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -88,11 +88,11 @@ public class CommentDetailActivity extends AppCompatActivity {
         xRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         xRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
-        
+
         headView = LayoutInflater.from(this).inflate(R.layout.item_forum_post_comment,
                 findViewById(android.R.id.content), false);
         xRecyclerView.addHeaderView(headView);
-        
+
         initCommentDialog();
         setHeadView();
         setListener();
@@ -124,18 +124,18 @@ public class CommentDetailActivity extends AppCompatActivity {
             // 
             Toast.makeText(this, "弹出提示,询问是否举报", Toast.LENGTH_SHORT).show();
         });
-        
+
         click_write.setOnClickListener(view -> {
             commentText.setHint("回复给：" + comment.getFromName());
             commentDialog.show();
         });
-        
+
         commentBar.setOnClickListener(view -> {
             commentText.setHint("回复给：" + comment.getFromName());
             commentDialog.show();
         });
     }
-    
+
     private void initCommentDialog() {
         commentDialog = new BottomSheetDialog(this, R.style.BottomSheetEdit);
         View commentView = LayoutInflater.from(this).inflate(R.layout.dialog_comment_write, null);
@@ -146,12 +146,12 @@ public class CommentDetailActivity extends AppCompatActivity {
         // 配合 R.style.BottomSheetEdit 解决键盘遮挡问题
         View parent = (View) commentView.getParent();
         BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
-        commentView.measure(0,0);
+        commentView.measure(0, 0);
         behavior.setPeekHeight(commentView.getMeasuredHeight());
 
         btn_submit.setOnClickListener(view1 -> {
             String commentContent = commentText.getText().toString().trim();
-            if(!TextUtils.isEmpty(commentContent)) {
+            if (!TextUtils.isEmpty(commentContent)) {
                 commentDialog.dismiss();
                 PostComment postComment = new PostComment();
                 postComment.setPortrait("");
@@ -166,7 +166,7 @@ public class CommentDetailActivity extends AppCompatActivity {
                 toName = null;
                 commentText.setText("");
             } else {
-                Toast.makeText(CommentDetailActivity.this,"评论内容不能为空",Toast.LENGTH_SHORT).show();
+                Toast.makeText(CommentDetailActivity.this, "评论内容不能为空", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -178,7 +178,7 @@ public class CommentDetailActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(!TextUtils.isEmpty(charSequence) && charSequence.length() > 0) {
+                if (!TextUtils.isEmpty(charSequence) && charSequence.length() > 0) {
                     btn_submit.setBackgroundColor(Color.parseColor("#46b3e6"));
                 } else {
                     btn_submit.setBackgroundColor(Color.parseColor("#D5C9C9"));
@@ -194,23 +194,23 @@ public class CommentDetailActivity extends AppCompatActivity {
 
     private void setHeadView() {
         initHeadView();
-        
+
         String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
-//        String uri = comment.getPortrait();
+        //        String uri = comment.getPortrait();
         Glide.with(this).load(Uri.parse(uri))
                 .placeholder(R.drawable.portrait_default)
                 .error(R.drawable.portrait_default)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(portrait);
         portrait.setBorderWidth(0);
-        
+
         commentator.setText(comment.getFromName());
         content.setText(comment.getContent());
         time.setText(comment.getDate());
         praise.setCount(comment.getLikeNum());
-        
+
         division.setVisibility(View.VISIBLE);
-        
+
     }
 
     private void initHeadView() {
@@ -219,6 +219,15 @@ public class CommentDetailActivity extends AppCompatActivity {
         content = headView.findViewById(R.id.tv_cu_forum_comment_content);
         time = headView.findViewById(R.id.tv_cu_forum_comment_time);
         praise = headView.findViewById(R.id.praise_view_cu_forum_comment_like);
+        praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
+            @Override
+            public void select(boolean isSelected) {
+                if (isSelected == true)
+                    comment.setLikeNum(comment.getLikeNum() + 1);
+                else
+                    comment.setLikeNum(comment.getLikeNum() - 1);
+            }
+        });
         report = headView.findViewById(R.id.imgv_cu_forum_comment_more);
         division = headView.findViewById(R.id.view_cu_forum_comment_division);
         click_write = headView.findViewById(R.id.ll_cu_forum_comment_write);
@@ -228,7 +237,7 @@ public class CommentDetailActivity extends AppCompatActivity {
         list = new ArrayList<>();
 
         PostComment comment = new PostComment();
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             comment.setFromName("郭麒麟");
             comment.setContent("英雄所见略同");
             comment.setDate("2020-4-3 22:35");

@@ -62,7 +62,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.5.2'
 
     // 点赞
-    implementation 'com.sunbq:iconcountview:1.0.1'
+    implementation 'com.github.BILL-CS:IconCountView:1.0.0'
 
     //Material design Edittext
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
@@ -87,7 +87,7 @@ dependencies {
     implementation 'com.github.f0ris.sweetalert:library:1.5.1'
 
     //扁平化按钮
-    implementation  'com.github.jd-alexander:android-flat-button:v1.1'
+    implementation 'com.github.jd-alexander:android-flat-button:v1.1'
 
     //悬浮按钮
     implementation 'com.google.android.material:material:1.0.0'

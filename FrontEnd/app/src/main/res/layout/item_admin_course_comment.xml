@@ -100,7 +100,7 @@
             app:count="0"
             app:normalRes="@drawable/icon_praise_normal"
             app:selectedRes="@drawable/icon_praise_selected"
-            app:state="false"
+            app:checked="false"
             app:textNormalColor="@color/darkGray"
             app:textSelectedColor="#FF0000"
             app:textSize="12sp"

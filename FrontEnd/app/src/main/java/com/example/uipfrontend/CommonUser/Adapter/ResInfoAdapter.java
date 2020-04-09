@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.ResInfo;
 import com.example.uipfrontend.R;
+import com.luck.picture.lib.widget.longimage.SubsamplingScaleImageView;
 import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.sunbinqiang.iconcountview.IconCountView;
 
@@ -27,16 +28,16 @@ import java.util.List;
 
 public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ResInfo> resInfoList;
-    private Context context;
+    private Context       context;
 
-    private int beginPos;
-    private String text;
+    private int                 beginPos;
+    private String              text;
     private ForegroundColorSpan span;
 
     public ResInfoAdapter(List<ResInfo> resInfoList, Context context) {
         super();
         this.resInfoList = resInfoList;
-        this.context     = context;
+        this.context = context;
     }
 
     public void setText(String text, ForegroundColorSpan span) {
@@ -45,27 +46,27 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     static class ResInfoViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout ll_item;
-        ImageView iv_portrait;
-        TextView tv_username;
-        TextView tv_title;
+        LinearLayout       ll_item;
+        ImageView          iv_portrait;
+        TextView           tv_username;
+        TextView           tv_title;
         ExpandableTextView etv_description;
-        TextView tv_link;
-        TextView tv_time;
-        IconCountView icv_like;
-        ImageView iv_report;
+        TextView           tv_link;
+        TextView           tv_time;
+        IconCountView      icv_like;
+        ImageView          iv_report;
 
         public ResInfoViewHolder(View view) {
             super(view);
-            ll_item         = view.findViewById(R.id.ll_cu_resItem);
-            iv_portrait     = view.findViewById(R.id.iv_cu_resItem_portrait);
-            tv_username     = view.findViewById(R.id.tv_cu_resItem_username);
-            tv_title        = view.findViewById(R.id.tv_cu_resItem_title);
+            ll_item = view.findViewById(R.id.ll_cu_resItem);
+            iv_portrait = view.findViewById(R.id.iv_cu_resItem_portrait);
+            tv_username = view.findViewById(R.id.tv_cu_resItem_username);
+            tv_title = view.findViewById(R.id.tv_cu_resItem_title);
             etv_description = view.findViewById(R.id.etv_cu_resItem_description);
-            tv_link         = view.findViewById(R.id.tv_cu_resItem_link);
-            tv_time         = view.findViewById(R.id.tv_cu_resItem_time);
-            icv_like        = view.findViewById(R.id.icv_cu_resItem_like);
-            iv_report       = view.findViewById(R.id.iv_cu_resItem_report);
+            tv_link = view.findViewById(R.id.tv_cu_resItem_link);
+            tv_time = view.findViewById(R.id.tv_cu_resItem_time);
+            icv_like = view.findViewById(R.id.icv_cu_resItem_like);
+            iv_report = view.findViewById(R.id.iv_cu_resItem_report);
         }
     }
 
@@ -131,6 +132,15 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             resInfoViewHolder.tv_link.setText(resInfo.getLink());
             resInfoViewHolder.tv_time.setText(resInfo.getTime());
             resInfoViewHolder.icv_like.setCount(resInfo.getLikeNum());
+            resInfoViewHolder.icv_like.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
+                @Override
+                public void select(boolean isSelected) {
+                    if (isSelected)
+                        resInfo.setLikeNum(resInfo.getLikeNum() + 1);
+                    else
+                        resInfo.setLikeNum(resInfo.getLikeNum() - 1);
+                }
+            });
 
             resInfoViewHolder.iv_report.setOnClickListener(new View.OnClickListener() {
                 @Override
