@@ -1,6 +1,9 @@
 package com.example.uipfrontend.Admin;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +11,9 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.example.uipfrontend.Admin.Adapter.AdminFragmentAdapter;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Student.StudentActivity;
+import com.lzy.ninegrid.NineGridView;
+import com.squareup.picasso.Picasso;
 
 public class AdminHomeActivity extends AppCompatActivity {
 
@@ -26,6 +32,7 @@ public class AdminHomeActivity extends AppCompatActivity {
     }
 
     public void init(){
+        NineGridView.setImageLoader(new AdminHomeActivity.PicassoImageLoader());
 
         adminViewPager = findViewById(R.id.vp_admin);
         adminAHBottomNavigation = findViewById(R.id.btmNav_admin);
@@ -91,5 +98,21 @@ public class AdminHomeActivity extends AppCompatActivity {
             return true;
         });
 
+    }
+    /** Picasso 加载 */
+    private class PicassoImageLoader implements NineGridView.ImageLoader {
+
+        @Override
+        public void onDisplayImage(Context context, ImageView imageView, String url) {
+            Picasso.with(context).load(url)//
+                    .placeholder(R.drawable.ic_default_image)//
+                    .error(R.drawable.ic_default_image)//
+                    .into(imageView);
+        }
+
+        @Override
+        public Bitmap getCacheImage(String url) {
+            return null;
+        }
     }
 }

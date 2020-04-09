@@ -29,14 +29,13 @@ public class AdminReportFragment extends Fragment  implements View.OnClickListen
 
     private static String  TAG = AdminReportFragment.class.getName();
 
-    private LinearLayout lin_sub1, lin_sub2, lin_sub3;
+    private LinearLayout lin_sub1, lin_sub2;
 
     private Fragment subFragment1;
     private Fragment subFragment2;
-    private Fragment subFragment3;
 
     private ImageView mTabline;
-    private int mScreen1_3;
+    private int mScreen1_2;
 
 
     @Override
@@ -66,7 +65,6 @@ public class AdminReportFragment extends Fragment  implements View.OnClickListen
 
         lin_sub1 = (LinearLayout) view.findViewById(R.id.lin_sub1);
         lin_sub2 = (LinearLayout) view.findViewById(R.id.lin_sub2);
-        lin_sub3 = (LinearLayout) view.findViewById(R.id.lin_sub3);
         mTabline = (ImageView) view.findViewById(R.id.imv_tabline);
 
     }
@@ -76,9 +74,9 @@ public class AdminReportFragment extends Fragment  implements View.OnClickListen
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
-        mScreen1_3 = outMetrics.widthPixels / 3;
+        mScreen1_2 = outMetrics.widthPixels / 2;
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mTabline.getLayoutParams();
-        lp.width = mScreen1_3;
+        lp.width = mScreen1_2;
         mTabline.setLayoutParams(lp);
 
         //初次显示设置
@@ -90,7 +88,6 @@ public class AdminReportFragment extends Fragment  implements View.OnClickListen
     protected void setLinstener() {
         lin_sub1.setOnClickListener(this);
         lin_sub2.setOnClickListener(this);
-        lin_sub3.setOnClickListener(this);
 
     }
 
@@ -105,10 +102,6 @@ public class AdminReportFragment extends Fragment  implements View.OnClickListen
                 setSubFragment(1);
                 setmTabline(1);
                 break;
-            case R.id.lin_sub3:
-                setSubFragment(2);
-                setmTabline(2);
-                break;
             default:
                 break;
         }
@@ -119,7 +112,7 @@ public class AdminReportFragment extends Fragment  implements View.OnClickListen
 
         LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) mTabline
                 .getLayoutParams();
-        lp.leftMargin = i * mScreen1_3;
+        lp.leftMargin = i * mScreen1_2;
         mTabline.setLayoutParams(lp);
 
     }
@@ -137,11 +130,6 @@ public class AdminReportFragment extends Fragment  implements View.OnClickListen
         }else if(1 == i ){
             subFragment2 = (subFragment2 == null ? new  SubFragment2():subFragment2);
             transaction.replace(R.id.id_content,subFragment2);
-            //	transaction.addToBackStack(null);
-            transaction.commit();
-        }else if(2 == i ){
-            subFragment3 = (subFragment3 == null ? new  SubFragment3():subFragment3);
-            transaction.replace(R.id.id_content,subFragment3);
             //	transaction.addToBackStack(null);
             transaction.commit();
         }

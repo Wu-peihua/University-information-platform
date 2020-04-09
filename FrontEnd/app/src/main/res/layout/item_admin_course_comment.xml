@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical"
+    >
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <com.lzy.widget.CircleImageView
+            android:id="@+id/adminUserImg"
+            android:layout_width="@dimen/layoutWidth"
+            android:layout_height="@dimen/layoutHeight"
+            android:layout_margin="@dimen/margin_s"
+            android:src="@drawable/ic_student_img"/>
+        <!--ImageView
+            android:id="@+id/UserImg"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/ic_student_img"/-->
+        <LinearLayout
+            android:id="@+id/adminUsercenter"
+            android:layout_width="180dp"
+            android:layout_height="60dp"
+            android:layout_toRightOf="@+id/adminUserImg"
+            android:layout_margin="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/adminUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/blue"
+                android:layout_marginTop="@dimen/margin_xs"
+                android:layout_marginBottom="@dimen/margin_xs"
+                android:layout_marginLeft="0dp"
+                android:text="Yuzz"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/fontSize_s" />
+
+            <TextView
+
+                android:id="@+id/adminCommentDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_xs"
+                android:layout_marginBottom="@dimen/margin_xs"
+                android:layout_marginLeft="0dp"
+                android:text="2019-12-08"
+                android:layout_centerVertical="true"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s" />
+
+        </LinearLayout>
+
+        <!--Button
+            android:layout_toRightOf="@+id/Usercenter"
+            android:id="@+id/BtnLike"
+            android:background="@drawable/ic_like"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="@dimen/margin_xs"
+            android:onClick="onClick"
+            ></Button>
+        <TextView
+            android:layout_toRightOf="@+id/BtnLike"
+            android:id="@+id/LikeCounts"
+            android:layout_margin="@dimen/margin_xs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+        </TextView-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/adminUsercenter">
+
+        <com.sunbinqiang.iconcountview.IconCountView
+            android:id="@+id/adminbtnlike_student_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/margin_xs"
+            android:layout_marginTop="@dimen/margin_xs"
+            android:layout_marginEnd="@dimen/margin_xs"
+            android:layout_marginBottom="@dimen/margin_xs"
+            android:clickable="true"
+            android:duplicateParentState="false"
+            app:count="0"
+            app:normalRes="@drawable/icon_praise_normal"
+            app:selectedRes="@drawable/icon_praise_selected"
+            app:state="false"
+            app:textNormalColor="@color/darkGray"
+            app:textSelectedColor="#FF0000"
+            app:textSize="12sp"
+            app:zeroText="赞" />
+
+        <Button
+            android:layout_toRightOf="@+id/adminbtnlike_student_comment"
+            android:id="@+id/adminBtnBadReport"
+            android:background="@drawable/del"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:onClick="onClick"
+            android:focusableInTouchMode="false"></Button>
+    </RelativeLayout>
+
+        <RatingBar
+            android:layout_toRightOf="@+id/adminUserImg"
+            android:layout_below="@+id/adminUsercenter"
+            android:id="@+id/adminuserRatingBar"
+            style="@style/Widget.AppCompat.RatingBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_xs"
+            android:layout_gravity="center"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:rating="4.5"
+            android:stepSize="0.5"
+            android:progressTint="@android:color/holo_orange_light" />
+
+        <TextView
+            android:layout_below="@+id/adminuserRatingBar"
+            android:layout_toRightOf="@+id/adminUserImg"
+            android:id="@+id/adminCommentContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/margin_xs"
+            android:textSize="@dimen/fontSize_s"
+            android:textColor="@color/black"
+            android:text="这个课很不错！">
+
+        </TextView>
+
+
+    </RelativeLayout>
+</LinearLayout>
+
+
+</LinearLayout>
