@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -77,6 +78,13 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         }
 
         initRecyclerView();
+    }
+
+    //toolbar带有保存按钮
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.submit_menu, menu);
+        return true;
     }
 
     @Override

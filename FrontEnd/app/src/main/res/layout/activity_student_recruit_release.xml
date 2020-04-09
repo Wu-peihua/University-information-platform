@@ -198,24 +198,24 @@
 
 
             <!--提交按钮-->
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:layout_gravity="center">
+<!--            <FrameLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="@dimen/margin"-->
+<!--                android:layout_gravity="center">-->
 
-                <Button
-                    android:id="@+id/btn_recruit_submit"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/margin_s"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="发布"
-                    android:textSize="@dimen/fontSize_s"
-                    android:textColor="@color/white"
-                    android:background="@drawable/btn_selector"/>
+<!--                <Button-->
+<!--                    android:id="@+id/btn_recruit_submit"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_margin="@dimen/margin_s"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="发布"-->
+<!--                    android:textSize="@dimen/fontSize_s"-->
+<!--                    android:textColor="@color/white"-->
+<!--                    android:background="@drawable/btn_selector"/>-->
 
-            </FrameLayout>
+<!--            </FrameLayout>-->
 
         </LinearLayout>
 
