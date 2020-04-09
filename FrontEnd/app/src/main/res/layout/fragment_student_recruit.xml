@@ -13,6 +13,6 @@
     app:ddtextSelectedColor="@color/blue"
     app:ddtextUnselectedColor="@color/gray"
     app:ddunderlineColor="@color/lightGray"
-    android:background="@color/white"
+    android:background="@color/background"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" />

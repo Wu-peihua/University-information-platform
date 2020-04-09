@@ -54,6 +54,8 @@ dependencies {
     implementation 'com.lzy.widget:ninegridview:0.2.0'
     //头像图片控件
     implementation 'com.lzy.widget:view-core:0.2.1'
+    //个人主页圆形头像
+    implementation 'com.vivifarm.view:circleimageview:1.2.0'
     //图片加载
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     //图片加载器

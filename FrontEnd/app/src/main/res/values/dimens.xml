@@ -16,6 +16,7 @@
     <dimen name="margin">10dp</dimen>
     <dimen name="margin_l">15dp</dimen>
     <dimen name="margin_xl">20dp</dimen>
+    <dimen name="margin_xxl">30dp</dimen>
 
 
     <dimen name="padding_xs">3dp</dimen>
@@ -23,6 +24,9 @@
     <dimen name="padding">10dp</dimen>
     <dimen name="padding_l">15dp</dimen>
     <dimen name="padding_xl">20dp</dimen>
+    <dimen name="padding_xxl">30dp</dimen>
+    <dimen name="padding_xxxl">40dp</dimen>
+    <dimen name="padding_xxxxl">80dp</dimen>
 
 
     <!--底部导航栏高度-->
@@ -33,8 +37,13 @@
     <dimen name="layoutHeight">54dp</dimen>
     <dimen name="layoutHeight_s">18dp</dimen>
     <dimen name="layoutWeight_s">18dp</dimen>
+    <dimen name="layoutHeight_xs">13dp</dimen>
+    <dimen name="layoutWeight_xs">13dp</dimen>
 
     <!--自定义顶部标题文字大小-->
     <dimen name="toolBarTitle">20sp</dimen>
+
+    <!--个人主页-->
+    <dimen name="maxWidth">190dp</dimen>
 
 </resources>
