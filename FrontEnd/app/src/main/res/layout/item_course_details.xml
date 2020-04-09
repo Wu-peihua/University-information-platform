@@ -130,8 +130,7 @@
                     android:layout_centerHorizontal="true"
                     android:textColor="@color/white"
                 fbutton:fButtonColor="@color/colorPrimary"
-                fbutton:shadowEnabled="true"
-                fbutton:shadowHeight="5dp"
+                fbutton:shadowEnabled="false"
                 fbutton:cornerRadius="10dp"
 
                 />
@@ -152,12 +151,22 @@
         android:orientation="vertical">
         <!--课程评论列表-->
         <TextView
+            android:id="@+id/course_comment_sum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/lightGray"
+            android:paddingLeft="20dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="32条评论"
+            android:textSize="@dimen/fontSize_s" />
+        <!--TextView
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@color/blue"
             android:gravity="center"
             android:text="评论列表"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white" /-->
         <!--ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

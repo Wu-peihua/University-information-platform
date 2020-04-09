@@ -158,6 +158,8 @@
             android:gravity="center"
             android:text="评论列表"
             android:textColor="@android:color/white" />
+        <!-- 评论数目 -->
+
         <!--ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
