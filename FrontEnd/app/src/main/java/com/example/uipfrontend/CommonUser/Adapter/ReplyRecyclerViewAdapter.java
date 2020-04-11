@@ -42,7 +42,7 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
         this.itemClickListener = clickListener;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout       ll_item;           // 评论布局: 点击回复该评论
         LinearLayout       ll_reply_to;       // 当是'评论给'时显示，否则隐藏
@@ -111,14 +111,11 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
         viewHolder.tv_content.setContentText(list.get(position).getContent());
         viewHolder.tv_time.setText(list.get(position).getDate());
         viewHolder.praise.setCount(list.get(position).getLikeNum());
-        viewHolder.praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
-            @Override
-            public void select(boolean isSelected) {
-                if (isSelected)
-                    list.get(position).setLikeNum(list.get(position).getLikeNum() + 1);
-                else
-                    list.get(position).setLikeNum(list.get(position).getLikeNum() - 1);
-            }
+        viewHolder.praise.setOnStateChangedListener(isSelected -> {
+            if (isSelected)
+                list.get(position).setLikeNum(list.get(position).getLikeNum() + 1);
+            else
+                list.get(position).setLikeNum(list.get(position).getLikeNum() - 1);
         });
 
         viewHolder.iv_report.setOnClickListener(view -> {

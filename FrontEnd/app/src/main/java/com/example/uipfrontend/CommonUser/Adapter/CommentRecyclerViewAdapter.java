@@ -42,7 +42,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
         this.itemClickListener = clickListener;
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder {
+    private static class ViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout       ll_item;         // 评论布局: 点击跳转到评论详情
         LinearLayout       ll_click_write;  // 点击回复按钮
@@ -98,15 +98,12 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
         // 判断用户是否对该条评论点过赞，若点过：setState(true)
         viewHolder.praise.setCount(list.get(position).getLikeNum());
         
-        viewHolder.praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
-            @Override
-            public void select(boolean isSelected) {
-                if (isSelected) {
-                    list.get(position).setLikeNum(list.get(position).getLikeNum() + 1);
-                }
-                else {
-                    list.get(position).setLikeNum(list.get(position).getLikeNum() - 1);
-                }
+        viewHolder.praise.setOnStateChangedListener(isSelected -> {
+            if (isSelected) {
+                list.get(position).setLikeNum(list.get(position).getLikeNum() + 1);
+            }
+            else {
+                list.get(position).setLikeNum(list.get(position).getLikeNum() - 1);
             }
         });
 

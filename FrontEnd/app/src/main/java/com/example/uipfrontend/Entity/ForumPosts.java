@@ -15,6 +15,8 @@ public class ForumPosts implements Serializable {
     private Integer userId;         // 发帖人ID
     private String poster;          // 发帖人用户名
     private String portrait;        // 发帖人头像
+    
+    public ForumPosts() {}
 
     public ForumPosts(Integer postId, String title, String poster, String postTime,
                       int likeNum) {

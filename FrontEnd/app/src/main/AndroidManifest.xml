@@ -43,7 +43,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CommonUser.Activity.WritePostActivity" />
+        <activity android:name=".CommonUser.Activity.WritePostActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".CommonUser.Activity.PostDetailActivity" />
         <activity android:name=".CommonUser.Activity.CommentDetailActivity" />
     </application>
