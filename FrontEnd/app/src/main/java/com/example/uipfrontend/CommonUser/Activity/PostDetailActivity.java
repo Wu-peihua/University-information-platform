@@ -35,6 +35,7 @@ import com.lzy.ninegrid.ImageInfo;
 import com.lzy.ninegrid.NineGridView;
 import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
 import com.lzy.widget.CircleImageView;
+import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.squareup.picasso.Picasso;
 import com.sunbinqiang.iconcountview.IconCountView;
 
@@ -52,18 +53,18 @@ public class PostDetailActivity extends AppCompatActivity {
 
     private View headView; // 帖子详情作为 RecyclerView 的头部
 
-    private CircleImageView detail_portrait; // 发帖人头像
-    private TextView        detail_title;           // 帖子标题
-    private TextView        detail_poster;          // 发帖人
-    private TextView        detail_content;         // 帖子内容
-    private NineGridView    detail_pictures;    // 帖子图片
-    private TextView        detail_time;            // 发布时间
-    private IconCountView   praise;            // 点赞按钮
-    private ImageView       detail_report;         // 举报按钮
-    private TextView        commentSum;             // 评论数
+    private CircleImageView    detail_portrait; // 发帖人头像
+    private TextView           detail_title;    // 帖子标题
+    private TextView           detail_poster;   // 发帖人
+    private ExpandableTextView detail_content;  // 帖子内容
+    private NineGridView       detail_pictures; // 帖子图片
+    private TextView           detail_time;     // 发布时间
+    private IconCountView      praise;          // 点赞按钮
+    private ImageView          detail_report;   // 举报按钮
+    private TextView           commentSum;      // 评论数
 
-    private LinearLayout      commentBar;         // 底部评论栏
-    private BottomSheetDialog commentDialog;
+    private LinearLayout       commentBar;      // 底部评论栏
+    private BottomSheetDialog  commentDialog;
 
     private XRecyclerView              xRecyclerView;
     private CommentRecyclerViewAdapter adapter;
@@ -82,7 +83,7 @@ public class PostDetailActivity extends AppCompatActivity {
     /**
      * Picasso 加载
      */
-    private class PicassoImageLoader implements NineGridView.ImageLoader {
+    private static class PicassoImageLoader implements NineGridView.ImageLoader {
 
         @Override
         public void onDisplayImage(Context context, ImageView imageView, String url) {
@@ -131,6 +132,18 @@ public class PostDetailActivity extends AppCompatActivity {
             Intent intent = new Intent(PostDetailActivity.this, CommentDetailActivity.class);
             intent.putExtra("comment", list.get(pos));
             startActivity(intent);
+        });
+
+        praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
+            @Override
+            public void select(boolean isSelected) {
+                if (isSelected) {
+                    post.setLikeNum(post.getLikeNum() + 1);
+                }
+                else {
+                    post.setLikeNum(post.getLikeNum() - 1);
+                }
+            }
         });
 
         // 刷新和加载更多
@@ -205,14 +218,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
             commentDialog.show();
         });
-
-
-        //        praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
-        //            @Override
-        //            public void select(boolean isSelected) {
-        //
-        //            }
-        //        });
+        
     }
 
     private List getComment() {
@@ -236,7 +242,11 @@ public class PostDetailActivity extends AppCompatActivity {
 
         detail_title.setText(post.getTitle());
         detail_poster.setText(post.getPoster());
-        //        detail_content.setText(post.getContent());
+//        detail_content.setContentText(post.getContent());
+        detail_content.setContentText("测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起" +
+                "测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起" +
+                "测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起" +
+                "测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起");
 
         //        List<String> picUris = post.getPictures();
         List<ImageInfo> imageList = new ArrayList<>();
@@ -270,7 +280,13 @@ public class PostDetailActivity extends AppCompatActivity {
 
         detail_time.setText(post.getPostTime());
 
-        praise.setCount(post.getLikeNum());
+        if(post.getLikeNum() > 0) {
+            praise.setState(true);
+            praise.setCount(post.getLikeNum());
+        } else {
+            praise.setState(false);
+            praise.setCount(0);
+        }
 
         if (list.size() == 0)
             commentSum.setText("还没有人评论，快留下你的高见吧。");
@@ -282,19 +298,10 @@ public class PostDetailActivity extends AppCompatActivity {
         detail_portrait = headView.findViewById(R.id.imgv_cu_forum_detail_portrait);
         detail_title = headView.findViewById(R.id.tv_cu_forum_detail_title);
         detail_poster = headView.findViewById(R.id.tv_cu_forum_detail_poster);
-        detail_content = headView.findViewById(R.id.tv_cu_forum_detail_content);
+        detail_content = headView.findViewById(R.id.etv_cu_forum_detail_content);
         detail_pictures = headView.findViewById(R.id.nineGrid_cu_forum_detail_pic);
         detail_time = headView.findViewById(R.id.tv_cu_forum_detail_time);
         praise = headView.findViewById(R.id.praise_view_cu_forum_detail_like);
-        praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
-            @Override
-            public void select(boolean isSelected) {
-                if (isSelected == true)
-                    post.setLikeNum(post.getLikeNum() + 1);
-                else
-                    post.setLikeNum(post.getLikeNum() - 1);
-            }
-        });
         detail_report = headView.findViewById(R.id.imgv_cu_forum_detail_more);
         commentSum = headView.findViewById(R.id.tv_cu_forum_detail_comment_sum);
     }
@@ -302,9 +309,9 @@ public class PostDetailActivity extends AppCompatActivity {
     private void initCommentData() {
         list = new ArrayList<>();
 
-        PostComment comment = new PostComment();
         for (int i = 0; i < 5; i++) {
-            comment.setFromName("韦骁龙");
+            PostComment comment = new PostComment();
+            comment.setFromName("韦骁龙" + i);
             comment.setContent("英雄所见略同");
             comment.setDate("2020-4-3 22:35");
             comment.setLikeNum(0);

@@ -18,6 +18,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.PostComment;
 import com.example.uipfrontend.R;
 import com.lzy.widget.CircleImageView;
+import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.sunbinqiang.iconcountview.IconCountView;
 
 import java.util.List;
@@ -43,17 +44,17 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        LinearLayout    ll_item;            // 评论布局: 点击回复该评论
-        LinearLayout    ll_reply_to;        // 当是'评论给'时显示，否则隐藏
-        LinearLayout    ll_click_wirte;     // 点击回复按钮
-        CircleImageView portrait;        // 评论者头像
-        TextView        tv_fromUserName;        // 评论者
-        TextView        tv_toUserName;          // 评论给
-        TextView        tv_reference;           // 原内容
-        TextView        tv_content;             // 评论内容
-        TextView        tv_time;                // 评论时间
-        IconCountView   praise;            // 点赞按钮
-        ImageView       iv_report;             // 举报按钮
+        LinearLayout       ll_item;           // 评论布局: 点击回复该评论
+        LinearLayout       ll_reply_to;       // 当是'评论给'时显示，否则隐藏
+        LinearLayout       ll_click_wirte;    // 点击回复按钮
+        CircleImageView    portrait;          // 评论者头像
+        TextView           tv_fromUserName;   // 评论者
+        TextView           tv_toUserName;     // 评论给
+        TextView           tv_reference;      // 原内容
+        ExpandableTextView tv_content;        // 评论内容
+        TextView           tv_time;           // 评论时间
+        IconCountView      praise;            // 点赞按钮
+        ImageView          iv_report;         // 举报按钮
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -65,7 +66,7 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
             tv_fromUserName = itemView.findViewById(R.id.tv_cu_forum_comment_from);
             tv_toUserName = itemView.findViewById(R.id.tv_cu_forum_comment_to);
             tv_reference = itemView.findViewById(R.id.tv_cu_forum_comment_reference);
-            tv_content = itemView.findViewById(R.id.tv_cu_forum_comment_content);
+            tv_content = itemView.findViewById(R.id.etv_cu_forum_comment_content);
             tv_time = itemView.findViewById(R.id.tv_cu_forum_comment_time);
             praise = itemView.findViewById(R.id.praise_view_cu_forum_comment_like);
             iv_report = itemView.findViewById(R.id.imgv_cu_forum_comment_more);
@@ -107,7 +108,7 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
             viewHolder.ll_reply_to.setVisibility(View.GONE);
         }
 
-        viewHolder.tv_content.setText(list.get(position).getContent());
+        viewHolder.tv_content.setContentText(list.get(position).getContent());
         viewHolder.tv_time.setText(list.get(position).getDate());
         viewHolder.praise.setCount(list.get(position).getLikeNum());
         viewHolder.praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {

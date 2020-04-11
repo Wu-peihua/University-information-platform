@@ -43,7 +43,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:scaleType="centerInside"
-            android:src="@drawable/comment" />
+            android:src="@drawable/reply" />
 
     </LinearLayout>
 

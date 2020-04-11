@@ -28,6 +28,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.lzy.widget.CircleImageView;
+import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.sunbinqiang.iconcountview.IconCountView;
 
 import java.util.ArrayList;
@@ -45,19 +46,19 @@ public class CommentDetailActivity extends AppCompatActivity {
 
     private View headView; // 评论作为 RecyclerView 的头部
 
-    private CircleImageView portrait;  // 评论者头像
-    private TextView        commentator;      // 评论者
-    private TextView        content;          // 评论内容
-    private TextView        time;             // 发布时间
-    private IconCountView   praise;      // 点赞按钮
-    private ImageView       report;          // 举报按钮
-    private View            division;             // 分割线
-    private LinearLayout    click_write;  // 点击回复
+    private CircleImageView    portrait;     // 评论者头像
+    private TextView           commentator;  // 评论者
+    private ExpandableTextView content;      // 评论内容
+    private TextView           time;         // 发布时间
+    private IconCountView      praise;       // 点赞按钮
+    private ImageView          report;       // 举报按钮
+    private View               division;     // 分割线
+    private LinearLayout       click_write;  // 点击回复
 
-    private String toName;             // 评论的对象
-    private String reference;          // 评论引用的内容
+    private String             toName;       // 评论的对象
+    private String             reference;    // 评论引用的内容
 
-    private LinearLayout      commentBar;   // 底部评论栏
+    private LinearLayout      commentBar;    // 底部评论栏
     private BottomSheetDialog commentDialog;
     private EditText          commentText;
 
@@ -205,7 +206,7 @@ public class CommentDetailActivity extends AppCompatActivity {
         portrait.setBorderWidth(0);
 
         commentator.setText(comment.getFromName());
-        content.setText(comment.getContent());
+        content.setContentText(comment.getContent());
         time.setText(comment.getDate());
         praise.setCount(comment.getLikeNum());
 
@@ -216,7 +217,7 @@ public class CommentDetailActivity extends AppCompatActivity {
     private void initHeadView() {
         portrait = headView.findViewById(R.id.imgv_cu_forum_comment_portrait);
         commentator = headView.findViewById(R.id.tv_cu_forum_comment_from);
-        content = headView.findViewById(R.id.tv_cu_forum_comment_content);
+        content = headView.findViewById(R.id.etv_cu_forum_comment_content);
         time = headView.findViewById(R.id.tv_cu_forum_comment_time);
         praise = headView.findViewById(R.id.praise_view_cu_forum_comment_like);
         praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
@@ -236,9 +237,9 @@ public class CommentDetailActivity extends AppCompatActivity {
     private void initReplyData() {
         list = new ArrayList<>();
 
-        PostComment comment = new PostComment();
         for (int i = 0; i < 5; i++) {
-            comment.setFromName("郭麒麟");
+            PostComment comment = new PostComment();
+            comment.setFromName("郭麒麟" + i);
             comment.setContent("英雄所见略同");
             comment.setDate("2020-4-3 22:35");
             comment.setLikeNum(0);

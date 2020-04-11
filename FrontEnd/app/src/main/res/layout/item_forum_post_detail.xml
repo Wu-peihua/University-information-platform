@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <!-- item_forum_post_detail
@@ -50,15 +51,22 @@
                 android:textSize="@dimen/fontSize_xs" />
 
             <!-- 帖子内容 -->
-            <TextView
-                android:id="@+id/tv_cu_forum_detail_content"
+            <com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView
+                android:id="@+id/etv_cu_forum_detail_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:lineSpacingExtra="5dp"
-                android:text="内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
-                android:textColor="@color/item_text"
-                android:textSize="@dimen/fontSize_s" />
+                app:animDuration="150"
+                app:contentMaxLine="4"
+                app:contentTextColor="@color/item_text"
+                app:contentTextSize="@dimen/fontSize_s"
+                app:labelCollapseText="收起"
+                app:labelExpandText="全文"
+                app:labelTextColor="@color/blue"
+                app:labelTextSize="@dimen/fontSize_s"
+                app:middlePadding="6dp"
+                tools:contentText="测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起" />
 
             <!-- 帖子图片 -->
             <com.lzy.ninegrid.NineGridView
@@ -87,15 +95,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:layout_toLeftOf="@+id/imgv_cu_forum_detail_more"
+                    android:layout_marginRight="30dp"
+                    android:layout_alignParentRight="true"
                     app:count="0"
                     app:normalRes="@drawable/icon_praise_normal"
                     app:selectedRes="@drawable/icon_praise_selected"
                     app:checked="false"
                     app:textNormalColor="@color/darkGray"
                     app:textSelectedColor="#FF0000"
-                    app:textSize="12sp"
                     app:zeroText="赞" />
 
                 <!-- 举报按钮 -->

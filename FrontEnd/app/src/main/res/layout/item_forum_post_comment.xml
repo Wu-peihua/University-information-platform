@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_cu_forum_comment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -59,8 +60,7 @@
                     android:background="@drawable/more" />
 
             </RelativeLayout>
-
-
+            
             <!-- 评论给
                 在帖子详情的itemView下隐藏 
                 在评论详情的headView下隐藏-->
@@ -117,18 +117,24 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-
+            
             <!-- 评论内容 -->
-            <TextView
-                android:id="@+id/tv_cu_forum_comment_content"
+            <com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView
+                android:id="@+id/etv_cu_forum_comment_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:lineSpacingExtra="5dp"
-                android:text="内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
-                android:textColor="@color/item_text"
-                android:textSize="@dimen/fontSize_s" />
+                app:animDuration="150"
+                app:contentMaxLine="4"
+                app:contentTextColor="@color/item_text"
+                app:contentTextSize="@dimen/fontSize_s"
+                app:labelCollapseText="收起"
+                app:labelExpandText="全文"
+                app:labelTextColor="@color/blue"
+                app:labelTextSize="@dimen/fontSize_s"
+                app:middlePadding="6dp"
+                tools:contentText="测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -149,15 +155,14 @@
                     android:id="@+id/praise_view_cu_forum_comment_like"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="8dp"
-                    android:layout_toLeftOf="@id/ll_cu_forum_comment_write"
-                    app:count="100"
+                    android:layout_marginRight="30dp"
+                    android:layout_alignParentRight="true"
                     app:normalRes="@drawable/icon_praise_normal"
                     app:selectedRes="@drawable/icon_praise_selected"
-                    app:checked="false"
                     app:textNormalColor="@color/darkGray"
                     app:textSelectedColor="#FF0000"
-                    app:textSize="12sp"
+                    app:count="0"
+                    app:checked="false"
                     app:zeroText="赞" />
 
                 <!-- 回复按钮 -->
@@ -172,15 +177,15 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/forum" />
+                        android:src="@drawable/reply" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="3dp"
-                        android:layout_marginTop="5dp"
-                        android:text="点击回复"
-                        android:textSize="11sp" />
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginLeft="3dp"-->
+<!--                        android:layout_marginTop="5dp"-->
+<!--                        android:text="点击回复"-->
+<!--                        android:textSize="11sp" />-->
 
                 </LinearLayout>
 
