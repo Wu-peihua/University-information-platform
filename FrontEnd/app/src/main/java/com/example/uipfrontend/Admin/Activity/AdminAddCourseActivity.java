@@ -1,18 +1,30 @@
 package com.example.uipfrontend.Admin.Activity;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.bigkoo.alertview.AlertView;
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Activity.RecruitReleaseActivity;
 import com.example.uipfrontend.Student.Adapter.GridImageAdapter;
@@ -22,11 +34,18 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import fj.edittextcount.lib.FJEditTextCount;
+
 import static androidx.constraintlayout.widget.Constraints.TAG;
+import static com.example.uipfrontend.CommonUser.Activity.AddResActivity.hideSystemKeyboard;
 
 public class AdminAddCourseActivity extends AppCompatActivity {
 
@@ -34,8 +53,8 @@ public class AdminAddCourseActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     private GridImageAdapter adapter;
 
-    //弹出对话框 选择照片选择方式
-    NiftyDialogBuilder dialogBuilderSelect;
+//    //弹出对话框 选择照片选择方式
+//    NiftyDialogBuilder dialogBuilderSelect;
 
     private List<LocalMedia> selectList = new ArrayList<>();   //照片存储列表
     //记录用户选择，拍照或从相册选择
@@ -50,6 +69,17 @@ public class AdminAddCourseActivity extends AppCompatActivity {
     private int upResId,downResId;
     private int chooseMode = PictureMimeType.ofAll();
 
+    private OptionsPickerView pvNoLinkOptions;
+    private MaterialEditText school;
+    private int schoolOption;
+    private int subjectOption;
+
+    //发布课程名
+    private MaterialEditText title;
+    //课程教师
+    private MaterialEditText teacher;
+    //课程简介
+    private FJEditTextCount description;
 
 
 
@@ -60,30 +90,38 @@ public class AdminAddCourseActivity extends AppCompatActivity {
 //        getSupportActionBar().hide();
 
 
-        setTitle("发布课程");
+//        setTitle("发布课程");
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().setStatusBarColor(getResources().getColor(R.color.blue));
+//        ActionBar actionBar = getSupportActionBar();
+//        if (actionBar != null) {
+//            actionBar.setHomeButtonEnabled(true);
+//            actionBar.setDisplayHomeAsUpEnabled(true);
+//        }
+//
+//        initRecyclerView();
+
+        initToolBar();
+        initRecyclerView();
+        initView();
+
+        initNoLinkOptionsPicker();
+    }
+    public void initToolBar() {
+
+        setTitle("");
+        Toolbar toolbar = findViewById(R.id.toolbar_admin_recruit_release);
+        setSupportActionBar(toolbar);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        initRecyclerView();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void initRecyclerView(){
-        recyclerView = findViewById(R.id.rv_course_picture);
+        recyclerView = findViewById(R.id.rv_admin_picture);
 
         //主题风格id设置
         themeId = R.style.picture_default_style;
@@ -126,6 +164,59 @@ public class AdminAddCourseActivity extends AppCompatActivity {
         });
 
 
+    }
+    public void initView(){
+        school = findViewById(R.id.et_admin_school);
+        title = findViewById(R.id.et_admin_title);
+        teacher = findViewById(R.id.et_admin_teacher);
+        description = findViewById(R.id.et_admin_description);
+    }
+
+    //不联动的多级选项
+    @SuppressLint("ClickableViewAccessibility")
+    private void initNoLinkOptionsPicker() {
+        String[] option1 = {"华南师范大学"};
+        String[] option2 = {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
+                "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"};
+
+        pvNoLinkOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                schoolOption = options1;
+                subjectOption = options2;
+                String str = option1[options1] + "-" + option2[options2];
+                school.setText(str);
+            }
+        })
+                .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
+                    @Override
+                    public void onOptionsSelectChanged(int options1, int options2, int options3) {
+                    }
+                })
+                .setSelectOptions(0, 0)
+                .isRestoreItem(false)
+                .setSubmitColor(getResources().getColor(R.color.blue))
+                .setCancelColor(getResources().getColor(R.color.blue))
+                .setTextColorCenter(getResources().getColor(R.color.blue))
+                .setItemVisibleCount(8)
+                .setLineSpacingMultiplier((float) 2.3)
+                .setOutSideCancelable(false)
+                .build();
+
+        //将数组类型转换成参数所需的Arraylist类型再传参
+        pvNoLinkOptions.setNPicker(new ArrayList(Arrays.asList(option1)), new ArrayList(Arrays.asList(option2)),null);
+
+        school.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                school.requestFocus();
+                hideSystemKeyboard(AdminAddCourseActivity.this, v);
+                if (pvNoLinkOptions != null)
+                    pvNoLinkOptions.show();
+                return false;
+            }
+        });
     }
 
     //选择图片
@@ -222,6 +313,81 @@ public class AdminAddCourseActivity extends AppCompatActivity {
                     .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
         }
     }
+
+    //toolbar的操作
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            /*
+             * 将actionBar的HomeButtonEnabled设为ture，
+             *
+             * 将会执行此case
+             */
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.submit:
+                if (TextUtils.isEmpty(school.getText().toString().trim())) {
+                    school.requestFocus();
+                    hideSystemKeyboard(AdminAddCourseActivity.this, school);
+                    Toast.makeText(this, "请选择发布面向的学校及学科！", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(title.getText().toString().trim())) {
+                    title.requestFocus();
+                    Toast.makeText(this, "请输入课程名！", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(teacher.getText().toString().trim())) {
+                    teacher.requestFocus();
+                    Toast.makeText(this, "请输入课程教师的姓名！", Toast.LENGTH_SHORT).show();
+                }else if(TextUtils.isEmpty(description.getText().trim())) {
+                    description.requestFocus();
+                    Toast.makeText(this, "请输入课程简介！", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    DialogInterface.OnClickListener dialog_OL = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                //确定
+                                case -1:
+                                    Intent intent = new Intent();
+                                    String username = "张咩阿";
+                                    String strTitle = title.getText().toString().trim();
+                                    String strDescription = description.getText().trim();
+                                    String strContact = teacher.getText().toString();
+                                    Date date = new Date(System.currentTimeMillis());
+                                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+                                    String strTime = format.format(date);
+
+                                    setResult(1, intent);
+                                    Toast.makeText(AdminAddCourseActivity.this, "课程发布成功", Toast.LENGTH_SHORT).show();
+
+                                    AdminAddCourseActivity.this.finish();
+                                    break;
+                                //取消
+                                case -2:
+                                    dialog.dismiss();
+                                    break;
+                                //其他
+                                case -3:
+                                    dialog.dismiss();
+                                    break;
+                            }
+                        }
+                    };
+                    AlertDialog dialog = new AlertDialog.Builder(AdminAddCourseActivity.this)
+                            .setTitle("提示")
+                            .setMessage("是否确认发布该课程？")
+                            .setPositiveButton("确定", dialog_OL)
+                            .setNegativeButton("取消", dialog_OL)
+                            .setCancelable(false)
+                            .create();
+                    dialog.show();
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     //给上传图片添加点击事件
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
