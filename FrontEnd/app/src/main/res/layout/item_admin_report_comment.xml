@@ -86,7 +86,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/adminUsercenter"
-        android:layout_below="@+id/adminUsercenter">
+        android:layout_below="@+id/adminUsercenter"
+        android:id="@+id/admin_is_pass">
 
 
         <info.hoang8f.widget.FButton
@@ -95,11 +96,11 @@
             android:layout_width="50dp"
             android:layout_height="30dp"
             android:text="通过"
-
+            android:layout_toLeftOf="@id/admin_btn_unpass"
             android:textColor="@color/white"
             fbutton:fButtonColor="@color/colorPrimary"
             fbutton:shadowEnabled="true"
-            fbutton:shadowHeight="3dp"
+            fbutton:shadowHeight="0dp"
             fbutton:cornerRadius="7dp"
             />
         <info.hoang8f.widget.FButton
@@ -107,14 +108,14 @@
             android:layout_margin="@dimen/margin_s"
             android:layout_width="50dp"
             android:layout_height="30dp"
-            android:layout_toRightOf="@id/admin_btn_pass"
+            android:layout_alignParentRight="true"
             android:text="不通过"
             android:textSize="12sp"
             android:layout_centerHorizontal="true"
             android:textColor="@color/white"
             fbutton:fButtonColor="@color/colorPrimary"
             fbutton:shadowEnabled="true"
-            fbutton:shadowHeight="3dp"
+            fbutton:shadowHeight="0dp"
             fbutton:cornerRadius="7dp"
             />
 
