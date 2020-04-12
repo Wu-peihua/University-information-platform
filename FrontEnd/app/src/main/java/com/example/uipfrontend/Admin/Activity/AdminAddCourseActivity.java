@@ -313,6 +313,11 @@ public class AdminAddCourseActivity extends AppCompatActivity {
                     .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
         }
     }
+        @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.submit_menu, menu);
+        return true;
+    }
 
     //toolbar的操作
     @Override
