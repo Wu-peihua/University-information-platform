@@ -29,6 +29,7 @@
             android:id="@+id/UserImg"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            app:civ_BorderWidth="0dp"
             android:src="@drawable/portrait_default" />
 
         <LinearLayout

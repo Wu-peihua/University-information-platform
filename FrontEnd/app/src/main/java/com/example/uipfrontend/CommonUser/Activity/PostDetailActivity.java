@@ -309,7 +309,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private void initCommentData() {
         list = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
             PostComment comment = new PostComment();
             comment.setFromName("韦骁龙" + i);
             comment.setContent("英雄所见略同");

@@ -38,16 +38,16 @@ public class ResourceFragment extends Fragment {
     private View rootView;
     private View rootContentView;
 
-    private XRecyclerView xRecyclerView;
+    private XRecyclerView  xRecyclerView;
     private ResInfoAdapter resInfoAdapter;
 
     private List<ResInfo> posts;
     private List<ResInfo> whole;
 
-    private DropDownMenu dropDownMenu;
+    private DropDownMenu        dropDownMenu;
     private ForegroundColorSpan blueSpan;
-    private EditText et_search;
-    private ImageView iv_delete;
+    private EditText            et_search;
+    private ImageView           iv_delete;
 
     FloatingActionButton fab;
 
@@ -61,7 +61,7 @@ public class ResourceFragment extends Fragment {
                 parent.removeView(rootView);
             }
         } else {
-            rootView        = inflater.inflate(R.layout.fragment_cu_resource, null);
+            rootView = inflater.inflate(R.layout.fragment_cu_resource, null);
             rootContentView = inflater.inflate(R.layout.fragment_cu_resource_content, null);
 
             initDropDownMenu();
@@ -127,6 +127,19 @@ public class ResourceFragment extends Fragment {
                 "支付宝破解版", "小朋友你是否有很多问号", "www.baidu.com", "2020-02-02 00:00", 0));
         posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
                 "支付宝破解版", "小朋友你是否有很多问号", "www.baidu.com", "2020-02-02 00:00", 0));
+        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
+                "支付宝破解版", "清明前后，种瓜种豆。当然，那都是为漫长夏日的怎样过活做准备的，儿时生在乡下的人，这些话" +
+                "多半还是有些耳熟的。一般的话，清明过后是一日热胜一日，偶尔会有个不应时的桃花暮春雪，也是个稀少的意外，大多这个时候，" +
+                "植物随着气候变化也即将转换着面目，即便是在城里，也能掐算着哪个时候能见上什么。踏春的时尚，之外哪能少的了吃货们的小算计呢。",
+                "www.baidu.com", "2020-02-02 00:00", 100));
+        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
+                "支付宝破解版", null, "www.baidu.com", "2020-02-02 00:00", 0));
+        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
+                "支付宝破解版", "小朋友你是否有很多问号", "www.baidu.com", "2020-02-02 00:00", 0));
+        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
+                "支付宝破解版", "小朋友你是否有很多问号", "www.baidu.com", "2020-02-02 00:00", 0));
+        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
+                "支付宝破解版", "小朋友你是否有很多问号", "www.baidu.com", "2020-02-02 00:00", 0));
 
         whole.addAll(posts);
     }
@@ -175,7 +188,7 @@ public class ResourceFragment extends Fragment {
     }
 
     private void setSearch() {
-        blueSpan  = new ForegroundColorSpan(Color.rgb(255, 0, 0));
+        blueSpan = new ForegroundColorSpan(Color.rgb(255, 0, 0));
         et_search = rootContentView.findViewById(R.id.edt_cu_res_search);
         iv_delete = rootContentView.findViewById(R.id.imgv_cu_res_delete);
 
