@@ -27,6 +27,7 @@ public class AdminHomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_home);
+        getSupportActionBar().hide();
 
         init();
     }
@@ -52,7 +53,7 @@ public class AdminHomeActivity extends AppCompatActivity {
         adminAHBottomNavigation.addItem(item2);
         adminAHBottomNavigation.addItem(item3);
         adminAHBottomNavigation.addItem(item4);
-        adminAHBottomNavigation.setCurrentItem(0);
+
 
         //设置整体背景颜色（如果开启了单个的背景颜色，该项将会无效）
         adminAHBottomNavigation.setDefaultBackgroundColor(getResources().getColor(R.color.lightGray));
@@ -64,6 +65,7 @@ public class AdminHomeActivity extends AppCompatActivity {
         //是否开启切换item切换颜色
 //        bottomNavigation.setColored(true);
 
+        adminAHBottomNavigation.setCurrentItem(0);
 
         // Set listener
 //        bottomNavigation.setAHBottomNavigationListener(new AHBottomNavigation.AHBottomNavigationListener() {
@@ -93,9 +95,28 @@ public class AdminHomeActivity extends AppCompatActivity {
 //                return true;
 //            }
 //        });
-        adminAHBottomNavigation.setOnTabSelectedListener((position, wasSelected) -> {
-            adminViewPager.setCurrentItem(position);
-            return true;
+        adminAHBottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
+            @Override
+            public boolean onTabSelected(int position, boolean wasSelected) {
+                adminViewPager.setCurrentItem(position);
+                switch (position){
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                }
+                return true;
+            }
+        });
+        adminAHBottomNavigation.setOnNavigationPositionListener(new AHBottomNavigation.OnNavigationPositionListener() {
+            @Override
+            public void onPositionChange(int y) {
+
+            }
         });
 
     }
