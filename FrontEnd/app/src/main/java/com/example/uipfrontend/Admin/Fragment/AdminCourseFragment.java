@@ -6,18 +6,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.uipfrontend.Admin.Activity.AdminAddCourseActivity;
 import com.example.uipfrontend.Admin.Activity.AdminCourseDetailActivity;
 import com.example.uipfrontend.Admin.Adapter.CourseAdapter;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Entity.Course;
 //import com.example.uipfrontend.Student.Activity.CourseDetailActivity;
 //import com.example.uipfrontend.Student.Adapter.StudentCourseRecyclerViewAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.qlh.dropdownmenu.DropDownMenu;
@@ -39,8 +42,11 @@ public class AdminCourseFragment extends Fragment {
     private CourseAdapter studentCourseRecyclerViewAdapter;     //课程内容适配器
 
     private View rootView;
+    private View rootContentView;    //根视图内容
     private List<Course> courses =new ArrayList<>();//课程实体数组
     //private List<Course> AllCourses = new ArrayList<>();
+    private FloatingActionButton fabtn;  //浮动按钮，发布新的组队信息
+
 
     @Nullable
     @Override
@@ -53,7 +59,8 @@ public class AdminCourseFragment extends Fragment {
             }
         } else {
             rootView = inflater.inflate(R.layout.fragment_admin_course, null);
-            recyclerView = rootView.findViewById(R.id.adminrv_student_course);
+            rootContentView=inflater.inflate(R.layout.fragment_admin_course_content,null);
+           // recyclerView = rootContentView.findViewById(R.id.adminrv_student_course);
 
             init();
         }
@@ -66,6 +73,7 @@ public class AdminCourseFragment extends Fragment {
         initMenus();
         initRecyclerView();
         initListener();
+        initFAB();
 
     }
 
@@ -90,7 +98,9 @@ public class AdminCourseFragment extends Fragment {
         multiMenusView = new MultiMenusView(this.getContext(),levelOneMenu,levelTwoMenu);
         popupViews.add(multiMenusView);
         //初始化内容视图
-        View contentView = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_admin_course,null);
+        //View contentView = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_admin_course,null);
+        RelativeLayout contentView = rootContentView.findViewById(R.id.rl_admin_course_course);
+
         //装载
         dropDownMenu.setDropDownMenu(Arrays.asList(headers),popupViews,contentView);
 
@@ -175,6 +185,8 @@ public class AdminCourseFragment extends Fragment {
     }
 
     private void initRecyclerView() {
+        recyclerView = rootContentView.findViewById(R.id.rv_admin_group);
+
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -224,6 +236,16 @@ public class AdminCourseFragment extends Fragment {
 
  */
 
+    }
+    private void initFAB(){
+        fabtn = rootContentView.findViewById(R.id.fabtn_admin_addcourse);
+        fabtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(rootContentView.getContext(), AdminAddCourseActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 
