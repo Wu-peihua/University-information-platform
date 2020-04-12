@@ -20,7 +20,10 @@
         <activity android:name=".Student.Activity.CourseDetailActivity" />
         <activity android:name=".Student.Activity.RecruitReleaseActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Admin.Activity.AdminCourseDetailActivity"></activity>
+        <activity android:name=".Admin.Activity.AdminCourseDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".Admin.Activity.AdminAddCourseActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".Student.StudentActivity"
             android:windowSoftInputMode="adjustPan" />
