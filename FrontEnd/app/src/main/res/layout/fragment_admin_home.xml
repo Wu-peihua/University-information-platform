@@ -1,15 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:background="@color/background">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="管理员个人主页"
-        android:gravity="center">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    </TextView>
+        <RelativeLayout
+            android:id="@+id/rl_admin_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingHorizontal="@dimen/padding_xxl"
+            android:paddingTop="@dimen/padding_xxxl"
+            android:paddingBottom="@dimen/padding_xxl">
 
-</LinearLayout>
+            <com.lzy.widget.CircleImageView
+                android:id="@+id/iv_admin_home_portrait"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_default_portrait"
+                app:civ_BorderWidth="0dp" />
+
+            <TextView
+                android:id="@+id/tv_admin_home_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:ellipsize="end"
+                android:maxWidth="@dimen/maxWidth"
+                android:maxLines="1"
+                android:text="用户昵称"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_xl" />
+
+            <TextView
+                android:id="@+id/tv_admin_home_vertify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/iv_admin_home_portrait"
+                android:layout_alignParentLeft="true"
+                android:paddingBottom="@dimen/fontSize_xs"
+                android:text="华南师范大学" />
+
+            <TextView
+                android:id="@+id/tv_admin_home_isvertify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/iv_admin_home_portrait"
+                android:layout_toRightOf="@+id/tv_admin_home_vertify"
+                android:paddingBottom="@dimen/fontSize_xs"
+                android:text="管理员" />
+
+        </RelativeLayout>
+        <!--        分割线-->
+        <!--        <ImageView-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="1dp"-->
+        <!--            android:background="@color/divider" />-->
+
+
+
+
+        <RelativeLayout
+            android:id="@+id/rl_admin_home_password"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="@dimen/margin"
+            android:background="@drawable/home_select_bg"
+            android:paddingLeft="@dimen/padding_xxl">
+
+            <ImageView
+                android:id="@+id/iv_admin_home_password"
+                android:layout_width="@dimen/layoutWeight_s"
+                android:layout_height="@dimen/layoutWeight_s"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/margin_xl"
+                android:src="@drawable/ic_pwd" />
+
+            <TextView
+                android:id="@+id/admin_tv_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/iv_admin_home_password"
+                android:text="修改密码"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"
+                android:typeface="serif" />
+
+            <ImageView
+                android:layout_width="@dimen/layoutWeight_xs"
+                android:layout_height="@dimen/layoutWeight_xs"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/margin_xxl"
+                android:src="@drawable/ic_back" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</ScrollView>
