@@ -7,13 +7,40 @@
     android:background="@color/background">
 
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_admin_recruit_release"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:textAlignment="center"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:maxLines="1"
+                android:text="发布课程"
+                android:textColor="@color/white"
+                android:textSize="@dimen/fontSize_l" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
     <!--发布信息表单-->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/admin_course_release"
+            android:id="@+id/ll_admin_recruit_release"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -28,42 +55,58 @@
                 android:layout_marginTop="@dimen/margin">
 
 
+                <!--                <com.rengwuxian.materialedittext.MaterialEditText-->
+                <!--                    android:id="@+id/et_recruit_school"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginHorizontal="@dimen/margin_s"-->
+                <!--                    android:hint="所在学校"-->
+                <!--                    app:met_iconLeft="@drawable/ic_school"-->
+                <!--                    app:met_baseColor="@color/darkBlue"-->
+                <!--                    app:met_primaryColor="@color/darkBlue"-->
+                <!--                    app:met_textColor="@color/black"-->
+                <!--                    android:textSize="@dimen/fontSize_s"-->
+                <!--                    android:maxLines="1"/>-->
+
                 <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/et_course_school"
+                    android:id="@+id/et_admin_school"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_s"
                     android:layout_marginHorizontal="@dimen/margin_s"
-                    android:hint="学校"
-                    app:met_iconLeft="@drawable/ic_school"
-                    app:met_baseColor="@color/darkBlue"
-                    app:met_primaryColor="@color/darkBlue"
-                    app:met_textColor="@color/black"
+                    android:editable="false"
+                    android:hint="发布面向学校及学科"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    app:met_floatingLabel="highlight"
+                    app:met_floatingLabelText="学校及学科"
+                    app:met_floatingLabelTextSize="@dimen/fontSize_xs"
                     android:textSize="@dimen/fontSize_s"
-                    android:maxLines="1"/>
+                    app:met_iconLeft="@drawable/ic_school" />
 
             </FrameLayout>
 
             <!--组队学科-->
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin"
-                android:background="@color/white">
+            <!--            <FrameLayout-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginTop="@dimen/margin"-->
+            <!--                android:background="@color/white">-->
 
-                <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/et_course_subject"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="学院"
-                    android:textSize="@dimen/fontSize_s"
-                    android:layout_marginHorizontal="@dimen/margin_s"
-                    app:met_iconLeft="@drawable/ic_subject"
-                    app:met_baseColor="@color/darkBlue"
-                    app:met_primaryColor="@color/darkBlue"
-                    app:met_textColor="@color/black"
-                    android:maxLines="1"/>
+            <!--                <com.rengwuxian.materialedittext.MaterialEditText-->
+            <!--                    android:id="@+id/et_recruit_subject"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:hint="所属学科"-->
+            <!--                    android:textSize="@dimen/fontSize_s"-->
+            <!--                    android:layout_marginHorizontal="@dimen/margin_s"-->
+            <!--                    app:met_iconLeft="@drawable/ic_subject"-->
+            <!--                    app:met_baseColor="@color/darkBlue"-->
+            <!--                    app:met_primaryColor="@color/darkBlue"-->
+            <!--                    app:met_textColor="@color/black"-->
+            <!--                    android:maxLines="1"/>-->
 
-            </FrameLayout>
+            <!--            </FrameLayout>-->
 
             <!--组队信息标题-->
             <FrameLayout
@@ -73,16 +116,16 @@
                 android:background="@color/white">
 
                 <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/et_course_title"
+                    android:id="@+id/et_admin_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/fontSize_s"
                     android:hint="课程名"
                     android:layout_marginHorizontal="@dimen/margin_s"
                     app:met_iconLeft="@drawable/ic_title"
-                    app:met_baseColor="@color/darkBlue"
-                    app:met_primaryColor="@color/darkBlue"
+                    app:met_primaryColor="@color/blue"
                     app:met_textColor="@color/black"
+                    android:padding="@dimen/padding_s"
                     android:maxLines="1"/>
 
             </FrameLayout>
@@ -95,16 +138,16 @@
                 android:background="@color/white">
 
                 <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/et_course_teacher"
+                    android:id="@+id/et_admin_teacher"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/fontSize_s"
-                    android:hint="课程教师"
+                    android:hint="教师名"
                     android:layout_marginHorizontal="@dimen/margin_s"
-                    app:met_iconLeft="@drawable/recruit_ed"
-                    app:met_baseColor="@color/darkBlue"
-                    app:met_primaryColor="@color/darkBlue"
+                    app:met_iconLeft="@drawable/ic_phone"
+                    app:met_primaryColor="@color/blue"
                     app:met_textColor="@color/black"
+                    android:padding="@dimen/padding_s"
                     android:maxLines="1"/>
 
             </FrameLayout>
@@ -119,7 +162,7 @@
                 android:layout_marginTop="@dimen/margin">
 
                 <fj.edittextcount.lib.FJEditTextCount
-                    android:id="@+id/et_course_description"
+                    android:id="@+id/et_admin_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:met_iconLeft="@drawable/ic_require"
@@ -143,7 +186,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@color/white"
-                android:layout_marginTop="@dimen/margin">
+                android:layout_marginTop="@dimen/margin"
+                android:paddingBottom="@dimen/padding">
 
 
                 <LinearLayout
@@ -183,7 +227,7 @@
                     android:layout_marginTop="@dimen/margin">
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_course_picture"
+                        android:id="@+id/rv_admin_picture"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
@@ -198,24 +242,24 @@
 
 
             <!--提交按钮-->
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:layout_gravity="center">
+            <!--            <FrameLayout-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_margin="@dimen/margin"-->
+            <!--                android:layout_gravity="center">-->
 
-                <Button
-                    android:id="@+id/btn_course_submit"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/margin_s"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="发布"
-                    android:textSize="@dimen/fontSize_s"
-                    android:textColor="@color/white"
-                    android:background="@drawable/btn_selector"/>
+            <!--                <Button-->
+            <!--                    android:id="@+id/btn_recruit_submit"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:layout_margin="@dimen/margin_s"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:text="发布"-->
+            <!--                    android:textSize="@dimen/fontSize_s"-->
+            <!--                    android:textColor="@color/white"-->
+            <!--                    android:background="@drawable/btn_selector"/>-->
 
-            </FrameLayout>
+            <!--            </FrameLayout>-->
 
         </LinearLayout>
 
