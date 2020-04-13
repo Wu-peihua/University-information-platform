@@ -59,7 +59,7 @@
                 app:met_iconLeft="@drawable/home" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/met_cu_addRes_head"
+                android:id="@+id/met_cu_addRes_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
@@ -84,7 +84,7 @@
                 app:met_iconLeft="@drawable/comment" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/met_cu_addRes_address"
+                android:id="@+id/met_cu_addRes_link"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"

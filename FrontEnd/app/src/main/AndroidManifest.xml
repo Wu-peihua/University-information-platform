@@ -14,6 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
+        <activity android:name=".CommonUser.Activity.CommonUserMyReleaseActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".CommonUser.Activity.AddResActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>

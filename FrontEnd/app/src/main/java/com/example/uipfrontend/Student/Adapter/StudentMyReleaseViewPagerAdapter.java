@@ -1,20 +1,13 @@
 package com.example.uipfrontend.Student.Adapter;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.uipfrontend.CommonUser.Fragment.ForumFragment;
-import com.example.uipfrontend.CommonUser.Fragment.ResourceFragment;
-import com.example.uipfrontend.Student.Fragment.StudentCommentFragment;
-import com.example.uipfrontend.Student.Fragment.StudentForumFragment;
-import com.example.uipfrontend.Student.Fragment.StudentHomeFragment;
+import com.example.uipfrontend.CommonUser.Fragment.MyReleaseForumFragment;
+import com.example.uipfrontend.CommonUser.Fragment.MyReleaseResFragment;
 import com.example.uipfrontend.Student.Fragment.StudentMyReleaseCourseFragment;
-import com.example.uipfrontend.Student.Fragment.StudentMyReleaseForumFragment;
 import com.example.uipfrontend.Student.Fragment.StudentMyReleaseRecruitFragment;
-import com.example.uipfrontend.Student.Fragment.StudentMyReleaseResFragment;
-import com.example.uipfrontend.Student.Fragment.StudentRecruitFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +25,7 @@ public class StudentMyReleaseViewPagerAdapter extends FragmentPagerAdapter {
 
 //    public StudentMyReleaseViewPagerAdapter(FragmentManager mFragmentManager, ArrayList<Fragment> fragmentList) {
 //        super(mFragmentManager);
-//        mFragmentList = fragmentList;
+//        this.fragmentList = fragmentList;
 //    }
 //
 //    public StudentMyReleaseViewPagerAdapter(FragmentManager mFragmentManager) {
@@ -50,8 +43,8 @@ public class StudentMyReleaseViewPagerAdapter extends FragmentPagerAdapter {
         this.titles = titles;
 
         fragmentList = new ArrayList<>();
-        fragmentList.add(0, new StudentMyReleaseForumFragment());
-        fragmentList.add(1, new StudentMyReleaseResFragment());
+        fragmentList.add(0, new MyReleaseForumFragment());
+        fragmentList.add(1, new MyReleaseResFragment());
         fragmentList.add(2, new StudentMyReleaseRecruitFragment());
         fragmentList.add(3, new StudentMyReleaseCourseFragment());
 

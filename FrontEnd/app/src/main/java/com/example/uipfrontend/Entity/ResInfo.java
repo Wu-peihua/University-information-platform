@@ -4,18 +4,22 @@ import java.io.Serializable;
 
 public class ResInfo implements Serializable {
     //用整数代表类型
-    private int type1;
-    private int type2;
-    private String portraitUri;
-    private String username;
-    private String title;
-    private String description;
-    private String link;
-    private String time;
-    private int likeNum;
+    private int     type1;
+    private int     type2;
+    private String  portraitUri;
+    private String  username;
+    private String  title;
+    private String  description;
+    private String  link;
+    private String  time;
+    private int     likeNum;
+    private boolean isAnonymous;
 
-    public ResInfo(int type1, int type2, String portraitUri, String username,
-                   String title, String description, String link, String time, int likeNum) {
+    public ResInfo() {
+    }
+
+    public ResInfo(int type1, int type2, String portraitUri, String username, String title,
+                   String description, String link, String time, int likeNum, boolean isAnonymous) {
         this.type1 = type1;
         this.type2 = type2;
         this.portraitUri = portraitUri;
@@ -25,6 +29,7 @@ public class ResInfo implements Serializable {
         this.link = link;
         this.time = time;
         this.likeNum = likeNum;
+        this.isAnonymous = isAnonymous;
     }
 
     public int getType1() {
@@ -63,6 +68,10 @@ public class ResInfo implements Serializable {
         return likeNum;
     }
 
+    public boolean isAnonymous() {
+        return isAnonymous;
+    }
+
     public void setType1(int type1) {
         this.type1 = type1;
     }
@@ -97,5 +106,9 @@ public class ResInfo implements Serializable {
 
     public void setLikeNum(int likeNum) {
         this.likeNum = likeNum;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        isAnonymous = anonymous;
     }
 }

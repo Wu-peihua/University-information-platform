@@ -9,7 +9,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/ll_cu_resItem"
+        android:id="@+id/ll_mr_resItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -18,7 +18,7 @@
         android:paddingRight="20dp">
 
         <com.lzy.widget.CircleImageView
-            android:id="@+id/iv_cu_resItem_portrait"
+            android:id="@+id/iv_mr_resItem_portrait"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/portrait_default"
@@ -31,7 +31,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_cu_resItem_title"
+                android:id="@+id/tv_mr_resItem_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
@@ -41,7 +41,7 @@
                 android:textSize="@dimen/fontSize_s" />
 
             <TextView
-                android:id="@+id/tv_cu_resItem_username"
+                android:id="@+id/tv_mr_resItem_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
@@ -65,7 +65,7 @@
                     android:textSize="@dimen/fontSize_s" />
 
                 <TextView
-                    android:id="@+id/tv_cu_resItem_link"
+                    android:id="@+id/tv_mr_resItem_link"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:autoLink="web"
@@ -77,7 +77,7 @@
             </LinearLayout>
 
             <com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView
-                android:id="@+id/etv_cu_resItem_description"
+                android:id="@+id/etv_mr_resItem_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:animDuration="150"
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/tv_cu_resItem_time"
+                    android:id="@+id/tv_mr_resItem_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -104,13 +104,38 @@
                     android:text="2020-02-02 00:00"
                     android:textSize="10sp" />
 
-                <com.sunbinqiang.iconcountview.IconCountView
-                    android:id="@+id/icv_cu_resItem_like"
+                <TextView
+                    android:id="@+id/tv_mr_resItem_delete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:layout_toLeftOf="@+id/iv_cu_resItem_report"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@id/tv_mr_resItem_time"
+                    android:background="@drawable/textview_selector"
+                    android:gravity="center"
+                    android:text="删除"
+                    android:textColor="@color/blue"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_mr_resItem_modify"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/tv_mr_resItem_delete"
+                    android:background="@drawable/textview_selector"
+                    android:gravity="center"
+                    android:text="修改"
+                    android:textColor="@color/blue"
+                    android:textSize="13sp" />
+
+                <com.sunbinqiang.iconcountview.IconCountView
+                    android:id="@+id/icv_mr_resItem_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
                     android:paddingBottom="2.5dp"
                     app:checked="false"
                     app:count="0"
@@ -120,15 +145,6 @@
                     app:textSelectedColor="#FF0000"
                     app:textSize="12sp" />
 
-                <ImageView
-                    android:id="@+id/iv_cu_resItem_report"
-                    android:layout_width="@dimen/layoutWeight_s"
-                    android:layout_height="@dimen/layoutHeight_s"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="5dp"
-                    android:src="@drawable/report" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

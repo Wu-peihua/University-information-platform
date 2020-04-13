@@ -119,12 +119,21 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             }
 
-            Glide.with(context).load(resInfo.getPortraitUri())
-                    .placeholder(R.drawable.portrait_default)
-                    .error(R.drawable.portrait_default)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(resInfoViewHolder.iv_portrait);
-            resInfoViewHolder.tv_username.setText(resInfo.getUsername());
+            if (resInfo.isAnonymous()) {
+                Glide.with(context).load("")
+                        .placeholder(R.drawable.portrait_default)
+                        .error(R.drawable.portrait_default)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(resInfoViewHolder.iv_portrait);
+                resInfoViewHolder.tv_username.setText("匿名者");
+            } else {
+                Glide.with(context).load(resInfo.getPortraitUri())
+                        .placeholder(R.drawable.portrait_default)
+                        .error(R.drawable.portrait_default)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(resInfoViewHolder.iv_portrait);
+                resInfoViewHolder.tv_username.setText(resInfo.getUsername());
+            }
             if (resInfo.getDescription() == null || resInfo.getDescription().trim().length() == 0)
                 resInfoViewHolder.etv_description.setContentText("(暂无相关描述信息)");
             else

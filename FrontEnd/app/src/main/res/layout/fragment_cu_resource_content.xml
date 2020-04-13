@@ -59,7 +59,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/ll_cu_res"
         android:clipChildren="false"
-        android:clipToPadding="false"></com.jcodecraeer.xrecyclerview.XRecyclerView>
+        android:clipToPadding="false"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_cu_res"
@@ -67,8 +67,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="@dimen/margin_l"
-        android:layout_marginBottom="@dimen/margin_l"
+        android:layout_marginRight="38dp"
+        android:layout_marginBottom="50dp"
         android:backgroundTint="@color/blue"
         app:borderWidth="0dp"
         app:fabSize="mini"

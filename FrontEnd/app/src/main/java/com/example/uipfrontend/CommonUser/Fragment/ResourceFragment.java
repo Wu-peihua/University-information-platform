@@ -45,7 +45,7 @@ public class ResourceFragment extends Fragment {
     private List<ResInfo> whole;
 
     private DropDownMenu        dropDownMenu;
-    private ForegroundColorSpan blueSpan;
+    private ForegroundColorSpan span;
     private EditText            et_search;
     private ImageView           iv_delete;
 
@@ -66,7 +66,7 @@ public class ResourceFragment extends Fragment {
 
             initDropDownMenu();
             initData();
-            initRecyclerView();
+            initXRecyclerView();
             setSearch();
             initFab();
         }
@@ -114,37 +114,24 @@ public class ResourceFragment extends Fragment {
         posts = new ArrayList<>();
         whole = new ArrayList<>();
 
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
-                "支付宝破解版", "清明前后，种瓜种豆。当然，那都是为漫长夏日的怎样过活做准备的，儿时生在乡下的人，这些话" +
-                "多半还是有些耳熟的。一般的话，清明过后是一日热胜一日，偶尔会有个不应时的桃花暮春雪，也是个稀少的意外，大多这个时候，" +
+        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg",
+                "张咩阿", "支付宝破解版", "清明前后，种瓜种豆。当然，那都是为漫长夏日的怎样过活做准备的，儿时生在乡下的人，" +
+                "这些话多半还是有些耳熟的。一般的话，清明过后是一日热胜一日，偶尔会有个不应时的桃花暮春雪，也是个稀少的意外，大多这个时候，" +
                 "植物随着气候变化也即将转换着面目，即便是在城里，也能掐算着哪个时候能见上什么。踏春的时尚，之外哪能少的了吃货们的小算计呢。",
-                "www.baidu.com", "2020-02-02 00:00", 100));
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
-                "支付宝破解版", null, "www.baidu.com", "2020-02-02 00:00", 0));
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
-                "支付宝破解版", "小朋友你是否有很多问号", "www.baidu.com", "2020-02-02 00:00", 0));
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
-                "支付宝破解版", "小朋友你是否有很多问号", "www.baidu.com", "2020-02-02 00:00", 0));
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
-                "支付宝破解版", "小朋友你是否有很多问号", "www.baidu.com", "2020-02-02 00:00", 0));
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
-                "支付宝破解版", "清明前后，种瓜种豆。当然，那都是为漫长夏日的怎样过活做准备的，儿时生在乡下的人，这些话" +
-                "多半还是有些耳熟的。一般的话，清明过后是一日热胜一日，偶尔会有个不应时的桃花暮春雪，也是个稀少的意外，大多这个时候，" +
+                "www.baidu.com", "2020-02-02 00:00", 100, true));
+        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg",
+                "张咩阿", "支付宝破解版", "清明前后，种瓜种豆。当然，那都是为漫长夏日的怎样过活做准备的，儿时生在乡下的人，" +
+                "这些话多半还是有些耳熟的。一般的话，清明过后是一日热胜一日，偶尔会有个不应时的桃花暮春雪，也是个稀少的意外，大多这个时候，" +
                 "植物随着气候变化也即将转换着面目，即便是在城里，也能掐算着哪个时候能见上什么。踏春的时尚，之外哪能少的了吃货们的小算计呢。",
-                "www.baidu.com", "2020-02-02 00:00", 100));
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
-                "支付宝破解版", null, "www.baidu.com", "2020-02-02 00:00", 0));
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
-                "支付宝破解版", "小朋友你是否有很多问号", "www.baidu.com", "2020-02-02 00:00", 0));
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
-                "支付宝破解版", "小朋友你是否有很多问号", "www.baidu.com", "2020-02-02 00:00", 0));
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg", "张咩阿",
-                "支付宝破解版", "小朋友你是否有很多问号", "www.baidu.com", "2020-02-02 00:00", 0));
+                "www.baidu.com", "2020-02-02 00:00", 100, false));
+        for (int i = 0; i < 10; i++)
+            posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg",
+                    "张咩阿", "支付宝破解版", null, "www.baidu.com", "2020-02-02 00:00", 0, false));
 
         whole.addAll(posts);
     }
 
-    private void initRecyclerView() {
+    private void initXRecyclerView() {
         xRecyclerView = rootContentView.findViewById(R.id.rv_cu_res);
 
         resInfoAdapter = new ResInfoAdapter(posts, rootContentView.getContext());
@@ -188,7 +175,7 @@ public class ResourceFragment extends Fragment {
     }
 
     private void setSearch() {
-        blueSpan = new ForegroundColorSpan(Color.rgb(255, 0, 0));
+        span = new ForegroundColorSpan(Color.rgb(255, 0, 0));
         et_search = rootContentView.findViewById(R.id.edt_cu_res_search);
         iv_delete = rootContentView.findViewById(R.id.imgv_cu_res_delete);
 
@@ -227,7 +214,7 @@ public class ResourceFragment extends Fragment {
                     posts.add(whole.get(i));
                 }
             }
-            resInfoAdapter.setText(text, blueSpan);
+            resInfoAdapter.setText(text, span);
         }
         resInfoAdapter.notifyDataSetChanged();
         xRecyclerView.scheduleLayoutAnimation();

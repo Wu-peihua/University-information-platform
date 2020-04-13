@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -36,18 +38,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-public class AddResActivity extends AppCompatActivity {
+public class AddResActivity extends AppCompatActivity implements View.OnTouchListener{
 
     private OptionsPickerView pvNoLinkOptions;
-    private MaterialEditText met_type;
-    private MaterialEditText met_head;
-    private MaterialEditText met_desc;
-    private MaterialEditText met_address;
-    private CheckBox checkBox;
+    private MaterialEditText  met_type;
+    private MaterialEditText  met_title;
+    private MaterialEditText  met_desc;
+    private MaterialEditText  met_link;
+    private CheckBox          checkBox;
 
-    private int type1;
-    private int type2;
+    private int     type1;
+    private int     type2;
+    private String  portraitUri;
+    private String  username;
+    private String  title;
+    private String  desc;
+    private String  link;
+    private String  time;
+    private int     likeNum;
+    private boolean isAnonymous;
 
+    String[] option1 = {"全部", "哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学", "艺术学"};
+    String[] option2 = {"全部", "论文、报告", "试题", "电子书", "视频课程", "其他"};
     //url的正则表达式
     private String regex = "^(?=^.{3,255}$)(http(s)?:\\/\\/)?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}" +
             "(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\\d+)*(\\/\\w+\\.\\w+)*([\\?&]\\w+=\\w*)*$";
@@ -79,19 +91,45 @@ public class AddResActivity extends AppCompatActivity {
     }
 
     public void initView() {
-        met_type    = findViewById(R.id.met_cu_addRes_type);
-        met_head    = findViewById(R.id.met_cu_addRes_head);
-        met_desc    = findViewById(R.id.met_cu_addRes_desc);
-        met_address = findViewById(R.id.met_cu_addRes_address);
-        checkBox    = findViewById(R.id.cb_cu_addRes);
+        met_type = findViewById(R.id.met_cu_addRes_type);
+        met_title = findViewById(R.id.met_cu_addRes_title);
+        met_desc = findViewById(R.id.met_cu_addRes_desc);
+        met_desc.setOnTouchListener(this);
+        met_link = findViewById(R.id.met_cu_addRes_link);
+        checkBox = findViewById(R.id.cb_cu_addRes);
+        initData();
+    }
+
+    public void initData() {
+        type1 = type2 = 0;
+        portraitUri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
+        username = "张咩阿";
+        likeNum = 0;
+        Intent intent = getIntent();
+        ResInfo acceptData = (ResInfo) intent.getSerializableExtra("resInfo");
+        if (acceptData != null) {
+            type1 = acceptData.getType1();
+            type2 = acceptData.getType2();
+            portraitUri = acceptData.getPortraitUri();
+            username = acceptData.getUsername();
+            title = acceptData.getTitle();
+            desc = acceptData.getDescription();
+            link = acceptData.getLink();
+            time = acceptData.getTime();
+            likeNum = acceptData.getLikeNum();
+            isAnonymous = acceptData.isAnonymous();
+
+            met_type.setText(option1[type1] + "-" + option2[type2]);
+            met_title.setText(title);
+            met_desc.setText(desc);
+            met_link.setText(link);
+            checkBox.setChecked(isAnonymous);
+        }
     }
 
     //不联动的多级选项
     @SuppressLint("ClickableViewAccessibility")
     private void initNoLinkOptionsPicker() {
-        String[] option1 = {"全部", "哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学", "艺术学"};
-        String[] option2 = {"全部", "论文、报告", "试题", "电子书", "视频课程", "其他"};
-
         pvNoLinkOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
 
             @Override
@@ -107,7 +145,7 @@ public class AddResActivity extends AppCompatActivity {
                     public void onOptionsSelectChanged(int options1, int options2, int options3) {
                     }
                 })
-                .setSelectOptions(0, 0)
+                .setSelectOptions(type1, type2)
                 .isRestoreItem(false)
                 .setSubmitColor(getResources().getColor(R.color.blue))
                 .setCancelColor(getResources().getColor(R.color.blue))
@@ -133,7 +171,7 @@ public class AddResActivity extends AppCompatActivity {
     }
 
     public void testAddress() {
-        met_address.addTextChangedListener(new TextWatcher() {
+        met_link.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -145,10 +183,10 @@ public class AddResActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 //利用正则表达式检测地址是否合法
-                if (s.toString().length() != 0 && !met_address.validate(regex, "请输入正确的地址"))
-                    met_address.setPrimaryColor(Color.parseColor("#E74C31"));
+                if (s.toString().length() != 0 && !met_link.validate(regex, "请输入正确的地址"))
+                    met_link.setPrimaryColor(Color.parseColor("#E74C31"));
                 else
-                    met_address.setPrimaryColor(getResources().getColor(R.color.blue));
+                    met_link.setPrimaryColor(getResources().getColor(R.color.blue));
             }
         });
     }
@@ -176,11 +214,11 @@ public class AddResActivity extends AppCompatActivity {
                     met_type.requestFocus();
                     hideSystemKeyboard(AddResActivity.this, met_type);
                     Toast.makeText(this, "请选择资源的类型！", Toast.LENGTH_SHORT).show();
-                } else if (TextUtils.isEmpty(met_head.getText().toString().trim())) {
-                    met_head.requestFocus();
+                } else if (TextUtils.isEmpty(met_title.getText().toString().trim())) {
+                    met_title.requestFocus();
                     Toast.makeText(this, "请输入资源的标题！", Toast.LENGTH_SHORT).show();
-                } else if (!met_address.isValid(regex)) {
-                    met_address.requestFocus();
+                } else if (!met_link.isValid(regex)) {
+                    met_link.requestFocus();
                     Toast.makeText(this, "请输入正确的地址！", Toast.LENGTH_SHORT).show();
                 } else {
                     DialogInterface.OnClickListener dialog_OL = new DialogInterface.OnClickListener() {
@@ -190,28 +228,24 @@ public class AddResActivity extends AppCompatActivity {
                                 //确定
                                 case -1:
                                     Intent intent = new Intent();
-                                    String portraitUri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
-                                    String username = "张咩阿";
-                                    String head = met_head.getText().toString().trim();
-                                    String desc = met_desc.getText().toString().trim();
-                                    String address = met_address.getText().toString();
-                                    //时间
-                                    String strTime;
+
+                                    title = met_title.getText().toString().trim();
+                                    desc = met_desc.getText().toString().trim();
+                                    link = met_link.getText().toString();
+
                                     long longTime = System.currentTimeMillis();
                                     Date date = new Date(longTime);
                                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
-                                    strTime = format.format(date);
+                                    time = format.format(date);
 
-                                    if (checkBox.isChecked())
-                                        intent.putExtra("resInfo", new ResInfo(type1, type2, "", "匿名者",
-                                                head, desc, address, strTime, 0));
-                                    else
-                                        intent.putExtra("resInfo", new ResInfo(type1, type2, portraitUri, username,
-                                                head, desc, address, strTime, 0));
+                                    isAnonymous = checkBox.isChecked();
+
+                                    intent.putExtra("resInfo", new ResInfo(type1, type2, portraitUri, username,
+                                            title, desc, link, time, likeNum, isAnonymous));
 
                                     setResult(1, intent);
                                     Toast.makeText(AddResActivity.this, "资源发布成功", Toast.LENGTH_SHORT).show();
-
+                                    hideSystemKeyboard(AddResActivity.this, met_type);
                                     AddResActivity.this.finish();
                                     break;
                                 //取消
@@ -227,7 +261,7 @@ public class AddResActivity extends AppCompatActivity {
                     };
                     AlertDialog dialog = new AlertDialog.Builder(AddResActivity.this)
                             .setTitle("提示")
-                            .setMessage("是否确认发布该资源？")
+                            .setMessage("是否确定发布该资源？")
                             .setPositiveButton("确定", dialog_OL)
                             .setNegativeButton("取消", dialog_OL)
                             .setCancelable(false)
@@ -238,5 +272,18 @@ public class AddResActivity extends AppCompatActivity {
                 }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        //触摸的是EditText并且当前EditText可以滚动则将事件交给EditText处理，否则将事件交由父视图处理
+//        if ((view.getId() == R.id.met_cu_addRes_desc && met_desc.canScrollVertically(1))) {
+//            //EditText处理滚动事件
+//            view.getParent().requestDisallowInterceptTouchEvent(true);
+//            if (motionEvent.getAction() == MotionEvent.ACTION_UP)
+//                //父视图处理滚动事件
+//                view.getParent().requestDisallowInterceptTouchEvent(false);
+//        }
+        return false;
     }
 }
