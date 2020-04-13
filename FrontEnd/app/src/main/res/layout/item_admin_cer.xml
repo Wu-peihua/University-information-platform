@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/padding"
+        android:paddingLeft="@dimen/padding_l"
+        android:paddingRight="@dimen/padding_xl"
+        android:paddingTop="@dimen/padding_l">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/admin_student_picture"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/portrait_default" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/admin_student_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="王大明"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"/>
+            <TextView
+                android:id="@+id/admin_student_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="20172141154"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"/>
+            <TextView
+                android:id="@+id/admin_student_school"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="华南师范大学"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"/>
+            <TextView
+                android:id="@+id/admin_student_college"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="计算机学院"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"/>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/admin_student_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:text="2020-3-26 12:30"
+                    android:textColor="@color/item_time"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+
+                <info.hoang8f.widget.FButton
+                    android:id="@+id/admin_btn_pass_cer"
+                    android:layout_margin="@dimen/margin_s"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:text="通过"
+                    android:layout_toLeftOf="@id/admin_btn_unpass_cer"
+                    android:textColor="@color/white"
+                    fbutton:fButtonColor="@color/colorPrimary"
+                    fbutton:shadowEnabled="true"
+                    fbutton:shadowHeight="0dp"
+                    fbutton:cornerRadius="7dp"
+                    />
+                <info.hoang8f.widget.FButton
+                    android:id="@+id/admin_btn_unpass_cer"
+                    android:layout_margin="@dimen/margin_s"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+
+                    android:layout_alignParentRight="true"
+                    android:text="不通过"
+                    android:textSize="12sp"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/white"
+                    fbutton:fButtonColor="@color/colorPrimary"
+                    fbutton:shadowEnabled="true"
+                    fbutton:shadowHeight="0dp"
+                    fbutton:cornerRadius="7dp"
+                    />
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGray"/>
+
+</LinearLayout>
