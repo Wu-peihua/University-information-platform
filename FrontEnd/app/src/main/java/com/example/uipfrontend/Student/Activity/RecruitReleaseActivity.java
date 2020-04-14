@@ -26,6 +26,7 @@ import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.example.uipfrontend.CommonUser.Activity.AddResActivity;
+import com.example.uipfrontend.Entity.RecruitInfo;
 import com.example.uipfrontend.Entity.ResInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.GridImageAdapter;
@@ -79,6 +80,9 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     //组队信息描述
     private FJEditTextCount description;
 
+    private String[] option1 = {"全部", "华南师范大学", "华南理工大学", "中山大学", "暨南大学", "华南农业大学", "广州大学"};
+    private String[] option2 = {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"};
+
 
 
 
@@ -95,6 +99,8 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         initToolBar();
         initRecyclerView();
         initView();
+
+        initData();
 
         initNoLinkOptionsPicker();
 
@@ -251,8 +257,7 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     //不联动的多级选项
     @SuppressLint("ClickableViewAccessibility")
     private void initNoLinkOptionsPicker() {
-        String[] option1 = {"全部", "华南师范大学", "华南理工大学", "中山大学", "暨南大学", "华南农业大学", "广州大学"};
-        String[] option2 = {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"};
+
 
         pvNoLinkOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
 
@@ -450,6 +455,20 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         }
     }
 
+
+    public void initData() {
+
+        Intent intent = getIntent();
+        RecruitInfo recruitInfo = (RecruitInfo) intent.getSerializableExtra("recruitInfo");
+        if (recruitInfo != null) {
+
+            school.setText(option1[recruitInfo.getType1()] + "-" + option2[recruitInfo.getType2()]);
+            title.setText(recruitInfo.getTitle());
+            contact.setText(recruitInfo.getContact());
+            description.setText(recruitInfo.getContent());
+
+        }
+    }
 
 
 

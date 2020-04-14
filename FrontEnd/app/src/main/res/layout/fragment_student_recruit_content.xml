@@ -11,8 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
-    android:clipToPadding="false"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:clipToPadding="false">
     </com.jcodecraeer.xrecyclerview.XRecyclerView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -26,7 +25,7 @@
         android:backgroundTint="@color/blue"
         app:borderWidth="0dp"
         app:fabSize="mini"
-        app:maxImageSize="40dp"
+        app:maxImageSize="30dp"
         app:rippleColor="@color/darkBlue"
         app:srcCompat="@drawable/ic_add" />
 

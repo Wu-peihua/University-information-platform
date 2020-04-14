@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/padding"
+        android:paddingLeft="@dimen/padding_l"
+        android:paddingRight="@dimen/padding_xl"
+        android:paddingTop="@dimen/padding_l">
+
+        <com.lzy.widget.CircleImageView
+            android:id="@+id/iv_studentReleaseRecruitPortrait"
+            android:layout_width="@dimen/layoutWidth"
+            android:layout_height="@dimen/layoutHeight"
+            android:src="@drawable/portrait_default"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_studentReleaseRecruitTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="组队标题"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"/>
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_studentReleaseRecruitName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/layoutHeight_s"
+                    android:layout_marginBottom="@dimen/margin_s"
+                    android:layout_marginTop="@dimen/margin_s"
+                    android:layout_weight="1"
+                    android:text="发布人"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/darkGray"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+                <TextView
+                    android:id="@+id/tv_studentReleaseRecruitContact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/layoutHeight_s"
+                    android:layout_marginBottom="@dimen/margin_s"
+                    android:layout_marginTop="@dimen/margin_s"
+                    android:layout_marginLeft="@dimen/margin_xl"
+                    android:layout_toRightOf="@id/tv_studentReleaseRecruitName"
+                    android:text="联系方式"
+                    android:textColor="@color/darkGray"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/tv_studentReleaseRecruitContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
+                android:textColor="@color/item_text"
+                android:textSize="@dimen/fontSize_s"/>
+
+            <com.lzy.ninegrid.NineGridView
+                android:id="@+id/nineGrid_studentReleaseRecruitPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/padding_s"
+                android:paddingTop="@dimen/padding_s"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_studentReleaseRecruitDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin"
+                    android:text="2020-3-26 12:30"
+                    android:textColor="@color/item_time"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+                 <TextView
+                android:id="@+id/tv_studentReleaseRecruitDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_xl"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_toRightOf="@id/tv_studentReleaseRecruitDate"
+                android:text="删除"
+                android:textColor="@color/item_delete"
+                android:textSize="@dimen/fontSize_xs"/>
+
+                <TextView
+                    android:id="@+id/tv_studentReleaseRecruitModify"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_xl"
+                    android:layout_marginTop="@dimen/margin"
+                    android:layout_toRightOf="@id/tv_studentReleaseRecruitDelete"
+                    android:text="修改"
+                    android:textColor="@color/item_delete"
+                    android:textSize="@dimen/fontSize_xs"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGray"/>
+
+</LinearLayout>

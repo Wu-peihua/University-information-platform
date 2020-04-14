@@ -3,12 +3,16 @@ package com.example.uipfrontend.Entity;
 
 import android.content.Intent;
 
+import com.luck.picture.lib.entity.LocalMedia;
+
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /****
  * 组队信息类
  */
-public class RecruitInfo {
+public class RecruitInfo implements Serializable {
     public Integer getInfoId() {
         return infoId;
     }
@@ -89,6 +93,38 @@ public class RecruitInfo {
         this.contact = contact;
     }
 
+    public int getType1() {
+        return type1;
+    }
+
+    public void setType1(int type1) {
+        this.type1 = type1;
+    }
+
+    public int getType2() {
+        return type2;
+    }
+
+    public void setType2(int type2) {
+        this.type2 = type2;
+    }
+
+
+    public  RecruitInfo(Integer infoId,String title,String contact,String content,Date infoDate,String userName,String portrait,String pictures,Integer type1,Integer type2){
+        this.infoId = infoId;
+        this.title = title;
+        this.contact = contact;
+        this.content = content;
+        this.infoDate = infoDate;
+        this.userName = userName;
+        this.portrait = portrait;
+        this.pictures = pictures;
+        this.type1 = type1;
+        this.type2 = type2;
+    }
+    {
+
+    }
 
     @Override
     public String toString(){
@@ -116,7 +152,10 @@ public class RecruitInfo {
     private Integer universityId;
     //发布者联系方式
     private String contact;
-
+    //学校选择id
+    private Integer type1;
+    //学科选择id
+    private Integer type2;
 
 
 

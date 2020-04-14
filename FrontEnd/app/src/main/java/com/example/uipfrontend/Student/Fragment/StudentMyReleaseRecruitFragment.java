@@ -1,21 +1,30 @@
 package com.example.uipfrontend.Student.Fragment;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.uipfrontend.CommonUser.Activity.AddResActivity;
+import com.example.uipfrontend.CommonUser.Adapter.MyReleaseResInfoAdapter;
+import com.example.uipfrontend.Entity.RecruitInfo;
 import com.example.uipfrontend.R;
-import com.example.uipfrontend.Student.Adapter.StudentMyReleaseRecruitRecyclerAdapter;
+import com.example.uipfrontend.Student.Activity.RecruitReleaseActivity;
+import com.example.uipfrontend.Student.Adapter.StudentMyReleaseRecruitRecyclerViewAdapter;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
+import java.util.List;
 
 import butterknife.ButterKnife;
 
@@ -25,10 +34,8 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
 
     private XRecyclerView recyclerView;
 
-    private ArrayList<HashMap<String,Object>> listItem;
-    private StudentMyReleaseRecruitRecyclerAdapter myAdapter;
-
-    XRecyclerView xrv_studentReleaseRecruit;
+    private List<RecruitInfo> list;   //组队信息实体类数组
+    private StudentMyReleaseRecruitRecyclerViewAdapter studentRecruitRecyclerViewAdapter;
 
     @Nullable
     @Override
@@ -36,10 +43,10 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_my_release_recruit,null);
         ButterKnife.bind(this, rootView);
 
-        xrv_studentReleaseRecruit = rootView.findViewById(R.id.xrv_studentReleaseRecruit);
-
         init();
         initView();
+        getData();
+        initRecyclerView();
         return rootView;
     }
 
@@ -51,17 +58,33 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
     // 绑定数据到RecyclerView
     public void initView(){
 
+    }
 
-        recyclerView = (XRecyclerView) rootView.findViewById(R.id.xrv_studentReleaseRecruit);
-        //使用线性布局
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+    private void getData(){
+        list = new ArrayList<>();
+
+
+        list.add(new RecruitInfo(1,"互联网+创新创业招募队友","wx:alsdkjf","互联网找队友，人数：2，要求：经管学院，大三，积极有动力",new Date(2020,04,14),
+                "秋同学" ,"https://c-ssl.duitang.com/uploads/item/201511/21/20151121171107_zMZcy.thumb.1000_0.jpeg","",1,2));
+        list.add(new RecruitInfo(1,"互联网+创新创业招募队友","wx:alsdkjf","互联网找队友，人数：2，要求：经管学院，大三，积极有动力",new Date(2020,04,14),
+                "秋同学" ,"https://c-ssl.duitang.com/uploads/item/201511/21/20151121171107_zMZcy.thumb.1000_0.jpeg","",1,2));
+        list.add(new RecruitInfo(1,"互联网+创新创业招募队友","wx:alsdkjf","互联网找队友，人数：2，要求：经管学院，大三，积极有动力",new Date(2020,04,14),
+                "秋同学" ,"https://c-ssl.duitang.com/uploads/item/201511/21/20151121171107_zMZcy.thumb.1000_0.jpeg","",1,2));
+        list.add(new RecruitInfo(1,"互联网+创新创业招募队友","wx:alsdkjf","互联网找队友，人数：2，要求：经管学院，大三，积极有动力",new Date(2020,04,14),
+                "秋同学" ,"https://c-ssl.duitang.com/uploads/item/201511/21/20151121171107_zMZcy.thumb.1000_0.jpeg","",1,2));
+    }
+
+    public void initRecyclerView() {
+
+        recyclerView = rootView.findViewById(R.id.xrv_studentReleaseRecruit);
+
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        //为ListView绑定适配器
-        myAdapter = new StudentMyReleaseRecruitRecyclerAdapter(this.getContext(),listItem);
-        recyclerView.setAdapter(myAdapter);
-
+        studentRecruitRecyclerViewAdapter = new StudentMyReleaseRecruitRecyclerViewAdapter(this.getContext(), list);
+        recyclerView.setAdapter(studentRecruitRecyclerViewAdapter);
 
         recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
@@ -198,6 +221,55 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
             }
         });
 
+
+
+        studentRecruitRecyclerViewAdapter.setOnItemDeleteClickListener(new MyReleaseResInfoAdapter.OnItemDeleteClickListener() {
+            @Override
+            public void onDeleteClick(int position) {
+                AlertDialog dialog = new AlertDialog.Builder(rootView.getContext())
+                        .setTitle("提示")
+                        .setMessage("是否确定删除该记录？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                list.remove(position);
+                                studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
+                                Toast.makeText(rootView.getContext(), "记录删除成功", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .setCancelable(false)
+                        .create();
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+            }
+        });
+        studentRecruitRecyclerViewAdapter.setOnItemModifyClickListener(new MyReleaseResInfoAdapter.OnItemModifyClickListener() {
+            @Override
+            public void onModifyClick(int position) {
+                AlertDialog dialog = new AlertDialog.Builder(rootView.getContext())
+                        .setTitle("提示")
+                        .setMessage("修改后该组队信息将重新发布，是否确定修改？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(rootView.getContext(), RecruitReleaseActivity.class);
+                                intent.putExtra("recruitInfo", list.get(position));
+                                startActivityForResult(intent, 1);
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .setCancelable(false)
+                        .create();
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+            }
+        });
+
     }
+
+
 
 }

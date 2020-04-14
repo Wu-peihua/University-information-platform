@@ -52,7 +52,6 @@ public class StudentRecruitFragment extends Fragment {
     //测试下拉筛选控件选择值
     final String[] arr1=new String[]{"全部", "华南师范大学", "华南理工大学", "中山大学"};
     final String[] arr2=new String[]{"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"};
-    final String[] arr3=new String[]{"全部年龄","10","20","30","40","50","60","70"};
 
     final String[] strings=new String[]{"所属院校","所属专业","选择年龄"};
 
