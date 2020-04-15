@@ -88,6 +88,6 @@ public class Course implements Serializable {
     @Override
     public String toString(){
         return "CourseInfo[ courseId:" + courseID + ",courseName:" + courseName + ",imageUrl:" +imageUrl +  ",schoolId:" + schoolId+
-        "academyId:" + academyId+",description:" + description  + ",teacher:" + teacher  + ",score:" + score +"]";
+                "academyId:" + academyId+",description:" + description  + ",teacher:" + teacher  + ",score:" + score +"]";
     }
 }

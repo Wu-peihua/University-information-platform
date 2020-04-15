@@ -1,6 +1,8 @@
 package com.example.uipfrontend.Entity;
 
-public class Student {
+import java.io.Serializable;
+
+public class Student implements Serializable {
     private Integer userID;//唯一标识ID
     private String userimgl;//头像url
     //账号名和密码用于登录

@@ -1,17 +1,31 @@
 package com.example.uipfrontend.Entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class CourseComment {
-    private Integer CommentId;
-    private Integer UserId;
-    private String UserName;
-    private String UserImg;
-    private Date CommentDate;
-    private String Content;
-    private double Score;
+public class CourseComment implements Serializable {
+    private Integer CourseId;//评论的课程id
+    private String CourseName;//课程名称
+    private Integer CommentId;//评论的id
+    private Integer UserId;//用户id
+    private String UserName;//用户名
+    private String UserImgUrl;//用户头像
+    private Date CommentDate;//评论日期
+    private String Content;//评论内容
+    private double Score;//评分
     private int BadReportCount;//举报次数
     private int LikeCount;//点赞次数
+
+
+    public CourseComment(String courseName,Integer commentId, String _name, Date _commentdate,String _content,double _score,int likeCount){
+        this.CourseName = courseName;
+        this.CommentId = commentId;
+        this.UserName = _name;
+        this.CommentDate = _commentdate;
+        this.Content = _content;
+        this.Score = _score;
+        this.LikeCount=likeCount;
+    }
 
     public CourseComment(Integer commentId, String _name, Date _commentdate,String _content,double _score,int likeCount){
         this.CommentId = commentId;
@@ -20,6 +34,14 @@ public class CourseComment {
         this.Content = _content;
         this.Score = _score;
         this.LikeCount=likeCount;
+    }
+
+    public void setCourseId(Integer courseId){
+        this.CourseId = courseId;
+    }
+
+    public  void setCourseName(String courseName){
+        this.CourseName = courseName;
     }
 
     public void setCommentId(Integer commentId){ this.CommentId = commentId;}
@@ -36,8 +58,8 @@ public class CourseComment {
         this.Score = _score;
     }
 
-    public  void setUserImg(String urlImg) {
-        this.UserImg = urlImg;
+    public  void setUserImgUrl(String urlImg) {
+        this.UserImgUrl = urlImg;
     }
 
     public void setCommentDate(Date commentDate) {
@@ -60,8 +82,8 @@ public class CourseComment {
         return this.UserName;
     }
 
-    public  String getUserImg() {
-        return this.UserImg;
+    public  String getUserImgUrl() {
+        return this.UserImgUrl;
     }
 
     public Date getCommentDate() {
@@ -88,9 +110,12 @@ public class CourseComment {
         return this.CommentId;
     }
 
+    public Integer getCourseId() {return this.CourseId;}
+
+    public String getCourseName() {return this.CourseName;}
     @Override
     public String toString(){
-        return "CourseComment[ commentId:" + CommentId + ",UserId:" + UserId + ",UserImg:" + UserImg + ",Content:" + Content + ",CommentDate:" + CommentDate
+        return "CourseComment[ commentId:" + CommentId + ",UserId:" + UserId + ",UserImg:" + UserImgUrl + ",Content:" + Content + ",CommentDate:" + CommentDate
                 + ",userName:" + UserName +
                 ",score:" + Score + "]";
     }

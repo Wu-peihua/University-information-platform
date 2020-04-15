@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.CourseComment;
 import com.example.uipfrontend.R;
 import com.sunbinqiang.iconcountview.IconCountView;
@@ -49,6 +51,7 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
+
 
 
             userName = (TextView) itemView.findViewById(R.id.UserName);
@@ -110,16 +113,26 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
         CourseCommentRecyclerViewAdapter.ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
-        viewHolder.userName.setText(mTags.get(pos).getUserName());
-        viewHolder.commentDate.setText(DateFormat.getInstance().format(mTags.get(pos).getCommentDate()));
+        CourseComment comment = mTags.get(pos);
+
+        //预设用户头像
+        Glide.with(context).load("")
+                .placeholder(R.drawable.portrait_default)
+                .error(R.drawable.portrait_default)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(viewHolder.userimg);
+
+
+        viewHolder.userName.setText(comment.getUserName());
+        viewHolder.commentDate.setText(DateFormat.getInstance().format(comment.getCommentDate()));
 
         //courseImage.setImageResource(course.getImageurl());
-        viewHolder.commentContent.setText(mTags.get(pos).getContent());
-        viewHolder.score.setRating((float) mTags.get(pos).getScore());
+        viewHolder.commentContent.setText(comment.getContent());
+        viewHolder.score.setRating((float)comment.getScore());
 
         //viewHolder.LikeCounts.setText(String.valueOf(mTags.get(pos).getLikeCount()));
 
-        viewHolder.BtnLike.setCount(mTags.get(pos).getLikeCount());
+        viewHolder.BtnLike.setCount(comment.getLikeCount());
         Log.i("当前点赞pos",String.valueOf(mTags.get(pos)));
         //点赞按钮与举报按钮
         /*
@@ -200,4 +213,3 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
 
 }
-
