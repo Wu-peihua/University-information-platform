@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -128,12 +129,8 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private void setListener() {
-        adapter.setOnItemClickListener((view, pos) -> {
-            Intent intent = new Intent(PostDetailActivity.this, CommentDetailActivity.class);
-            intent.putExtra("comment", list.get(pos));
-            startActivity(intent);
-        });
 
+        // 点赞按钮监听
         praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
             @Override
             public void select(boolean isSelected) {
@@ -159,11 +156,23 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
+        // 举报监听
         detail_report.setOnClickListener(view -> {
-            // 
-            Toast.makeText(this, "弹出提示,询问是否举报", Toast.LENGTH_SHORT).show();
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("提示")
+                    .setMessage("如果该条帖子含有不恰当的内容，请点击确定")
+                    .setPositiveButton("确定", (dialog1, which) -> {
+                        Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("取消", null)
+                    .setCancelable(false)
+                    .create();
+            dialog.show();
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
         });
 
+        // 弹出评论框
         commentBar.setOnClickListener(view -> {
             commentDialog = new BottomSheetDialog(this, R.style.BottomSheetEdit);
             View commentView = LayoutInflater.from(this).inflate(R.layout.dialog_comment_write, null);
@@ -195,6 +204,7 @@ public class PostDetailActivity extends AppCompatActivity {
                 }
             });
 
+            // 改变按钮颜色
             commentText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -262,31 +272,18 @@ public class PostDetailActivity extends AppCompatActivity {
         String picUrl = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1585825362863&di=de3d04b6fa2086c93ba748613193b7c0&imgtype=0&src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_match%2F0%2F11506358584%2F0.jpg";
         image.setThumbnailUrl(picUrl);
         image.setBigImageUrl(picUrl);
-        imageList.add(image);
-        imageList.add(image);
-        imageList.add(image);
-        imageList.add(image);
-        imageList.add(image);
-        imageList.add(image);
-        imageList.add(image);
-        imageList.add(image);
-        imageList.add(image);
-        imageList.add(image);
-        imageList.add(image);
-        imageList.add(image);
+        imageList.add(image); imageList.add(image); imageList.add(image);
+        imageList.add(image); imageList.add(image); imageList.add(image);
+        imageList.add(image); imageList.add(image); imageList.add(image);
+        imageList.add(image); imageList.add(image); imageList.add(image);
         // 临时图片
 
         detail_pictures.setAdapter(new NineGridViewClickAdapter(this, imageList));
 
         detail_time.setText(post.getPostTime());
 
-        if(post.getLikeNum() > 0) {
-            praise.setState(true);
-            praise.setCount(post.getLikeNum());
-        } else {
-            praise.setState(false);
-            praise.setCount(0);
-        }
+        praise.setCount(post.getLikeNum());
+        // 如果是本人查看自己发的帖子，则需查找否点过赞
 
         if (list.size() == 0) {
             commentSum.setText("还没有人评论，快来抢沙发吧。");

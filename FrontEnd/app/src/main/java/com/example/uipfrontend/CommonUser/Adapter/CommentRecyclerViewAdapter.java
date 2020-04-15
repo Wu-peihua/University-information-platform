@@ -1,6 +1,7 @@
 package com.example.uipfrontend.CommonUser.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +12,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.uipfrontend.CommonUser.Activity.CommentDetailActivity;
+import com.example.uipfrontend.CommonUser.Activity.PostDetailActivity;
 import com.example.uipfrontend.Entity.PostComment;
 import com.example.uipfrontend.R;
 import com.lzy.widget.CircleImageView;
@@ -44,25 +48,23 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
 
     private static class ViewHolder extends RecyclerView.ViewHolder {
 
-        LinearLayout       ll_item;         // 评论布局: 点击跳转到评论详情
-        LinearLayout       ll_click_write;  // 点击回复按钮
         CircleImageView    portrait;        // 评论者头像
         TextView           tv_userName;     // 评论者
         ExpandableTextView tv_content;      // 评论内容
         TextView           tv_time;         // 评论时间
         IconCountView      praise;          // 点赞按钮
+        LinearLayout       ll_click_write;  // 评论详情按钮
         ImageView          iv_report;       // 举报按钮
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            ll_item = itemView.findViewById(R.id.item_cu_forum_comment);
-            ll_click_write = itemView.findViewById(R.id.ll_cu_forum_comment_write);
             portrait = itemView.findViewById(R.id.imgv_cu_forum_comment_portrait);
             tv_userName = itemView.findViewById(R.id.tv_cu_forum_comment_from);
             tv_content = itemView.findViewById(R.id.etv_cu_forum_comment_content);
             tv_time = itemView.findViewById(R.id.tv_cu_forum_comment_time);
             praise = itemView.findViewById(R.id.praise_view_cu_forum_comment_like);
+            ll_click_write = itemView.findViewById(R.id.ll_cu_forum_comment_write);
             iv_report = itemView.findViewById(R.id.imgv_cu_forum_comment_more);
         }
     }
@@ -77,11 +79,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
-
-        // 评论 点击监听
-        viewHolder.ll_click_write.setOnClickListener(view -> itemClickListener.onClick(view, position));
-        //        viewHolder.ll_item.setOnClickListener(view -> itemClickListener.onClick(view, position));
-
+        
         String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
         //        String uri = list.get(position).getPortrait();
         Glide.with(context).load(Uri.parse(uri))
@@ -95,9 +93,10 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
         viewHolder.tv_content.setContentText(list.get(position).getContent());
         viewHolder.tv_time.setText(list.get(position).getDate());
         
-        // 判断用户是否对该条评论点过赞，若点过：setState(true)
         viewHolder.praise.setCount(list.get(position).getLikeNum());
+        // 如果是本人查看自己发的帖子，则需查找否点过赞
         
+        // 点赞监听
         viewHolder.praise.setOnStateChangedListener(isSelected -> {
             if (isSelected) {
                 list.get(position).setLikeNum(list.get(position).getLikeNum() + 1);
@@ -107,9 +106,30 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
             }
         });
 
+        // 跳转到评论详情
+        viewHolder.ll_click_write.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, CommentDetailActivity.class);
+                intent.putExtra("comment", list.get(position));
+                context.startActivity(intent);
+            }
+        });
+        
+        // 举报监听
         viewHolder.iv_report.setOnClickListener(view -> {
-            // 
-            Toast.makeText(context, "弹出提示,询问是否举报", Toast.LENGTH_SHORT).show();
+            AlertDialog dialog = new AlertDialog.Builder(context)
+                    .setTitle("提示")
+                    .setMessage("如果该条评论含有不恰当的内容，请点击确定")
+                    .setPositiveButton("确定", (dialog1, which) -> {
+                        Toast.makeText(context, "感谢您的反馈", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("取消", null)
+                    .setCancelable(false)
+                    .create();
+            dialog.show();
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.blue));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.blue));
         });
     }
 

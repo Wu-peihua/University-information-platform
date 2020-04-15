@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -44,31 +45,29 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        LinearLayout       ll_item;           // 评论布局: 点击回复该评论
-        LinearLayout       ll_reply_to;       // 当是'评论给'时显示，否则隐藏
-        LinearLayout       ll_click_wirte;    // 点击回复按钮
         CircleImageView    portrait;          // 评论者头像
         TextView           tv_fromUserName;   // 评论者
+        LinearLayout       ll_reply_to;       // 当是'评论给'时显示，否则隐藏
         TextView           tv_toUserName;     // 评论给
         TextView           tv_reference;      // 原内容
         ExpandableTextView tv_content;        // 评论内容
         TextView           tv_time;           // 评论时间
         IconCountView      praise;            // 点赞按钮
+        LinearLayout       ll_click_write;    // 回复按钮
         ImageView          iv_report;         // 举报按钮
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            ll_item = itemView.findViewById(R.id.item_cu_forum_comment);
-            ll_reply_to = itemView.findViewById(R.id.ll_cu_forum_reply_to);
-            ll_click_wirte = itemView.findViewById(R.id.ll_cu_forum_comment_write);
             portrait = itemView.findViewById(R.id.imgv_cu_forum_comment_portrait);
             tv_fromUserName = itemView.findViewById(R.id.tv_cu_forum_comment_from);
+            ll_reply_to = itemView.findViewById(R.id.ll_cu_forum_reply_to);
             tv_toUserName = itemView.findViewById(R.id.tv_cu_forum_comment_to);
             tv_reference = itemView.findViewById(R.id.tv_cu_forum_comment_reference);
             tv_content = itemView.findViewById(R.id.etv_cu_forum_comment_content);
             tv_time = itemView.findViewById(R.id.tv_cu_forum_comment_time);
             praise = itemView.findViewById(R.id.praise_view_cu_forum_comment_like);
+            ll_click_write = itemView.findViewById(R.id.ll_cu_forum_comment_write);
             iv_report = itemView.findViewById(R.id.imgv_cu_forum_comment_more);
         }
     }
@@ -84,9 +83,8 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
-        // 评论 点击监听
-        viewHolder.ll_click_wirte.setOnClickListener(view -> itemClickListener.onClick(view, position));
-        //        viewHolder.ll_item.setOnClickListener(view -> itemClickListener.onClick(view, position));
+        // 回复按钮监听
+        viewHolder.ll_click_write.setOnClickListener(view -> itemClickListener.onClick(view, position));
 
         String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
         //        String uri = list.get(position).getPortrait();
@@ -110,17 +108,33 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
 
         viewHolder.tv_content.setContentText(list.get(position).getContent());
         viewHolder.tv_time.setText(list.get(position).getDate());
+        
         viewHolder.praise.setCount(list.get(position).getLikeNum());
+        // 如果是本人查看自己发的帖子，则需查找否点过赞
+        
+        // 点赞监听
         viewHolder.praise.setOnStateChangedListener(isSelected -> {
-            if (isSelected)
+            if (isSelected) {
                 list.get(position).setLikeNum(list.get(position).getLikeNum() + 1);
-            else
+            } else {
                 list.get(position).setLikeNum(list.get(position).getLikeNum() - 1);
+            }
         });
 
+        // 举报监听
         viewHolder.iv_report.setOnClickListener(view -> {
-            // 
-            Toast.makeText(context, "弹出提示,询问是否举报", Toast.LENGTH_SHORT).show();
+            AlertDialog dialog = new AlertDialog.Builder(context)
+                    .setTitle("提示")
+                    .setMessage("如果该条评论含有不恰当的内容，请点击确定")
+                    .setPositiveButton("确定", (dialog1, which) -> {
+                        Toast.makeText(context, "感谢您的反馈", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("取消", null)
+                    .setCancelable(false)
+                    .create();
+            dialog.show();
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.blue));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.blue));
         });
     }
 

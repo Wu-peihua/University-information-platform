@@ -97,12 +97,10 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
                 AlertDialog dialog = new AlertDialog.Builder(context)
                         .setTitle("提示")
                         .setMessage("是否确定删除该条记录？")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                list.remove(position);
-                                Toast.makeText(context, "记录删除成功", Toast.LENGTH_SHORT).show();
-                            }
+                        .setPositiveButton("确定", (dialog1, which) -> {
+                            list.remove(position);
+                            notifyDataSetChanged();
+                            Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show();
                         })
                         .setNegativeButton("取消", null)
                         .setCancelable(false)

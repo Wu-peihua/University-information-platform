@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -53,7 +54,6 @@ public class CommentDetailActivity extends AppCompatActivity {
     private IconCountView      praise;       // 点赞按钮
     private ImageView          report;       // 举报按钮
     private TextView           replySum;     // 评论数
-//    private View               division;     // 分割线
     private LinearLayout       click_write;  // 点击回复
 
     private String             toName;       // 评论的对象
@@ -102,13 +102,6 @@ public class CommentDetailActivity extends AppCompatActivity {
     }
 
     private void setListener() {
-        adapter.setOnItemClickListener((view, pos) -> {
-            toName = list.get(pos).getFromName();
-            reference = list.get(pos).getContent();
-            commentText.setHint("回复给：" + toName);
-            commentDialog.show();
-        });
-
         // 刷新和加载更多
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
@@ -122,19 +115,40 @@ public class CommentDetailActivity extends AppCompatActivity {
             }
         });
 
+        // 点赞按钮监听
         praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
             @Override
             public void select(boolean isSelected) {
-                if (isSelected == true)
+                if (isSelected) {
                     comment.setLikeNum(comment.getLikeNum() + 1);
-                else
+                } else {
                     comment.setLikeNum(comment.getLikeNum() - 1);
+                }
             }
         });
 
+        // 举报监听
         report.setOnClickListener(view -> {
-            // 
-            Toast.makeText(this, "弹出提示,询问是否举报", Toast.LENGTH_SHORT).show();
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("提示")
+                    .setMessage("如果该条评论含有不恰当的内容，请点击确定")
+                    .setPositiveButton("确定", (dialog1, which) -> {
+                        Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("取消", null)
+                    .setCancelable(false)
+                    .create();
+            dialog.show();
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+        });
+        
+        // 弹出评论框
+        adapter.setOnItemClickListener((view, pos) -> {
+            toName = list.get(pos).getFromName();
+            reference = list.get(pos).getContent();
+            commentText.setHint("回复给：" + toName);
+            commentDialog.show();
         });
 
         click_write.setOnClickListener(view -> {
@@ -175,6 +189,7 @@ public class CommentDetailActivity extends AppCompatActivity {
                 postComment.setLikeNum(0);
                 list.add(postComment);
                 adapter.notifyDataSetChanged();
+                replySum.setText(list.size() + "条对话");
                 toName = null;
                 commentText.setText("");
             } else {
@@ -182,6 +197,7 @@ public class CommentDetailActivity extends AppCompatActivity {
             }
         });
 
+        // 改变按钮颜色
         commentText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -219,7 +235,9 @@ public class CommentDetailActivity extends AppCompatActivity {
         commentator.setText(comment.getFromName());
         content.setContentText(comment.getContent());
         time.setText(comment.getDate());
+        
         praise.setCount(comment.getLikeNum());
+        // 如果是本人查看自己发的帖子，则需查找否点过赞
         
         replySum.setVisibility(View.VISIBLE);
         if(list.size() == 0) {
@@ -227,9 +245,6 @@ public class CommentDetailActivity extends AppCompatActivity {
         } else {
             replySum.setText(list.size() + "条对话");
         }
-
-//        division.setVisibility(View.VISIBLE);
-
     }
 
     private void initHeadView() {
@@ -239,7 +254,6 @@ public class CommentDetailActivity extends AppCompatActivity {
         time = headView.findViewById(R.id.tv_cu_forum_comment_time);
         praise = headView.findViewById(R.id.praise_view_cu_forum_comment_like);
         report = headView.findViewById(R.id.imgv_cu_forum_comment_more);
-//        division = headView.findViewById(R.id.view_cu_forum_comment_division);
         click_write = headView.findViewById(R.id.ll_cu_forum_comment_write);
         replySum = headView.findViewById(R.id.tv_cu_forum_comment_reply_sum);
     }
