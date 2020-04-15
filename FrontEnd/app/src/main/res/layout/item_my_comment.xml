@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal"
+        android:id="@+id/ll_item_my_comment">
+
+        <!-- 评论者头像 -->
+        <com.lzy.widget.CircleImageView
+            android:id="@+id/my_user_img"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            app:civ_BorderWidth="0dp"
+            android:src="@drawable/portrait_default" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/my_comment_course_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_xs"
+                android:text="数据库项目"
+                android:textColor="@color/black">
+            </TextView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- 评论者 -->
+                <TextView
+                    android:id="@+id/my_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_xs"
+                    android:text="Yuzz"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fontSize_s" />
+
+                <RatingBar
+                    android:id="@+id/my_user_rating_bar"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/margin_xs"
+                    android:layout_toRightOf="@+id/my_user_name"
+                    android:isIndicator="true"
+                    android:layout_centerVertical="true"
+                    android:numStars="5"
+                    android:progressTint="@android:color/holo_orange_light"
+                    android:rating="4.5"
+                    android:stepSize="0.5" />
+                <!-- 举报按钮 -->
+
+            </RelativeLayout>
+
+            <!-- 评论内容 -->
+            <TextView
+                android:id="@+id/my_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_xs"
+                android:lineSpacingExtra="5dp"
+                android:text="内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
+                android:textColor="@color/item_text"
+                android:textSize="@dimen/fontSize_s" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- 评论时间 -->
+                <TextView
+                    android:id="@+id/my_comment_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="2020-3-26 12:30"
+                    android:textColor="@color/item_time"
+                    android:textSize="@dimen/fontSize_xs" />
+
+                <TextView
+                    android:id="@+id/my_comment_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@id/my_comment_date"
+                    android:background="@drawable/textview_selector"
+                    android:gravity="center"
+                    android:text="删除"
+                    android:textColor="@color/blue"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/my_comment_modify"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/my_comment_delete"
+                    android:background="@drawable/textview_selector"
+                    android:gravity="center"
+                    android:text="修改"
+                    android:textColor="@color/blue"
+                    android:textSize="13sp" />
+
+
+                <!-- 点赞按钮 -->
+                <com.sunbinqiang.iconcountview.IconCountView
+                    android:id="@+id/my_comment_btn_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingBottom="2.5dp"
+                    app:checked="false"
+                    app:count="0"
+                    app:normalRes="@drawable/icon_praise_normal"
+                    app:selectedRes="@drawable/icon_praise_selected"
+                    app:textNormalColor="@color/darkGray"
+                    app:textSelectedColor="#FF0000"
+                    app:textSize="12sp" />
+
+                <!--添加删除与修改按钮-->
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- headView分隔 -->
+    <View
+        android:id="@+id/view_cu_forum_comment_division"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/lightGray"
+        android:visibility="gone" />
+
+    <!-- item分隔 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGray" />
+
+
+
+
+</LinearLayout>
