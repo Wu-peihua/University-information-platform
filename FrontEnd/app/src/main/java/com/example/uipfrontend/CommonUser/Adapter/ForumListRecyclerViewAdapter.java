@@ -41,7 +41,7 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
         this.span = span;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         
         LinearLayout ll_item;  // 对帖子设置监听
         TextView tv_title;     // 帖子标题

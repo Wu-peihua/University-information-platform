@@ -29,23 +29,29 @@ import com.luck.picture.lib.entity.LocalMedia;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import fj.edittextcount.lib.FJEditTextCount;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /*
- * 点击搜索框旁边的+号跳转到这个Activity
- * 跳转时携带用户ID
+ * 1、点击搜索框旁边的+号跳转到这个Activity
+ * 跳转时携带用户ID；
+ * 2、发布记录里点击详情跳转到这个Activity
+ * 跳转时携带帖子对象
  */
 public class WritePostActivity extends AppCompatActivity {
 
     private final int maxSelectNum = 9; //最大照片数
     private final Boolean SELECT_FROM_PHOTO_ALBUM = true;
     private final Boolean TAKING_PHOTO = false;
-
-    private FJEditTextCount et_title;   // 帖子标题
-    private EditText et_content; // 帖子内容
+    
+    private ForumPosts post;  // intent 传递过来帖子对象
+    private Integer userId;   // intent 传递过来的用户id
+    
+    private FJEditTextCount et_title;    // 帖子标题
+    private EditText et_content;         // 帖子内容
     private List<LocalMedia> selectList; // 帖子配图
 
     private GridImageAdapter adapter;
@@ -68,6 +74,7 @@ public class WritePostActivity extends AppCompatActivity {
         et_title = findViewById(R.id.edt_cu_forum_write_title);
         et_content = findViewById(R.id.edt_cu_forum_write_content);
         initToolBar();
+        getData();
         initRecyclerView();
     }
 
@@ -85,15 +92,27 @@ public class WritePostActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
+    
+    private void getData() {
+        Intent intent = getIntent();
+        if(intent != null) {
+            userId = intent.getIntExtra("userId", -1);
+            if(userId == -1) {
+                post = (ForumPosts) Objects.requireNonNull(intent.getExtras()).get("post");
+                et_title.setText(post.getTitle());
+                et_content.setText(post.getContent());
+            }
+        }
+    }
 
-    // toolbar带有保存按钮
+    // 使toolbar带有保存按钮
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.submit_menu, menu);
         return true;
     }
 
-    // toolbar的操作
+    // toolbar按钮监听
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -118,6 +137,7 @@ public class WritePostActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // 照片显示的recyclerview
     private void initRecyclerView() {
         selectList = new ArrayList<>();
         
@@ -162,7 +182,7 @@ public class WritePostActivity extends AppCompatActivity {
         });
     }
 
-    //选择图片
+    // 选择图片
     public void selectPhotos() {
         if (mode) {
             // 进入相册 以下是例子：不需要的api可以不写
@@ -257,7 +277,7 @@ public class WritePostActivity extends AppCompatActivity {
         }
     }
 
-    //给上传图片添加点击事件
+    // 给上传图片添加点击事件
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener =
             new GridImageAdapter.onAddPicClickListener() {
                 @Override
@@ -286,7 +306,7 @@ public class WritePostActivity extends AppCompatActivity {
                 }
             };
 
-    //返回结果并显示
+    // 返回结果并显示
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

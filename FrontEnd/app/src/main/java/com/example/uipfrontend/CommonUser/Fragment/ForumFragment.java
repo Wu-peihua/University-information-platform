@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +42,8 @@ public class ForumFragment extends Fragment {
     private ImageView iv_delete;  // 清除输入按钮
     private ImageView iv_new;     // 新建帖子按钮
 
+    private TextView tv_blank_text; // 搜索结果为空提示
+
     private XRecyclerView xRecyclerView;
     private ForumListRecyclerViewAdapter adapter;
     
@@ -58,6 +61,7 @@ public class ForumFragment extends Fragment {
             }
         } else {
             rootView = inflater.inflate(R.layout.fragment_cu_forum, null);
+            tv_blank_text = rootView.findViewById(R.id.tv_blank);
             initData();
             initView();
             setListener();
@@ -143,6 +147,7 @@ public class ForumFragment extends Fragment {
         // 进入新建帖子页面
         iv_new.setOnClickListener(view -> {
             Intent intent = new Intent(rootView.getContext(), WritePostActivity.class);
+            intent.putExtra("userId", 10001);
             startActivity(intent);
         });
         

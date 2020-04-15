@@ -168,8 +168,8 @@
                 <!-- 回复按钮 -->
                 <LinearLayout
                     android:id="@+id/ll_cu_forum_comment_write"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:orientation="horizontal">
@@ -177,6 +177,8 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_gravity="center_vertical"
                         android:src="@drawable/reply" />
 
 <!--                    <TextView-->
@@ -195,13 +197,26 @@
 
     </LinearLayout>
 
-    <!-- headView分隔 -->
-    <View
-        android:id="@+id/view_cu_forum_comment_division"
+    <!-- 数目 -->
+    <TextView
+        android:id="@+id/tv_cu_forum_comment_reply_sum"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:background="@color/lightGray"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="32条对话"
+        android:textSize="@dimen/fontSize_s"
         android:visibility="gone" />
+
+<!--    &lt;!&ndash; headView分隔 &ndash;&gt;-->
+<!--    <View-->
+<!--        android:id="@+id/view_cu_forum_comment_division"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="30dp"-->
+<!--        android:background="@color/lightGray"-->
+<!--        android:visibility="gone" />-->
     
     <!-- item分隔 -->
     <View

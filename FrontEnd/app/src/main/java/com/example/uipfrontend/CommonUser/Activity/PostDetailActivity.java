@@ -288,10 +288,11 @@ public class PostDetailActivity extends AppCompatActivity {
             praise.setCount(0);
         }
 
-        if (list.size() == 0)
-            commentSum.setText("还没有人评论，快留下你的高见吧。");
-        else
+        if (list.size() == 0) {
+            commentSum.setText("还没有人评论，快来抢沙发吧。");
+        } else {
             commentSum.setText(list.size() + "条评论");
+        }
     }
 
     private void initPostDetail() {

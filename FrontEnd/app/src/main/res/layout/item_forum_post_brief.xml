@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <!-- 帖子标题 -->
     <TextView
         android:id="@+id/tv_cu_forum_title"
         android:layout_width="match_parent"
@@ -13,6 +14,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="3dp"
+        android:lineSpacingExtra="5dp"
         android:maxLines="2"
         android:ellipsize="end"
         android:text="震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了[doge][doge]"/>
@@ -25,16 +27,19 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp">
 
+        <!-- 发帖人 -->
         <TextView
             android:id="@+id/tv_cu_forum_poster"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:maxLines="1"
+            android:maxWidth="70dp"
             android:ellipsize="end"
             android:textSize="@dimen/fontSize_xs"
-            android:text="法外狂徒张三"/>
+            android:text="法外狂徒张三法外狂徒张三法外狂徒张三法外狂徒张三"/>
 
+        <!-- 发帖时间 -->
         <TextView
             android:id="@+id/tv_cu_forum_time"
             android:layout_width="wrap_content"
@@ -45,9 +50,53 @@
             android:maxLines="1"
             android:ellipsize="end"
             android:textSize="@dimen/fontSize_xs"
-            android:text="2020/3/26"/>
+            android:text="2020-3-26 11:11"/>
 
+        <!-- 功能按钮 -->
         <LinearLayout
+            android:id="@+id/ll_cu_forum_record_operation"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            
+            <TextView
+                android:id="@+id/tv_cu_forum_record_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_weight="1"
+                android:gravity="bottom|right"
+                android:text="详情"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/fontSize_xs"/>
+
+            <TextView
+                android:id="@+id/tv_cu_forum_record_modify"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_weight="1"
+                android:gravity="bottom|right"
+                android:text="修改"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/fontSize_xs"/>
+
+            <TextView
+                android:id="@+id/tv_cu_forum_record_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_weight="1"
+                android:gravity="bottom|right"
+                android:text="删除"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/fontSize_xs"/>
+            
+        </LinearLayout>
+
+        <!-- 点赞数 -->
+        <LinearLayout
+            android:id="@+id/ll_cu_forum_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -79,7 +128,7 @@
 
     </RelativeLayout>
 
-    <!--        分割线-->
+    <!-- 分割线 -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"

@@ -52,7 +52,8 @@ public class CommentDetailActivity extends AppCompatActivity {
     private TextView           time;         // 发布时间
     private IconCountView      praise;       // 点赞按钮
     private ImageView          report;       // 举报按钮
-    private View               division;     // 分割线
+    private TextView           replySum;     // 评论数
+//    private View               division;     // 分割线
     private LinearLayout       click_write;  // 点击回复
 
     private String             toName;       // 评论的对象
@@ -118,6 +119,16 @@ public class CommentDetailActivity extends AppCompatActivity {
             @Override
             public void onLoadMore() {
                 xRecyclerView.setNoMore(true);
+            }
+        });
+
+        praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
+            @Override
+            public void select(boolean isSelected) {
+                if (isSelected == true)
+                    comment.setLikeNum(comment.getLikeNum() + 1);
+                else
+                    comment.setLikeNum(comment.getLikeNum() - 1);
             }
         });
 
@@ -209,8 +220,15 @@ public class CommentDetailActivity extends AppCompatActivity {
         content.setContentText(comment.getContent());
         time.setText(comment.getDate());
         praise.setCount(comment.getLikeNum());
+        
+        replySum.setVisibility(View.VISIBLE);
+        if(list.size() == 0) {
+            replySum.setText("还没有人回复，快来抢沙发吧。");
+        } else {
+            replySum.setText(list.size() + "条对话");
+        }
 
-        division.setVisibility(View.VISIBLE);
+//        division.setVisibility(View.VISIBLE);
 
     }
 
@@ -220,24 +238,16 @@ public class CommentDetailActivity extends AppCompatActivity {
         content = headView.findViewById(R.id.etv_cu_forum_comment_content);
         time = headView.findViewById(R.id.tv_cu_forum_comment_time);
         praise = headView.findViewById(R.id.praise_view_cu_forum_comment_like);
-        praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
-            @Override
-            public void select(boolean isSelected) {
-                if (isSelected == true)
-                    comment.setLikeNum(comment.getLikeNum() + 1);
-                else
-                    comment.setLikeNum(comment.getLikeNum() - 1);
-            }
-        });
         report = headView.findViewById(R.id.imgv_cu_forum_comment_more);
-        division = headView.findViewById(R.id.view_cu_forum_comment_division);
+//        division = headView.findViewById(R.id.view_cu_forum_comment_division);
         click_write = headView.findViewById(R.id.ll_cu_forum_comment_write);
+        replySum = headView.findViewById(R.id.tv_cu_forum_comment_reply_sum);
     }
 
     private void initReplyData() {
         list = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
             PostComment comment = new PostComment();
             comment.setFromName("郭麒麟" + i);
             comment.setContent("英雄所见略同");

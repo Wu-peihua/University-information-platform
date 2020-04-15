@@ -12,4 +12,14 @@
         android:clipChildren="false"
         android:clipToPadding="false" />
 
+    <!-- 空白提示 -->
+    <TextView
+        android:id="@+id/tv_blank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="还没有发布过帖子哦，快去写一篇吧"
+        android:textColor="@color/blue"
+        android:visibility="gone"/>
+
 </RelativeLayout>
