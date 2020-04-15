@@ -16,6 +16,7 @@
     <dimen name="margin_l">15dp</dimen>
     <dimen name="margin_xl">20dp</dimen>
     <dimen name="margin_xxl">30dp</dimen>
+    <dimen name="margin_xxxl">55dp</dimen>
 
 
     <dimen name="padding_xs">3dp</dimen>

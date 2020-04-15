@@ -19,7 +19,10 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Student.Activity.StudentModifyPasswordActivity;
 import com.example.uipfrontend.Student.Activity.StudentMyReleaseActivity;
+import com.example.uipfrontend.Student.Activity.StudentPersonalInfoActivity;
+import com.example.uipfrontend.Student.Activity.StudentSettingCenterActivity;
 import com.zuowei.circleimageview.CircleImageView;
 
 
@@ -53,6 +56,9 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
 
     private void init(){
         rootView.findViewById(R.id.rl_student_home_release).setOnClickListener(this);
+        rootView.findViewById(R.id.rl_studentSettingCenter).setOnClickListener(this);
+        rootView.findViewById(R.id.rl_studentInfo).setOnClickListener(this);
+
 
         //初始化头像、昵称、手机号
         imPortrait = rootView.findViewById(R.id.iv_student_home_portrait);
@@ -69,19 +75,22 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
     public void onClick(View view) {
 
         switch (view.getId()) {
-            case R.id.tv_student_home_name:
+            case R.id.rl_studentInfo:
+                Intent intent0 = new Intent(activity, StudentPersonalInfoActivity.class);
+                startActivity(intent0);
                 break;
             case R.id.rl_student_home_vertify:
 
                 break;
 
             case R.id.rl_student_home_release:
-                Intent intent = new Intent(activity, StudentMyReleaseActivity.class);
-                startActivityForResult(intent, 4);
+                Intent intent2 = new Intent(activity, StudentMyReleaseActivity.class);
+                startActivity(intent2);
                 break;
 
-            case R.id.rl_student_home_password:
-
+            case R.id.rl_studentSettingCenter:
+                Intent intent3 = new Intent(activity, StudentSettingCenterActivity.class);
+                startActivity(intent3);
                 break;
         }
 

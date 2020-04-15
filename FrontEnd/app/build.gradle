@@ -113,4 +113,7 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
     //可扩展文本框
     implementation 'com.github.ParfoisMeng:ExpandableTextView:1.0.1'
+
+    //动画单选按钮
+    implementation 'com.github.ceryle:RadioRealButton:v2.1.1'
 }
