@@ -2,6 +2,7 @@ package com.example.uipfrontend.Admin.Fragment;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,10 @@ public class AdminReportFragment extends Fragment  implements View.OnClickListen
 
     private ImageView mTabline;
     private int mScreen1_2;
+    private View rootView;
+    private View rootContentView;    //根视图内容
+
+
 
 
     @Override
@@ -49,17 +54,35 @@ public class AdminReportFragment extends Fragment  implements View.OnClickListen
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-       // T.showShort(getActivity(), "AdminReportFragment==onCreateView");
-        View view = inflater.inflate(R.layout.fragment_admin_report, null);
-
-        initView(view);
-        setLinstener();
-        initData();
-        return view;
+//    @Nullable
+//    @Override
+//    public View onCreateView(@NonNull LayoutInflater inflater,@Nullable ViewGroup container,
+//                             @Nullable Bundle savedInstanceState) {
+//       // T.showShort(getActivity(), "AdminReportFragment==onCreateView");
+//        View view = inflater.inflate(R.layout.fragment_admin_report, null);
+//        initView(view);
+//        setLinstener();
+//        initData();
+//        return view;
+//    }
+@Nullable
+@Override
+public View onCreateView(@NonNull LayoutInflater inflater,@Nullable ViewGroup container,
+                         @Nullable Bundle savedInstanceState) {
+    if (rootView != null) {
+        ViewGroup parent = (ViewGroup) rootView.getParent();
+        if (parent != null) {
+            parent.removeView(rootView);
+        }
+    } else {
+    // T.showShort(getActivity(), "AdminReportFragment==onCreateView");
+         rootView = inflater.inflate(R.layout.fragment_admin_report, null);
+    initView(rootView);
+    setLinstener();
+    initData();
     }
+    return rootView;
+}
 
     private void initView(View view) {
 
@@ -78,6 +101,8 @@ public class AdminReportFragment extends Fragment  implements View.OnClickListen
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mTabline.getLayoutParams();
         lp.width = mScreen1_2;
         mTabline.setLayoutParams(lp);
+
+
 
         //初次显示设置
         setSubFragment(0);
@@ -135,6 +160,7 @@ public class AdminReportFragment extends Fragment  implements View.OnClickListen
         }
 
     }
+
 
 
 }
