@@ -22,8 +22,6 @@ import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Activity.StudentModifyPasswordActivity;
 import com.example.uipfrontend.Student.Activity.StudentMyReleaseActivity;
 import com.example.uipfrontend.Student.Activity.StudentPersonalInfoActivity;
-import com.example.uipfrontend.Student.Activity.StudentSettingCenterActivity;
-import com.zuowei.circleimageview.CircleImageView;
 
 
 public class StudentHomeFragment extends Fragment  implements View.OnClickListener{
@@ -56,7 +54,7 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
 
     private void init(){
         rootView.findViewById(R.id.rl_student_home_release).setOnClickListener(this);
-        rootView.findViewById(R.id.rl_studentSettingCenter).setOnClickListener(this);
+        rootView.findViewById(R.id.rl_studentModifyPassword).setOnClickListener(this);
         rootView.findViewById(R.id.rl_studentInfo).setOnClickListener(this);
 
 
@@ -88,8 +86,8 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
                 startActivity(intent2);
                 break;
 
-            case R.id.rl_studentSettingCenter:
-                Intent intent3 = new Intent(activity, StudentSettingCenterActivity.class);
+            case R.id.rl_studentModifyPassword:
+                Intent intent3 = new Intent(activity, StudentModifyPasswordActivity.class);
                 startActivity(intent3);
                 break;
         }

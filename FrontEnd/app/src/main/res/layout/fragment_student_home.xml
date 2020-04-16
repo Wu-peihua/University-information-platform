@@ -56,7 +56,7 @@
                 android:layout_alignBottom="@+id/iv_student_home_portrait"
                 android:layout_toRightOf="@+id/tv_student_home_vertify"
                 android:paddingBottom="@dimen/fontSize_xs"
-                android:text="否" />
+                android:text="是" />
 
         </RelativeLayout>
         <!--        分割线-->
@@ -151,7 +151,7 @@
 
 
         <RelativeLayout
-            android:id="@+id/rl_studentSettingCenter"
+            android:id="@+id/rl_studentModifyPassword"
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_marginTop="@dimen/margin"
@@ -159,7 +159,7 @@
             android:paddingLeft="@dimen/padding_xxl">
 
             <ImageView
-                android:id="@+id/iv_student_home_setting"
+                android:id="@+id/iv_studentModifyPassword"
                 android:layout_width="@dimen/layoutWeight_s"
                 android:layout_height="@dimen/layoutWeight_s"
                 android:layout_alignParentLeft="true"
@@ -168,12 +168,12 @@
                 android:src="@drawable/ic_pwd" />
 
             <TextView
-                android:id="@+id/tv_student_home_setting"
+                android:id="@+id/tv_studentModifyPasswordLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/iv_student_home_setting"
-                android:text="设置中心"
+                android:layout_toRightOf="@+id/iv_studentModifyPassword"
+                android:text="修改密码"
                 android:textColor="@color/black"
                 android:textSize="@dimen/fontSize_s"
                 android:typeface="serif" />

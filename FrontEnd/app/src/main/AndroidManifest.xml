@@ -26,10 +26,8 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Student.Activity.StudentModifyNameActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Student.Activity.StudentSettingCenterActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Student.Activity.StudentSystemSettingActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+
+
         <activity android:name=".Student.Activity.StudentPersonalInfoActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Admin.Activity.AdminCourseDetailActivity"
