@@ -19,10 +19,12 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Student.Activity.StudentModifyPasswordActivity;
 import com.example.uipfrontend.Student.Activity.StudentMyReleaseActivity;
+import com.example.uipfrontend.Student.Activity.StudentPersonalInfoActivity;
 
 
-public class AdminHomeFragment extends Fragment {
+public class AdminHomeFragment extends Fragment implements View.OnClickListener {
     private View rootView;
     private Activity activity;
 
@@ -42,7 +44,7 @@ public class AdminHomeFragment extends Fragment {
             }
         } else {
             rootView = inflater.inflate(R.layout.fragment_admin_home, null);
-            //activity = getActivity();
+            activity = getActivity();
 
             init();
         }
@@ -51,6 +53,8 @@ public class AdminHomeFragment extends Fragment {
 
     private void init(){
         //rootView.findViewById(R.id.rl_admin_home_release).setOnClickListener(this);
+        rootView.findViewById(R.id.rl_admin_home).setOnClickListener(this);
+        rootView.findViewById(R.id.rl_admin_home_password).setOnClickListener(this);
 
         //初始化头像、昵称、手机号
         imPortrait = rootView.findViewById(R.id.iv_admin_home_portrait);
@@ -63,16 +67,22 @@ public class AdminHomeFragment extends Fragment {
         isVertify.setText("管理员");
     }
 
-//    @Override
-//    public void onClick(View view) {
-//
-//        switch (view.getId()) {
-//            case R.id.tv_admin_home_name:
-//                break;
-//            case R.id.rl_student_home_password:
-//                break;
-//        }
-//    }
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()) {
+            case R.id.rl_admin_home:
+                Intent intent0 = new Intent(activity, StudentPersonalInfoActivity.class);
+                startActivity(intent0);
+                break;
+            case R.id.rl_admin_home_password:
+                Intent intent3 = new Intent(activity, StudentModifyPasswordActivity.class);
+                startActivity(intent3);
+                break;
+        }
+
+
+    }
 
     private Uri getResourcesUri(@DrawableRes int id) {
         Resources resources = getResources();
