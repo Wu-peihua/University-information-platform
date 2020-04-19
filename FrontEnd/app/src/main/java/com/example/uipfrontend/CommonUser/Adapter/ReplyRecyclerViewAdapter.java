@@ -119,6 +119,7 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
             } else {
                 list.get(position).setLikeNum(list.get(position).getLikeNum() - 1);
             }
+            notifyDataSetChanged();
         });
 
         // 举报监听
@@ -142,6 +143,16 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         if (list != null) return list.size();
         return 0;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     public interface onItemClickListener {

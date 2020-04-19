@@ -109,6 +109,7 @@ public class PostDetailActivity extends AppCompatActivity {
         //        list = getComment();
 
         adapter = new CommentRecyclerViewAdapter(this, list);
+        adapter.setHasStableIds(true);
 
         xRecyclerView = findViewById(R.id.rv_cu_forum_post_comment);
         xRecyclerView.setAdapter(adapter);
@@ -312,7 +313,7 @@ public class PostDetailActivity extends AppCompatActivity {
             comment.setFromName("韦骁龙" + i);
             comment.setContent("英雄所见略同");
             comment.setDate("2020-4-3 22:35");
-            comment.setLikeNum(0);
+            comment.setLikeNum(99999);
             list.add(comment);
         }
     }

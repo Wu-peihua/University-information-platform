@@ -153,14 +153,14 @@
                 <com.sunbinqiang.iconcountview.IconCountView
                     android:id="@+id/praise_view_cu_forum_comment_like"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_marginRight="30dp"
                     android:layout_alignParentRight="true"
                     app:normalRes="@drawable/icon_praise_normal"
                     app:selectedRes="@drawable/icon_praise_selected"
                     app:textNormalColor="@color/darkGray"
                     app:textSelectedColor="#FF0000"
-                    app:count="0"
+                    app:count="9999"
                     app:checked="false"
                     app:zeroText="赞" />
 

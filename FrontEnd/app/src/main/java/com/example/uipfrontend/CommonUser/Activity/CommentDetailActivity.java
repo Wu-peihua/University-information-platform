@@ -82,6 +82,7 @@ public class CommentDetailActivity extends AppCompatActivity {
         comment = (PostComment) Objects.requireNonNull(getIntent().getExtras()).get("comment");
 
         adapter = new ReplyRecyclerViewAdapter(this, list);
+        adapter.setHasStableIds(true);
 
         xRecyclerView = findViewById(R.id.rv_cu_forum_comment_reply);
         xRecyclerView.setAdapter(adapter);

@@ -3,6 +3,7 @@ package com.example.uipfrontend.CommonUser.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,6 +105,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
             else {
                 list.get(position).setLikeNum(list.get(position).getLikeNum() - 1);
             }
+            notifyDataSetChanged();
         });
 
         // 跳转到评论详情
@@ -139,6 +141,16 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
         return 0;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+    
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+    
     public interface onItemClickListener {
         void onClick(View view, int pos);
     }
