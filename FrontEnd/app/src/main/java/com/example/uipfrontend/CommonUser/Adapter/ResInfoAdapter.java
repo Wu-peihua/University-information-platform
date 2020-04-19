@@ -28,10 +28,10 @@ import java.util.List;
 
 public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ResInfo> resInfoList;
-    private Context       context;
+    private Context context;
 
-    private int                 beginPos;
-    private String              text;
+    private int beginPos;
+    private String text;
     private ForegroundColorSpan span;
 
     public ResInfoAdapter(List<ResInfo> resInfoList, Context context) {
@@ -46,15 +46,15 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     static class ResInfoViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout       ll_item;
-        ImageView          iv_portrait;
-        TextView           tv_username;
-        TextView           tv_title;
+        LinearLayout ll_item;
+        ImageView iv_portrait;
+        TextView tv_username;
+        TextView tv_title;
         ExpandableTextView etv_description;
-        TextView           tv_link;
-        TextView           tv_time;
-        IconCountView      icv_like;
-        ImageView          iv_report;
+        TextView tv_link;
+        TextView tv_time;
+        IconCountView icv_like;
+        ImageView iv_report;
 
         public ResInfoViewHolder(View view) {
             super(view);
@@ -86,10 +86,16 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.onItemClickListenerlistener = onItemClickListenerlistener;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public int getItemViewType(int position) {
         if (resInfoList == null)
             return -1;
-        return resInfoList.size() == 0 ? -1 : super.getItemViewType(position);
+        return resInfoList.size() == 0 ? -1 : position;
     }
 
     @Override
@@ -148,6 +154,7 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         resInfo.setLikeNum(resInfo.getLikeNum() + 1);
                     else
                         resInfo.setLikeNum(resInfo.getLikeNum() - 1);
+                    notifyDataSetChanged();
                 }
             });
 

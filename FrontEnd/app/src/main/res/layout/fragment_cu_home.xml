@@ -21,9 +21,10 @@
 
             <com.lzy.widget.CircleImageView
                 android:id="@+id/iv_cu_home_portrait"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_alignParentRight="true"
+                android:layout_marginRight="3dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_default_portrait"
                 app:civ_BorderWidth="0dp" />
@@ -46,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/iv_cu_home_portrait"
                 android:layout_alignParentLeft="true"
-                android:paddingBottom="@dimen/fontSize_xxs"
+                android:paddingBottom="@dimen/fontSize_xs"
                 android:text="是否认证学生身份：" />
 
             <TextView

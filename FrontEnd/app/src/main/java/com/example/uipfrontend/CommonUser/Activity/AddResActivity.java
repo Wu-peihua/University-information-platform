@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -38,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-public class AddResActivity extends AppCompatActivity implements View.OnTouchListener{
+public class AddResActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private OptionsPickerView pvNoLinkOptions;
     private MaterialEditText  met_type;
@@ -277,13 +275,14 @@ public class AddResActivity extends AppCompatActivity implements View.OnTouchLis
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         //触摸的是EditText并且当前EditText可以滚动则将事件交给EditText处理，否则将事件交由父视图处理
-//        if ((view.getId() == R.id.met_cu_addRes_desc && met_desc.canScrollVertically(1))) {
-//            //EditText处理滚动事件
-//            view.getParent().requestDisallowInterceptTouchEvent(true);
-//            if (motionEvent.getAction() == MotionEvent.ACTION_UP)
-//                //父视图处理滚动事件
-//                view.getParent().requestDisallowInterceptTouchEvent(false);
-//        }
+        if (view.getId() == R.id.met_cu_addRes_desc &&
+                (met_desc.canScrollVertically(1) || met_desc.canScrollVertically(-1))) {
+            //EditText处理滚动事件
+            view.getParent().requestDisallowInterceptTouchEvent(true);
+            if (motionEvent.getAction() == MotionEvent.ACTION_UP)
+                //父视图处理滚动事件
+                view.getParent().requestDisallowInterceptTouchEvent(false);
+        }
         return false;
     }
 }

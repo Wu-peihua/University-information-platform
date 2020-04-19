@@ -2,8 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.uipfrontend">
-
-    <!--调用相机权限-->
+    <!-- 调用相机权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -14,26 +13,40 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <activity android:name=".CommonUser.Activity.CommonUserMyReleaseActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".CommonUser.Activity.CommonUserStudentVerifyActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CommonUser.Activity.CommonUserModifyPasswordActivity"
+            android:theme="@style/AppTheme.NoActionBar" />/>
+        <activity
+            android:name=".CommonUser.Activity.CommonUserPersonalInfoActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CommonUser.Activity.CommonUserMyReleaseActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".CommonUser.Activity.AddResActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Student.Activity.CourseDetailActivity" />
-        <activity android:name=".Student.Activity.RecruitReleaseActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Student.Activity.StudentModifyPasswordActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Student.Activity.StudentModifyNameActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-
-        <activity android:name=".Student.Activity.StudentPersonalInfoActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Admin.Activity.AdminCourseDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Admin.Activity.AdminAddCourseActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".Student.Activity.RecruitReleaseActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Student.Activity.StudentModifyPasswordActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Student.Activity.StudentModifyNameActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Student.Activity.StudentPersonalInfoActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Admin.Activity.AdminCourseDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Admin.Activity.AdminAddCourseActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Student.StudentActivity"
             android:windowSoftInputMode="adjustPan" />
@@ -45,8 +58,8 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Student.Activity.StudentMyReleaseActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme">
@@ -56,7 +69,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CommonUser.Activity.WritePostActivity"
+        <activity
+            android:name=".CommonUser.Activity.WritePostActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".CommonUser.Activity.PostDetailActivity" />
         <activity android:name=".CommonUser.Activity.CommentDetailActivity" />

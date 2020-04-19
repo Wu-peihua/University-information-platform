@@ -100,7 +100,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginTop="8dp"
                     android:text="2020-02-02 00:00"
                     android:textSize="10sp" />
 
@@ -109,7 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginLeft="18dp"
                     android:layout_toRightOf="@id/tv_mr_resItem_time"
                     android:background="@drawable/textview_selector"
                     android:gravity="center"
@@ -133,17 +132,18 @@
                 <com.sunbinqiang.iconcountview.IconCountView
                     android:id="@+id/icv_mr_resItem_like"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:paddingBottom="2.5dp"
+                    android:paddingBottom="3dp"
                     app:checked="false"
                     app:count="0"
                     app:normalRes="@drawable/icon_praise_normal"
                     app:selectedRes="@drawable/icon_praise_selected"
                     app:textNormalColor="@color/darkGray"
                     app:textSelectedColor="#FF0000"
-                    app:textSize="12sp" />
+                    app:textSize="12sp"
+                    app:zeroText="赞" />
 
             </RelativeLayout>
         </LinearLayout>

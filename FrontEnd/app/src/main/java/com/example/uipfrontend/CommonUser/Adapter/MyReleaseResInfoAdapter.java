@@ -82,10 +82,16 @@ public class MyReleaseResInfoAdapter extends RecyclerView.Adapter<RecyclerView.V
         this.onItemModifyClickListener = onItemModifyClickListener;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public int getItemViewType(int position) {
         if (resInfoList == null)
             return -1;
-        return resInfoList.size() == 0 ? -1 : super.getItemViewType(position);
+        return resInfoList.size() == 0 ? -1 : position;
     }
 
     @Override
@@ -134,6 +140,7 @@ public class MyReleaseResInfoAdapter extends RecyclerView.Adapter<RecyclerView.V
                         resInfo.setLikeNum(resInfo.getLikeNum() + 1);
                     else
                         resInfo.setLikeNum(resInfo.getLikeNum() - 1);
+                    notifyDataSetChanged();
                 }
             });
             infoViewHolder.tv_delete.setOnClickListener(new View.OnClickListener() {

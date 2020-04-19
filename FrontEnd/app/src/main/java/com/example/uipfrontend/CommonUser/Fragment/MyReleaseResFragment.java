@@ -32,11 +32,11 @@ import java.util.List;
 import butterknife.ButterKnife;
 
 public class MyReleaseResFragment extends Fragment {
-    private View                    rootView;
-    private XRecyclerView           xRecyclerView;
+    private View rootView;
+    private XRecyclerView xRecyclerView;
     private MyReleaseResInfoAdapter adapter;
-    private List<ResInfo>           list;
-    private int                     republishPos;
+    private List<ResInfo> list;
+    private int republishPos;
 
     @Nullable
     @Override
@@ -66,6 +66,7 @@ public class MyReleaseResFragment extends Fragment {
     public void initXRecyclerView() {
         xRecyclerView = rootView.findViewById(R.id.xrv_mr_res);
         adapter = new MyReleaseResInfoAdapter(list, rootView.getContext());
+        adapter.setHasStableIds(true);
         xRecyclerView.setAdapter(adapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(rootView.getContext()) {

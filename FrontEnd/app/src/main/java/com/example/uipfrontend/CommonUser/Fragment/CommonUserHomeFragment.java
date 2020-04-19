@@ -18,19 +18,24 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.uipfrontend.CommonUser.Activity.CommonUserModifyPasswordActivity;
 import com.example.uipfrontend.CommonUser.Activity.CommonUserMyReleaseActivity;
+import com.example.uipfrontend.CommonUser.Activity.CommonUserPersonalInfoActivity;
+import com.example.uipfrontend.CommonUser.Activity.CommonUserStudentVerifyActivity;
+import com.example.uipfrontend.MainActivity;
 import com.example.uipfrontend.R;
-import com.example.uipfrontend.Student.Activity.StudentMyReleaseActivity;
 
 public class CommonUserHomeFragment extends Fragment implements View.OnClickListener {
 
-    private View     rootView;
+    private View rootView;
     private Activity activity;
 
-    private TextView  tv_name;
-    private TextView  tv_isVertify;
-    private ImageView im_portrait;
-    private Uri       portrait;
+    private TextView tv_name;
+    private String str_name = "立即登录";
+    private TextView tv_isVertify;
+    private ImageView iv_portrait;
+    private Uri uri_portrait;
 
     @Nullable
     @Override
@@ -51,17 +56,24 @@ public class CommonUserHomeFragment extends Fragment implements View.OnClickList
     }
 
     private void init() {
+        rootView.findViewById(R.id.rl_cu_home_personalInfo).setOnClickListener(this);
+        rootView.findViewById(R.id.rl_cu_home_vertify).setOnClickListener(this);
         rootView.findViewById(R.id.rl_cu_home_release).setOnClickListener(this);
-
+        rootView.findViewById(R.id.rl_cu_home_password).setOnClickListener(this);
 
         tv_name = rootView.findViewById(R.id.tv_cu_home_name);
         tv_isVertify = rootView.findViewById(R.id.tv_cu_home_isVertify);
-        im_portrait = rootView.findViewById(R.id.iv_cu_home_portrait);
-        portrait = getResourcesUri(R.drawable.ic_default_portrait);
+        iv_portrait = rootView.findViewById(R.id.iv_cu_home_portrait);
+        uri_portrait = getResourcesUri(R.drawable.ic_default_portrait);
 
-        tv_name.setText("用户名");
+        str_name = "张咩阿";
+        tv_name.setText(str_name);
         tv_isVertify.setText("否");
-        Glide.with(rootView.getContext()).load(portrait).into(im_portrait);
+        Glide.with(rootView.getContext()).load(uri_portrait)
+                .placeholder(R.drawable.portrait_default)
+                .error(R.drawable.portrait_default)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(iv_portrait);
     }
 
     @Override
@@ -69,14 +81,42 @@ public class CommonUserHomeFragment extends Fragment implements View.OnClickList
 
         switch (view.getId()) {
             case R.id.rl_cu_home_personalInfo:
+                Intent intent0 = new Intent(activity, CommonUserPersonalInfoActivity.class);
+                intent0.putExtra("oldPortrait", uri_portrait.toString());
+                intent0.putExtra("oldNickname", str_name);
+                startActivityForResult(intent0, 0);
                 break;
             case R.id.rl_cu_home_vertify:
+                startActivity(new Intent(activity, CommonUserStudentVerifyActivity.class));
                 break;
             case R.id.rl_cu_home_release:
                 startActivity(new Intent(activity, CommonUserMyReleaseActivity.class));
                 break;
             case R.id.rl_cu_home_password:
+                startActivity(new Intent(activity, CommonUserModifyPasswordActivity.class));
                 break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 0) {
+            if (resultCode == 1) {
+                if (data.getStringExtra("newNickname") != null) {
+                    str_name = data.getStringExtra("newNickname");
+                    tv_name.setText(str_name);
+                }
+                if (data.getStringExtra("newPortrait") != null) {
+                    uri_portrait = Uri.parse(data.getStringExtra("newPortrait"));
+                    Glide.with(rootView.getContext()).load(uri_portrait)
+                            .placeholder(R.drawable.portrait_default)
+                            .error(R.drawable.portrait_default)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(iv_portrait);
+                }
+            }
         }
     }
 

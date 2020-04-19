@@ -38,16 +38,16 @@ public class ResourceFragment extends Fragment {
     private View rootView;
     private View rootContentView;
 
-    private XRecyclerView  xRecyclerView;
+    private XRecyclerView xRecyclerView;
     private ResInfoAdapter resInfoAdapter;
 
     private List<ResInfo> posts;
     private List<ResInfo> whole;
 
-    private DropDownMenu        dropDownMenu;
+    private DropDownMenu dropDownMenu;
     private ForegroundColorSpan span;
-    private EditText            et_search;
-    private ImageView           iv_delete;
+    private EditText et_search;
+    private ImageView iv_delete;
 
     FloatingActionButton fab;
 
@@ -135,6 +135,7 @@ public class ResourceFragment extends Fragment {
         xRecyclerView = rootContentView.findViewById(R.id.rv_cu_res);
 
         resInfoAdapter = new ResInfoAdapter(posts, rootContentView.getContext());
+        resInfoAdapter.setHasStableIds(true);
         xRecyclerView.setAdapter(resInfoAdapter);
 
         xRecyclerView.setArrowImageView(R.drawable.iconfont_downgrey);

@@ -48,14 +48,15 @@
                 android:id="@+id/met_cu_addRes_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="10dp"
                 android:editable="false"
                 android:hint="请选择该资源的类型"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:textSize="16sp"
                 app:met_floatingLabel="highlight"
                 app:met_floatingLabelText="类型"
-                app:met_floatingLabelTextSize="15sp"
+                app:met_floatingLabelTextSize="13sp"
                 app:met_iconLeft="@drawable/home" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
@@ -66,9 +67,10 @@
                 android:hint="请输入该资源的标题"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:textSize="16sp"
                 app:met_floatingLabel="highlight"
                 app:met_floatingLabelText="标题"
-                app:met_floatingLabelTextSize="15sp"
+                app:met_floatingLabelTextSize="13sp"
                 app:met_iconLeft="@drawable/ic_school" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
@@ -78,9 +80,11 @@
                 android:layout_marginTop="18dp"
                 android:hint="请输入该资源的描述信息"
                 android:maxHeight="250dp"
+                android:maxLines="8"
+                android:textSize="16sp"
                 app:met_floatingLabel="highlight"
                 app:met_floatingLabelText="描述"
-                app:met_floatingLabelTextSize="15sp"
+                app:met_floatingLabelTextSize="13sp"
                 app:met_iconLeft="@drawable/comment" />
 
             <com.rengwuxian.materialedittext.MaterialEditText
@@ -91,10 +95,11 @@
                 android:hint="请输入该资源的获取地址"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:textSize="16sp"
                 app:met_bottomTextSize="13sp"
                 app:met_floatingLabel="highlight"
                 app:met_floatingLabelText="地址"
-                app:met_floatingLabelTextSize="15sp"
+                app:met_floatingLabelTextSize="13sp"
                 app:met_iconLeft="@drawable/ic_subject" />
 
             <CheckBox
@@ -102,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
-                android:layout_marginTop="33dp"
+                android:layout_marginTop="25dp"
                 android:paddingLeft="5dp"
                 android:text="是否匿名发布"
                 android:textColor="@color/blue"
