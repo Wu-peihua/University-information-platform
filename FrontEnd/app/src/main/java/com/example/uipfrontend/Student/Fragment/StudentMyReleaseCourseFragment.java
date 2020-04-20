@@ -68,9 +68,9 @@ public class StudentMyReleaseCourseFragment extends Fragment {
 
     public void initData() {
         list = new ArrayList<>();
-        list.add(new CourseComment("数据库原理",2001,"ChilamZ", new Date(), "作业多", 2.50,10));
-        list.add(new CourseComment("计算机网络",2002,"ChilamZ", new Date(), "课程有趣", 4.50,6));
-        list.add(new CourseComment("操作系统",2003,"ChilamZ", new Date(), "课程难度大", 3.50,5));
+        list.add(new CourseComment("数据库原理",2001,"ChilamZ", "2020-4-25 22:44", "作业多", 2.50,10));
+        list.add(new CourseComment("计算机网络",2002,"ChilamZ", "2020-4-25 22:44", "课程有趣", 4.50,6));
+        list.add(new CourseComment("操作系统",2003,"ChilamZ", "2020-4-25 22:44", "课程难度大", 3.50,5));
 
     }
 

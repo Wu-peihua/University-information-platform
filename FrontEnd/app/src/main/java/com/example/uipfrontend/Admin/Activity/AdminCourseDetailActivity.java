@@ -138,13 +138,14 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
 
     public void initCommentData() {
 
-        mTags.add (new CourseComment(2001,"LinussPP", new Date(), "有趣", 4.50,10));
-        mTags.add (new CourseComment(2002,"ZhouKK", new Date(), "学到了很多", 4.50,12));
-        mTags.add (new CourseComment(2003,"MandyWong", new Date(), "没意思", 3.50,13));
-        mTags.add (new CourseComment(3008,"LarryChen", new Date(), "课程难度大", 3.50,20));
-        mTags.add (new CourseComment(4010,"LinYii", new Date(), "作业量惊人", 2.50,12));
-        mTags.add (new CourseComment(2020,"Oliver", new Date(), "不推荐", 1.50,10));
-        mTags.add (new CourseComment(2034,"Patric", new Date(), "推荐", 4.50,2));
+        mTags.add (new CourseComment(2001,"LinussPP", "2020-4-25 22:44", "有趣", 4.50,10));
+        mTags.add (new CourseComment(2002,"ZhouKK", "2020-4-25 22:44", "学到了很多", 4.50,12));
+        mTags.add (new CourseComment(2003,"MandyWong", "2020-4-25 22:44", "没意思", 3.50,13));
+        mTags.add (new CourseComment(3008,"LarryChen", "2020-4-25 22:44", "课程难度大", 3.50,20));
+        mTags.add (new CourseComment(4010,"LinYii", "2020-4-25 22:44", "作业量惊人", 2.50,12));
+        mTags.add (new CourseComment(2020,"Oliver", "2020-4-25 22:44", "不推荐", 1.50,10));
+        mTags.add (new CourseComment(2034,"Patric", "2020-4-25 22:44", "推荐", 4.50,2));
+
 
         //count = mTags.size();
     }

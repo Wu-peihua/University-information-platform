@@ -150,16 +150,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <!--课程评论列表-->
-        <TextView
-            android:id="@+id/course_comment_sum"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/lightGray"
-            android:paddingLeft="20dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="32条评论"
-            android:textSize="@dimen/fontSize_s" />
+
         <!--TextView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -172,6 +163,55 @@
             android:layout_height="wrap_content"
             android:id="@+id/CommentList">
         </ListView-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/lightGray"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:id="@+id/course_comment_sum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/lightGray"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="32条评论"
+                android:textSize="@dimen/fontSize_s" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="200dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:orientation="horizontal"
+                android:paddingRight="10dp"
+                >
+            <!-- 时间顺序 -->
+            <TextView
+                android:id="@+id/tv_course_comment_order_by_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:text="时间"
+                android:textColor="@color/black"/>
+
+            <!-- 热度顺序 -->
+            <TextView
+                android:id="@+id/tv_course_comment_order_by_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:text="热度"
+                android:textColor="@color/blue"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
         <com.jcodecraeer.xrecyclerview.XRecyclerView
             android:id="@+id/rv_student_comment"
             android:layout_width="match_parent"

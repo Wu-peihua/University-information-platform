@@ -10,14 +10,14 @@ public class CourseComment implements Serializable {
     private Integer UserId;//用户id
     private String UserName;//用户名
     private String UserImgUrl;//用户头像
-    private Date CommentDate;//评论日期
+    private String CommentDate;//评论日期
     private String Content;//评论内容
     private double Score;//评分
     private int BadReportCount;//举报次数
     private int LikeCount;//点赞次数
 
 
-    public CourseComment(String courseName,Integer commentId, String _name, Date _commentdate,String _content,double _score,int likeCount){
+    public CourseComment(String courseName,Integer commentId, String _name, String _commentdate,String _content,double _score,int likeCount){
         this.CourseName = courseName;
         this.CommentId = commentId;
         this.UserName = _name;
@@ -27,7 +27,7 @@ public class CourseComment implements Serializable {
         this.LikeCount=likeCount;
     }
 
-    public CourseComment(Integer commentId, String _name, Date _commentdate,String _content,double _score,int likeCount){
+    public CourseComment(Integer commentId, String _name, String _commentdate,String _content,double _score,int likeCount){
         this.CommentId = commentId;
         this.UserName = _name;
         this.CommentDate = _commentdate;
@@ -62,7 +62,7 @@ public class CourseComment implements Serializable {
         this.UserImgUrl = urlImg;
     }
 
-    public void setCommentDate(Date commentDate) {
+    public void setCommentDate(String commentDate) {
         this.CommentDate = commentDate;
     }
 
@@ -86,7 +86,7 @@ public class CourseComment implements Serializable {
         return this.UserImgUrl;
     }
 
-    public Date getCommentDate() {
+    public String getCommentDate() {
         return this.CommentDate;
     }
 

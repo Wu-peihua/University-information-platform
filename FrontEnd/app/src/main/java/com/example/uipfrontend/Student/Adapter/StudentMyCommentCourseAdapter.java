@@ -119,7 +119,9 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
             commentViewHolder.tv_content.setText(courseComment.getContent());
             commentViewHolder.rb_score.setRating((float)courseComment.getScore());
             //格式化
-            commentViewHolder.tv_comment_date.setText(DateFormat.getInstance().format(courseComment.getCommentDate()));
+            //commentViewHolder.tv_comment_date.setText(DateFormat.getInstance().format(courseComment.getCommentDate()));
+            commentViewHolder.tv_comment_date.setText(courseComment.getCommentDate());
+
             commentViewHolder.icv_like.setCount(courseComment.getLikeCount());
             commentViewHolder.icv_like.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
                 @Override
