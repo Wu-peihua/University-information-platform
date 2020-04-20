@@ -18,7 +18,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".CommonUser.Activity.CommonUserModifyPasswordActivity"
-            android:theme="@style/AppTheme.NoActionBar" />/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".CommonUser.Activity.CommonUserPersonalInfoActivity"
             android:theme="@style/AppTheme.NoActionBar" />

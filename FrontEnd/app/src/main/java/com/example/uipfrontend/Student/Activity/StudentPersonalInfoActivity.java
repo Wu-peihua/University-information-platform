@@ -2,6 +2,7 @@ package com.example.uipfrontend.Student.Activity;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -10,10 +11,13 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -46,6 +50,8 @@ public class StudentPersonalInfoActivity extends AppCompatActivity implements Vi
     //向上箭头、向下箭头
     private int upResId,downResId;
     private int chooseMode = PictureMimeType.ofAll();
+
+    private TextView tv_studentPersonalName;
 
 
     @Override
@@ -86,6 +92,7 @@ public class StudentPersonalInfoActivity extends AppCompatActivity implements Vi
         findViewById(R.id.iv_studentPersonalPortrait).setOnClickListener(this);
 
         iv_Portrait = findViewById(R.id.iv_studentPersonalPortrait);
+        tv_studentPersonalName = findViewById(R.id.tv_studentPersonalName);
 
 //        Intent receivedIntent = getIntent();
 //        portrait = Uri.parse(receivedIntent.getStringExtra("oldPortrait"));
@@ -133,9 +140,32 @@ public class StudentPersonalInfoActivity extends AppCompatActivity implements Vi
                         .show();
                 break;
             case R.id.rl_studentPersonalName:
-                Intent intent = new Intent(this, StudentModifyNameActivity.class);
-//                intent.putExtra("oldNickname", nickname);
-                startActivity(intent);
+//                Intent intent = new Intent(this, StudentModifyNameActivity.class);
+////                intent.putExtra("oldNickname", nickname);
+//                startActivity(intent);
+//                break;
+
+                EditText et = new EditText(this);
+                et.setMaxLines(1);
+                et.setHorizontallyScrolling(true);
+                et.setPadding(70, 80, 70, 45);
+                et.setHint("请输入新昵称");
+
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .setTitle("修改昵称")
+                        .setView(et)
+                        .setCancelable(false)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                tv_studentPersonalName.setText(et.getText().toString().trim());
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
+
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
                 break;
 
         }
