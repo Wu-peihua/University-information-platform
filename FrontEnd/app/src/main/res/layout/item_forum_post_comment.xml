@@ -59,7 +59,7 @@
                     android:background="@drawable/more" />
 
             </RelativeLayout>
-            
+
             <!-- 评论给
                 在帖子详情的itemView下隐藏 
                 在评论详情的headView下隐藏-->
@@ -70,13 +70,13 @@
                 android:layout_marginTop="5dp"
                 android:orientation="vertical"
                 android:visibility="gone">
-                
+
                 <!-- 被评论人 -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -116,7 +116,7 @@
                 </LinearLayout>
 
             </LinearLayout>
-            
+
             <!-- 评论内容 -->
             <com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView
                 android:id="@+id/etv_cu_forum_comment_content"
@@ -180,13 +180,13 @@
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/reply" />
 
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginLeft="3dp"-->
-<!--                        android:layout_marginTop="5dp"-->
-<!--                        android:text="点击回复"-->
-<!--                        android:textSize="11sp" />-->
+                    <!-- <TextView-->
+                    <!--     android:layout_width="wrap_content"-->
+                    <!--     android:layout_height="wrap_content"-->
+                    <!--     android:layout_marginLeft="3dp"-->
+                    <!--     android:layout_marginTop="5dp"-->
+                    <!--     android:text="点击回复"-->
+                    <!--     android:textSize="11sp" />-->
 
                 </LinearLayout>
 
@@ -196,27 +196,54 @@
 
     </LinearLayout>
 
-    <!-- 数目 -->
-    <TextView
-        android:id="@+id/tv_cu_forum_comment_reply_sum"
+    <RelativeLayout
+        android:id="@+id/rv_cu_forum_comment_division"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/lightGray"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:text="32条对话"
-        android:textSize="@dimen/fontSize_s"
-        android:visibility="gone" />
+        android:visibility="gone">
+        
+        <!-- 数目 -->
+        <TextView
+            android:id="@+id/tv_cu_forum_comment_reply_sum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="32条对话"
+            android:textSize="@dimen/fontSize_s"/>
 
-<!--    &lt;!&ndash; headView分隔 &ndash;&gt;-->
-<!--    <View-->
-<!--        android:id="@+id/view_cu_forum_comment_division"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="30dp"-->
-<!--        android:background="@color/lightGray"-->
-<!--        android:visibility="gone" />-->
-    
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal"
+            android:paddingRight="10dp">
+
+            <!-- 时间顺序 -->
+            <TextView
+                android:id="@+id/tv_cu_forum_comment_order_by_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:text="时间"
+                android:textColor="@color/gray"/>
+
+            <!-- 热度顺序 -->
+            <TextView
+                android:id="@+id/tv_cu_forum_comment_order_by_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="热度"
+                android:textColor="@color/blue"/>
+
+        </LinearLayout>
+        
+    </RelativeLayout>
+
     <!-- item分隔 -->
     <View
         android:layout_width="match_parent"

@@ -38,6 +38,8 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
         this.context = context;
         this.list = list;
     }
+    
+    public void setList(List<PostComment> list) { this.list = list; }
 
     public void setOnItemClickListener(onItemClickListener clickListener) {
         this.itemClickListener = clickListener;

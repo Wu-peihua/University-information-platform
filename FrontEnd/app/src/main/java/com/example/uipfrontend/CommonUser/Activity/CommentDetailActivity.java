@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +33,12 @@ import com.lzy.widget.CircleImageView;
 import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.sunbinqiang.iconcountview.IconCountView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,11 +59,15 @@ public class CommentDetailActivity extends AppCompatActivity {
     private TextView           time;         // 发布时间
     private IconCountView      praise;       // 点赞按钮
     private ImageView          report;       // 举报按钮
-    private TextView           replySum;     // 评论数
     private LinearLayout       click_write;  // 点击回复
+    
+    private RelativeLayout    rv_division;   // headView与item的分隔
+    private TextView          replySum;      // 评论数
+    private TextView          order_by_time; // 按时间排序
+    private TextView          order_by_like; // 按热度排序
 
-    private String             toName;       // 评论的对象
-    private String             reference;    // 评论引用的内容
+    private String            toName;        // 评论的对象
+    private String            reference;     // 评论引用的内容
 
     private LinearLayout      commentBar;    // 底部评论栏
     private BottomSheetDialog commentDialog;
@@ -67,6 +77,8 @@ public class CommentDetailActivity extends AppCompatActivity {
     private ReplyRecyclerViewAdapter adapter;
 
     private List<PostComment> list; // 评论列表
+    private List<PostComment> list_order_by_asc; // ↓：按时间从远到近
+    private List<PostComment> list_order_by_des; // ↑：按时间从近到远
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +115,36 @@ public class CommentDetailActivity extends AppCompatActivity {
     }
 
     private void setListener() {
+
+        // 按热度从高到低排序
+        order_by_like.setOnClickListener(view -> {
+            if(!order_by_time.getText().toString().equals("时间")) {
+                order_by_like.setTextColor(getResources().getColor(R.color.blue));
+                order_by_time.setTextColor(getResources().getColor(R.color.gray));
+                order_by_time.setText("时间");
+                adapter.setList(list);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        // 按时间排序
+        order_by_time.setOnClickListener(view -> {
+            order_by_time.setTextColor(getResources().getColor(R.color.blue));
+            order_by_like.setTextColor(getResources().getColor(R.color.gray));
+            String text = order_by_time.getText().toString();
+            if(text.contains("↑")){
+                order_by_time.setText("时间↓");
+                adapter.setList(list_order_by_asc);
+            } else if(text.contains("↓")) {
+                order_by_time.setText("时间↑");
+                adapter.setList(list_order_by_des);
+            } else {
+                order_by_time.setText("时间↓");
+                adapter.setList(list_order_by_asc);
+            }
+            adapter.notifyDataSetChanged();
+        });
+        
         // 刷新和加载更多
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
@@ -163,6 +205,9 @@ public class CommentDetailActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 初始化评论框
+     */
     private void initCommentDialog() {
         commentDialog = new BottomSheetDialog(this, R.style.BottomSheetEdit);
         View commentView = LayoutInflater.from(this).inflate(R.layout.dialog_comment_write, null);
@@ -186,9 +231,11 @@ public class CommentDetailActivity extends AppCompatActivity {
                 postComment.setToName(toName);
                 postComment.setReference(reference);
                 postComment.setContent(commentContent);
-                postComment.setDate("2020-4-5 22:44");
+                postComment.setDate("2020-4-25 22:44");
                 postComment.setLikeNum(0);
                 list.add(postComment);
+                list_order_by_asc.add(postComment);
+                list_order_by_des.add(0, postComment);
                 adapter.notifyDataSetChanged();
                 replySum.setText(list.size() + "条对话");
                 toName = null;
@@ -240,7 +287,7 @@ public class CommentDetailActivity extends AppCompatActivity {
         praise.setCount(comment.getLikeNum());
         // 如果是本人查看自己发的帖子，则需查找否点过赞
         
-        replySum.setVisibility(View.VISIBLE);
+        rv_division.setVisibility(View.VISIBLE);
         if(list.size() == 0) {
             replySum.setText("还没有人回复，快来抢沙发吧。");
         } else {
@@ -256,19 +303,80 @@ public class CommentDetailActivity extends AppCompatActivity {
         praise = headView.findViewById(R.id.praise_view_cu_forum_comment_like);
         report = headView.findViewById(R.id.imgv_cu_forum_comment_more);
         click_write = headView.findViewById(R.id.ll_cu_forum_comment_write);
+        rv_division = headView.findViewById(R.id.rv_cu_forum_comment_division);
         replySum = headView.findViewById(R.id.tv_cu_forum_comment_reply_sum);
+        order_by_time = headView.findViewById(R.id.tv_cu_forum_comment_order_by_time);
+        order_by_like = headView.findViewById(R.id.tv_cu_forum_comment_order_by_like);
     }
 
     private void initReplyData() {
         list = new ArrayList<>();
 
-        for (int i = 0; i < 15; i++) {
-            PostComment comment = new PostComment();
-            comment.setFromName("郭麒麟" + i);
-            comment.setContent("英雄所见略同");
-            comment.setDate("2020-4-3 22:35");
-            comment.setLikeNum(0);
-            list.add(comment);
-        }
+        PostComment comment = new PostComment();
+        comment.setFromName("郭麒麟1"); comment.setContent("英雄所见略同");
+        comment.setDate("2020-4-1 22:35"); comment.setLikeNum(88);
+        list.add(comment);
+
+        comment = new PostComment();
+        comment.setFromName("郭麒麟2"); comment.setContent("英雄所见略同");
+        comment.setDate("2020-4-20 22:35"); comment.setLikeNum(8);
+        list.add(comment);
+
+        comment = new PostComment();
+        comment.setFromName("郭麒麟3"); comment.setContent("英雄所见略同");
+        comment.setDate("2020-3-1 22:35"); comment.setLikeNum(63);
+        list.add(comment);
+
+        comment = new PostComment();
+        comment.setFromName("郭麒麟4"); comment.setContent("英雄所见略同");
+        comment.setDate("2020-4-1 20:35"); comment.setLikeNum(3);
+        list.add(comment);
+
+        comment = new PostComment();
+        comment.setFromName("郭麒麟5"); comment.setContent("英雄所见略同");
+        comment.setDate("2020-4-1 22:39"); comment.setLikeNum(28);
+        list.add(comment);
+
+        comment = new PostComment();
+        comment.setFromName("郭麒麟6"); comment.setContent("英雄所见略同");
+        comment.setDate("2020-4-1 12:35"); comment.setLikeNum(47);
+        list.add(comment);
+
+        list_order_by_asc = new ArrayList<>();
+        list_order_by_asc.addAll(list);
+        Collections.sort(list_order_by_asc, new Comparator<PostComment>() {
+            DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            @Override
+            public int compare(PostComment p1, PostComment p2) {
+                try {
+                    return f.parse(p1.getDate()).compareTo(f.parse(p2.getDate()));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
+
+        list_order_by_des = new ArrayList<>();
+        list_order_by_des.addAll(list);
+        Collections.sort(list_order_by_des, new Comparator<PostComment>() {
+            DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            @Override
+            public int compare(PostComment p1, PostComment p2) {
+                try {
+                    return f.parse(p2.getDate()).compareTo(f.parse(p1.getDate()));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
+
+        Collections.sort(list, new Comparator<PostComment>() {
+            @Override
+            public int compare(PostComment p1, PostComment p2) {
+                int s1 = p1.getLikeNum();
+                int s2 = p2.getLikeNum();
+                return s1 < s2 ? s1 : (s1 == s2) ? 0 : -1;
+            }
+        });
     }
 }

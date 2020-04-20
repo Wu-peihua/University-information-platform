@@ -50,7 +50,7 @@ public class WritePostActivity extends AppCompatActivity {
     private ForumPosts post;  // intent 传递过来帖子对象
     private Integer userId;   // intent 传递过来的用户id
     
-    private FJEditTextCount et_title;    // 帖子标题
+    private EditText et_title;    // 帖子标题
     private EditText et_content;         // 帖子内容
     private List<LocalMedia> selectList; // 帖子配图
 
@@ -285,7 +285,7 @@ public class WritePostActivity extends AppCompatActivity {
                     //弹出对话框 选择拍照或从相册选择
                     new AlertView.Builder().setContext(WritePostActivity.this)
                             .setStyle(AlertView.Style.ActionSheet)
-                            .setTitle("选择照片")
+                            .setTitle("选择图片")
                             .setCancelText("取消")
                             .setDestructive("拍照", "相册")
                             .setOthers(null)

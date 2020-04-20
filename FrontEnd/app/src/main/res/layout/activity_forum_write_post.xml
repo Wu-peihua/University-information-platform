@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".CommonUser.Activity.WritePostActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -35,8 +36,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,23 +44,45 @@
             android:orientation="vertical">
             
             <!-- 帖子标题 -->
-            <fj.edittextcount.lib.FJEditTextCount
+            <EditText
                 android:id="@+id/edt_cu_forum_write_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/white"
+                android:gravity="top"
+                android:hint="取个标题"
                 android:lineSpacingExtra="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                app:etHint="起个响亮的标题"
-                app:etLineColor="@color/darkGray"
-                app:etMaxLength="100"
-                app:etMinHeight="50dp"
-                app:etPromptTextColor="@color/colorAccent"
-                app:etPromptTextSize="16sp"
-                app:etTextColor="@color/black"
-                app:etTextSize="16sp"
-                app:etType="singular" />
+                android:textSize="15sp"
+                android:textColor="@color/darkGray"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/gray" />
+            
+<!--            <fj.edittextcount.lib.FJEditTextCount-->
+<!--                android:id="@+id/edt_cu_forum_write_title"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="5dp"-->
+<!--                android:lineSpacingExtra="5dp"-->
+<!--                android:paddingLeft="10dp"-->
+<!--                android:paddingRight="10dp"-->
+<!--                app:etHint="起个响亮的标题"-->
+<!--                app:etLineColor="@color/darkGray"-->
+<!--                app:etMaxLength="100"-->
+<!--                app:etMinHeight="50dp"-->
+<!--                app:etPromptTextColor="@color/colorAccent"-->
+<!--                app:etPromptTextSize="16sp"-->
+<!--                app:etTextColor="@color/black"-->
+<!--                app:etTextSize="16sp"-->
+<!--                app:etType="singular" />-->
 
             <!-- 帖子内容 -->
             <EditText
@@ -83,7 +105,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@color/darkGray" />
+                android:background="@color/gray" />
 
             <LinearLayout
                 android:layout_width="match_parent"

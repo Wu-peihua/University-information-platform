@@ -13,8 +13,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:orientation="horizontal">
 
@@ -120,18 +120,52 @@
 
     </LinearLayout>
 
-    <!-- 评论数目 -->
-    <TextView
-        android:id="@+id/tv_cu_forum_detail_comment_sum"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/lightGray"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:text="32条评论"
-        android:textSize="@dimen/fontSize_s" />
+        android:background="@color/lightGray">
+        
+        <!-- 评论数目 -->
+        <TextView
+            android:id="@+id/tv_cu_forum_detail_comment_sum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="32条评论"
+            android:textSize="@dimen/fontSize_s" />
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal"
+            android:paddingRight="10dp">
+            
+            <!-- 时间顺序 -->
+            <TextView
+                android:id="@+id/tv_cu_forum_detail_comment_order_by_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:text="时间"
+                android:textColor="@color/gray"/>
 
+            <!-- 热度顺序 -->
+            <TextView
+                android:id="@+id/tv_cu_forum_detail_comment_order_by_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="热度"
+                android:textColor="@color/blue"/>
+            
+        </LinearLayout>
+        
+    </RelativeLayout>
+    
     <!--    <View-->
     <!--        android:layout_width="match_parent"-->
     <!--        android:layout_height="1dp"-->
