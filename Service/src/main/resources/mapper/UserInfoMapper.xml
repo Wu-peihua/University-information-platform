@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.uipservice.dao.UserInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.example.uipservice.entity.UserInfo" >
+    <id column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="pw" property="pw" jdbcType="VARCHAR" />
+    <result column="stu_number" property="stuNumber" jdbcType="VARCHAR" />
+    <result column="stu_card" property="stuCard" jdbcType="VARCHAR" />
+    <result column="portrait" property="portrait" jdbcType="VARCHAR" />
+    <result column="university_id" property="universityId" jdbcType="INTEGER" />
+    <result column="institute_id" property="instituteId" jdbcType="INTEGER" />
+    <result column="user_type" property="userType" jdbcType="INTEGER" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_id, user_name, pw, stu_number, stu_card, portrait, university_id, institute_id, 
+    user_type, created
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_info
+    where user_id = #{userId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from user_info
+    where user_id = #{userId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.uipservice.entity.UserInfo" >
+    <selectKey resultType="java.lang.Long" keyProperty="userId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user_info (user_name, pw, stu_number, 
+      stu_card, portrait, university_id, 
+      institute_id, user_type, created
+      )
+    values (#{userName,jdbcType=VARCHAR}, #{pw,jdbcType=VARCHAR}, #{stuNumber,jdbcType=VARCHAR}, 
+      #{stuCard,jdbcType=VARCHAR}, #{portrait,jdbcType=VARCHAR}, #{universityId,jdbcType=INTEGER}, 
+      #{instituteId,jdbcType=INTEGER}, #{userType,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.uipservice.entity.UserInfo" >
+    <selectKey resultType="java.lang.Long" keyProperty="userId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="pw != null" >
+        pw,
+      </if>
+      <if test="stuNumber != null" >
+        stu_number,
+      </if>
+      <if test="stuCard != null" >
+        stu_card,
+      </if>
+      <if test="portrait != null" >
+        portrait,
+      </if>
+      <if test="universityId != null" >
+        university_id,
+      </if>
+      <if test="instituteId != null" >
+        institute_id,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="created != null" >
+        created,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="pw != null" >
+        #{pw,jdbcType=VARCHAR},
+      </if>
+      <if test="stuNumber != null" >
+        #{stuNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="stuCard != null" >
+        #{stuCard,jdbcType=VARCHAR},
+      </if>
+      <if test="portrait != null" >
+        #{portrait,jdbcType=VARCHAR},
+      </if>
+      <if test="universityId != null" >
+        #{universityId,jdbcType=INTEGER},
+      </if>
+      <if test="instituteId != null" >
+        #{instituteId,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.uipservice.entity.UserInfo" >
+    update user_info
+    <set >
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="pw != null" >
+        pw = #{pw,jdbcType=VARCHAR},
+      </if>
+      <if test="stuNumber != null" >
+        stu_number = #{stuNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="stuCard != null" >
+        stu_card = #{stuCard,jdbcType=VARCHAR},
+      </if>
+      <if test="portrait != null" >
+        portrait = #{portrait,jdbcType=VARCHAR},
+      </if>
+      <if test="universityId != null" >
+        university_id = #{universityId,jdbcType=INTEGER},
+      </if>
+      <if test="instituteId != null" >
+        institute_id = #{instituteId,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.UserInfo" >
+    update user_info
+    set user_name = #{userName,jdbcType=VARCHAR},
+      pw = #{pw,jdbcType=VARCHAR},
+      stu_number = #{stuNumber,jdbcType=VARCHAR},
+      stu_card = #{stuCard,jdbcType=VARCHAR},
+      portrait = #{portrait,jdbcType=VARCHAR},
+      university_id = #{universityId,jdbcType=INTEGER},
+      institute_id = #{instituteId,jdbcType=INTEGER},
+      user_type = #{userType,jdbcType=INTEGER},
+      created = #{created,jdbcType=TIMESTAMP}
+    where user_id = #{userId,jdbcType=BIGINT}
+  </update>
+</mapper>

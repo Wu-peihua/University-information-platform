@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.uipservice.dao.StuCertificationMapper" >
+  <resultMap id="BaseResultMap" type="com.example.uipservice.entity.StuCertification" >
+    <id column="info_id" property="infoId" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="stu_name" property="stuName" jdbcType="VARCHAR" />
+    <result column="stu_number" property="stuNumber" jdbcType="VARCHAR" />
+    <result column="institude_id" property="institudeId" jdbcType="INTEGER" />
+    <result column="university_id" property="universityId" jdbcType="INTEGER" />
+    <result column="stu_card" property="stuCard" jdbcType="VARCHAR" />
+    <result column="stu_cer" property="stuCer" jdbcType="INTEGER" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    info_id, user_id, stu_name, stu_number, institude_id, university_id, stu_card, stu_cer, 
+    created
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from stu_certification
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from stu_certification
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.uipservice.entity.StuCertification" >
+    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into stu_certification (user_id, stu_name, stu_number, 
+      institude_id, university_id, stu_card, 
+      stu_cer, created)
+    values (#{userId,jdbcType=BIGINT}, #{stuName,jdbcType=VARCHAR}, #{stuNumber,jdbcType=VARCHAR}, 
+      #{institudeId,jdbcType=INTEGER}, #{universityId,jdbcType=INTEGER}, #{stuCard,jdbcType=VARCHAR}, 
+      #{stuCer,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.uipservice.entity.StuCertification" >
+    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into stu_certification
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="stuName != null" >
+        stu_name,
+      </if>
+      <if test="stuNumber != null" >
+        stu_number,
+      </if>
+      <if test="institudeId != null" >
+        institude_id,
+      </if>
+      <if test="universityId != null" >
+        university_id,
+      </if>
+      <if test="stuCard != null" >
+        stu_card,
+      </if>
+      <if test="stuCer != null" >
+        stu_cer,
+      </if>
+      <if test="created != null" >
+        created,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="stuName != null" >
+        #{stuName,jdbcType=VARCHAR},
+      </if>
+      <if test="stuNumber != null" >
+        #{stuNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="institudeId != null" >
+        #{institudeId,jdbcType=INTEGER},
+      </if>
+      <if test="universityId != null" >
+        #{universityId,jdbcType=INTEGER},
+      </if>
+      <if test="stuCard != null" >
+        #{stuCard,jdbcType=VARCHAR},
+      </if>
+      <if test="stuCer != null" >
+        #{stuCer,jdbcType=INTEGER},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.uipservice.entity.StuCertification" >
+    update stu_certification
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="stuName != null" >
+        stu_name = #{stuName,jdbcType=VARCHAR},
+      </if>
+      <if test="stuNumber != null" >
+        stu_number = #{stuNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="institudeId != null" >
+        institude_id = #{institudeId,jdbcType=INTEGER},
+      </if>
+      <if test="universityId != null" >
+        university_id = #{universityId,jdbcType=INTEGER},
+      </if>
+      <if test="stuCard != null" >
+        stu_card = #{stuCard,jdbcType=VARCHAR},
+      </if>
+      <if test="stuCer != null" >
+        stu_cer = #{stuCer,jdbcType=INTEGER},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.StuCertification" >
+    update stu_certification
+    set user_id = #{userId,jdbcType=BIGINT},
+      stu_name = #{stuName,jdbcType=VARCHAR},
+      stu_number = #{stuNumber,jdbcType=VARCHAR},
+      institude_id = #{institudeId,jdbcType=INTEGER},
+      university_id = #{universityId,jdbcType=INTEGER},
+      stu_card = #{stuCard,jdbcType=VARCHAR},
+      stu_cer = #{stuCer,jdbcType=INTEGER},
+      created = #{created,jdbcType=TIMESTAMP}
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+</mapper>

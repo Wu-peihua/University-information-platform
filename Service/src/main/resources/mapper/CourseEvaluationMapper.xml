@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.uipservice.dao.CourseEvaluationMapper" >
+  <resultMap id="BaseResultMap" type="com.example.uipservice.entity.CourseEvaluation" >
+    <id column="info_id" property="infoId" jdbcType="BIGINT" />
+    <result column="commentator_id" property="commentatorId" jdbcType="BIGINT" />
+    <result column="course_id" property="courseId" jdbcType="BIGINT" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="info_date" property="infoDate" jdbcType="TIMESTAMP" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    info_id, commentator_id, course_id, content, score, info_date, created
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from course_evaluation
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from course_evaluation
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.uipservice.entity.CourseEvaluation" >
+    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into course_evaluation (commentator_id, course_id, content, 
+      score, info_date, created
+      )
+    values (#{commentatorId,jdbcType=BIGINT}, #{courseId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, 
+      #{score,jdbcType=INTEGER}, #{infoDate,jdbcType=TIMESTAMP}, #{created,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.uipservice.entity.CourseEvaluation" >
+    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into course_evaluation
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="commentatorId != null" >
+        commentator_id,
+      </if>
+      <if test="courseId != null" >
+        course_id,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="infoDate != null" >
+        info_date,
+      </if>
+      <if test="created != null" >
+        created,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="commentatorId != null" >
+        #{commentatorId,jdbcType=BIGINT},
+      </if>
+      <if test="courseId != null" >
+        #{courseId,jdbcType=BIGINT},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="infoDate != null" >
+        #{infoDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.uipservice.entity.CourseEvaluation" >
+    update course_evaluation
+    <set >
+      <if test="commentatorId != null" >
+        commentator_id = #{commentatorId,jdbcType=BIGINT},
+      </if>
+      <if test="courseId != null" >
+        course_id = #{courseId,jdbcType=BIGINT},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="infoDate != null" >
+        info_date = #{infoDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.CourseEvaluation" >
+    update course_evaluation
+    set commentator_id = #{commentatorId,jdbcType=BIGINT},
+      course_id = #{courseId,jdbcType=BIGINT},
+      content = #{content,jdbcType=VARCHAR},
+      score = #{score,jdbcType=INTEGER},
+      info_date = #{infoDate,jdbcType=TIMESTAMP},
+      created = #{created,jdbcType=TIMESTAMP}
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+</mapper>

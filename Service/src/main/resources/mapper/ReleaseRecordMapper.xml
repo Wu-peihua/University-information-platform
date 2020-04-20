@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.uipservice.dao.ReleaseRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.example.uipservice.entity.ReleaseRecord" >
+    <id column="info_id" property="infoId" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="record_id" property="recordId" jdbcType="BIGINT" />
+    <result column="record_type" property="recordType" jdbcType="INTEGER" />
+    <result column="record_date" property="recordDate" jdbcType="TIMESTAMP" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    info_id, user_id, record_id, record_type, record_date, created
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from release_record
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from release_record
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.uipservice.entity.ReleaseRecord" >
+    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into release_record (user_id, record_id, record_type, 
+      record_date, created)
+    values (#{userId,jdbcType=BIGINT}, #{recordId,jdbcType=BIGINT}, #{recordType,jdbcType=INTEGER}, 
+      #{recordDate,jdbcType=TIMESTAMP}, #{created,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.uipservice.entity.ReleaseRecord" >
+    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into release_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="recordId != null" >
+        record_id,
+      </if>
+      <if test="recordType != null" >
+        record_type,
+      </if>
+      <if test="recordDate != null" >
+        record_date,
+      </if>
+      <if test="created != null" >
+        created,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="recordId != null" >
+        #{recordId,jdbcType=BIGINT},
+      </if>
+      <if test="recordType != null" >
+        #{recordType,jdbcType=INTEGER},
+      </if>
+      <if test="recordDate != null" >
+        #{recordDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.uipservice.entity.ReleaseRecord" >
+    update release_record
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="recordId != null" >
+        record_id = #{recordId,jdbcType=BIGINT},
+      </if>
+      <if test="recordType != null" >
+        record_type = #{recordType,jdbcType=INTEGER},
+      </if>
+      <if test="recordDate != null" >
+        record_date = #{recordDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.ReleaseRecord" >
+    update release_record
+    set user_id = #{userId,jdbcType=BIGINT},
+      record_id = #{recordId,jdbcType=BIGINT},
+      record_type = #{recordType,jdbcType=INTEGER},
+      record_date = #{recordDate,jdbcType=TIMESTAMP},
+      created = #{created,jdbcType=TIMESTAMP}
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+</mapper>

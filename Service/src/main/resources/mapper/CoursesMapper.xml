@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.uipservice.dao.CoursesMapper" >
+  <resultMap id="BaseResultMap" type="com.example.uipservice.entity.Courses" >
+    <id column="info_id" property="infoId" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="university_id" property="universityId" jdbcType="INTEGER" />
+    <result column="institute_id" property="instituteId" jdbcType="INTEGER" />
+    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
+    <result column="teacher_name" property="teacherName" jdbcType="VARCHAR" />
+    <result column="course_picture" property="coursePicture" jdbcType="VARCHAR" />
+    <result column="info_date" property="infoDate" jdbcType="TIMESTAMP" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="average_score" property="averageScore" jdbcType="INTEGER" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    info_id, user_id, university_id, institute_id, course_name, teacher_name, course_picture, 
+    info_date, description, average_score, created
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from courses
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from courses
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.uipservice.entity.Courses" >
+    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into courses (user_id, university_id, institute_id, 
+      course_name, teacher_name, course_picture, 
+      info_date, description, average_score, 
+      created)
+    values (#{userId,jdbcType=BIGINT}, #{universityId,jdbcType=INTEGER}, #{instituteId,jdbcType=INTEGER}, 
+      #{courseName,jdbcType=VARCHAR}, #{teacherName,jdbcType=VARCHAR}, #{coursePicture,jdbcType=VARCHAR}, 
+      #{infoDate,jdbcType=TIMESTAMP}, #{description,jdbcType=VARCHAR}, #{averageScore,jdbcType=INTEGER}, 
+      #{created,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.uipservice.entity.Courses" >
+    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into courses
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="universityId != null" >
+        university_id,
+      </if>
+      <if test="instituteId != null" >
+        institute_id,
+      </if>
+      <if test="courseName != null" >
+        course_name,
+      </if>
+      <if test="teacherName != null" >
+        teacher_name,
+      </if>
+      <if test="coursePicture != null" >
+        course_picture,
+      </if>
+      <if test="infoDate != null" >
+        info_date,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="averageScore != null" >
+        average_score,
+      </if>
+      <if test="created != null" >
+        created,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="universityId != null" >
+        #{universityId,jdbcType=INTEGER},
+      </if>
+      <if test="instituteId != null" >
+        #{instituteId,jdbcType=INTEGER},
+      </if>
+      <if test="courseName != null" >
+        #{courseName,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherName != null" >
+        #{teacherName,jdbcType=VARCHAR},
+      </if>
+      <if test="coursePicture != null" >
+        #{coursePicture,jdbcType=VARCHAR},
+      </if>
+      <if test="infoDate != null" >
+        #{infoDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="averageScore != null" >
+        #{averageScore,jdbcType=INTEGER},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.uipservice.entity.Courses" >
+    update courses
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="universityId != null" >
+        university_id = #{universityId,jdbcType=INTEGER},
+      </if>
+      <if test="instituteId != null" >
+        institute_id = #{instituteId,jdbcType=INTEGER},
+      </if>
+      <if test="courseName != null" >
+        course_name = #{courseName,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherName != null" >
+        teacher_name = #{teacherName,jdbcType=VARCHAR},
+      </if>
+      <if test="coursePicture != null" >
+        course_picture = #{coursePicture,jdbcType=VARCHAR},
+      </if>
+      <if test="infoDate != null" >
+        info_date = #{infoDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="averageScore != null" >
+        average_score = #{averageScore,jdbcType=INTEGER},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.Courses" >
+    update courses
+    set user_id = #{userId,jdbcType=BIGINT},
+      university_id = #{universityId,jdbcType=INTEGER},
+      institute_id = #{instituteId,jdbcType=INTEGER},
+      course_name = #{courseName,jdbcType=VARCHAR},
+      teacher_name = #{teacherName,jdbcType=VARCHAR},
+      course_picture = #{coursePicture,jdbcType=VARCHAR},
+      info_date = #{infoDate,jdbcType=TIMESTAMP},
+      description = #{description,jdbcType=VARCHAR},
+      average_score = #{averageScore,jdbcType=INTEGER},
+      created = #{created,jdbcType=TIMESTAMP}
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+</mapper>

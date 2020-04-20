@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.uipservice.dao.ForumPostsMapper" >
+  <resultMap id="BaseResultMap" type="com.example.uipservice.entity.ForumPosts" >
+    <id column="info_id" property="infoId" jdbcType="BIGINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="pictures" property="pictures" jdbcType="VARCHAR" />
+    <result column="info_date" property="infoDate" jdbcType="TIMESTAMP" />
+    <result column="poster" property="poster" jdbcType="BIGINT" />
+    <result column="report_number" property="reportNumber" jdbcType="INTEGER" />
+    <result column="like_number" property="likeNumber" jdbcType="INTEGER" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    info_id, title, content, pictures, info_date, poster, report_number, like_number, 
+    created
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from forum_posts
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from forum_posts
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.uipservice.entity.ForumPosts" >
+    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into forum_posts (title, content, pictures, 
+      info_date, poster, report_number, 
+      like_number, created)
+    values (#{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{pictures,jdbcType=VARCHAR}, 
+      #{infoDate,jdbcType=TIMESTAMP}, #{poster,jdbcType=BIGINT}, #{reportNumber,jdbcType=INTEGER}, 
+      #{likeNumber,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.uipservice.entity.ForumPosts" >
+    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into forum_posts
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="pictures != null" >
+        pictures,
+      </if>
+      <if test="infoDate != null" >
+        info_date,
+      </if>
+      <if test="poster != null" >
+        poster,
+      </if>
+      <if test="reportNumber != null" >
+        report_number,
+      </if>
+      <if test="likeNumber != null" >
+        like_number,
+      </if>
+      <if test="created != null" >
+        created,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="pictures != null" >
+        #{pictures,jdbcType=VARCHAR},
+      </if>
+      <if test="infoDate != null" >
+        #{infoDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="poster != null" >
+        #{poster,jdbcType=BIGINT},
+      </if>
+      <if test="reportNumber != null" >
+        #{reportNumber,jdbcType=INTEGER},
+      </if>
+      <if test="likeNumber != null" >
+        #{likeNumber,jdbcType=INTEGER},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.uipservice.entity.ForumPosts" >
+    update forum_posts
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="pictures != null" >
+        pictures = #{pictures,jdbcType=VARCHAR},
+      </if>
+      <if test="infoDate != null" >
+        info_date = #{infoDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="poster != null" >
+        poster = #{poster,jdbcType=BIGINT},
+      </if>
+      <if test="reportNumber != null" >
+        report_number = #{reportNumber,jdbcType=INTEGER},
+      </if>
+      <if test="likeNumber != null" >
+        like_number = #{likeNumber,jdbcType=INTEGER},
+      </if>
+      <if test="created != null" >
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.ForumPosts" >
+    update forum_posts
+    set title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      pictures = #{pictures,jdbcType=VARCHAR},
+      info_date = #{infoDate,jdbcType=TIMESTAMP},
+      poster = #{poster,jdbcType=BIGINT},
+      report_number = #{reportNumber,jdbcType=INTEGER},
+      like_number = #{likeNumber,jdbcType=INTEGER},
+      created = #{created,jdbcType=TIMESTAMP}
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+</mapper>
