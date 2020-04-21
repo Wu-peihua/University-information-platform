@@ -23,6 +23,18 @@
     from user_info
     where user_id = #{userId,jdbcType=BIGINT}
   </select>
+  <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.Character" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where user_name = #{userName,jdbcType=VARCHAR}
+  </select>
+  <select id="getUserInfoByUserPassword" resultMap="BaseResultMap" resultType="com.example.uipservice.entity.UserInfo"
+          parameterType="com.example.uipservice.entity.UserInfo" >
+        SELECT *
+        FROM user_info
+        WHERE user_name =#{userName} AND pw=#{pw}
+    </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from user_info
     where user_id = #{userId,jdbcType=BIGINT}

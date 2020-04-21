@@ -15,6 +15,10 @@
     from university
     where info_id = #{infoId,jdbcType=INTEGER}
   </select>
+  <select id="queryUniversity" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.University">
+    select *
+    from university
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from university
     where info_id = #{infoId,jdbcType=INTEGER}
