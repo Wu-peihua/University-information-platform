@@ -29,7 +29,11 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     private Context context;
     private List<CourseComment> mTags = new ArrayList<>();
-    ;
+
+    public void setList(List<CourseComment> list)
+    {
+        this.mTags = list;
+    }
 
     public CourseCommentRecyclerViewAdapter(Context context, List<CourseComment> list) {
         this.context = context;
@@ -124,8 +128,8 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
 
         viewHolder.userName.setText(comment.getUserName());
-        viewHolder.commentDate.setText(DateFormat.getInstance().format(comment.getCommentDate()));
-
+        //viewHolder.commentDate.setText(DateFormat.getInstance().format(comment.getCommentDate()));
+        viewHolder.commentDate.setText(comment.getCommentDate());
         //courseImage.setImageResource(course.getImageurl());
         viewHolder.commentContent.setText(comment.getContent());
         viewHolder.score.setRating((float)comment.getScore());
@@ -207,9 +211,18 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     public int getItemCount() {
 
 //        return list.size();
-
-        return mTags.size();
+        if (mTags != null) return mTags.size();
+        return 0;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
 }

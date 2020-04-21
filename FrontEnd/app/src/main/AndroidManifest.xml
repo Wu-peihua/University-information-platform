@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
-            android:name=".CommonUser.Activity.CommonUserStudentVerifyActivity"
+            android:name=".CommonUser.Activity.StudentVerifyActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".CommonUser.Activity.CommonUserModifyPasswordActivity"

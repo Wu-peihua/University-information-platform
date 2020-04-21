@@ -22,8 +22,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.CommonUser.Activity.CommonUserModifyPasswordActivity;
 import com.example.uipfrontend.CommonUser.Activity.CommonUserMyReleaseActivity;
 import com.example.uipfrontend.CommonUser.Activity.CommonUserPersonalInfoActivity;
-import com.example.uipfrontend.CommonUser.Activity.CommonUserStudentVerifyActivity;
-import com.example.uipfrontend.MainActivity;
+import com.example.uipfrontend.CommonUser.Activity.StudentVerifyActivity;
 import com.example.uipfrontend.R;
 
 public class CommonUserHomeFragment extends Fragment implements View.OnClickListener {
@@ -87,7 +86,7 @@ public class CommonUserHomeFragment extends Fragment implements View.OnClickList
                 startActivityForResult(intent0, 0);
                 break;
             case R.id.rl_cu_home_vertify:
-                startActivity(new Intent(activity, CommonUserStudentVerifyActivity.class));
+                startActivity(new Intent(activity, StudentVerifyActivity.class));
                 break;
             case R.id.rl_cu_home_release:
                 startActivity(new Intent(activity, CommonUserMyReleaseActivity.class));

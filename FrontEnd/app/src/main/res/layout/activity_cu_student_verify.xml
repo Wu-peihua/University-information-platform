@@ -32,4 +32,84 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="vertical">
+
+        <!-- 高校名 -->
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/met_cu_verify_university"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="请输入学校名(如：华南师范大学)"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="16sp"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="学校"
+            app:met_floatingLabelTextSize="13sp"
+            app:met_iconLeft="@drawable/home_ed" />
+
+        <!-- 学院名 -->
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/met_cu_verify_institute"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:hint="请输入学院名(如：计算机学院)"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="16sp"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="学院"
+            app:met_floatingLabelTextSize="13sp"
+            app:met_iconLeft="@drawable/ic_school" />
+
+        <!-- 学号 -->
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/met_cu_verify_sno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:inputType="number"
+            android:hint="请输入学号"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="16sp"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="学号"
+            app:met_floatingLabelTextSize="13sp"
+            app:met_iconLeft="@drawable/comment_ed" />
+        
+        <!-- 学生证 -->
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:focusable="false"
+            android:hint="请在下面添加学生身份信息证明"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="16sp"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelText="学号"
+            app:met_floatingLabelTextSize="13sp"
+            app:met_iconLeft="@drawable/ic_photo" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_cu_verify_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:overScrollMode="never" />
+        
+    </LinearLayout>
+    
 </LinearLayout>

@@ -179,6 +179,8 @@ public class StudentCommentFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         studentCourseRecyclerViewAdapter = new StudentCourseRecyclerViewAdapter(this.getContext(), courses);
+        studentCourseRecyclerViewAdapter.setHasStableIds(true);
+        //点赞数据错乱修复
         recyclerView.setAdapter(studentCourseRecyclerViewAdapter);
 
 
