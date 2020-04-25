@@ -116,4 +116,12 @@ dependencies {
 
     //动画单选按钮
     implementation 'com.github.ceryle:RadioRealButton:v2.1.1'
+    
+    
+    //okhttp请求
+    implementation 'com.squareup.okhttp3:okhttp:4.0.1'
+    //Gson解析数据
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+
 }

@@ -1,8 +1,12 @@
 package com.example.uipfrontend.Student.Fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,19 +19,37 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.uipfrontend.Entity.Institute;
+import com.example.uipfrontend.Entity.University;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Activity.RecruitReleaseActivity;
 import com.example.uipfrontend.Student.Adapter.StudentRecruitRecyclerViewAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.jayfang.dropdownmenu.OnMenuSelectedListener;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.qlh.dropdownmenu.DropDownMenu;
 import com.qlh.dropdownmenu.view.MultiMenusView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 public class StudentRecruitFragment extends Fragment {
@@ -45,17 +67,10 @@ public class StudentRecruitFragment extends Fragment {
 
     private FloatingActionButton fabtn;  //浮动按钮，发布新的组队信息
 
+    public static final int MenuDataOk = 0;
 
-
-
-
-    //测试下拉筛选控件选择值
-    final String[] arr1=new String[]{"全部", "华南师范大学", "华南理工大学", "中山大学"};
-    final String[] arr2=new String[]{"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"};
-
-    final String[] strings=new String[]{"所属院校","所属专业","选择年龄"};
-
-
+    private String[] levelOneMenu;
+    private String[][] levelTwoMenu;
 
 
     @Nullable
@@ -77,19 +92,100 @@ public class StudentRecruitFragment extends Fragment {
     }
 
     private void init() {
-        //初始化下拉筛选
-        initMenus();
-        initListener();
 
-        //获取列表数据
-        getData();
-        //初始化列表
-        initRecyclerView();
+
+        //获取下拉目录显示数据
+        getMenusData();
+
+
         //初始化浮动按钮
         initFAB();
 
+    }
+
+
+    private void getMenusData(){
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                if (msg.what == MenuDataOk) {//初始化下拉筛选
+                    initMenus();
+                    initListener();
+                    //获取列表数据
+                    getData();
+                    //初始化列表
+                    initRecyclerView();
+                    System.out.println("adfa asfsaf+++++++++++=======");
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+
+        //发送http请求
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                OkHttpClient client = new OkHttpClient();
+                Request requestUniversity = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryuniversity)).build();
+                Request requestInstitute = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryinstitute)).build();
+
+                try {
+                   //请求大学目录
+                    Response responseUniversity = client.newCall(requestUniversity).execute();//发送请求
+                    Response responseInstitute = client.newCall(requestInstitute).execute();
+                    String resultUniversity = Objects.requireNonNull(responseUniversity.body()).string();
+                    String resultInstitute = Objects.requireNonNull(responseInstitute.body()).string();
+
+                    //解析大学json字符串数组
+                    JsonObject jsonObjectUniversity = new JsonParser().parse(resultUniversity).getAsJsonObject();
+                    JsonArray jsonArrayUniversity = jsonObjectUniversity.getAsJsonArray("universityList");
+                    //解析专业json字符串数组
+                    JsonObject jsonObjectInstitute = new JsonParser().parse(resultInstitute).getAsJsonObject();
+                    JsonArray jsonArrayInstitute = jsonObjectInstitute.getAsJsonArray("instituteList");
+
+                    //初始化菜单栏
+                    levelOneMenu = new String[jsonArrayUniversity.size()];
+                    levelTwoMenu = new String[jsonArrayUniversity.size()][jsonArrayInstitute.size()];
+
+                    //循环遍历数组
+                    int index = 0;
+                    for (JsonElement jsonElement : jsonArrayUniversity) {
+                        University university = new Gson().fromJson(jsonElement, new TypeToken<University>() {
+                        }.getType());
+                        levelOneMenu[index] = university.getUniversityName();
+                        ++index;
+                    }
+
+                    index = 0;
+                    for(int i=0;i<jsonArrayUniversity.size();++i){
+                        for (JsonElement jsonElement : jsonArrayInstitute) {
+                            Institute institute = new Gson().fromJson(jsonElement, new TypeToken<Institute>() {
+                            }.getType());
+
+                            levelTwoMenu[i][index] = institute.getInstituteName();
+                            ++index;
+                        }
+                    }
+
+
+                    Log.d(TAG, "resultUniversity: " + resultUniversity);
+                    Log.d(TAG, "resultInstitute: " + resultInstitute);
+
+
+                    Message msg = new Message();
+                    msg.what = MenuDataOk;
+                    handler.sendMessage(msg);
+
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
 
     }
+
 
 
     private void initMenus() {
@@ -98,13 +194,13 @@ public class StudentRecruitFragment extends Fragment {
 
         headers = new String[]{"所属院校"};
         //初始化多级菜单
-        final String[] levelOneMenu = {"全部", "华南师范大学", "华南理工大学", "中山大学"};
-        final String[][] levelTwoMenu = {
-                {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"},
-                {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"},
-                {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"},
-                {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"}
-        };
+//        final String[] levelOneMenu = {"全部", "华南师范大学", "华南理工大学", "中山大学"};
+//        final String[][] levelTwoMenu = {
+//                {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"},
+//                {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"},
+//                {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"},
+//                {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"}
+//        };
         multiMenusView = new MultiMenusView(this.getContext(),levelOneMenu,levelTwoMenu);
         popupViews.add(multiMenusView);
         //初始化内容视图

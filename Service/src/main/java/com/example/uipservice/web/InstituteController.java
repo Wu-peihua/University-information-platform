@@ -59,10 +59,9 @@ public class InstituteController {
      * @return modelMap
      */
     @RequestMapping(value = "/queryinstitute", method = RequestMethod.GET)
-    private Map<String,Object> queryInstitute(){
-        Map<String,Object> modelMap = new HashMap<String, Object>();
-        modelMap.put("success", instituteService.queryInstitute());
-        return modelMap;
+    private Map queryInstitute(){
+
+        return instituteService.queryInstitute();
     }
 
 

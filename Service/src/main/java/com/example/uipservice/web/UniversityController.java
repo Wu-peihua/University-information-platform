@@ -59,10 +59,8 @@ public class UniversityController {
      * @return modelMap
      */
     @RequestMapping(value = "/queryuniversity", method = RequestMethod.GET)
-    private Map<String,Object> queryUniversity(){
-        Map<String,Object> modelMap = new HashMap<String, Object>();
-        modelMap.put("success", universityService.queryUniversity());
-        return modelMap;
+    private Map queryUniversity(){
+        return universityService.queryUniversity();
     }
 
 
