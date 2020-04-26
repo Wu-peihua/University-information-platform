@@ -126,16 +126,6 @@ public class MainActivity extends AppCompatActivity {
                         ++index;
                     }
 
-//                    index = 0;
-//                    for(int i=0;i<jsonArrayUniversity.size();++i){
-//                        for (JsonElement jsonElement : jsonArrayInstitute) {
-//                            Institute institute = new Gson().fromJson(jsonElement, new TypeToken<Institute>() {
-//                            }.getType());
-//
-//                            levelTwoInstituteMenu[i][index] = institute.getInstituteName();
-//                            ++index;
-//                        }
-//                    }
                     for (JsonElement jsonElement : jsonArrayInstitute) {
                         Institute institute = new Gson().fromJson(jsonElement, new TypeToken<Institute>() {
                         }.getType());

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bigkoo.alertview.AlertView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.uipfrontend.Entity.RecruitInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Activity.RecruitReleaseActivity;
 import com.example.uipfrontend.Utils.GlobalDialog;
@@ -69,6 +70,8 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
 
     }
 
+
+    public void setList(List<RecruitInfo> list) { this.list = list; }
 
 
     @NonNull
@@ -143,9 +146,8 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
 
-//        return list.size();
+        return list.size();
 
-        return 10;
     }
 
 

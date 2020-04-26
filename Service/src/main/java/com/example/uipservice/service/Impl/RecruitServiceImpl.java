@@ -78,9 +78,11 @@ public class RecruitServiceImpl implements RecruitService {
         Map recruitMap = new HashMap();
         PageHelper.startPage(pageNum,pageSize);
         Page<Recruit> data = recruitMapper.queryRecruitByUserId(userId);
-        recruitMap.put("recruit",data);  //分页获取的数据
+        recruitMap.put("recruitInfoList",data);  //分页获取的数据
         recruitMap.put("total",data.getTotal());       //总页数
         recruitMap.put("pageSize",data.getPageSize());     //每页大小
+        recruitMap.put("pageNum",pageNum);     //页数
+
         return recruitMap;
     }
 
@@ -89,9 +91,11 @@ public class RecruitServiceImpl implements RecruitService {
         Map recruitMap = new HashMap();
         PageHelper.startPage(pageNum,pageSize);
         Page<Recruit> data = recruitMapper.queryRecruitByInfoId(infoId);
-        recruitMap.put("recruit",data);  //分页获取的数据
+        recruitMap.put("recruitInfoList",data);  //分页获取的数据
         recruitMap.put("total",data.getTotal());       //总页数
         recruitMap.put("pageSize",data.getPageSize());     //每页大小
+        recruitMap.put("pageNum",pageNum);     //页数
+
         return recruitMap;    }
 
     @Override
@@ -99,19 +103,24 @@ public class RecruitServiceImpl implements RecruitService {
         Map recruitMap = new HashMap();
         PageHelper.startPage(pageNum,pageSize);
         Page<Recruit> data = recruitMapper.queryRecruitByUniAndIns(universityId,instituteId);
-        recruitMap.put("recruit",data);  //分页获取的数据
+        recruitMap.put("recruitInfoList",data);  //分页获取的数据
         recruitMap.put("total",data.getTotal());       //总页数
         recruitMap.put("pageSize",data.getPageSize());     //每页大小
-        return recruitMap;    }
+        recruitMap.put("pageNum",pageNum);     //页数
+
+        return recruitMap;
+    }
 
     @Override
     public Map queryRecruit(Integer pageNum, Integer pageSize) {
         Map recruitMap = new HashMap();
         PageHelper.startPage(pageNum,pageSize);
         Page<Recruit> data = recruitMapper.queryRecruit();
-        recruitMap.put("recruit",data);  //分页获取的数据
+        recruitMap.put("recruitInfoList",data);  //分页获取的数据
         recruitMap.put("total",data.getTotal());       //总页数
         recruitMap.put("pageSize",data.getPageSize());     //每页大小
+        recruitMap.put("pageNum",pageNum);     //页数
+
         return recruitMap;
     }
 }
