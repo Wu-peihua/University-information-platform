@@ -4,12 +4,12 @@
     <!--url配置-->
     <string name="serverBasePath">http://192.168.1.107:8080/uip</string>
     <!--获取顶部筛选菜单-->
-    <string name="queryuniversity">/university/queryuniversity</string>
-    <string name="queryinstitute">/institute/queryinstitute</string>
+    <string name="queryUniversity">/university/queryuniversity</string>
+    <string name="queryInstitute">/institute/queryinstitute</string>
     <!--分页获取所有组队信息-->
-    <string name="queryrecruit">/recruit/queryrecruit</string>
+    <string name="queryRecruit">/recruit/queryrecruit</string>
     <!--根据学校ID和学院ID分页获取所有组队信息-->
-    <string name=""
+    <string name="queryRecruitByUniAndIns">/recruit/queryrecruitbyuniandins</string>
 
 
 </resources>
