@@ -14,8 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.CourseComment;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Student.Adapter.CourseCommentRecyclerViewAdapter;
 import com.sunbinqiang.iconcountview.IconCountView;
 
 import java.text.DateFormat;
@@ -28,6 +31,10 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     private Context context;
     private List<CourseComment> mTags = new ArrayList<>();
     ;
+    public void setList(List<CourseComment> list)
+    {
+        this.mTags = list;
+    }
 
     public AdminCourseCommentRecyclerViewAdapter(Context context, List<CourseComment> list) {
         this.context = context;
@@ -49,6 +56,7 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
+
 
 
             userName = (TextView) itemView.findViewById(R.id.adminUserName);
@@ -108,18 +116,28 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int pos) {
 
-        AdminCourseCommentRecyclerViewAdapter.ViewHolder viewHolder = new ViewHolder(holder.itemView);
+        AdminCourseCommentRecyclerViewAdapter.ViewHolder viewHolder = new AdminCourseCommentRecyclerViewAdapter.ViewHolder(holder.itemView);
 
-        viewHolder.userName.setText(mTags.get(pos).getUserName());
-        viewHolder.commentDate.setText(DateFormat.getInstance().format(mTags.get(pos).getCommentDate()));
+        CourseComment comment = mTags.get(pos);
 
+        //预设用户头像
+        Glide.with(context).load("")
+                .placeholder(R.drawable.portrait_default)
+                .error(R.drawable.portrait_default)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(viewHolder.userimg);
+
+
+        viewHolder.userName.setText(comment.getUserName());
+        //viewHolder.commentDate.setText(DateFormat.getInstance().format(comment.getCommentDate()));
+        viewHolder.commentDate.setText(comment.getCommentDate());
         //courseImage.setImageResource(course.getImageurl());
-        viewHolder.commentContent.setText(mTags.get(pos).getContent());
-        viewHolder.score.setRating((float) mTags.get(pos).getScore());
+        viewHolder.commentContent.setText(comment.getContent());
+        viewHolder.score.setRating((float)comment.getScore());
 
         //viewHolder.LikeCounts.setText(String.valueOf(mTags.get(pos).getLikeCount()));
 
-        viewHolder.BtnLike.setCount(mTags.get(pos).getLikeCount());
+        viewHolder.BtnLike.setCount(comment.getLikeCount());
         Log.i("当前点赞pos",String.valueOf(mTags.get(pos)));
         //点赞按钮与举报按钮
         /*
@@ -194,10 +212,19 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     public int getItemCount() {
 
 //        return list.size();
-
-        return mTags.size();
+        if (mTags != null) return mTags.size();
+        return 0;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
 }
 
