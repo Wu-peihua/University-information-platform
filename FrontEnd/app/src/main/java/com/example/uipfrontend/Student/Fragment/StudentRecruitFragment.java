@@ -2,6 +2,7 @@ package com.example.uipfrontend.Student.Fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -49,6 +51,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.content.Context.MODE_PRIVATE;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
@@ -67,7 +70,7 @@ public class StudentRecruitFragment extends Fragment {
 
     private FloatingActionButton fabtn;  //浮动按钮，发布新的组队信息
 
-    public static final int MenuDataOk = 0;
+    private static final int MenuDataOk = 0;
 
     private String[] levelOneMenu;
     private String[][] levelTwoMenu;
@@ -97,6 +100,12 @@ public class StudentRecruitFragment extends Fragment {
         //获取下拉目录显示数据
         getMenusData();
 
+        initMenus();
+        initListener();
+        //获取列表数据
+        getData();
+        //初始化列表
+        initRecyclerView();
 
         //初始化浮动按钮
         initFAB();
@@ -105,84 +114,96 @@ public class StudentRecruitFragment extends Fragment {
 
 
     private void getMenusData(){
-        @SuppressLint("HandlerLeak")
-        Handler handler = new Handler() {
-            public void handleMessage(Message msg) {
-                if (msg.what == MenuDataOk) {//初始化下拉筛选
-                    initMenus();
-                    initListener();
-                    //获取列表数据
-                    getData();
-                    //初始化列表
-                    initRecyclerView();
-                    System.out.println("adfa asfsaf+++++++++++=======");
-                }
-                super.handleMessage(msg);
-            }
-        };
+//        @SuppressLint("HandlerLeak")
+//        Handler handler = new Handler() {
+//            public void handleMessage(Message msg) {
+//                if (msg.what == MenuDataOk) {//初始化下拉筛选
+//
+//                }
+//                super.handleMessage(msg);
+//            }
+//        };
 
 
-        //发送http请求
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                OkHttpClient client = new OkHttpClient();
-                Request requestUniversity = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryuniversity)).build();
-                Request requestInstitute = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryinstitute)).build();
+//        //发送http请求
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                OkHttpClient client = new OkHttpClient();
+//                Request requestUniversity = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryuniversity)).build();
+//                Request requestInstitute = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryinstitute)).build();
+//
+//                try {
+//                   //请求大学目录
+//                    Response responseUniversity = client.newCall(requestUniversity).execute();//发送请求
+//                    Response responseInstitute = client.newCall(requestInstitute).execute();
+//                    String resultUniversity = Objects.requireNonNull(responseUniversity.body()).string();
+//                    String resultInstitute = Objects.requireNonNull(responseInstitute.body()).string();
+//
+//                    //解析大学json字符串数组
+//                    JsonObject jsonObjectUniversity = new JsonParser().parse(resultUniversity).getAsJsonObject();
+//                    JsonArray jsonArrayUniversity = jsonObjectUniversity.getAsJsonArray("universityList");
+//                    //解析专业json字符串数组
+//                    JsonObject jsonObjectInstitute = new JsonParser().parse(resultInstitute).getAsJsonObject();
+//                    JsonArray jsonArrayInstitute = jsonObjectInstitute.getAsJsonArray("instituteList");
+//
+//                    //初始化菜单栏
+//                    levelOneMenu = new String[jsonArrayUniversity.size()];
+//                    levelTwoMenu = new String[jsonArrayUniversity.size()][jsonArrayInstitute.size()];
+//
+//                    //循环遍历数组
+//                    int index = 0;
+//                    for (JsonElement jsonElement : jsonArrayUniversity) {
+//                        University university = new Gson().fromJson(jsonElement, new TypeToken<University>() {
+//                        }.getType());
+//                        levelOneMenu[index] = university.getUniversityName();
+//                        ++index;
+//                    }
+//
+//                    index = 0;
+//                    for(int i=0;i<jsonArrayUniversity.size();++i){
+//                        for (JsonElement jsonElement : jsonArrayInstitute) {
+//                            Institute institute = new Gson().fromJson(jsonElement, new TypeToken<Institute>() {
+//                            }.getType());
+//
+//                            levelTwoMenu[i][index] = institute.getInstituteName();
+//                            ++index;
+//                        }
+//                    }
+//
+//
+//                    Log.d(TAG, "resultUniversity: " + resultUniversity);
+//                    Log.d(TAG, "resultInstitute: " + resultInstitute);
+//
+//
+//                    Message msg = new Message();
+//                    msg.what = MenuDataOk;
+//                    handler.sendMessage(msg);
+//
+//                } catch(IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
 
-                try {
-                   //请求大学目录
-                    Response responseUniversity = client.newCall(requestUniversity).execute();//发送请求
-                    Response responseInstitute = client.newCall(requestInstitute).execute();
-                    String resultUniversity = Objects.requireNonNull(responseUniversity.body()).string();
-                    String resultInstitute = Objects.requireNonNull(responseInstitute.body()).string();
+        //通过sharepreference获取顶部筛选菜单数据
+        SharedPreferences sp = Objects.requireNonNull(getActivity()).getSharedPreferences("data",MODE_PRIVATE);
+        //第二个参数为缺省值，如果不存在该key，返回缺省值
+        Set<String> setUniversity = sp.getStringSet("university",null);
+        Set<String> setInstitute = sp.getStringSet("institute",null);
 
-                    //解析大学json字符串数组
-                    JsonObject jsonObjectUniversity = new JsonParser().parse(resultUniversity).getAsJsonObject();
-                    JsonArray jsonArrayUniversity = jsonObjectUniversity.getAsJsonArray("universityList");
-                    //解析专业json字符串数组
-                    JsonObject jsonObjectInstitute = new JsonParser().parse(resultInstitute).getAsJsonObject();
-                    JsonArray jsonArrayInstitute = jsonObjectInstitute.getAsJsonArray("instituteList");
+        assert setUniversity != null;
+        List<String> universityList = new ArrayList<>(setUniversity);
+        assert setInstitute != null;
+        List<String> instituteList = new ArrayList<>(setInstitute);
 
-                    //初始化菜单栏
-                    levelOneMenu = new String[jsonArrayUniversity.size()];
-                    levelTwoMenu = new String[jsonArrayUniversity.size()][jsonArrayInstitute.size()];
+        levelOneMenu = universityList.toArray(new String[0]);
+        String[] temp = instituteList.toArray(new String[0]);
+        levelTwoMenu = new String [levelOneMenu.length][temp.length];
 
-                    //循环遍历数组
-                    int index = 0;
-                    for (JsonElement jsonElement : jsonArrayUniversity) {
-                        University university = new Gson().fromJson(jsonElement, new TypeToken<University>() {
-                        }.getType());
-                        levelOneMenu[index] = university.getUniversityName();
-                        ++index;
-                    }
-
-                    index = 0;
-                    for(int i=0;i<jsonArrayUniversity.size();++i){
-                        for (JsonElement jsonElement : jsonArrayInstitute) {
-                            Institute institute = new Gson().fromJson(jsonElement, new TypeToken<Institute>() {
-                            }.getType());
-
-                            levelTwoMenu[i][index] = institute.getInstituteName();
-                            ++index;
-                        }
-                    }
-
-
-                    Log.d(TAG, "resultUniversity: " + resultUniversity);
-                    Log.d(TAG, "resultInstitute: " + resultInstitute);
-
-
-                    Message msg = new Message();
-                    msg.what = MenuDataOk;
-                    handler.sendMessage(msg);
-
-                } catch(IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
+        for(int i = 0;i<levelOneMenu.length;++i){
+            System.arraycopy(temp, 0, levelTwoMenu[i], 0, temp.length);
+        }
 
     }
 
