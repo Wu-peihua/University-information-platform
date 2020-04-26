@@ -20,6 +20,10 @@ public interface RecruitService {
     //分页获取所有组队信息
     /*根据发布人的用户id分页获取组队信息*/
     Map queryRecruitByUserId(Integer pageNum, Integer pageSize, Long userId);
+    //根据信息主键id分页获取
+    Map queryRecruitByInfoId(Integer pageNum, Integer pageSize, Long infoId);
+    /*根据学校ID和学院ID分页获取所有组队信息*/
+    Map queryRecruitByUniAndIns(Integer pageNum, Integer pageSize, Integer universityId,Integer instituteId);
     /*分页获取所有的组队信息*/
     Map queryRecruit(Integer pageNum, Integer pageSize);
 

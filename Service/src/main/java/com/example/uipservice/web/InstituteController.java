@@ -2,9 +2,7 @@ package com.example.uipservice.web;
 
 
 import com.example.uipservice.entity.Institute;
-import com.example.uipservice.entity.Recruit;
 import com.example.uipservice.service.InstituteService;
-import com.example.uipservice.service.RecruitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

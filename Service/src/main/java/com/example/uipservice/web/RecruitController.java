@@ -63,7 +63,25 @@ public class RecruitController {
     }
 
     /**
-     * 获取所有组队信息
+     * 根据信息主键id分页获取组队信息
+     * @return modelMap
+     */
+    @RequestMapping(value = "/queryrecruitbyinfoid", method = RequestMethod.GET)
+    private Map queryRecruitByInfoId(Integer pageNum, Integer pageSize, Long infoId){
+        return recruitService.queryRecruitByInfoId(pageNum, pageSize, infoId);
+    }
+
+    /**
+     * 根据学校ID和学院ID分页获取所有组队信息
+     * @return modelMap
+     */
+    @RequestMapping(value = "/queryrecruitbyuniandins", method = RequestMethod.GET)
+    private Map queryRecruitByUniAndIns(Integer pageNum, Integer pageSize, Integer universityId,Integer instituteId){
+        return recruitService.queryRecruitByUniAndIns(pageNum, pageSize, universityId,instituteId);
+    }
+
+    /**
+     * 分页获取所有组队信息
      * @return modelMap
      */
     @RequestMapping(value = "/queryrecruit", method = RequestMethod.GET)

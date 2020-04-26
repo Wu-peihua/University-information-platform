@@ -1,6 +1,5 @@
 package com.example.uipservice.service;
 
-import com.example.uipservice.entity.Recruit;
 import com.example.uipservice.entity.University;
 import org.springframework.stereotype.Service;
 

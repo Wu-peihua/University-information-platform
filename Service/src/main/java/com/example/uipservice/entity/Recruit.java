@@ -15,7 +15,7 @@ public class Recruit {
 
     private Long userId;
 
-    private Integer subjectId;
+    private Integer instituteId;
 
     private Integer universityId;
 
@@ -73,12 +73,12 @@ public class Recruit {
         this.userId = userId;
     }
 
-    public Integer getSubjectId() {
-        return subjectId;
+    public Integer getInstituteId() {
+        return instituteId;
     }
 
-    public void setSubjectId(Integer subjectId) {
-        this.subjectId = subjectId;
+    public void setInstituteId(Integer instituteId) {
+        this.instituteId = instituteId;
     }
 
     public Integer getUniversityId() {
