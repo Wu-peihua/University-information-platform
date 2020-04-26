@@ -46,28 +46,12 @@ public class RecruitInfo implements Serializable {
         this.infoDate = infoDate;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public String getPortrait() {
         return portrait;
     }
 
     public void setPortrait(String portrait) {
         this.portrait = portrait;
-    }
-
-    public Integer getSubjectId() {
-        return subjectId;
-    }
-
-    public void setSubjectId(Integer subjectId) {
-        this.subjectId = subjectId;
     }
 
     public Integer getUniversityId() {
@@ -86,24 +70,27 @@ public class RecruitInfo implements Serializable {
         this.contact = contact;
     }
 
+    public RecruitInfo(){
 
+    }
 
-    public  RecruitInfo(Long infoId,String title,String contact,String content,Date infoDate,String userName,String portrait,String pictures){
+    public  RecruitInfo(Long infoId,String title,String contact,String content,Date infoDate,String portrait,String pictures,Integer universityId,Integer instituteId){
         this.infoId = infoId;
         this.title = title;
         this.contact = contact;
         this.content = content;
         this.infoDate = infoDate;
-        this.userName = userName;
         this.portrait = portrait;
         this.pictures = pictures;
+        this.instituteId = instituteId;
+        this.universityId = universityId;
 
     }
 
     @Override
     public String toString(){
-        return "RecruitInfo[ infoId:" + infoId + ",title:" + title + ",content:" + content + ",pictures:" + pictures + ",infoDate:" + infoDate + ",userName:" + userName +
-                ",portrait:" + portrait + ",subjected:" + subjectId + ",universityId:" + universityId + ",contact:" + contact + "]";
+        return "RecruitInfo[ infoId:" + infoId + ",title:" + title + ",content:" + content + ",pictures:" + pictures + ",infoDate:" + infoDate  +
+                ",portrait:" + portrait + ",institute::" + instituteId + ",universityId:" + universityId + ",contact:" + contact + "]";
     }
 
     public void setInfoId(Long infoId) {
@@ -118,6 +105,15 @@ public class RecruitInfo implements Serializable {
         this.userId = userId;
     }
 
+
+    public Integer getInstituteId() {
+        return instituteId;
+    }
+
+    public void setInstituteId(Integer instituteId) {
+        this.instituteId = instituteId;
+    }
+
     //组队信息Id
     private Long infoId;
     //组队信息标题
@@ -128,14 +124,12 @@ public class RecruitInfo implements Serializable {
     private String pictures;
     //组队信息发布日期
     private Date infoDate;
-    //组队信息发布人姓名
-    private String userName;
     //信息发布人ID
     private Long userId;
     //组队信息发布人头像
     private String portrait;
-    //组队信息所属科目Id
-    private Integer subjectId;
+    //组队信息所属学院Id
+    private Integer instituteId;
     //组队信息所属学校id
     private Integer universityId;
     //发布者联系方式

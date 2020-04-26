@@ -14,6 +14,8 @@
     <string name="queryRecruitByInfoid">/recruit/queryrecruitbyinfoid</string>
     <!--根据用户id分页获取组队信息-->
     <string name="queryRecruitByUserId">/recruit/queryrecruitbyuserid</string>
+    <!--提交组队信息-->
+    <string name="insertRecruit">/recruit/insertrecruit</string>
 
 
 </resources>

@@ -26,28 +26,34 @@ import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
-import com.example.uipfrontend.CommonUser.Activity.AddResActivity;
 import com.example.uipfrontend.Entity.RecruitInfo;
-import com.example.uipfrontend.Entity.ResInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.GridImageAdapter;
 import com.example.uipfrontend.Student.FullyGridLayoutManager;
-import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
+import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import fj.edittextcount.lib.FJEditTextCount;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 import static com.example.uipfrontend.CommonUser.Activity.AddResActivity.hideSystemKeyboard;
@@ -75,7 +81,7 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     //发布组队信息面向的学校
     private MaterialEditText school;
     private int schoolOption;
-    private int subjectOption;
+    private int instituteOption;
     //发布组队信息的标题
     private MaterialEditText title;
     //组队信息发布人联系方式
@@ -83,11 +89,11 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     //组队信息描述
     private FJEditTextCount description;
 
-//    private String[] option1 = {"全部", "华南师范大学", "华南理工大学", "中山大学", "暨南大学", "华南农业大学", "广州大学"};
-//    private String[] option2 = {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"};
-
     private String[] option1 ;
     private String[] option2 ;
+
+    //用于发送的组队信息
+    private RecruitInfo recruitInfo;
 
 
 
@@ -95,6 +101,8 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_recruit_release);
+
+        recruitInfo = new RecruitInfo();
 
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -107,6 +115,9 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         initView();
 
         initNoLinkOptionsPicker();
+
+
+
 
     }
 
@@ -217,15 +228,26 @@ public class RecruitReleaseActivity extends AppCompatActivity {
                                 //确定
                                 case -1:
                                     Intent intent = new Intent();
-                                    String username = "张咩阿";
-                                    String strTitle = title.getText().toString().trim();
-                                    String strDescription = description.getText().trim();
-                                    String strContact = contact.getText().toString();
-                                    Date date = new Date(System.currentTimeMillis());
-                                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
-                                    String strTime = format.format(date);
+//                                    String username = "张咩阿";
+//                                    String strTitle = title.getText().toString().trim();
+//                                    String strDescription = description.getText().trim();
+//                                    String strContact = contact.getText().toString();
+//                                    Date date = new Date(System.currentTimeMillis());
+//                                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+//                                    String strTime = format.format(date);
+//
+//                                    setResult(1, intent);
 
-                                    setResult(1, intent);
+                                    recruitInfo.setUserId(Long.valueOf(1)); //默认设置为1
+                                    recruitInfo.setContact(contact.getText().toString());
+                                    recruitInfo.setContent(description.getText());
+                                    recruitInfo.setInfoDate(new Date());
+                                    recruitInfo.setUniversityId(schoolOption);
+                                    recruitInfo.setInstituteId(instituteOption);
+                                    recruitInfo.setPortrait("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587898699610&di=c7b2fc839b41a4eb285279b781112427&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F09%2F20190109072726_aNNZd.thumb.700_0.jpeg");
+
+
+
                                     Toast.makeText(RecruitReleaseActivity.this, "组队信息发布成功", Toast.LENGTH_SHORT).show();
 
                                     RecruitReleaseActivity.this.finish();
@@ -267,7 +289,7 @@ public class RecruitReleaseActivity extends AppCompatActivity {
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
                 schoolOption = options1;
-                subjectOption = options2;
+                instituteOption = options2;
                 String str = option1[options1] + "-" + option2[options2];
                 school.setText(str);
             }
@@ -465,7 +487,7 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         RecruitInfo recruitInfo = (RecruitInfo) intent.getSerializableExtra("recruitInfo");
         if (recruitInfo != null) {
 
-            school.setText(option1[recruitInfo.getType1()] + "-" + option2[recruitInfo.getType2()]);
+            school.setText(option1[recruitInfo.getUniversityId()] + "-" + option2[recruitInfo.getInstituteId()]);
             title.setText(recruitInfo.getTitle());
             contact.setText(recruitInfo.getContact());
             description.setText(recruitInfo.getContent());
@@ -485,6 +507,46 @@ public class RecruitReleaseActivity extends AppCompatActivity {
 
         option1 = universityList.toArray(new String[0]);
         option2 = instituteList.toArray(new String[0]);
+
+
+    }
+
+
+    public void insertRecruitInfo(){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //建立client
+                final OkHttpClient[] client = {new OkHttpClient()};
+                //将传送实体类转为string类型的键值对
+                Gson gson = new Gson();
+                String json = gson.toJson(recruitInfo);
+
+                System.out.println("json:"+json);
+                //设置请求体并设置contentType
+                RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"),json);
+                //请求
+                Request request=new Request.Builder()
+                        .url(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.insertRecruit))
+                        .post(requestBody)
+                        .build();
+                //新建call联结client和request
+                Call call= client[0].newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        //请求失败的处理
+                        Log.i("RESPONSE:","fail"+e.getMessage());
+                    }
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        Log.i("RESPONSE:",response.body().string());
+                    }
+
+                });
+            }
+        }).start();
 
 
     }
