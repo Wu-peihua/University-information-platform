@@ -8,148 +8,303 @@
     android:descendantFocusability="blocksDescendants"
     android:orientation="vertical"
     >
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
 
-    <RelativeLayout
+
+    <!-- item_forum_post_comment
+        1、是 activity_forum_post_detail
+        的 itemView
+        2、是 activity_forum_comment_detail
+        的 headView 和 itemView -->
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp">
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal">
 
+        <!-- 评论者头像 -->
         <com.lzy.widget.CircleImageView
             android:id="@+id/adminUserImg"
-            android:layout_width="@dimen/layoutWidth"
-            android:layout_height="@dimen/layoutHeight"
-            android:layout_margin="@dimen/margin_s"
-            android:src="@drawable/ic_student_img"/>
-        <!--ImageView
-            android:id="@+id/UserImg"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/ic_student_img"/-->
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            app:civ_BorderWidth="0dp"
+            android:src="@drawable/portrait_default" />
+
         <LinearLayout
-            android:id="@+id/adminUsercenter"
-            android:layout_width="180dp"
-            android:layout_height="60dp"
-            android:layout_toRightOf="@+id/adminUserImg"
-            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/adminUserName"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/blue"
-                android:layout_marginTop="@dimen/margin_xs"
-                android:layout_marginBottom="@dimen/margin_xs"
-                android:layout_marginLeft="0dp"
-                android:text="Yuzz"
-                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+
+                <!-- 评论者 -->
+                <TextView
+                    android:id="@+id/adminUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_xs"
+                    android:text="Yuzz"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fontSize_s" />
+
+                <RatingBar
+                    android:id="@+id/adminuserRatingBar"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/margin_xs"
+                    android:layout_toRightOf="@+id/adminUserName"
+                    android:isIndicator="true"
+                    android:layout_centerVertical="true"
+                    android:numStars="5"
+                    android:progressTint="@android:color/holo_orange_light"
+                    android:rating="4.5"
+                    android:stepSize="0.5" />
+                <!-- 举报按钮 -->
+
+            </RelativeLayout>
+
+            <!-- 评论内容 -->
+            <TextView
+                android:id="@+id/adminCommentContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="5dp"
+                android:text="内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
+                android:textColor="@color/item_text"
                 android:textSize="@dimen/fontSize_s" />
 
-            <TextView
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                android:id="@+id/adminCommentDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_xs"
-                android:layout_marginBottom="@dimen/margin_xs"
-                android:layout_marginLeft="0dp"
-                android:text="2019-12-08"
-                android:layout_centerVertical="true"
-                android:textColor="@color/black"
-                android:textSize="@dimen/fontSize_s" />
+                <!-- 评论时间 -->
+                <TextView
+                    android:id="@+id/adminCommentDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="2020-3-26 12:30"
+                    android:textColor="@color/item_time"
+                    android:textSize="@dimen/fontSize_xs" />
+
+                <!-- 点赞按钮 -->
+                <com.sunbinqiang.iconcountview.IconCountView
+                    android:id="@+id/adminbtnlike_student_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:layout_toLeftOf="@id/adminll_cu_forum_comment_write"
+                    app:count="100"
+                    app:normalRes="@drawable/icon_praise_normal"
+                    app:selectedRes="@drawable/icon_praise_selected"
+                    app:checked="false"
+                    app:textNormalColor="@color/darkGray"
+                    app:textSelectedColor="#FF0000"
+                    app:textSize="12sp"
+                    app:zeroText="赞" />
+
+                <!-- 回复按钮 -->
+                <LinearLayout
+                    android:id="@+id/adminll_cu_forum_comment_write"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_toRightOf="@+id/adminbtnlike_student_comment"
+                        android:id="@+id/adminBtnBadReport"
+                        android:background="@drawable/del"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_centerVertical="true"
+                        android:onClick="onClick"
+                        android:focusableInTouchMode="false"></Button>
+
+                </LinearLayout>
+
+            </RelativeLayout>
 
         </LinearLayout>
 
-        <!--Button
-            android:layout_toRightOf="@+id/Usercenter"
-            android:id="@+id/BtnLike"
-            android:background="@drawable/ic_like"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_margin="@dimen/margin_xs"
-            android:onClick="onClick"
-            ></Button>
-        <TextView
-            android:layout_toRightOf="@+id/BtnLike"
-            android:id="@+id/LikeCounts"
-            android:layout_margin="@dimen/margin_xs"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            >
-        </TextView-->
-    <RelativeLayout
+    </LinearLayout>
+
+    <!-- headView分隔 -->
+    <View
+        android:id="@+id/view_cu_forum_comment_division"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/adminUsercenter">
+        android:layout_height="30dp"
+        android:background="@color/lightGray"
+        android:visibility="gone" />
 
-        <com.sunbinqiang.iconcountview.IconCountView
-            android:id="@+id/adminbtnlike_student_comment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/margin_xs"
-            android:layout_marginTop="@dimen/margin_xs"
-            android:layout_marginEnd="@dimen/margin_xs"
-            android:layout_marginBottom="@dimen/margin_xs"
-            android:clickable="true"
-            android:duplicateParentState="false"
-            app:count="0"
-            app:normalRes="@drawable/icon_praise_normal"
-            app:selectedRes="@drawable/icon_praise_selected"
-            app:checked="false"
-            app:textNormalColor="@color/darkGray"
-            app:textSelectedColor="#FF0000"
-            app:textSize="12sp"
-            app:zeroText="赞" />
-
-        <Button
-            android:layout_toRightOf="@+id/adminbtnlike_student_comment"
-            android:id="@+id/adminBtnBadReport"
-            android:background="@drawable/del"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
-            android:onClick="onClick"
-            android:focusableInTouchMode="false"></Button>
-    </RelativeLayout>
-
-        <RatingBar
-            android:layout_toRightOf="@+id/adminUserImg"
-            android:layout_below="@+id/adminUsercenter"
-            android:id="@+id/adminuserRatingBar"
-            style="@style/Widget.AppCompat.RatingBar.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_xs"
-            android:layout_gravity="center"
-            android:isIndicator="true"
-            android:numStars="5"
-            android:rating="4.5"
-            android:stepSize="0.5"
-            android:progressTint="@android:color/holo_orange_light" />
-
-        <TextView
-            android:layout_below="@+id/adminuserRatingBar"
-            android:layout_toRightOf="@+id/adminUserImg"
-            android:id="@+id/adminCommentContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_margin="@dimen/margin_xs"
-            android:textSize="@dimen/fontSize_s"
-            android:textColor="@color/black"
-            android:text="这个课很不错！">
-
-        </TextView>
-
-
-    </RelativeLayout>
+    <!-- item分隔 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightGray" />
 </LinearLayout>
 
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:descendantFocusability="blocksDescendants"-->
+<!--    android:orientation="vertical"-->
+<!--    >-->
+<!--<LinearLayout-->
+<!--    android:layout_width="wrap_content"-->
+<!--    android:layout_height="wrap_content">-->
 
-</LinearLayout>
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="5dp">-->
+
+<!--        <com.lzy.widget.CircleImageView-->
+<!--            android:id="@+id/adminUserImg"-->
+<!--            android:layout_width="@dimen/layoutWidth"-->
+<!--            android:layout_height="@dimen/layoutHeight"-->
+<!--            android:layout_margin="@dimen/margin_s"-->
+<!--            android:src="@drawable/ic_student_img"/>-->
+<!--        &lt;!&ndash;ImageView-->
+<!--            android:id="@+id/UserImg"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:background="@drawable/ic_student_img"/&ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:id="@+id/adminUsercenter"-->
+<!--            android:layout_width="180dp"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:layout_toRightOf="@+id/adminUserImg"-->
+<!--            android:layout_margin="5dp"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/adminUserName"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textColor="@color/blue"-->
+<!--                android:layout_marginTop="@dimen/margin_xs"-->
+<!--                android:layout_marginBottom="@dimen/margin_xs"-->
+<!--                android:layout_marginLeft="0dp"-->
+<!--                android:text="Yuzz"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:textSize="@dimen/fontSize_s" />-->
+
+<!--            <TextView-->
+
+<!--                android:id="@+id/adminCommentDate"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="@dimen/margin_xs"-->
+<!--                android:layout_marginBottom="@dimen/margin_xs"-->
+<!--                android:layout_marginLeft="0dp"-->
+<!--                android:text="2019-12-08"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="@dimen/fontSize_s" />-->
+
+<!--        </LinearLayout>-->
+
+<!--        &lt;!&ndash;Button-->
+<!--            android:layout_toRightOf="@+id/Usercenter"-->
+<!--            android:id="@+id/BtnLike"-->
+<!--            android:background="@drawable/ic_like"-->
+<!--            android:layout_width="25dp"-->
+<!--            android:layout_height="25dp"-->
+<!--            android:layout_margin="@dimen/margin_xs"-->
+<!--            android:onClick="onClick"-->
+<!--            ></Button>-->
+<!--        <TextView-->
+<!--            android:layout_toRightOf="@+id/BtnLike"-->
+<!--            android:id="@+id/LikeCounts"-->
+<!--            android:layout_margin="@dimen/margin_xs"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            >-->
+<!--        </TextView&ndash;&gt;-->
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_toRightOf="@+id/adminUsercenter">-->
+
+<!--        <com.sunbinqiang.iconcountview.IconCountView-->
+<!--            android:id="@+id/adminbtnlike_student_comment"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:layout_marginStart="@dimen/margin_xs"-->
+<!--            android:layout_marginTop="@dimen/margin_xs"-->
+<!--            android:layout_marginEnd="@dimen/margin_xs"-->
+<!--            android:layout_marginBottom="@dimen/margin_xs"-->
+<!--            android:clickable="true"-->
+<!--            android:duplicateParentState="false"-->
+<!--            app:count="0"-->
+<!--            app:normalRes="@drawable/icon_praise_normal"-->
+<!--            app:selectedRes="@drawable/icon_praise_selected"-->
+<!--            app:checked="false"-->
+<!--            app:textNormalColor="@color/darkGray"-->
+<!--            app:textSelectedColor="#FF0000"-->
+<!--            app:textSize="12sp"-->
+<!--            app:zeroText="赞" />-->
+
+<!--        <Button-->
+<!--            android:layout_toRightOf="@+id/adminbtnlike_student_comment"-->
+<!--            android:id="@+id/adminBtnBadReport"-->
+<!--            android:background="@drawable/del"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:onClick="onClick"-->
+<!--            android:focusableInTouchMode="false"></Button>-->
+<!--    </RelativeLayout>-->
+
+<!--        <RatingBar-->
+<!--            android:layout_toRightOf="@+id/adminUserImg"-->
+<!--            android:layout_below="@+id/adminUsercenter"-->
+<!--            android:id="@+id/adminuserRatingBar"-->
+<!--            style="@style/Widget.AppCompat.RatingBar.Small"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="@dimen/margin_xs"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:isIndicator="true"-->
+<!--            android:numStars="5"-->
+<!--            android:rating="4.5"-->
+<!--            android:stepSize="0.5"-->
+<!--            android:progressTint="@android:color/holo_orange_light" />-->
+
+<!--        <TextView-->
+<!--            android:layout_below="@+id/adminuserRatingBar"-->
+<!--            android:layout_toRightOf="@+id/adminUserImg"-->
+<!--            android:id="@+id/adminCommentContent"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:layout_margin="@dimen/margin_xs"-->
+<!--            android:textSize="@dimen/fontSize_s"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:text="这个课很不错！">-->
+
+<!--        </TextView>-->
+
+
+<!--    </RelativeLayout>-->
+<!--</LinearLayout>-->
+
+
+<!--</LinearLayout>-->
