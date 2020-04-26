@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 OkHttpClient client = new OkHttpClient();
-                Request requestUniversity = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryuniversity)).build();
-                Request requestInstitute = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryinstitute)).build();
+                Request requestUniversity = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryUniversity)).build();
+                Request requestInstitute = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryInstitute)).build();
 
                 try {
                     //请求大学目录

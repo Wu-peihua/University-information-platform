@@ -10,6 +10,10 @@
     <string name="queryRecruit">/recruit/queryrecruit</string>
     <!--根据学校ID和学院ID分页获取所有组队信息-->
     <string name="queryRecruitByUniAndIns">/recruit/queryrecruitbyuniandins</string>
+    <!--根据信息主键id分页获取组队信息-->
+    <string name="queryRecruitByInfoid">/recruit/queryrecruitbyinfoid</string>
+    <!--根据用户id分页获取组队信息-->
+    <string name="queryRecruitByUserId">/recruit/queryrecruitbyuserid</string>
 
 
 </resources>
