@@ -75,11 +75,11 @@
                     android:layout_marginTop="@dimen/margin_s"
                     android:layout_marginHorizontal="@dimen/margin_s"
                     android:editable="false"
-                    android:hint="发布面向学校及学科"
+                    android:hint="发布面向学校及学院"
                     android:maxLines="1"
                     android:singleLine="true"
                     app:met_floatingLabel="highlight"
-                    app:met_floatingLabelText="学校及学科"
+                    app:met_floatingLabelText="学校及学院"
                     app:met_floatingLabelTextSize="@dimen/fontSize_xs"
                     android:textSize="@dimen/fontSize_s"
                     app:met_iconLeft="@drawable/ic_school" />

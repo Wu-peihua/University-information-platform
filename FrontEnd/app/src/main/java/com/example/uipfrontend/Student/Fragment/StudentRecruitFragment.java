@@ -62,7 +62,6 @@ public class StudentRecruitFragment extends Fragment {
 
     private FloatingActionButton fabtn;  //浮动按钮，发布新的组队信息
 
-
     private String[] levelOneMenu;
     private String[][] levelTwoMenu;
 

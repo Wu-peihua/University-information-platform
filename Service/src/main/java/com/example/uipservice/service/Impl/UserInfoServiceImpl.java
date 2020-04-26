@@ -26,7 +26,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                     throw new RuntimeException("用户名已被使用，注册用户失败！");
                 }
                 userInfo.setPortrait("https://tse1-mm.cn.bing.net/th/id/OIP.kbhcK_jmmGTIrDmD_5ZaKwHaHa?w=207&h=203&c=7&o=5&pid=1.7");
-                int effectNum = userInfoMapper.insert(userInfo);
+                int effectNum = userInfoMapper.insertSelective(userInfo);
                 if(effectNum > 0){
                     return true;
                 }else{

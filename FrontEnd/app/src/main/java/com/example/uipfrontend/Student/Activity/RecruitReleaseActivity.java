@@ -3,6 +3,7 @@ package com.example.uipfrontend.Student.Activity;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -43,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import fj.edittextcount.lib.FJEditTextCount;
 
@@ -80,10 +83,11 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     //组队信息描述
     private FJEditTextCount description;
 
-    private String[] option1 = {"全部", "华南师范大学", "华南理工大学", "中山大学", "暨南大学", "华南农业大学", "广州大学"};
-    private String[] option2 = {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"};
+//    private String[] option1 = {"全部", "华南师范大学", "华南理工大学", "中山大学", "暨南大学", "华南农业大学", "广州大学"};
+//    private String[] option2 = {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学","艺术学"};
 
-
+    private String[] option1 ;
+    private String[] option2 ;
 
 
 
@@ -96,11 +100,11 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().setStatusBarColor(getResources().getColor(R.color.blue));
 
+        initData();
+
         initToolBar();
         initRecyclerView();
         initView();
-
-        initData();
 
         initNoLinkOptionsPicker();
 
@@ -128,7 +132,6 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         statusBarColorPrimaryDark = R.color.blue;
         upResId = R.drawable.arrow_up;
         downResId = R.drawable.arrow_down;
-//        dialogBuilderSelect = NiftyDialogBuilder.getInstance(this);
 
         //照片上传功能
         //每行显示3张照片
@@ -468,6 +471,22 @@ public class RecruitReleaseActivity extends AppCompatActivity {
             description.setText(recruitInfo.getContent());
 
         }
+
+        //通过sharepreference获取大学选项和学院选项
+        SharedPreferences sp = getSharedPreferences("data",MODE_PRIVATE);
+        //第二个参数为缺省值，如果不存在该key，返回缺省值
+        Set<String> setUniversity = sp.getStringSet("university",null);
+        Set<String> setInstitute = sp.getStringSet("institute",null);
+
+        assert setUniversity != null;
+        List<String> universityList = new ArrayList<>(setUniversity);
+        assert setInstitute != null;
+        List<String> instituteList = new ArrayList<>(setInstitute);
+
+        option1 = universityList.toArray(new String[0]);
+        option2 = instituteList.toArray(new String[0]);
+
+
     }
 
 
