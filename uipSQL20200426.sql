@@ -134,7 +134,7 @@ CREATE TABLE recruit(
     institute_id INT UNSIGNED NOT NULL,# 组队所属学院id
     university_id INT UNSIGNED NOT NULL,  #组队所属学校id
     report_number INT DEFAULT 0,# 信息被举报次数
-    contact BOOLEAN DEFAULT FALSE, #联系方式
+    contact VARCHAR(40) NOT NULL, #联系方式
     created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user_info(user_id),
     FOREIGN KEY (institute_id) REFERENCES institute(info_id),

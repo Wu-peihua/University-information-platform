@@ -13,13 +13,6 @@ import java.util.List;
  * 组队信息类
  */
 public class RecruitInfo implements Serializable {
-    public Integer getInfoId() {
-        return infoId;
-    }
-
-    public void setInfoId(Integer infoId) {
-        this.infoId = infoId;
-    }
 
     public String getTitle() {
         return title;
@@ -93,24 +86,9 @@ public class RecruitInfo implements Serializable {
         this.contact = contact;
     }
 
-    public int getType1() {
-        return type1;
-    }
-
-    public void setType1(int type1) {
-        this.type1 = type1;
-    }
-
-    public int getType2() {
-        return type2;
-    }
-
-    public void setType2(int type2) {
-        this.type2 = type2;
-    }
 
 
-    public  RecruitInfo(Integer infoId,String title,String contact,String content,Date infoDate,String userName,String portrait,String pictures,Integer type1,Integer type2){
+    public  RecruitInfo(Long infoId,String title,String contact,String content,Date infoDate,String userName,String portrait,String pictures){
         this.infoId = infoId;
         this.title = title;
         this.contact = contact;
@@ -119,10 +97,6 @@ public class RecruitInfo implements Serializable {
         this.userName = userName;
         this.portrait = portrait;
         this.pictures = pictures;
-        this.type1 = type1;
-        this.type2 = type2;
-    }
-    {
 
     }
 
@@ -132,8 +106,20 @@ public class RecruitInfo implements Serializable {
                 ",portrait:" + portrait + ",subjected:" + subjectId + ",universityId:" + universityId + ",contact:" + contact + "]";
     }
 
+    public void setInfoId(Long infoId) {
+        this.infoId = infoId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     //组队信息Id
-    private Integer infoId;
+    private Long infoId;
     //组队信息标题
     private String title;
     //组队信息内容
@@ -144,6 +130,8 @@ public class RecruitInfo implements Serializable {
     private Date infoDate;
     //组队信息发布人姓名
     private String userName;
+    //信息发布人ID
+    private Long userId;
     //组队信息发布人头像
     private String portrait;
     //组队信息所属科目Id
@@ -152,10 +140,7 @@ public class RecruitInfo implements Serializable {
     private Integer universityId;
     //发布者联系方式
     private String contact;
-    //学校选择id
-    private Integer type1;
-    //学科选择id
-    private Integer type2;
+
 
 
 

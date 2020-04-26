@@ -11,7 +11,7 @@
     <result column="institute_id" property="instituteId" jdbcType="INTEGER" />
     <result column="university_id" property="universityId" jdbcType="INTEGER" />
     <result column="report_number" property="reportNumber" jdbcType="INTEGER" />
-    <result column="contact" property="contact" jdbcType="BIT" />
+    <result column="contact" property="contact" jdbcType="VARCHAR" />
     <result column="created" property="created" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
@@ -38,7 +38,7 @@
       created)
     values (#{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{pictures,jdbcType=VARCHAR}, 
       #{infoDate,jdbcType=TIMESTAMP}, #{userId,jdbcType=BIGINT}, #{instituteId,jdbcType=INTEGER}, 
-      #{universityId,jdbcType=INTEGER}, #{reportNumber,jdbcType=INTEGER}, #{contact,jdbcType=BIT}, 
+      #{universityId,jdbcType=INTEGER}, #{reportNumber,jdbcType=INTEGER}, #{contact,jdbcType=VARCHAR}, 
       #{created,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.example.uipservice.entity.Recruit" >
@@ -104,7 +104,7 @@
         #{reportNumber,jdbcType=INTEGER},
       </if>
       <if test="contact != null" >
-        #{contact,jdbcType=BIT},
+        #{contact,jdbcType=VARCHAR},
       </if>
       <if test="created != null" >
         #{created,jdbcType=TIMESTAMP},
@@ -139,7 +139,7 @@
         report_number = #{reportNumber,jdbcType=INTEGER},
       </if>
       <if test="contact != null" >
-        contact = #{contact,jdbcType=BIT},
+        contact = #{contact,jdbcType=VARCHAR},
       </if>
       <if test="created != null" >
         created = #{created,jdbcType=TIMESTAMP},
@@ -157,7 +157,7 @@
       institute_id = #{instituteId,jdbcType=INTEGER},
       university_id = #{universityId,jdbcType=INTEGER},
       report_number = #{reportNumber,jdbcType=INTEGER},
-      contact = #{contact,jdbcType=BIT},
+      contact = #{contact,jdbcType=VARCHAR},
       created = #{created,jdbcType=TIMESTAMP}
     where info_id = #{infoId,jdbcType=BIGINT}
   </update>

@@ -21,7 +21,7 @@ public class Recruit {
 
     private Integer reportNumber;
 
-    private Boolean contact;
+    private String contact;
 
     private Date created;
 
@@ -97,12 +97,12 @@ public class Recruit {
         this.reportNumber = reportNumber;
     }
 
-    public Boolean getContact() {
+    public String getContact() {
         return contact;
     }
 
-    public void setContact(Boolean contact) {
-        this.contact = contact;
+    public void setContact(String contact) {
+        this.contact = contact == null ? null : contact.trim();
     }
 
     public Date getCreated() {
