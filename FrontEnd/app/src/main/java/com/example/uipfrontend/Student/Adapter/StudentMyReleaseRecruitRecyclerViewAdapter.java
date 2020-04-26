@@ -78,7 +78,7 @@ public class StudentMyReleaseRecruitRecyclerViewAdapter extends RecyclerView.Ada
         StudentMyReleaseRecruitRecyclerViewAdapter.ViewHolder viewHolder = new StudentMyReleaseRecruitRecyclerViewAdapter.ViewHolder(holder.itemView);
 
         viewHolder.contact.setText("联系方式："+list.get(pos).getContact());
-        viewHolder.userName.setText("联系人："+list.get(pos).getUserName());
+        viewHolder.userName.setText("联系人："+list.get(pos).getUserId());
         viewHolder.infoDate.setText(list.get(pos).getInfoDate().toString());
         viewHolder.title.setText(list.get(pos).getTitle());
         viewHolder.content.setText(list.get(pos).getContent());
