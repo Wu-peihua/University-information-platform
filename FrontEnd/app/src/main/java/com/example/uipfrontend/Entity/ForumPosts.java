@@ -5,33 +5,34 @@ import java.util.List;
 
 // 论坛帖子
 public class ForumPosts implements Serializable {
-    private Integer postId;         // 帖子ID
+    private Long postId;            // 帖子ID
     private String title;           // 帖子标题
     private String content;         // 帖子内容
-    private String postTime;        // 发布时间
+    private String created;         // 发布时间
     private List<String> pictures;  // 图片
-    private int likeNum;            // 点赞数
-    private int reportNum;          // 举报数
-    private Integer userId;         // 发帖人ID
-    private String poster;          // 发帖人用户名
+    private int replyNumber;        // 评论数
+    private int likeNumber;         // 点赞数
+    private int reportNumber;       // 举报数
+    private Long userId;            // 发帖人ID
+    private String userName;        // 发帖人昵称
     private String portrait;        // 发帖人头像
     
     public ForumPosts() {}
 
-    public ForumPosts(Integer postId, String title, String poster, String postTime,
+    public ForumPosts(Long postId, String title, String userName, String postTime,
                       int likeNum) {
         this.postId = postId;
         this.title = title;
-        this.poster = poster;
-        this.postTime = postTime;
-        this.likeNum = likeNum;
+        this.userName = userName;
+        this.created = postTime;
+        this.likeNumber = likeNum;
     }
 
-    public Integer getPostId() {
+    public Long getPostId() {
         return postId;
     }
 
-    public void setPostId(Integer postId) {
+    public void setPostId(Long postId) {
         this.postId = postId;
     }
 
@@ -51,12 +52,12 @@ public class ForumPosts implements Serializable {
         this.content = content;
     }
 
-    public String getPostTime() {
-        return postTime;
+    public String getCreated() {
+        return created;
     }
 
-    public void setPostTime(String postTime) {
-        this.postTime = postTime;
+    public void setCreated(String created) {
+        this.created = created;
     }
 
     public List<String> getPictures() {
@@ -67,37 +68,41 @@ public class ForumPosts implements Serializable {
         this.pictures = pictures;
     }
     
-    public int getLikeNum() {
-        return likeNum;
+    public int getReplyNumber() { return replyNumber; }
+    
+    public void setReplyNumber(int replyNumber) { this.replyNumber = replyNumber; }
+    
+    public int getLikeNumber() {
+        return likeNumber;
     }
 
-    public void setLikeNum(int likeNum) {
-        this.likeNum = likeNum;
+    public void setLikeNumber(int likeNumber) {
+        this.likeNumber = likeNumber;
     }
 
-    public int getReportNum() {
-        return reportNum;
+    public int getReportNumber() {
+        return reportNumber;
     }
 
-    public void setReportNum(int reportNum) {
-        this.reportNum = reportNum;
+    public void setReportNumber(int reportNumber) {
+        this.reportNumber = reportNumber;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public String getPoster() {
+    public String getUserName() {
         // 从用户表获取用户名
-        return poster;
+        return userName;
     }
 
-    public void setPoster(String poster) {
-        this.poster = poster;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPortrait() {

@@ -1,7 +1,11 @@
 package com.example.uipservice.dao;
 
 import com.example.uipservice.entity.ForumPosts;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Service
 public interface ForumPostsMapper {
     int deleteByPrimaryKey(Long infoId);
 
@@ -14,4 +18,6 @@ public interface ForumPostsMapper {
     int updateByPrimaryKeySelective(ForumPosts record);
 
     int updateByPrimaryKey(ForumPosts record);
+
+    List<ForumPosts> queryPosts();
 }

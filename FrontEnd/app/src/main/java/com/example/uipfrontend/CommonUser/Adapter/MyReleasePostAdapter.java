@@ -1,17 +1,14 @@
 package com.example.uipfrontend.CommonUser.Adapter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uipfrontend.CommonUser.Activity.PostDetailActivity;
@@ -46,9 +43,9 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
         TextView tv_time;      // 发布时间
         TextView tv_detail;    // 详情按钮
         TextView tv_modify;    // 修改按钮
-        TextView tv_delete;    // 删除按钮
+//        TextView tv_delete;    // 删除按钮
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             ll_operation = itemView.findViewById(R.id.ll_cu_forum_record_operation);
             ll_like = itemView.findViewById(R.id.ll_cu_forum_like);
@@ -57,7 +54,7 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
             tv_time = itemView.findViewById(R.id.tv_cu_forum_time);
             tv_detail = itemView.findViewById(R.id.tv_cu_forum_record_detail);
             tv_modify = itemView.findViewById(R.id.tv_cu_forum_record_modify);
-            tv_delete = itemView.findViewById(R.id.tv_cu_forum_record_delete);
+//            tv_delete = itemView.findViewById(R.id.tv_cu_forum_record_delete);
         }
     }
     
@@ -82,8 +79,8 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
             viewHolder.ll_operation.setVisibility(View.VISIBLE);
 
             viewHolder.tv_title.setText(list.get(position).getTitle());
-            viewHolder.tv_poster.setText(list.get(position).getPoster());
-            viewHolder.tv_time.setText(list.get(position).getPostTime());
+            viewHolder.tv_poster.setText(list.get(position).getUserName());
+            viewHolder.tv_time.setText(list.get(position).getCreated());
 
             // 跳转到帖子详情
             viewHolder.tv_detail.setOnClickListener(view -> {
@@ -93,22 +90,22 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
             });
 
             // 删除
-            viewHolder.tv_delete.setOnClickListener(view -> {
-                AlertDialog dialog = new AlertDialog.Builder(context)
-                        .setTitle("提示")
-                        .setMessage("是否确定删除该条记录？")
-                        .setPositiveButton("确定", (dialog1, which) -> {
-                            list.remove(position);
-                            notifyDataSetChanged();
-                            Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show();
-                        })
-                        .setNegativeButton("取消", null)
-                        .setCancelable(false)
-                        .create();
-                dialog.show();
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.blue));
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.blue));
-            });
+//            viewHolder.tv_delete.setOnClickListener(view -> {
+//                AlertDialog dialog = new AlertDialog.Builder(context)
+//                        .setTitle("提示")
+//                        .setMessage("是否确定删除该条记录？")
+//                        .setPositiveButton("确定", (dialog1, which) -> {
+//                            list.remove(position);
+//                            notifyDataSetChanged();
+//                            Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show();
+//                        })
+//                        .setNegativeButton("取消", null)
+//                        .setCancelable(false)
+//                        .create();
+//                dialog.show();
+//                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.blue));
+//                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.blue));
+//            });
 
             // 跳转到帖子编辑
             viewHolder.tv_modify.setOnClickListener(view -> {

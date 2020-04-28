@@ -48,6 +48,7 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
         TextView tv_poster;    // 发布者
         TextView tv_time;      // 发布时间
         TextView tv_like;      // 点赞数
+        TextView tv_reply;     // 评论数
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -56,6 +57,7 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
             tv_poster = itemView.findViewById(R.id.tv_cu_forum_poster);
             tv_time = itemView.findViewById(R.id.tv_cu_forum_time);
             tv_like = itemView.findViewById(R.id.tv_cu_forum_like);
+            tv_reply = itemView.findViewById(R.id.tv_cu_forum_reply);
         }
     }
 
@@ -80,9 +82,10 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
                 viewHolder.tv_title.setText(builder);
             }
         }
-        viewHolder.tv_poster.setText(list.get(position).getPoster());
-        viewHolder.tv_time.setText(list.get(position).getPostTime());
-        viewHolder.tv_like.setText(String.valueOf(list.get(position).getLikeNum()));
+        viewHolder.tv_poster.setText(list.get(position).getUserName());
+        viewHolder.tv_time.setText(list.get(position).getCreated());
+        viewHolder.tv_like.setText(String.valueOf(list.get(position).getLikeNumber()));
+        viewHolder.tv_reply.setText(String.valueOf(list.get(position).getReplyNumber()));
         viewHolder.ll_item.setOnClickListener(view -> itemClickListener.onClick(view, position));
     }
 

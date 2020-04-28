@@ -21,7 +21,7 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyReleaseForumFragment extends Fragment {
+public class MyReleasePostFragment extends Fragment {
 
     private View rootView;
     
@@ -79,8 +79,8 @@ public class MyReleaseForumFragment extends Fragment {
         for(int i = 10; i > 0; i--) {
             ForumPosts post = new ForumPosts();
             post.setTitle("我发布的我发布的我发布的我发布的我发布的我发布的我发布的我发布的我发布的我发布的");
-            post.setPoster("荣耀");
-            post.setPostTime("2020-4-" + i + " 14:30");
+            post.setUserName("荣耀");
+            post.setCreated("2020-4-" + i + " 14:30");
             list.add(post);
         }
         
