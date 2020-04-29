@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     String resultUniversity = Objects.requireNonNull(responseUniversity.body()).string();
                     String resultInstitute = Objects.requireNonNull(responseInstitute.body()).string();
 
+
                     //解析大学json字符串数组
                     JsonObject jsonObjectUniversity = new JsonParser().parse(resultUniversity).getAsJsonObject();
                     JsonArray jsonArrayUniversity = jsonObjectUniversity.getAsJsonArray("universityList");

@@ -169,14 +169,27 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
 
     public void initCommentData() {
 
-        mTags.add (new CourseComment(2001,"LinussPP", "2020-4-20 22:44", "有趣", 4.50,10));
-        mTags.add (new CourseComment(2002,"ZhouKK", "2020-4-21 22:44", "学到了很多", 4.50,12));
-        mTags.add (new CourseComment(2003,"MandyWong", "2020-4-22 22:44", "没意思", 3.50,13));
-        mTags.add (new CourseComment(3008,"LarryChen", "2020-4-23 22:44", "课程难度大", 3.50,20));
-        mTags.add (new CourseComment(4010,"LinYii", "2020-4-24 22:44", "作业量惊人", 2.50,12));
-        mTags.add (new CourseComment(2020,"Oliver", "2020-4-25 11:44", "不推荐", 1.50,10));
-        mTags.add (new CourseComment(2034,"Patric", "2020-4-25 10:44", "推荐", 4.50,2));
+        /*
+            mTags.add (new CourseComment(2001,"LinussPP", "2020-4-20 22:44", "有趣", 4.50,10));
+            mTags.add (new CourseComment(2002,"ZhouKK", "2020-4-21 22:44", "学到了很多", 4.50,12));
+            mTags.add (new CourseComment(2003,"MandyWong", "2020-4-22 22:44", "没意思", 3.50,13));
+            mTags.add (new CourseComment(3008,"LarryChen", "2020-4-23 22:44", "课程难度大", 3.50,20));
+            mTags.add (new CourseComment(4010,"LinYii", "2020-4-24 22:44", "作业量惊人", 2.50,12));
+            mTags.add (new CourseComment(2020,"Oliver", "2020-4-25 11:44", "不推荐", 1.50,10));
+            mTags.add (new CourseComment(2034,"Patric", "2020-4-25 10:44", "推荐", 4.50,2));
+*/
+        DateFormat datefomat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
+        Date commentDate = null;
+        try {
+            commentDate = datefomat.parse(datefomat.format(new Date()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        for(int i=0;i<10;i++) {
+            mTags.add(new CourseComment((long) 1, (long) 3, "interesting", 4, commentDate));
+
+        }
 
         //升序
         list_order_by_asc = new ArrayList<>();
@@ -186,7 +199,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
             @Override
             public int compare(CourseComment p1, CourseComment p2) {
                 try {
-                    return f.parse(p1.getCommentDate()).compareTo(f.parse(p2.getCommentDate()));
+                    return f.parse(p1.getInfoDate().toString()).compareTo(f.parse(p2.getInfoDate().toString()));
                 } catch (ParseException e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -211,7 +224,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
             @Override
             public int compare(CourseComment p1, CourseComment p2) {
                 try {
-                    return f.parse(p2.getCommentDate()).compareTo(f.parse(p1.getCommentDate()));
+                    return f.parse(p2.getInfoDate().toString()).compareTo(f.parse(p1.getInfoDate().toString()));
                 } catch (ParseException e) {
                     throw new IllegalArgumentException(e);
                 }

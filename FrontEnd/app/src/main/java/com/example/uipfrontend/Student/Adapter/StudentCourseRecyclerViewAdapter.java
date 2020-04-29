@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,9 +35,13 @@ public class StudentCourseRecyclerViewAdapter extends RecyclerView.Adapter {
         this.mTags = list;
     }
 
+    public void setList(List<Course> list) { this.mTags = list; }
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        LinearLayout card_item;  // 对cardview设置监听
         TextView name;//课程名称
         TextView content;//课程内容
         TextView teacher;//教师
@@ -50,6 +55,7 @@ public class StudentCourseRecyclerViewAdapter extends RecyclerView.Adapter {
             content = itemView.findViewById(R.id.courseDescription);
             teacher = itemView.findViewById(R.id.Teacher);
             score = itemView.findViewById(R.id.RatingScore);
+            card_item = itemView.findViewById(R.id.item_course);
 
         }
     }
@@ -81,13 +87,11 @@ public class StudentCourseRecyclerViewAdapter extends RecyclerView.Adapter {
 //        }
 
 
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_course_card, parent, false);
-
 
 
         ViewHolder holder = new ViewHolder(view);
@@ -100,18 +104,22 @@ public class StudentCourseRecyclerViewAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int pos) {
 
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
-
-        viewHolder.name.setText(mTags.get(pos).getName());
-        viewHolder.teacher.setText(mTags.get(pos).getTeacher());
-        viewHolder.score.setText(String.valueOf(mTags.get(pos).getScore()));
-        viewHolder.content.setText(mTags.get(pos).getDescription());
+        Course course = mTags.get(pos);
+        viewHolder.name.setText(course.getName());
+        viewHolder.teacher.setText(course.getTeacher());
+        viewHolder.score.setText(String.valueOf(course.getScore()));
+        viewHolder.content.setText(course.getDescription());
+        viewHolder.card_item.setOnClickListener(view -> itemClickListener.onItemClick(pos));
+        //System.out.println("当前课程"+course.getName());
+        //System.out.println("当前分数"+course.getScore());
+        //System.out.println("当前教师"+course.getTeacher());
 
         //设置点击监听器
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (itemClickListener != null) {
-                    //Log.e("click", "!");
+                    Log.e("click course item", "!");
                     itemClickListener.onItemClick(pos);
                 }
             }
@@ -145,6 +153,8 @@ public class StudentCourseRecyclerViewAdapter extends RecyclerView.Adapter {
 
     public interface OnItemClickListener {
         void onItemClick(int position);
+
+        //void onClick(int pos);
     }
 
     public void setOnItemClickListener(OnItemClickListener listenser) {

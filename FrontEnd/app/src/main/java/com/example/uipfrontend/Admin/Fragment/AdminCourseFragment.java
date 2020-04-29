@@ -123,7 +123,7 @@ public class AdminCourseFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
 
-                Integer courseID = courses.get(position).getCourseID();
+                Long courseID = courses.get(position).getCourseID();
                 Log.i("点击了","courseId:"+courseID.toString());
                 Log.e("course位置", "" + position + "被点击了！");
 
@@ -154,29 +154,30 @@ public class AdminCourseFragment extends Fragment {
 
     public void initData() {
 
-        courses.add(new Course(1001,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4.50));
 
-        courses.add(new Course(1002,"计算机网络", "Mr.ZHU", "了解互联网基础", 3.50));
+        courses.add(new Course((long) 1001,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
 
-        courses.add(new Course(1010,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
+        courses.add(new Course((long) 1002,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
 
-
-        courses.add(new Course(1028,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
+        courses.add(new Course((long) 1010,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
 
 
-        courses.add(new Course(2019,"算法设计", "Mr.LIN", "基础算法与数据结构", 2.50));
-
-        courses.add(new Course(1003,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4.50));
-
-        courses.add(new Course(1004,"计算机网络", "Mr.ZHU", "了解互联网基础", 3.50));
-
-        courses.add(new Course(1015,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
+        courses.add(new Course((long) 1028,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
 
 
-        courses.add(new Course(1022,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
+        courses.add(new Course((long) 2019,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
+
+        courses.add(new Course((long) 1003,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
+
+        courses.add(new Course((long) 1004,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
+
+        courses.add(new Course((long) 1015,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
 
 
-        courses.add(new Course(2023,"算法设计", "Mr.LIN", "基础算法与数据结构", 2.50));
+        courses.add(new Course((long) 1022,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
+
+
+        courses.add(new Course((long) 2023,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
 
 
         //AllCourses.addAll(courses);

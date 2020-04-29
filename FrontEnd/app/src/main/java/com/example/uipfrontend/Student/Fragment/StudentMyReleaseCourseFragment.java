@@ -26,6 +26,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,10 +71,24 @@ public class StudentMyReleaseCourseFragment extends Fragment {
 
     public void initData() {
         list = new ArrayList<>();
-        list.add(new CourseComment("数据库原理",2001,"ChilamZ", "2020-4-25 22:44", "作业多", 2.50,10));
+        /*list.add(new CourseComment("数据库原理",2001,"ChilamZ", "2020-4-25 22:44", "作业多", 2.50,10));
         list.add(new CourseComment("计算机网络",2002,"ChilamZ", "2020-4-25 22:44", "课程有趣", 4.50,6));
         list.add(new CourseComment("操作系统",2003,"ChilamZ", "2020-4-25 22:44", "课程难度大", 3.50,5));
 
+
+         */
+        DateFormat datefomat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+        Date commentDate = null;
+        try {
+            commentDate = datefomat.parse(datefomat.format(new Date()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        for(int i=0;i<10;i++) {
+            list.add(new CourseComment((long) 1, (long) 3, "interesting", 4, commentDate));
+
+        }
     }
 
     public void initXRecyclerView() {
@@ -174,7 +191,7 @@ public class StudentMyReleaseCourseFragment extends Fragment {
 
                 CourseComment newComment = list.get(commentPos);
                 newComment.setContent(CommentEidt.getText().toString());
-                newComment.setScore(commentScore);
+                newComment.setScore((int)commentScore);
                 adapter.notifyDataSetChanged();//更新数据
 
                 //传送至数据库更新课程详情数据

@@ -128,9 +128,9 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
                 .into(viewHolder.userimg);
 
 
-        viewHolder.userName.setText(comment.getUserName());
+        //viewHolder.userName.setText(comment.getUserName());
         //viewHolder.commentDate.setText(DateFormat.getInstance().format(comment.getCommentDate()));
-        viewHolder.commentDate.setText(comment.getCommentDate());
+        viewHolder.commentDate.setText(comment.getInfoDate().toString());
         //courseImage.setImageResource(course.getImageurl());
         viewHolder.commentContent.setText(comment.getContent());
         viewHolder.score.setRating((float)comment.getScore());

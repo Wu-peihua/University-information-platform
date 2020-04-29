@@ -25,6 +25,9 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.qlh.dropdownmenu.DropDownMenu;
 import com.qlh.dropdownmenu.view.MultiMenusView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -131,6 +134,7 @@ public class SubFragment2 extends Fragment {
 
     public void initCommentData() {
 
+        /*
         mTags.add (new CourseComment(2001,"LinussPP", "2020-4-25 22:44", "有趣", 4.50,10));
         mTags.add (new CourseComment(2002,"ZhouKK", "2020-4-25 22:44", "学到了很多", 4.50,12));
         mTags.add (new CourseComment(2003,"MandyWong", "2020-4-25 22:44", "没意思", 3.50,13));
@@ -140,6 +144,20 @@ public class SubFragment2 extends Fragment {
         mTags.add (new CourseComment(2034,"Patric", "2020-4-25 22:44", "推荐", 4.50,2));
 
 
+
+         */
+        DateFormat datefomat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+        Date commentDate = null;
+        try {
+            commentDate = datefomat.parse(datefomat.format(new Date()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        for(int i=0;i<10;i++) {
+            mTags.add(new CourseComment((long) 1, (long) 3, "interesting", 4, commentDate));
+
+        }
         //count = mTags.size();
     }
 

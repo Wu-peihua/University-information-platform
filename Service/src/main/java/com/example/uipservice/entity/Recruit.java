@@ -15,13 +15,13 @@ public class Recruit {
 
     private Long userId;
 
-    private Integer instituteId;
+    private Integer subjectId;
 
     private Integer universityId;
 
     private Integer reportNumber;
 
-    private String contact;
+    private Boolean contact;
 
     private Date created;
 
@@ -73,12 +73,12 @@ public class Recruit {
         this.userId = userId;
     }
 
-    public Integer getInstituteId() {
-        return instituteId;
+    public Integer getSubjectId() {
+        return subjectId;
     }
 
-    public void setInstituteId(Integer instituteId) {
-        this.instituteId = instituteId;
+    public void setSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
     }
 
     public Integer getUniversityId() {
@@ -97,12 +97,12 @@ public class Recruit {
         this.reportNumber = reportNumber;
     }
 
-    public String getContact() {
+    public Boolean getContact() {
         return contact;
     }
 
-    public void setContact(String contact) {
-        this.contact = contact == null ? null : contact.trim();
+    public void setContact(Boolean contact) {
+        this.contact = contact;
     }
 
     public Date getCreated() {

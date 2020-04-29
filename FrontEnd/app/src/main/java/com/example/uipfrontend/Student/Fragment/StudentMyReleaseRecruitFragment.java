@@ -63,7 +63,7 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
     private void getData(){
         list = new ArrayList<>();
 
-
+/*
         list.add(new RecruitInfo(1,"互联网+创新创业招募队友","wx:alsdkjf","互联网找队友，人数：2，要求：经管学院，大三，积极有动力",new Date(2020,04,14),
                 "秋同学" ,"https://c-ssl.duitang.com/uploads/item/201511/21/20151121171107_zMZcy.thumb.1000_0.jpeg","",1,2));
         list.add(new RecruitInfo(1,"互联网+创新创业招募队友","wx:alsdkjf","互联网找队友，人数：2，要求：经管学院，大三，积极有动力",new Date(2020,04,14),
@@ -72,7 +72,9 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
                 "秋同学" ,"https://c-ssl.duitang.com/uploads/item/201511/21/20151121171107_zMZcy.thumb.1000_0.jpeg","",1,2));
         list.add(new RecruitInfo(1,"互联网+创新创业招募队友","wx:alsdkjf","互联网找队友，人数：2，要求：经管学院，大三，积极有动力",new Date(2020,04,14),
                 "秋同学" ,"https://c-ssl.duitang.com/uploads/item/201511/21/20151121171107_zMZcy.thumb.1000_0.jpeg","",1,2));
+    */
     }
+
 
     public void initRecyclerView() {
 

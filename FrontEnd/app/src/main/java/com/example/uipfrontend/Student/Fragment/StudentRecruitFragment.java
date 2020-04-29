@@ -285,7 +285,7 @@ public class StudentRecruitFragment extends Fragment {
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-
+                   // System.out.println("recruit 请求返回数据:"+response.body().string());
                     ResponseRecruit responseRecruit = new Gson().fromJson(response.body().string(),
                             ResponseRecruit.class);
 
