@@ -1,5 +1,8 @@
 package com.example.uipservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 public class ForumPosts {
@@ -13,12 +16,20 @@ public class ForumPosts {
 
     private Date infoDate;
 
-    private Long poster;
+    private Long userId;
+
+    private String userName;
+
+    private String portrait;
 
     private Integer reportNumber;
 
     private Integer likeNumber;
 
+    private Integer replyNumber;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date created;
 
     public Long getInfoId() {
@@ -61,12 +72,28 @@ public class ForumPosts {
         this.infoDate = infoDate;
     }
 
-    public Long getPoster() {
-        return poster;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setPoster(Long poster) {
-        this.poster = poster;
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Integer getReportNumber() {
@@ -85,6 +112,10 @@ public class ForumPosts {
         this.likeNumber = likeNumber;
     }
 
+    public Integer getReplyNumber() { return replyNumber; }
+
+    public void setReplyNumber(Integer replyNumber) { this.replyNumber = replyNumber; }
+
     public Date getCreated() {
         return created;
     }
@@ -92,4 +123,5 @@ public class ForumPosts {
     public void setCreated(Date created) {
         this.created = created;
     }
+
 }

@@ -5,16 +5,17 @@ import java.io.Serializable;
 // 评论：包括帖子的评论和评论的评论
 public class PostComment implements Serializable {
     private Integer id;        // 评论ID
-    private String content;    // 评论内容
-    private String date;       // 发表时间
+    private String  content;   // 评论内容
+    private String  date;      // 发表时间
     private Integer likeNum;   // 点赞数
     private Integer reportNum; // 举报数
     private Integer from;      // 评论者ID
-    private String fromName;   // 评论者用户名
-    private String portrait;   // 评论者头像
+    private String  fromName;  // 评论者用户名
+    private String  portrait;  // 评论者头像
+    private int     tag;       // 0为帖子评论，1为评论的回复
     private Integer to;        // 所评论的帖子或评论的ID
-    private String toName;     // 被评论者用户名
-    private String reference;  // 被评论的内容
+    private String  toName;    // 被评论者用户名
+    private String  reference; // 被评论的内容
 
     public Integer getId() {
         return id;
@@ -81,6 +82,10 @@ public class PostComment implements Serializable {
     public void setPortrait(String portrait) {
         this.portrait = portrait;
     }
+    
+    public int getTag() { return tag; }
+    
+    public void setTag(int tag) { this.tag = tag; }
 
     public Integer getTo() {
         return to;

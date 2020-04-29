@@ -265,3 +265,4 @@ CREATE TABLE `stu_certification` (
 DROP USER IF EXISTS 'admin'@'localhost';
 CREATE USER 'admin'@'localhost' IDENTIFIED BY 'zxcvbnm';
 GRANT ALL ON uip.* TO 'admin'@'localhost';
+

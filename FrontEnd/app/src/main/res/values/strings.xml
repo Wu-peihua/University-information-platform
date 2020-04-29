@@ -18,7 +18,8 @@
     <string name="queryRecruitByUserId">/recruit/queryrecruitbyuserid</string>
     <!--提交组队信息-->
     <string name="insertRecruit">/recruit/insertrecruit</string>
-
+    <!--获取帖子-->
+    <string name="queryPosts">/forumposts/queryposts</string>
 
     <!--分页获取所有课程信息-->
     <string name="queryCourse">/courses/querycourses</string>

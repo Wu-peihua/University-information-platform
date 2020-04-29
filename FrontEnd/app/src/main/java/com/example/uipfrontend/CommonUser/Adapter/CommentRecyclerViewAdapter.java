@@ -82,9 +82,9 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
-        
+
         String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
-        //        String uri = list.get(position).getPortrait();
+        // String uri = list.get(position).getPortrait();
         Glide.with(context).load(Uri.parse(uri))
                 .placeholder(R.drawable.portrait_default)
                 .error(R.drawable.portrait_default)

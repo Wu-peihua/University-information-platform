@@ -39,12 +39,10 @@ import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.squareup.picasso.Picasso;
 import com.sunbinqiang.iconcountview.IconCountView;
 
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -176,10 +174,10 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void select(boolean isSelected) {
                 if (isSelected) {
-                    post.setLikeNum(post.getLikeNum() + 1);
+                    post.setLikeNumber(post.getLikeNumber() + 1);
                 }
                 else {
-                    post.setLikeNum(post.getLikeNum() - 1);
+                    post.setLikeNumber(post.getLikeNumber() - 1);
                 }
             }
         });
@@ -287,8 +285,8 @@ public class PostDetailActivity extends AppCompatActivity {
     private void setPostDetail() {
         initPostDetail();
 
-        String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
-        //        String uri = post.getPortrait();
+        // String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
+        String uri = post.getPortrait();
         Glide.with(this).load(Uri.parse(uri))
                 .placeholder(R.drawable.portrait_default)
                 .error(R.drawable.portrait_default)
@@ -297,12 +295,8 @@ public class PostDetailActivity extends AppCompatActivity {
         detail_portrait.setBorderWidth(0);
 
         detail_title.setText(post.getTitle());
-        detail_poster.setText(post.getPoster());
-//        detail_content.setContentText(post.getContent());
-        detail_content.setContentText("测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起" +
-                "测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起" +
-                "测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起" +
-                "测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起测试长文本展开收起");
+        detail_poster.setText(post.getUserName());
+        detail_content.setContentText(post.getContent());
 
         //        List<String> picUris = post.getPictures();
         List<ImageInfo> imageList = new ArrayList<>();
@@ -326,9 +320,9 @@ public class PostDetailActivity extends AppCompatActivity {
 
         detail_pictures.setAdapter(new NineGridViewClickAdapter(this, imageList));
 
-        detail_time.setText(post.getPostTime());
+        detail_time.setText(post.getCreated());
 
-        praise.setCount(post.getLikeNum());
+        praise.setCount(post.getLikeNumber());
         // 如果是本人查看自己发的帖子，则需查找否点过赞
 
         if (list.size() == 0) {

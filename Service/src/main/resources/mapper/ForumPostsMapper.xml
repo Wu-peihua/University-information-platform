@@ -7,36 +7,52 @@
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="pictures" property="pictures" jdbcType="VARCHAR" />
     <result column="info_date" property="infoDate" jdbcType="TIMESTAMP" />
-    <result column="poster" property="poster" jdbcType="BIGINT" />
+    <result column="poster" property="userId" jdbcType="BIGINT" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="portrait" property="portrait" jdbcType="VARCHAR" />
     <result column="report_number" property="reportNumber" jdbcType="INTEGER" />
     <result column="like_number" property="likeNumber" jdbcType="INTEGER" />
+    <result column="reply_number" property="replyNumber" javaType="INTEGER" />
     <result column="created" property="created" jdbcType="TIMESTAMP" />
   </resultMap>
+
   <sql id="Base_Column_List" >
-    info_id, title, content, pictures, info_date, poster, report_number, like_number, 
-    created
+    info_id, title, content, pictures, info_date, poster,
+    report_number, like_number, reply_number, created
   </sql>
+
+  <select id="queryPosts" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.ForumPosts">
+    select info_id, title, content, pictures, info_date, poster, reply_number,
+    like_number, report_number, forum_posts.created, user_name, portrait
+    from forum_posts inner join user_info
+    on poster = user_id
+    where report_number &lt; 5
+    order by str_to_date(forum_posts.created,'%Y-%m-%d') desc, reply_number desc, like_number desc
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from forum_posts
     where info_id = #{infoId,jdbcType=BIGINT}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from forum_posts
     where info_id = #{infoId,jdbcType=BIGINT}
   </delete>
+
   <insert id="insert" parameterType="com.example.uipservice.entity.ForumPosts" >
     <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into forum_posts (title, content, pictures, 
-      info_date, poster, report_number, 
-      like_number, created)
+    insert into forum_posts (title, content, pictures, info_date,
+    poster, report_number, like_number, reply_number, created)
     values (#{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{pictures,jdbcType=VARCHAR}, 
-      #{infoDate,jdbcType=TIMESTAMP}, #{poster,jdbcType=BIGINT}, #{reportNumber,jdbcType=INTEGER}, 
-      #{likeNumber,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP})
+      #{infoDate,jdbcType=TIMESTAMP}, #{userId,jdbcType=BIGINT}, #{reportNumber,jdbcType=INTEGER},
+      #{likeNumber,jdbcType=INTEGER}, #{replyNumber, jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP})
   </insert>
+
   <insert id="insertSelective" parameterType="com.example.uipservice.entity.ForumPosts" >
     <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
       SELECT LAST_INSERT_ID()
@@ -55,7 +71,7 @@
       <if test="infoDate != null" >
         info_date,
       </if>
-      <if test="poster != null" >
+      <if test="userId != null" >
         poster,
       </if>
       <if test="reportNumber != null" >
@@ -63,6 +79,9 @@
       </if>
       <if test="likeNumber != null" >
         like_number,
+      </if>
+      <if test="replyNumber != null" >
+        reply_number,
       </if>
       <if test="created != null" >
         created,
@@ -81,8 +100,8 @@
       <if test="infoDate != null" >
         #{infoDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="poster != null" >
-        #{poster,jdbcType=BIGINT},
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
       </if>
       <if test="reportNumber != null" >
         #{reportNumber,jdbcType=INTEGER},
@@ -90,11 +109,15 @@
       <if test="likeNumber != null" >
         #{likeNumber,jdbcType=INTEGER},
       </if>
+      <if test="replyNumber != null" >
+        #{replyNumber,jdbcType=INTEGER},
+      </if>
       <if test="created != null" >
         #{created,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.example.uipservice.entity.ForumPosts" >
     update forum_posts
     <set >
@@ -110,8 +133,8 @@
       <if test="infoDate != null" >
         info_date = #{infoDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="poster != null" >
-        poster = #{poster,jdbcType=BIGINT},
+      <if test="userId != null" >
+        poster = #{userId,jdbcType=BIGINT},
       </if>
       <if test="reportNumber != null" >
         report_number = #{reportNumber,jdbcType=INTEGER},
@@ -119,21 +142,26 @@
       <if test="likeNumber != null" >
         like_number = #{likeNumber,jdbcType=INTEGER},
       </if>
+      <if test="replyNumber != null" >
+        reply_number = #{replyNumber,jdbcType=INTEGER},
+      </if>
       <if test="created != null" >
         created = #{created,jdbcType=TIMESTAMP},
       </if>
     </set>
     where info_id = #{infoId,jdbcType=BIGINT}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.ForumPosts" >
     update forum_posts
     set title = #{title,jdbcType=VARCHAR},
       content = #{content,jdbcType=VARCHAR},
       pictures = #{pictures,jdbcType=VARCHAR},
       info_date = #{infoDate,jdbcType=TIMESTAMP},
-      poster = #{poster,jdbcType=BIGINT},
+      poster = #{userId,jdbcType=BIGINT},
       report_number = #{reportNumber,jdbcType=INTEGER},
       like_number = #{likeNumber,jdbcType=INTEGER},
+      reply_number = #{replyNumber, jdbcType=INTEGER},
       created = #{created,jdbcType=TIMESTAMP}
     where info_id = #{infoId,jdbcType=BIGINT}
   </update>
