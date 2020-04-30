@@ -18,8 +18,6 @@
     <string name="queryRecruitByUserId">/recruit/queryrecruitbyuserid</string>
     <!--提交组队信息-->
     <string name="insertRecruit">/recruit/insertrecruit</string>
-    <!--获取帖子-->
-    <string name="queryPosts">/forumposts/queryposts</string>
 
     <!--分页获取所有课程信息-->
     <string name="queryCourse">/courses/querycourses</string>
@@ -35,7 +33,12 @@
     <string name="queryCourseByInfoid">/courses/querycoursebyinfoid</string>
     <!--根据用户id分页获取评论信息-->
     <string name="queryCourseByUserId">/recruit/queryrecruitbyuserid</string>
-
-
+    
+    <!--获取帖子-->
+    <string name="queryPosts">/forumposts/queryposts</string>
+    <!--获取评论-->
+    <string name="queryCommentById">/postcomment/querycomments</string>
+    <!--获取评论的回复-->
+    <string name="queryReplyById">//commentreply/queryreply</string>
 
 </resources>

@@ -38,19 +38,24 @@ import com.google.gson.reflect.TypeToken;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class ForumFragment extends Fragment {
 
-    private static final int PostsDataError = 0;
-    private static final int PostsDataOk = 1;
+    private static final int FAILURE = -1;
+    private static final int ZERO = 0;
+    private static final int SUCCESS = 1;
 
     private View rootView;
     
@@ -81,94 +86,78 @@ public class ForumFragment extends Fragment {
         } else {
             rootView = inflater.inflate(R.layout.fragment_cu_forum, null);
             tv_blank_text = rootView.findViewById(R.id.tv_blank);
-            initData();
+            getPosts();
         }
         return rootView;
     }
 
-    private void initData() {
-        posts = new ArrayList<>();
-        whole = new ArrayList<>();
+    private void getPosts() {
 
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
-                if (msg.what == PostsDataError) {
-                    tv_blank_text.setText("好像出了点问题");
-                    tv_blank_text.setVisibility(View.VISIBLE);
-                } else if (msg.what == PostsDataOk) {
-                    posts.addAll(whole);
-                    initView();
-                    setListener();
+                switch (msg.what) {
+                    case FAILURE:
+                        Log.i("获取帖子: ", "失败");
+                        tv_blank_text.setText("好像出了点问题");
+                        tv_blank_text.setVisibility(View.VISIBLE);
+                        break;
+                    case ZERO:
+                        Log.i("获取帖子: ", "空");
+                        tv_blank_text.setText("还没有帖子，去发一条");
+                        tv_blank_text.setVisibility(View.VISIBLE);
+                        break;
+                    case SUCCESS:
+                        Log.i("获取帖子: ", "成功");
+                        // tv_blank_text.setText("未找到相关结果");
+                        // tv_blank_text.setVisibility(View.GONE);
+                        break;
                 }
+                posts = new ArrayList<>();
+                posts.addAll(whole);
+                initView();
+                setListener();
                 super.handleMessage(msg);
             }
         };
 
         new Thread(() -> {
+            Message msg = new Message();
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(getResources().getString(R.string.serverBasePath) 
                             + getResources().getString(R.string.queryPosts))
+                    .get()
                     .build();
-            try {
-                Response response = client.newCall(request).execute();
-                String resStr = Objects.requireNonNull(response.body()).string();
-                JsonObject object = new JsonParser().parse(resStr).getAsJsonObject();
-                JsonArray array = object.getAsJsonArray("postsList");
-
-                Log.d("论坛", resStr);
-                
-                for (JsonElement element : array) {
-                    ForumPosts post = new Gson().fromJson(element, new TypeToken<ForumPosts>(){}.getType());
-                    whole.add(post);
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("获取帖子: ", e.getMessage());
+                    msg.what = FAILURE;
+                    handler.sendMessage(msg);
                 }
-                
-                Message msg = new Message();
-                msg.what = whole.size() > 0 ? PostsDataOk : PostsDataError;
-                handler.sendMessage(msg);
-                
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String resStr = Objects.requireNonNull(response.body()).string();
+                    JsonObject object = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonArray array = object.getAsJsonArray("postsList");
+
+                    Log.i("获取帖子: ", resStr);
+
+                    whole = new ArrayList<>();
+                    for (JsonElement element : array) {
+                        ForumPosts post = new Gson().fromJson(element, new TypeToken<ForumPosts>(){}.getType());
+                        whole.add(post);
+                    }
+
+                    msg.what = whole.size() == 0 ? ZERO : SUCCESS;
+                    handler.sendMessage(msg);
+                }
+            });
         }).start();
-        
-//        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
-//                "法外狂徒张三", "2020/3/26", 0));
-//        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
-//                "法外狂徒张三", "2020/3/26", 666));
+
     }
 
     private void setListener() {
@@ -250,6 +239,9 @@ public class ForumFragment extends Fragment {
             adapter.notifyDataSetChanged();
             xRecyclerView.scheduleLayoutAnimation();
         }
+        if(posts.size() == 0) {
+            tv_blank_text.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initView() {
@@ -270,5 +262,45 @@ public class ForumFragment extends Fragment {
         LayoutAnimationController animationController = AnimationUtils
                 .loadLayoutAnimation(rootView.getContext(),R.anim.layout_animation);
         xRecyclerView.setLayoutAnimation(animationController);
+    }
+    
+    private void initData() {
+
+//        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
+//                "法外狂徒张三", "2020/3/26", 0));
+//        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
+//                "法外狂徒张三", "2020/3/26", 666));
+//        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
+//                "法外狂徒张三", "2020/3/26", 666));
     }
 }

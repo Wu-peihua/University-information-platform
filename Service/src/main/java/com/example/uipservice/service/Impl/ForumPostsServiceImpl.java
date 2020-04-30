@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Service
 @Transactional
-public class ForumPostsImpl implements ForumPostsService {
+public class ForumPostsServiceImpl implements ForumPostsService {
 
     @Autowired
     ForumPostsMapper forumPostsMapper;

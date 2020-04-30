@@ -5,30 +5,29 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-public class ForumComments {
+public class CommentReply {
+
     private Long infoId;
 
     private Long toId;
 
     private Long fromId;
-
     private String fromName;
-
     private String portrait;
 
+    private String toName;
+    private String reference;
+
     private String content;
-
     private Integer reportNumber;
-
     private Integer likeNumber;
-
-    private Integer replyNumber;
 
     private Date infoDate;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date created;
+
 
     public Long getInfoId() {
         return infoId;
@@ -54,12 +53,44 @@ public class ForumComments {
         this.fromId = fromId;
     }
 
+    public String getFromName() {
+        return fromName;
+    }
+
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
+    }
+
+    public String getToName() {
+        return toName;
+    }
+
+    public void setToName(String toName) {
+        this.toName = toName;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
     public String getContent() {
         return content;
     }
 
     public void setContent(String content) {
-        this.content = content == null ? null : content.trim();
+        this.content = content;
     }
 
     public Integer getReportNumber() {
@@ -78,12 +109,6 @@ public class ForumComments {
         this.likeNumber = likeNumber;
     }
 
-    public Integer getReplyNumber() { return replyNumber; }
-
-    public void setReplyNumber(Integer replyNumber) {
-        this.replyNumber = replyNumber;
-    }
-
     public Date getInfoDate() {
         return infoDate;
     }
@@ -98,21 +123,5 @@ public class ForumComments {
 
     public void setCreated(Date created) {
         this.created = created;
-    }
-
-    public String getFromName() {
-        return fromName;
-    }
-
-    public void setFromName(String fromName) {
-        this.fromName = fromName;
-    }
-
-    public String getPortrait() {
-        return portrait;
-    }
-
-    public void setPortrait(String portrait) {
-        this.portrait = portrait;
     }
 }

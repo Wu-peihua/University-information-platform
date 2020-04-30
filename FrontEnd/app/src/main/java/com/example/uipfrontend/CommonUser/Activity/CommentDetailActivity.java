@@ -1,11 +1,15 @@
 package com.example.uipfrontend.CommonUser.Activity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -27,12 +31,21 @@ import com.example.uipfrontend.Entity.PostComment;
 import com.example.uipfrontend.R;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.lzy.widget.CircleImageView;
 import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.sunbinqiang.iconcountview.IconCountView;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,12 +55,26 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 /*
  * 当某条评论被点击时跳转到这个Activity
  * 跳转时携带该条评论对象
  */
 
 public class CommentDetailActivity extends AppCompatActivity {
+
+    private static final int FAILURE = -1;
+    private static final int ZERO = 0;
+    private static final int SUCCESS = 1;
+
+    private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+    private static boolean flag = true;
 
     private PostComment comment; // intent传递过来的对象
 
@@ -70,8 +97,9 @@ public class CommentDetailActivity extends AppCompatActivity {
     private String            reference;     // 评论引用的内容
 
     private LinearLayout      commentBar;    // 底部评论栏
-    private BottomSheetDialog commentDialog;
-    private EditText          commentText;
+    private BottomSheetDialog commentDialog; // 评论输入框
+    private EditText          commentText;   // 评论内容
+    private Button            btn_submit;    // 评论提交按钮
 
     private XRecyclerView            xRecyclerView;
     private ReplyRecyclerViewAdapter adapter;
@@ -84,34 +112,76 @@ public class CommentDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forum_comment_detail);
-        initReplyData(); // 回复测试数据
-        init();
+        getReply();
     }
 
     private void init() {
-        commentBar = findViewById(R.id.ll_cu_forum_comment_detail_comment_bar);
-
+        initRecyclerView();
+        initHeadView();
+        setHeadView();
+        initCommentDialog();
+        setListener();
+    }
+    
+    private void getReply() {
         comment = (PostComment) Objects.requireNonNull(getIntent().getExtras()).get("comment");
 
-        adapter = new ReplyRecyclerViewAdapter(this, list);
-        adapter.setHasStableIds(true);
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAILURE:
+                        Log.i("获取回复: ", "失败");
+                        break;
+                    case ZERO:
+                        Log.i("获取回复: ", "空");
+                        break;
+                    case SUCCESS:
+                        Log.i("获取回复: ", "成功");
+                        break;
+                }
+                init();
+                super.handleMessage(msg);
+            }
+        };
+        
+        new Thread(()->{
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.queryReplyById)
+                            + "/?infoId=" + comment.getToId())
+                    .get()
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("获取回复: ", e.getMessage());
+                    msg.what = FAILURE;
+                    handler.sendMessage(msg);
+                }
 
-        xRecyclerView = findViewById(R.id.rv_cu_forum_comment_reply);
-        xRecyclerView.setAdapter(adapter);
-        xRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        xRecyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
-        xRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
-        xRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
-        xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String resStr = Objects.requireNonNull(response.body()).string();
+                    JsonObject object = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonArray array = object.getAsJsonArray("replyList");
 
-        headView = LayoutInflater.from(this).inflate(R.layout.item_forum_post_comment,
-                findViewById(android.R.id.content), false);
-        xRecyclerView.addHeaderView(headView);
+                    Log.i("获取回复：", resStr);
 
-        initCommentDialog();
-        setHeadView();
-        setListener();
+                    list = new ArrayList<>();
+                    for (JsonElement element : array) {
+                        PostComment comment = new Gson().fromJson(element, new TypeToken<PostComment>(){}.getType());
+                        list.add(comment);
+                    }
 
+                    msg.what = list.size() == 0 ? ZERO : SUCCESS;
+                    handler.sendMessage(msg);
+                }
+            });
+        }).start();
     }
 
     private void setListener() {
@@ -122,6 +192,8 @@ public class CommentDetailActivity extends AppCompatActivity {
                 order_by_like.setTextColor(getResources().getColor(R.color.blue));
                 order_by_time.setTextColor(getResources().getColor(R.color.gray));
                 order_by_time.setText("时间");
+                flag = true;
+                sortByLikeNum();
                 adapter.setList(list);
                 adapter.notifyDataSetChanged();
             }
@@ -132,16 +204,17 @@ public class CommentDetailActivity extends AppCompatActivity {
             order_by_time.setTextColor(getResources().getColor(R.color.blue));
             order_by_like.setTextColor(getResources().getColor(R.color.gray));
             String text = order_by_time.getText().toString();
-            if(text.contains("↑")){
+            if (flag) { sortByTimeAsc(); flag = false; }
+            else { Collections.reverse(list); }
+
+            if (text.contains("↑")) {
                 order_by_time.setText("时间↓");
-                adapter.setList(list_order_by_asc);
-            } else if(text.contains("↓")) {
+            } else if (text.contains("↓")) {
                 order_by_time.setText("时间↑");
-                adapter.setList(list_order_by_des);
             } else {
                 order_by_time.setText("时间↓");
-                adapter.setList(list_order_by_asc);
             }
+            adapter.setList(list);
             adapter.notifyDataSetChanged();
         });
         
@@ -163,9 +236,9 @@ public class CommentDetailActivity extends AppCompatActivity {
             @Override
             public void select(boolean isSelected) {
                 if (isSelected) {
-                    comment.setLikeNum(comment.getLikeNum() + 1);
+                    comment.setLikeNumber(comment.getLikeNumber() + 1);
                 } else {
-                    comment.setLikeNum(comment.getLikeNum() - 1);
+                    comment.setLikeNumber(comment.getLikeNumber() - 1);
                 }
             }
         });
@@ -203,24 +276,8 @@ public class CommentDetailActivity extends AppCompatActivity {
             commentText.setHint("回复给：" + comment.getFromName());
             commentDialog.show();
         });
-    }
 
-    /**
-     * 初始化评论框
-     */
-    private void initCommentDialog() {
-        commentDialog = new BottomSheetDialog(this, R.style.BottomSheetEdit);
-        View commentView = LayoutInflater.from(this).inflate(R.layout.dialog_comment_write, null);
-        commentText = commentView.findViewById(R.id.et_dialog_comment);
-        Button btn_submit = commentView.findViewById(R.id.btn_dialog_comment);
-        commentDialog.setContentView(commentView);
-
-        // 配合 R.style.BottomSheetEdit 解决键盘遮挡问题
-        View parent = (View) commentView.getParent();
-        BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
-        commentView.measure(0, 0);
-        behavior.setPeekHeight(commentView.getMeasuredHeight());
-
+        // 提交评论
         btn_submit.setOnClickListener(view1 -> {
             String commentContent = commentText.getText().toString().trim();
             if (!TextUtils.isEmpty(commentContent)) {
@@ -231,11 +288,13 @@ public class CommentDetailActivity extends AppCompatActivity {
                 postComment.setToName(toName);
                 postComment.setReference(reference);
                 postComment.setContent(commentContent);
-                postComment.setDate("2020-4-25 22:44");
-                postComment.setLikeNum(0);
-                list.add(postComment);
-                list_order_by_asc.add(postComment);
-                list_order_by_des.add(0, postComment);
+                postComment.setCreated("2020-4-25 22:44");
+                postComment.setLikeNumber(0);
+                if (order_by_time.getText().toString().equals("时间↑")) {
+                    list.add(0, postComment);
+                } else {
+                    list.add(postComment);
+                }
                 adapter.notifyDataSetChanged();
                 replySum.setText(list.size() + "条对话");
                 toName = null;
@@ -267,12 +326,48 @@ public class CommentDetailActivity extends AppCompatActivity {
             }
         });
     }
+    
+    private void initRecyclerView() {
+        adapter = new ReplyRecyclerViewAdapter(this, list);
+        adapter.setHasStableIds(true);
+
+        xRecyclerView = findViewById(R.id.rv_cu_forum_comment_reply);
+        xRecyclerView.setAdapter(adapter);
+        xRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        xRecyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
+        xRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        xRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
+        xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
+
+        headView = LayoutInflater.from(this).inflate(R.layout.item_forum_post_comment,
+                findViewById(android.R.id.content), false);
+        xRecyclerView.addHeaderView(headView);
+    }
+    
+    /**
+     * 初始化评论框
+     */
+    private void initCommentDialog() {
+        commentBar = findViewById(R.id.ll_cu_forum_comment_detail_comment_bar);
+        
+        commentDialog = new BottomSheetDialog(this, R.style.BottomSheetEdit);
+        View commentView = LayoutInflater.from(this).inflate(R.layout.dialog_comment_write, null);
+        commentText = commentView.findViewById(R.id.et_dialog_comment);
+        btn_submit = commentView.findViewById(R.id.btn_dialog_comment);
+        commentDialog.setContentView(commentView);
+
+        // 配合 R.style.BottomSheetEdit 解决键盘遮挡问题
+        View parent = (View) commentView.getParent();
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
+        commentView.measure(0, 0);
+        behavior.setPeekHeight(commentView.getMeasuredHeight());
+        
+    }
 
     private void setHeadView() {
-        initHeadView();
 
-        String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
-        //        String uri = comment.getPortrait();
+        // String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
+        String uri = comment.getPortrait();
         Glide.with(this).load(Uri.parse(uri))
                 .placeholder(R.drawable.portrait_default)
                 .error(R.drawable.portrait_default)
@@ -282,9 +377,9 @@ public class CommentDetailActivity extends AppCompatActivity {
 
         commentator.setText(comment.getFromName());
         content.setContentText(comment.getContent());
-        time.setText(comment.getDate());
+        time.setText(comment.getCreated());
         
-        praise.setCount(comment.getLikeNum());
+        praise.setCount(comment.getLikeNumber());
         // 如果是本人查看自己发的帖子，则需查找否点过赞
         
         rv_division.setVisibility(View.VISIBLE);
@@ -309,37 +404,55 @@ public class CommentDetailActivity extends AppCompatActivity {
         order_by_like = headView.findViewById(R.id.tv_cu_forum_comment_order_by_like);
     }
 
+    private void sortByLikeNum() {
+        Collections.sort(list, (p1, p2) -> {
+            int s1 = p1.getLikeNumber();
+            int s2 = p2.getLikeNumber();
+            return s1 < s2 ? s1 : (s1 == s2) ? 0 : -1;
+        });
+    }
+
+    private void sortByTimeAsc() {
+        Collections.sort(list, (p1, p2) -> {
+            try {
+                return Objects.requireNonNull(f.parse(p1.getCreated())).compareTo(f.parse(p2.getCreated()));
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(e);
+            }
+        });
+    }
+    
     private void initReplyData() {
         list = new ArrayList<>();
 
         PostComment comment = new PostComment();
         comment.setFromName("郭麒麟1"); comment.setContent("英雄所见略同");
-        comment.setDate("2020-4-1 22:35"); comment.setLikeNum(88);
+        comment.setCreated("2020-4-1 22:35"); comment.setLikeNumber(88);
         list.add(comment);
 
         comment = new PostComment();
         comment.setFromName("郭麒麟2"); comment.setContent("英雄所见略同");
-        comment.setDate("2020-4-20 22:35"); comment.setLikeNum(8);
+        comment.setCreated("2020-4-20 22:35"); comment.setLikeNumber(8);
         list.add(comment);
 
         comment = new PostComment();
         comment.setFromName("郭麒麟3"); comment.setContent("英雄所见略同");
-        comment.setDate("2020-3-1 22:35"); comment.setLikeNum(63);
+        comment.setCreated("2020-3-1 22:35"); comment.setLikeNumber(63);
         list.add(comment);
 
         comment = new PostComment();
         comment.setFromName("郭麒麟4"); comment.setContent("英雄所见略同");
-        comment.setDate("2020-4-1 20:35"); comment.setLikeNum(3);
+        comment.setCreated("2020-4-1 20:35"); comment.setLikeNumber(3);
         list.add(comment);
 
         comment = new PostComment();
         comment.setFromName("郭麒麟5"); comment.setContent("英雄所见略同");
-        comment.setDate("2020-4-1 22:39"); comment.setLikeNum(28);
+        comment.setCreated("2020-4-1 22:39"); comment.setLikeNumber(28);
         list.add(comment);
 
         comment = new PostComment();
         comment.setFromName("郭麒麟6"); comment.setContent("英雄所见略同");
-        comment.setDate("2020-4-1 12:35"); comment.setLikeNum(47);
+        comment.setCreated("2020-4-1 12:35"); comment.setLikeNumber(47);
         list.add(comment);
 
         list_order_by_asc = new ArrayList<>();
@@ -349,7 +462,7 @@ public class CommentDetailActivity extends AppCompatActivity {
             @Override
             public int compare(PostComment p1, PostComment p2) {
                 try {
-                    return f.parse(p1.getDate()).compareTo(f.parse(p2.getDate()));
+                    return f.parse(p1.getCreated()).compareTo(f.parse(p2.getCreated()));
                 } catch (ParseException e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -363,7 +476,7 @@ public class CommentDetailActivity extends AppCompatActivity {
             @Override
             public int compare(PostComment p1, PostComment p2) {
                 try {
-                    return f.parse(p2.getDate()).compareTo(f.parse(p1.getDate()));
+                    return f.parse(p2.getCreated()).compareTo(f.parse(p1.getCreated()));
                 } catch (ParseException e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -373,8 +486,8 @@ public class CommentDetailActivity extends AppCompatActivity {
         Collections.sort(list, new Comparator<PostComment>() {
             @Override
             public int compare(PostComment p1, PostComment p2) {
-                int s1 = p1.getLikeNum();
-                int s2 = p2.getLikeNum();
+                int s1 = p1.getLikeNumber();
+                int s2 = p2.getLikeNumber();
                 return s1 < s2 ? s1 : (s1 == s2) ? 0 : -1;
             }
         });

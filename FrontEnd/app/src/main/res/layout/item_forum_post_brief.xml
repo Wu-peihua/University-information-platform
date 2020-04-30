@@ -94,7 +94,6 @@
             
         </LinearLayout>
 
-        <!-- 点赞数 -->
         <LinearLayout
             android:id="@+id/ll_cu_forum_like"
             android:layout_width="wrap_content"
@@ -102,6 +101,8 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
+
+            <!-- 点赞数 -->
             <ImageView
                 android:layout_width="12dp"
                 android:layout_height="12dp"
@@ -113,6 +114,8 @@
                 android:maxLines="1"
                 android:textSize="@dimen/fontSize_xs"
                 android:text="666"/>
+
+            <!-- 评论数 -->
             <ImageView
                 android:layout_width="12dp"
                 android:layout_height="12dp"
@@ -122,9 +125,10 @@
                 android:id="@+id/tv_cu_forum_reply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
                 android:maxLines="1"
                 android:textSize="@dimen/fontSize_xs"
-                android:text="6"/>
+                android:text="666"/>
         </LinearLayout>
 
     </RelativeLayout>

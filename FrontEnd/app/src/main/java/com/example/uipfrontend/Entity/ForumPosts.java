@@ -5,7 +5,7 @@ import java.util.List;
 
 // 论坛帖子
 public class ForumPosts implements Serializable {
-    private Long postId;            // 帖子ID
+    private Long infoId;            // 帖子ID
     private String title;           // 帖子标题
     private String content;         // 帖子内容
     private String created;         // 发布时间
@@ -21,19 +21,19 @@ public class ForumPosts implements Serializable {
 
     public ForumPosts(Long postId, String title, String userName, String postTime,
                       int likeNum) {
-        this.postId = postId;
+        this.infoId = postId;
         this.title = title;
         this.userName = userName;
         this.created = postTime;
         this.likeNumber = likeNum;
     }
 
-    public Long getPostId() {
-        return postId;
+    public Long getInfoId() {
+        return infoId;
     }
 
-    public void setPostId(Long postId) {
-        this.postId = postId;
+    public void setInfoId(Long infoId) {
+        this.infoId = infoId;
     }
 
     public String getTitle() {

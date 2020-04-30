@@ -3,7 +3,6 @@ package com.example.uipfrontend.CommonUser.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.CommonUser.Activity.CommentDetailActivity;
-import com.example.uipfrontend.CommonUser.Activity.PostDetailActivity;
 import com.example.uipfrontend.Entity.PostComment;
 import com.example.uipfrontend.R;
 import com.lzy.widget.CircleImageView;
@@ -57,6 +55,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
         TextView           tv_time;         // 评论时间
         IconCountView      praise;          // 点赞按钮
         LinearLayout       ll_click_write;  // 评论详情按钮
+        TextView           tv_replySum;     // 回复数
         ImageView          iv_report;       // 举报按钮
 
         ViewHolder(@NonNull View itemView) {
@@ -68,6 +67,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
             tv_time = itemView.findViewById(R.id.tv_cu_forum_comment_time);
             praise = itemView.findViewById(R.id.praise_view_cu_forum_comment_like);
             ll_click_write = itemView.findViewById(R.id.ll_cu_forum_comment_write);
+            tv_replySum = itemView.findViewById(R.id.tv_cu_forum_comment_sum);
             iv_report = itemView.findViewById(R.id.imgv_cu_forum_comment_more);
         }
     }
@@ -83,8 +83,8 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
-        String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
-        // String uri = list.get(position).getPortrait();
+        // String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
+        String uri = list.get(position).getPortrait();
         Glide.with(context).load(Uri.parse(uri))
                 .placeholder(R.drawable.portrait_default)
                 .error(R.drawable.portrait_default)
@@ -94,30 +94,30 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
 
         viewHolder.tv_userName.setText(list.get(position).getFromName());
         viewHolder.tv_content.setContentText(list.get(position).getContent());
-        viewHolder.tv_time.setText(list.get(position).getDate());
+        viewHolder.tv_time.setText(list.get(position).getCreated());
         
-        viewHolder.praise.setCount(list.get(position).getLikeNum());
+        viewHolder.praise.setCount(list.get(position).getLikeNumber());
         // 如果是本人查看自己发的帖子，则需查找否点过赞
+
+        viewHolder.tv_replySum.setText(String.valueOf(list.get(position).getReplyNumber()));
+        viewHolder.tv_replySum.setVisibility(View.VISIBLE);
         
         // 点赞监听
         viewHolder.praise.setOnStateChangedListener(isSelected -> {
             if (isSelected) {
-                list.get(position).setLikeNum(list.get(position).getLikeNum() + 1);
+                list.get(position).setLikeNumber(list.get(position).getLikeNumber() + 1);
             }
             else {
-                list.get(position).setLikeNum(list.get(position).getLikeNum() - 1);
+                list.get(position).setLikeNumber(list.get(position).getLikeNumber() - 1);
             }
             notifyDataSetChanged();
         });
 
         // 跳转到评论详情
-        viewHolder.ll_click_write.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, CommentDetailActivity.class);
-                intent.putExtra("comment", list.get(position));
-                context.startActivity(intent);
-            }
+        viewHolder.ll_click_write.setOnClickListener(view -> {
+            Intent intent = new Intent(context, CommentDetailActivity.class);
+            intent.putExtra("comment", list.get(position));
+            context.startActivity(intent);
         });
         
         // 举报监听

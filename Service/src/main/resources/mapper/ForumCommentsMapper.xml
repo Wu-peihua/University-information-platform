@@ -1,129 +1,152 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.uipservice.dao.ForumCommentsMapper" >
-  <resultMap id="BaseResultMap" type="com.example.uipservice.entity.ForumComments" >
-    <id column="info_id" property="infoId" jdbcType="BIGINT" />
-    <result column="post_id" property="postId" jdbcType="BIGINT" />
-    <result column="commentator_id" property="commentatorId" jdbcType="BIGINT" />
-    <result column="content" property="content" jdbcType="VARCHAR" />
-    <result column="report_number" property="reportNumber" jdbcType="INTEGER" />
-    <result column="like_number" property="likeNumber" jdbcType="INTEGER" />
-    <result column="info_date" property="infoDate" jdbcType="TIMESTAMP" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    info_id, post_id, commentator_id, content, report_number, like_number, info_date, 
-    created
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    <include refid="Base_Column_List" />
-    from forum_comments
-    where info_id = #{infoId,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    <resultMap id="BaseResultMap" type="com.example.uipservice.entity.ForumComments" >
+        <id column="info_id" property="infoId" jdbcType="BIGINT" />
+        <result column="post_id" property="toId" jdbcType="BIGINT" />
+        <result column="commentator_id" property="fromId" jdbcType="BIGINT" />
+        <result column="user_name" property="fromName" jdbcType="VARCHAR" />
+        <result column="portrait" property="portrait" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="report_number" property="reportNumber" jdbcType="INTEGER" />
+        <result column="reply_number" property="replyNumber" jdbcType="INTEGER" />
+        <result column="like_number" property="likeNumber" jdbcType="INTEGER" />
+        <result column="info_date" property="infoDate" jdbcType="TIMESTAMP" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+    info_id, post_id, commentator_id, content,
+    report_number, like_number, reply_number,
+    info_date, created
+    </sql>
+
+    <select id="queryComments" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.ForumComments">
+    select info_id, post_id, commentator_id, content, report_number, like_number, reply_number,
+    info_date, forum_comments.created, user_name, portrait
+    from forum_comments inner join user_info
+    on commentator_id = user_id
+    where post_id = #{toId, jdbcType=BIGINT}
+    order by like_number desc, reply_number desc
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from forum_comments
+        where info_id = #{infoId,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from forum_comments
     where info_id = #{infoId,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="com.example.uipservice.entity.ForumComments" >
-    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into forum_comments (post_id, commentator_id, content, 
-      report_number, like_number, info_date, 
-      created)
-    values (#{postId,jdbcType=BIGINT}, #{commentatorId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, 
-      #{reportNumber,jdbcType=INTEGER}, #{likeNumber,jdbcType=INTEGER}, #{infoDate,jdbcType=TIMESTAMP}, 
-      #{created,jdbcType=TIMESTAMP})
-  </insert>
-  <insert id="insertSelective" parameterType="com.example.uipservice.entity.ForumComments" >
-    <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into forum_comments
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="postId != null" >
-        post_id,
-      </if>
-      <if test="commentatorId != null" >
-        commentator_id,
-      </if>
-      <if test="content != null" >
-        content,
-      </if>
-      <if test="reportNumber != null" >
-        report_number,
-      </if>
-      <if test="likeNumber != null" >
-        like_number,
-      </if>
-      <if test="infoDate != null" >
-        info_date,
-      </if>
-      <if test="created != null" >
-        created,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="postId != null" >
-        #{postId,jdbcType=BIGINT},
-      </if>
-      <if test="commentatorId != null" >
-        #{commentatorId,jdbcType=BIGINT},
-      </if>
-      <if test="content != null" >
-        #{content,jdbcType=VARCHAR},
-      </if>
-      <if test="reportNumber != null" >
-        #{reportNumber,jdbcType=INTEGER},
-      </if>
-      <if test="likeNumber != null" >
-        #{likeNumber,jdbcType=INTEGER},
-      </if>
-      <if test="infoDate != null" >
-        #{infoDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="created != null" >
-        #{created,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.example.uipservice.entity.ForumComments" >
+    </delete>
+
+    <insert id="insert" parameterType="com.example.uipservice.entity.ForumComments" >
+        <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into forum_comments (post_id, commentator_id, content,
+        report_number, like_number, reply_number, info_date, created)
+        values (#{toId,jdbcType=BIGINT}, #{fromId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR},
+        #{reportNumber,jdbcType=INTEGER}, #{likeNumber,jdbcType=INTEGER}, #{replyNumber,jdbcType=INTEGER}
+        #{infoDate,jdbcType=TIMESTAMP}, #{created,jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.example.uipservice.entity.ForumComments" >
+        <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into forum_comments
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="toId != null" >
+                post_id,
+            </if>
+            <if test="fromId != null" >
+                commentator_id,
+            </if>
+            <if test="content != null" >
+                content,
+            </if>
+            <if test="reportNumber != null" >
+                report_number,
+            </if>
+            <if test="likeNumber != null" >
+                like_number,
+            </if>
+            <if test="infoDate != null" >
+                info_date,
+            </if>
+            <if test="created != null" >
+                created,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="toId != null" >
+                #{toId,jdbcType=BIGINT},
+            </if>
+            <if test="fromId != null" >
+                #{fromId,jdbcType=BIGINT},
+            </if>
+            <if test="content != null" >
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="reportNumber != null" >
+                #{reportNumber,jdbcType=INTEGER},
+            </if>
+            <if test="likeNumber != null" >
+                #{likeNumber,jdbcType=INTEGER},
+            </if>
+            <if test="infoDate != null" >
+                #{infoDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.uipservice.entity.ForumComments" >
+        update forum_comments
+        <set >
+            <if test="toId != null" >
+                post_id = #{toId,jdbcType=BIGINT},
+            </if>
+            <if test="fromId != null" >
+                commentator_id = #{fromId,jdbcType=BIGINT},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="reportNumber != null" >
+                report_number = #{reportNumber,jdbcType=INTEGER},
+            </if>
+            <if test="likeNumber != null" >
+                like_number = #{likeNumber,jdbcType=INTEGER},
+            </if>
+            <if test="replyNumber != null" >
+                reply_number = #{replyNumber,jdbcType=INTEGER},
+            </if>
+            <if test="infoDate != null" >
+                info_date = #{infoDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="created != null" >
+                created = #{created,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where info_id = #{infoId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.ForumComments" >
     update forum_comments
-    <set >
-      <if test="postId != null" >
-        post_id = #{postId,jdbcType=BIGINT},
-      </if>
-      <if test="commentatorId != null" >
-        commentator_id = #{commentatorId,jdbcType=BIGINT},
-      </if>
-      <if test="content != null" >
-        content = #{content,jdbcType=VARCHAR},
-      </if>
-      <if test="reportNumber != null" >
-        report_number = #{reportNumber,jdbcType=INTEGER},
-      </if>
-      <if test="likeNumber != null" >
-        like_number = #{likeNumber,jdbcType=INTEGER},
-      </if>
-      <if test="infoDate != null" >
-        info_date = #{infoDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="created != null" >
-        created = #{created,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where info_id = #{infoId,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.ForumComments" >
-    update forum_comments
-    set post_id = #{postId,jdbcType=BIGINT},
-      commentator_id = #{commentatorId,jdbcType=BIGINT},
+    set post_id = #{toId,jdbcType=BIGINT},
+      commentator_id = #{fromId,jdbcType=BIGINT},
       content = #{content,jdbcType=VARCHAR},
       report_number = #{reportNumber,jdbcType=INTEGER},
       like_number = #{likeNumber,jdbcType=INTEGER},
+      reply_number = #{replyNumber,jdbcType=INTEGER},
       info_date = #{infoDate,jdbcType=TIMESTAMP},
       created = #{created,jdbcType=TIMESTAMP}
     where info_id = #{infoId,jdbcType=BIGINT}
-  </update>
+    </update>
 </mapper>

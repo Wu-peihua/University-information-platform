@@ -88,8 +88,8 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
         // 回复按钮监听
         viewHolder.ll_click_write.setOnClickListener(view -> itemClickListener.onClick(view, position));
 
-        String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
-        //        String uri = list.get(position).getPortrait();
+        // String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
+        String uri = list.get(position).getPortrait();
         Glide.with(context).load(Uri.parse(uri))
                 .placeholder(R.drawable.portrait_default)
                 .error(R.drawable.portrait_default)
@@ -109,17 +109,17 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
         }
 
         viewHolder.tv_content.setContentText(list.get(position).getContent());
-        viewHolder.tv_time.setText(list.get(position).getDate());
+        viewHolder.tv_time.setText(list.get(position).getCreated());
         
-        viewHolder.praise.setCount(list.get(position).getLikeNum());
+        viewHolder.praise.setCount(list.get(position).getLikeNumber());
         // 如果是本人查看自己发的帖子，则需查找否点过赞
         
         // 点赞监听
         viewHolder.praise.setOnStateChangedListener(isSelected -> {
             if (isSelected) {
-                list.get(position).setLikeNum(list.get(position).getLikeNum() + 1);
+                list.get(position).setLikeNumber(list.get(position).getLikeNumber() + 1);
             } else {
-                list.get(position).setLikeNum(list.get(position).getLikeNum() - 1);
+                list.get(position).setLikeNumber(list.get(position).getLikeNumber() - 1);
             }
             notifyDataSetChanged();
         });
