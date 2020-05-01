@@ -124,7 +124,8 @@ public class CommentDetailActivity extends AppCompatActivity {
     }
     
     private void getReply() {
-        comment = (PostComment) Objects.requireNonNull(getIntent().getExtras()).get("comment");
+        comment = (PostComment) Objects.requireNonNull(getIntent().getExtras())
+                .get("comment");
 
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {

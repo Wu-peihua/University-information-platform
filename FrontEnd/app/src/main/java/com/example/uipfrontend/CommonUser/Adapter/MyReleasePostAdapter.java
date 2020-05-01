@@ -43,7 +43,7 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
         TextView tv_time;      // 发布时间
         TextView tv_detail;    // 详情按钮
         TextView tv_modify;    // 修改按钮
-//        TextView tv_delete;    // 删除按钮
+        // TextView tv_delete;    // 删除按钮
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -54,7 +54,7 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
             tv_time = itemView.findViewById(R.id.tv_cu_forum_time);
             tv_detail = itemView.findViewById(R.id.tv_cu_forum_record_detail);
             tv_modify = itemView.findViewById(R.id.tv_cu_forum_record_modify);
-//            tv_delete = itemView.findViewById(R.id.tv_cu_forum_record_delete);
+            // tv_delete = itemView.findViewById(R.id.tv_cu_forum_record_delete);
         }
     }
     

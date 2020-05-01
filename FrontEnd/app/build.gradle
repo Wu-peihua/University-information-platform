@@ -117,6 +117,7 @@ dependencies {
     //动画单选按钮
     implementation 'com.github.ceryle:RadioRealButton:v2.1.1'
     
+    implementation 'net.steamcrafted:load-toast:1.0.12'
     
     //okhttp请求
     implementation 'com.squareup.okhttp3:okhttp:4.0.1'

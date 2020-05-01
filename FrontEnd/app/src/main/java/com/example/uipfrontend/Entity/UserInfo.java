@@ -1,8 +1,10 @@
 package com.example.uipfrontend.Entity;
 
+import android.app.Application;
+
 import java.util.Date;
 
-public class UserInfo {
+public class UserInfo extends Application {
     private Long userId;
 
     private String userName;

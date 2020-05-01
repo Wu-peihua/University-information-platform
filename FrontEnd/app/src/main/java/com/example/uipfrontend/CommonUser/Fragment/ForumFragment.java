@@ -18,6 +18,7 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,6 +29,7 @@ import com.example.uipfrontend.CommonUser.Activity.PostDetailActivity;
 import com.example.uipfrontend.CommonUser.Activity.WritePostActivity;
 import com.example.uipfrontend.CommonUser.Adapter.ForumListRecyclerViewAdapter;
 import com.example.uipfrontend.Entity.ForumPosts;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -109,8 +111,7 @@ public class ForumFragment extends Fragment {
                         break;
                     case SUCCESS:
                         Log.i("获取帖子: ", "成功");
-                        // tv_blank_text.setText("未找到相关结果");
-                        // tv_blank_text.setVisibility(View.GONE);
+                        tv_blank_text.setVisibility(View.GONE);
                         break;
                 }
                 posts = new ArrayList<>();
@@ -195,9 +196,14 @@ public class ForumFragment extends Fragment {
         
         // 进入新建帖子页面
         iv_new.setOnClickListener(view -> {
-            Intent intent = new Intent(rootView.getContext(), WritePostActivity.class);
-            intent.putExtra("userId", 10001);
-            startActivity(intent);
+            UserInfo user = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();
+            if (user.getUserId() == null) {
+                Toast.makeText(rootView.getContext(), "请登录", Toast.LENGTH_LONG).show();
+            } else {
+                Intent intent = new Intent(rootView.getContext(), WritePostActivity.class);
+                intent.putExtra("userId", user.getUserId());
+                startActivity(intent);
+            }
         });
         
         // 刷新和加载更多
@@ -216,19 +222,16 @@ public class ForumFragment extends Fragment {
 
     private void changeKeyWordColor(String keyWord){
         // 搜索帖子标题，关键词：keyWord
-        posts.clear();
-        if(keyWord.equals("")){
-            posts.addAll(whole);
-            adapter.setKeyWordColor(null, null);
-        } else {
+        if (!keyWord.equals("")) {
+            posts.clear();
             for (int i = 0; i < whole.size(); i++) {
-                if(whole.get(i).getTitle().contains(keyWord)) {
+                if (whole.get(i).getTitle().contains(keyWord)) {
                     posts.add(whole.get(i));
                 }
             }
             adapter.setKeyWordColor(keyWord, redSpan);
+            refreshUI();
         }
-        refreshUI();
     }
     
     private void refreshUI(){
@@ -240,6 +243,7 @@ public class ForumFragment extends Fragment {
             xRecyclerView.scheduleLayoutAnimation();
         }
         if(posts.size() == 0) {
+            tv_blank_text.setText("未找到相关结果");
             tv_blank_text.setVisibility(View.VISIBLE);
         }
     }

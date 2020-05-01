@@ -30,6 +30,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.CommonUser.Adapter.CommentRecyclerViewAdapter;
 import com.example.uipfrontend.Entity.ForumPosts;
 import com.example.uipfrontend.Entity.PostComment;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -57,14 +58,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /*
@@ -80,6 +83,8 @@ public class PostDetailActivity extends AppCompatActivity {
     private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private static boolean flag = true;
+    
+    private UserInfo user;
     
     private ForumPosts post; // intent传递过来的对象
 
@@ -196,7 +201,63 @@ public class PostDetailActivity extends AppCompatActivity {
         }).start();
     }
 
+    private void deletePost() {
+        
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAILURE:
+                        Log.i("删除帖子: ", "失败");
+                        Toast.makeText(PostDetailActivity.this, "网络出了点问题，请稍候再试", 
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case SUCCESS:
+                        Log.i("删除帖子: ", "成功");
+                        Toast.makeText(PostDetailActivity.this, "删除成功",
+                                Toast.LENGTH_LONG).show();
+                        // finish();
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+        
+        new Thread(()->{
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+            
+            FormBody.Builder builder = new FormBody.Builder();
+            builder.add("infoId", String.valueOf(post.getInfoId()));
+            RequestBody requestBody = builder.build();
+
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.deletePost))
+                    .post(requestBody)
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("删除帖子: ", e.getMessage());
+                    msg.what = FAILURE;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.i("删除帖子：", response.body().string());
+                    msg.what = SUCCESS;
+                    handler.sendMessage(msg);
+                }
+            });
+            
+        }).start();
+    }
+    
     private void init() {
+        user = (UserInfo) getApplication();
         initRecyclerView();
         initHeadView();
         initCommentDialog();
@@ -285,20 +346,37 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
-        // 举报监听
+        // 举报or删除监听
         detail_report.setOnClickListener(view -> {
-            AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle("提示")
-                    .setMessage("如果该条帖子含有不恰当的内容，请点击确定")
-                    .setPositiveButton("确定", (dialog1, which) -> {
-                        Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton("取消", null)
-                    .setCancelable(false)
-                    .create();
-            dialog.show();
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+            if (user.getUserId().equals(post.getUserId())) {
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle("提示")
+                        .setMessage("确定要删除吗")
+                        .setPositiveButton("确定", (dialog1, which) -> {
+                            deletePost();
+                        })
+                        .setNegativeButton("点错了", null)
+                        .setCancelable(false)
+                        .create();
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+            } else {
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle("提示")
+                        .setMessage("如果该条帖子含有不恰当的内容，请点击确定")
+                        .setPositiveButton("确定", (dialog1, which) -> {
+                            post.setReportNumber(post.getReportNumber() + 1);
+                            Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("取消", null)
+                        .setCancelable(false)
+                        .create();
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+            }
+            
         });
 
         // 弹出评论框
@@ -358,6 +436,7 @@ public class PostDetailActivity extends AppCompatActivity {
      * 显示帖子详情
      */
     private void setPostDetail() {
+        String isMe = user.getUserId().equals(post.getUserId()) ? "(我)" : "";
 
         // String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
         String uri = post.getPortrait();
@@ -369,7 +448,7 @@ public class PostDetailActivity extends AppCompatActivity {
         detail_portrait.setBorderWidth(0);
 
         detail_title.setText(post.getTitle());
-        detail_poster.setText(post.getUserName());
+        detail_poster.setText(post.getUserName() + isMe);
         detail_content.setContentText(post.getContent());
 
         //        List<String> picUris = post.getPictures();
