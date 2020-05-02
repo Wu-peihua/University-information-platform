@@ -5,7 +5,9 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/admin_item_course"
     android:descendantFocusability="blocksDescendants"
+    android:clickable="true"
     >
 
 

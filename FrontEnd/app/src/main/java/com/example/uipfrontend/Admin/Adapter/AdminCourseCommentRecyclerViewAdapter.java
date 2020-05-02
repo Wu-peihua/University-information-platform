@@ -1,7 +1,10 @@
 package com.example.uipfrontend.Admin.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,28 +20,125 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.CourseComment;
+import com.example.uipfrontend.Entity.ResponseUserInfo;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
-import com.example.uipfrontend.Student.Adapter.CourseCommentRecyclerViewAdapter;
+import com.google.gson.Gson;
 import com.sunbinqiang.iconcountview.IconCountView;
 
+import java.io.IOException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     private Context context;
-    private List<CourseComment> mTags = new ArrayList<>();
+    private List<CourseComment> courseComments = new ArrayList<>();
     ;
-    public void setList(List<CourseComment> list)
-    {
-        this.mTags = list;
+    //用户数据测试
+    private Map<Long, UserInfo> userInfos = new HashMap<>() ;//<userid,Userinfo>
+
+    private onItemClickListener itemClickListener;//设置点击监听器
+
+    //分页请求课程评论数据
+    private static final int SUCCESS = 1;
+    private static final int FAIL = -1;
+    private static final int ZERO = 0; //记录请求回来的数据条数是否为零
+    //评论用户
+
+    public void getAllCommentUser(){
+
+        for(CourseComment c:courseComments){
+            requestUserInfo(c.getCommentatorId());//请求评论列表下所有的用户
+        }
+    }
+    public void requestUserInfo(Long userId){
+
+        //final UserInfo[] temp = {new UserInfo()};
+        //查询评论者的信息
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message message){
+                switch (message.what){
+                    case SUCCESS:
+                        Log.i("获取: ", "成功");
+                        break;
+
+                    case FAIL:
+                        Log.i("获取: ", "失败");
+                        break;
+
+                    case ZERO:
+                        //setUserInfo();
+                        Log.i("获取: ", "0");
+                        break;
+                }
+            }
+        };
+
+
+        new Thread(()->{
+            Request request = new Request.Builder()
+                    .url(context.getResources().getString(R.string.serverBasePath) +
+                            context.getResources().getString(R.string.queryUserInfoByUserid)
+                            + "/?userId="+userId)
+                    .get()
+                    .build();
+            Message msg = new Message();
+            OkHttpClient okHttpClient = new OkHttpClient();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.i("获取: ", e.getMessage());
+                    msg.what = FAIL;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+
+                    String data = response.body().string();
+                    System.out.println("返回用户数据:"+data);
+
+                    ResponseUserInfo responseUserInfo = new Gson().fromJson(data,
+                            ResponseUserInfo.class);
+                    //设置此处的user info
+                    userInfos.put(userId,responseUserInfo.getUserInfo());
+                    //System.out.println("此处userinfo and name:"+userInfo.getUserName());
+                }
+            });
+        }).start();
+
+
+    }
+    public void setOnItemClickListener(onItemClickListener clickListener) {
+        this.itemClickListener = clickListener;
+    }
+
+    public void setList(List<CourseComment> list) {
+        this.courseComments= list;
+        if(!userInfos.isEmpty()){
+            userInfos.clear();
+        }
+        getAllCommentUser();//刷新列表数据
     }
 
     public AdminCourseCommentRecyclerViewAdapter(Context context, List<CourseComment> list) {
         this.context = context;
-        this.mTags = list;
+        this.courseComments = list;
+        getAllCommentUser();//根据评论列表获取
     }
 
 
@@ -54,11 +154,10 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
         ImageView userimg;
         private IconCountView BtnLike;//重写点赞按钮
 
+
+
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-
-
             userName = (TextView) itemView.findViewById(R.id.adminUserName);
             commentDate = (TextView) itemView.findViewById(R.id.adminCommentDate);
             commentContent = (TextView) itemView.findViewById(R.id.adminCommentContent);
@@ -72,32 +171,6 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
         }
     }
-
-
-//        @OnClick(R.id.tv_student_group_item_delete)
-//        public void delete(View view) {
-//            final GlobalDialog delDialog = new GlobalDialog(context);
-//            delDialog.setCanceledOnTouchOutside(true);
-//            delDialog.getTitle().setText("提示");
-//            delDialog.getContent().setText("确定删除吗?");
-//            delDialog.setLeftBtnText("取消");
-//            delDialog.setRightBtnText("确定");
-//            delDialog.setLeftOnclick(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(context, "取消", Toast.LENGTH_SHORT).show();
-//                    delDialog.dismiss();
-//                }
-//            });
-//            delDialog.setRightOnclick(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(context, "确定", Toast.LENGTH_SHORT).show();
-//                    delDialog.dismiss();
-//                }
-//            });
-//            delDialog.show();
-//        }
 
 
     @NonNull
@@ -116,21 +189,28 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int pos) {
 
-        AdminCourseCommentRecyclerViewAdapter.ViewHolder viewHolder = new AdminCourseCommentRecyclerViewAdapter.ViewHolder(holder.itemView);
+        AdminCourseCommentRecyclerViewAdapter.ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
-        CourseComment comment = mTags.get(pos);
+        CourseComment comment = courseComments.get(pos);
 
-        //预设用户头像
-        Glide.with(context).load("")
-                .placeholder(R.drawable.portrait_default)
-                .error(R.drawable.portrait_default)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(viewHolder.userimg);
+        //查询User map
+        UserInfo currentUser = userInfos.get(comment.getCommentatorId());
 
+        if(currentUser!=null) {
+            //System.out.println("此处userinfo:"+currentUser.toString());
+            viewHolder.userName.setText(currentUser.getUserName());
+            //System.out.println("当前用户名："+currentUser.getUserName());
+            setImage(context,viewHolder.userimg,currentUser.getPortrait());
+        }else{
+            viewHolder.userName.setText("未知用户");
+            setImage(context,viewHolder.userimg,"http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg");
+        }
 
-        //viewHolder.userName.setText(comment.getUserName());
-        //viewHolder.commentDate.setText(DateFormat.getInstance().format(comment.getCommentDate()));
-        viewHolder.commentDate.setText(comment.getInfoDate().toString());
+        DateFormat datefomat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        String commentDate = datefomat.format(comment.getInfoDate());
+        /// System.out.println("日期格式："+commentDate);
+        viewHolder.commentDate.setText(commentDate);
+
         //courseImage.setImageResource(course.getImageurl());
         viewHolder.commentContent.setText(comment.getContent());
         viewHolder.score.setRating((float)comment.getScore());
@@ -138,21 +218,16 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
         //viewHolder.LikeCounts.setText(String.valueOf(mTags.get(pos).getLikeCount()));
 
         viewHolder.BtnLike.setCount(comment.getLikeCount());
-        Log.i("当前点赞pos",String.valueOf(mTags.get(pos)));
-        //点赞按钮与举报按钮
-        /*
-        viewHolder.BtnLike.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int cur = mTags.get(pos).getLikeCount();
-                mTags.get(pos).setLikeCount(cur+1);
-                viewHolder.LikeCounts.setText(String.valueOf(cur+1));
-                Log.i("当前点赞数:",String.valueOf(mTags.get(pos).getLikeCount()));
-
+        // 点赞监听
+        viewHolder.BtnLike.setOnStateChangedListener(isSelected -> {
+            if (isSelected) {
+                comment.setLikeCount(comment.getLikeCount() + 1);
             }
+            else {
+                comment.setLikeCount(comment.getLikeCount() - 1);
+            }
+            notifyDataSetChanged();
         });
-
-         */
 
         //举报提示框
         viewHolder.BtnBadReport.setOnClickListener(new View.OnClickListener() {
@@ -186,33 +261,25 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
                 Log.i("click","删除该评论！");
             }
         });
-
-
-        /*
-        * holder.tvName.setText(mTags.get(position).getName());
-        holder.tvTeacher.setText(mTags.get(position).getTeacher());
-        holder.tvScore.setText(String.valueOf(mTags.get(position).getScore()));
-        holder.tvContent.setText(mTags.get(position).getDescription());
-
-
-        //holder.bindData(mTags.get(position));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null) {
-                    Log.e("click", "!");
-                    itemClickListener.onItemClick(position);
-                }
-            }
-        });
-        * */
-
     }
+    //设置用户头像
+    private void setImage(Context context, ImageView imageView, String url) {
+        Glide.with(context).load(url)
+                .placeholder(R.drawable.portrait_default)
+                .error(R.drawable.portrait_default)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageView);
+    }
+    //点击
+    public interface onItemClickListener {
+        void onClick(int pos);
+    }
+
     @Override
     public int getItemCount() {
 
 //        return list.size();
-        if (mTags != null) return mTags.size();
+        if (courseComments != null) return courseComments.size();
         return 0;
     }
 

@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         admin = findViewById(R.id.btn_admin);
 
         getMenusData();
+        initListener();
 
     }
 
