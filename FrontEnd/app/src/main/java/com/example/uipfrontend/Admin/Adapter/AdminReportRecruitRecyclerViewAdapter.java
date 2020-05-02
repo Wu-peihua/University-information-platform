@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bigkoo.alertview.AlertView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.uipfrontend.Entity.RecruitInfo;
 import com.example.uipfrontend.R;
 import com.lzy.ninegrid.ImageInfo;
 import com.lzy.ninegrid.NineGridView;
@@ -67,31 +68,7 @@ public class AdminReportRecruitRecyclerViewAdapter extends RecyclerView.Adapter 
 
 
     }
-
-//        @OnClick(R.id.tv_student_group_item_delete)
-//        public void delete(View view) {
-//            final GlobalDialog delDialog = new GlobalDialog(context);
-//            delDialog.setCanceledOnTouchOutside(true);
-//            delDialog.getTitle().setText("提示");
-//            delDialog.getContent().setText("确定删除吗?");
-//            delDialog.setLeftBtnText("取消");
-//            delDialog.setRightBtnText("确定");
-//            delDialog.setLeftOnclick(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(context, "取消", Toast.LENGTH_SHORT).show();
-//                    delDialog.dismiss();
-//                }
-//            });
-//            delDialog.setRightOnclick(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(context, "确定", Toast.LENGTH_SHORT).show();
-//                    delDialog.dismiss();
-//                }
-//            });
-//            delDialog.show();
-//        }
+    public void setList(List<RecruitInfo> list) { this.list = list; }
 
 
 
@@ -139,9 +116,8 @@ public class AdminReportRecruitRecyclerViewAdapter extends RecyclerView.Adapter 
     @Override
     public int getItemCount() {
 
-//        return list.size();
+        return list.size();
 
-        return 10;
     }
 
 
