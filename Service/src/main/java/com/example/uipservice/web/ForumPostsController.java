@@ -3,6 +3,7 @@ package com.example.uipservice.web;
 import com.example.uipservice.entity.ForumPosts;
 import com.example.uipservice.service.ForumPostsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,7 @@ public class ForumPostsController {
      * @return modelMap
      */
     @RequestMapping(value = "/insertpost", method = RequestMethod.POST)
-    private Map<String, Object> insertPost(ForumPosts post) {
+    private Map<String, Object> insertPost(@RequestBody ForumPosts post) {
         Map<String, Object> modelMap = new HashMap<>();
         modelMap.put("success", forumPostsService.insertPost(post));
         return modelMap;
@@ -40,11 +41,20 @@ public class ForumPostsController {
     }
 
     /**
+     * 根据ID获取帖子
+     * @return modelMap
+     */
+    @RequestMapping(value = "/selectposts", method = RequestMethod.GET)
+    private Map selectPosts(Long userId) {
+        return forumPostsService.selectPostsById(userId);
+    }
+
+    /**
      * 更新帖子
      * @return modelMap
      */
     @RequestMapping(value = "/updatepost", method = RequestMethod.POST)
-    private Map<String, Object> updatePost(ForumPosts post) {
+    private Map<String, Object> updatePost(@RequestBody ForumPosts post) {
         Map<String, Object> modelMap = new HashMap<>();
         modelMap.put("success", forumPostsService.updatePost(post));
         return modelMap;

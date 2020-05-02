@@ -19,11 +19,11 @@ public class CommentReplyServiceImpl implements CommentReplyService {
     CommentReplyMapper commentReplyMapper;
 
     @Override
-    public boolean insertReply(CommentReply reply) {
+    public Long insertReply(CommentReply reply) {
         if (reply.getContent() != null) {
             try {
                 int effectNum = commentReplyMapper.insert(reply);
-                if (effectNum > 0) return true;
+                if (effectNum > 0) return reply.getInfoId();
                 else throw new RuntimeException("服务器错误！插入回复失败！");
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());

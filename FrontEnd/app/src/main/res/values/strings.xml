@@ -49,5 +49,13 @@
     <string name="updatePost">/forumposts/updatepost</string>
     <!--删除帖子-->
     <string name="deletePost">/forumposts/deletepost</string>
+    <!--新建评论-->
+    <string name="insertComment">/postcomment/insertcomment</string>
+    <!--删除帖子-->
+    <string name="deleteComment">/postcomment/deletecomment</string>
+    <!--新建评论-->
+    <string name="insertReply">/commentreply/insertreply</string>
+    <!--删除帖子-->
+    <string name="deleteReply">/commentreply/deletereply</string>
 
 </resources>

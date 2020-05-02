@@ -9,7 +9,7 @@ import java.util.Map;
 public interface ForumCommentService {
 
     // 新建一条评论
-    boolean insertComment(ForumComments comment);
+    Long insertComment(ForumComments comment);
 
     // 删除一条评论
     boolean deleteComment(Long infoId);

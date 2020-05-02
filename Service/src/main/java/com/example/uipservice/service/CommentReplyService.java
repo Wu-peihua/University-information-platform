@@ -8,7 +8,7 @@ import java.util.Map;
 @Service
 public interface CommentReplyService {
     // 新建一条评论
-    boolean insertReply(CommentReply reply);
+    Long insertReply(CommentReply reply);
 
     // 删除一条评论
     boolean deleteReply(Long infoId);

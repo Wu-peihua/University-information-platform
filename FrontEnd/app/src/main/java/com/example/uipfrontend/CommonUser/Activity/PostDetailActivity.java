@@ -58,6 +58,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -117,7 +118,13 @@ public class PostDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forum_post_detail);
+        
+        post = (ForumPosts) Objects.requireNonNull(getIntent().getExtras())
+                .get("detail"); // 获取intent传递来的帖子对象
+        list = new ArrayList<>();
+        
         getComment();
+        init();
     }
 
     /**
@@ -140,8 +147,6 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private void getComment() {
-        post = (ForumPosts) Objects.requireNonNull(getIntent().getExtras())
-                .get("detail"); // 获取intent传递来的帖子对象
         
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -152,12 +157,14 @@ public class PostDetailActivity extends AppCompatActivity {
                         break;
                     case ZERO:
                         Log.i("获取评论: ", "空");
+                        setCommentSum();
                         break;
                     case SUCCESS:
                         Log.i("获取评论: ", "成功");
+                        setCommentSum();
+                        adapter.notifyDataSetChanged();
                         break;
                 }
-                init();
                 super.handleMessage(msg);
             }
         };
@@ -188,7 +195,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     
                     Log.i("获取评论：", resStr);
 
-                    list = new ArrayList<>();
+                    list.clear();
                     for (JsonElement element : array) {
                         PostComment comment = new Gson().fromJson(element, new TypeToken<PostComment>(){}.getType());
                         list.add(comment);
@@ -201,6 +208,76 @@ public class PostDetailActivity extends AppCompatActivity {
         }).start();
     }
 
+    private void insertComment(PostComment comment) {
+
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAILURE:
+                        Log.i("插入评论: ", "失败");
+                        Toast.makeText(PostDetailActivity.this, "网络出了点问题，请稍候再试",
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case SUCCESS:
+                        Log.i("插入评论: ", "成功");
+                        
+                        if (order_by_time.getText().toString().equals("时间↑")) {
+                            list.add(0, comment);
+                        } else {
+                            list.add(comment);
+                        }
+                        adapter.notifyDataSetChanged();
+                        setCommentSum();
+                        commentText.setText("");
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+        
+        new Thread(()->{
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+            Gson gson = new Gson();
+            String json = gson.toJson(comment);
+
+            Log.i("提交表单-评论：", json);
+
+            RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"), json);
+
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.insertComment))
+                    .post(requestBody)
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("插入评论: ", e.getMessage());
+                    msg.what = FAILURE;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String resStr = Objects.requireNonNull(response.body()).string();
+                    Log.i("插入评论：", resStr);
+                    String resId = resStr.substring(1, resStr.length()-1).split(":")[1];
+                    if (isNumber(resId)) {
+                        comment.setInfoId(Long.valueOf(resId));
+                        msg.what = SUCCESS;
+                    } else {
+                        msg.what = FAILURE;
+                    }
+                    handler.sendMessage(msg);
+                }
+            });
+
+        }).start();
+    }
+    
     private void deletePost() {
         
         @SuppressLint("HandlerLeak")
@@ -259,9 +336,11 @@ public class PostDetailActivity extends AppCompatActivity {
     private void init() {
         user = (UserInfo) getApplication();
         initRecyclerView();
-        initHeadView();
+        initPostDetail();
+        setPostDetail();
         initCommentDialog();
-        setListener();
+        setHeadListener();
+        setListListener();
     }
 
     private void initRecyclerView() {
@@ -281,12 +360,7 @@ public class PostDetailActivity extends AppCompatActivity {
         xRecyclerView.addHeaderView(headView);
     }
 
-    private void initHeadView() {
-        initPostDetail();
-        setPostDetail();
-    }
-
-    private void setListener() {
+    private void setHeadListener() {
         
         // 按热度从高到低排序
         order_by_like.setOnClickListener(view -> {
@@ -376,7 +450,6 @@ public class PostDetailActivity extends AppCompatActivity {
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
                 dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
             }
-            
         });
 
         // 弹出评论框
@@ -390,19 +463,18 @@ public class PostDetailActivity extends AppCompatActivity {
             if (!TextUtils.isEmpty(commentContent)) {
                 commentDialog.dismiss();
                 PostComment postComment = new PostComment();
-                postComment.setPortrait("");
-                postComment.setFromName("精神小伙");
+                postComment.setFromId(user.getUserId());
+                postComment.setToId(post.getInfoId());
                 postComment.setContent(commentContent);
-                postComment.setCreated("2020-4-25 12:34");
+                postComment.setPortrait(user.getPortrait());
+                postComment.setFromName(user.getUserName());
                 postComment.setLikeNumber(0);
-                if (order_by_time.getText().toString().equals("时间↑")) {
-                    list.add(0, postComment);
-                } else {
-                    list.add(postComment);
-                }
-                adapter.notifyDataSetChanged();
-                commentSum.setText(list.size() + "条评论");
-                commentText.setText("");
+                postComment.setReplyNumber(0);
+                postComment.setReportNumber(0);
+                postComment.setCreated(f.format(new Date()));
+                
+                insertComment(postComment);
+                
             } else {
                 Toast.makeText(PostDetailActivity.this, "评论内容不能为空", Toast.LENGTH_SHORT).show();
             }
@@ -432,6 +504,46 @@ public class PostDetailActivity extends AppCompatActivity {
         
     }
 
+    private void setListListener() {
+        adapter.setOnMoreClickListener((view, pos) -> {
+            if (user.getUserId().equals(list.get(pos).getFromId())) {
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle("提示")
+                        .setMessage("确定要删除吗")
+                        .setPositiveButton("确定", (dialog1, which) -> {
+                            deleteComment(list.get(pos).getInfoId(), pos);
+                        })
+                        .setNegativeButton("点错了", null)
+                        .setCancelable(false)
+                        .create();
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+            } else {
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle("提示")
+                        .setMessage("如果该条评论含有不恰当的内容，请点击确定")
+                        .setPositiveButton("确定", (dialog1, which) -> {
+                            Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("取消", null)
+                        .setCancelable(false)
+                        .create();
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+            }
+        });
+    }
+    
+    private void setCommentSum() {
+        if (list.size() == 0) {
+            commentSum.setText("还没有人评论，快来抢沙发吧。");
+        } else {
+            commentSum.setText(list.size() + "条评论");
+        }
+    }
+    
     /**
      * 显示帖子详情
      */
@@ -477,12 +589,8 @@ public class PostDetailActivity extends AppCompatActivity {
 
         praise.setCount(post.getLikeNumber());
         // 如果是本人查看自己发的帖子，则需查找否点过赞
-
-        if (list.size() == 0) {
-            commentSum.setText("还没有人评论，快来抢沙发吧。");
-        } else {
-            commentSum.setText(list.size() + "条评论");
-        }
+        
+        setCommentSum();
     }
 
     /**
@@ -548,4 +656,69 @@ public class PostDetailActivity extends AppCompatActivity {
         });
     }
     
+    private boolean isNumber(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (!Character.isDigit(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void deleteComment(Long id, int pos) {
+
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAILURE:
+                        Log.i("删除评论: ", "失败");
+                        Toast.makeText(PostDetailActivity.this, "网络出了点问题，请稍候再试",
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case SUCCESS:
+                        Log.i("删除评论: ", "成功");
+                        Toast.makeText(PostDetailActivity.this, "删除成功",
+                                Toast.LENGTH_LONG).show();
+                        list.remove(pos);
+                        setCommentSum();
+                        adapter.notifyDataSetChanged();
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+        new Thread(()->{
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+
+            FormBody.Builder builder = new FormBody.Builder();
+            builder.add("infoId", String.valueOf(id));
+            RequestBody requestBody = builder.build();
+
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.deleteComment))
+                    .post(requestBody)
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("删除评论: ", e.getMessage());
+                    msg.what = FAILURE;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.i("删除评论：", response.body().string());
+                    msg.what = SUCCESS;
+                    handler.sendMessage(msg);
+                }
+            });
+
+        }).start();
+    }
 }

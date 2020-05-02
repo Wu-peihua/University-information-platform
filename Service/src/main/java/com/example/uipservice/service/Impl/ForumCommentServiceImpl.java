@@ -19,11 +19,11 @@ public class ForumCommentServiceImpl implements ForumCommentService {
     ForumCommentsMapper forumCommentsMapper;
 
     @Override
-    public boolean insertComment(ForumComments comment) {
+    public Long insertComment(ForumComments comment) {
         if (comment.getContent() != null) {
             try {
                 int effectNum = forumCommentsMapper.insert(comment);
-                if (effectNum > 0) return true;
+                if (effectNum > 0) return comment.getInfoId();
                 else throw new RuntimeException("服务器错误！插入评论失败！");
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());

@@ -49,6 +49,18 @@ public class ForumPostsServiceImpl implements ForumPostsService {
     }
 
     @Override
+    public Map selectPostsById(Long userId) {
+        Map resMap = new HashMap();
+        try {
+            List<ForumPosts> postsList = forumPostsMapper.selectPostsById(userId);
+            resMap.put("postsList", postsList);
+            return resMap;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
     public boolean updatePost(ForumPosts post) {
         if (post.getTitle() != null && post.getContent() != null) {
             try {

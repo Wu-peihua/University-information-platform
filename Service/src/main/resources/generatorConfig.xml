@@ -55,6 +55,19 @@
 
             <generatedKey column="user_id" sqlStatement="Mysql" identity="true"/>
         </table>
+
+        <table tableName="forum_comments" domainObjectName="ForumComments" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="info_id" sqlStatement="Mysql" identity="true"/>
+        </table>
+
+        <table tableName="comment_reply" domainObjectName="CommentReply" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="info_id" sqlStatement="Mysql" identity="true"/>
+        </table>
+
         <!--table tableName="recruit" domainObjectName="Recruit" enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
             <property name="useActualColumnNames" value="false"/>

@@ -19,5 +19,7 @@ public interface ForumPostsMapper {
 
     int updateByPrimaryKey(ForumPosts record);
 
+    List<ForumPosts> selectPostsById(Long userId);
+
     List<ForumPosts> queryPosts();
 }

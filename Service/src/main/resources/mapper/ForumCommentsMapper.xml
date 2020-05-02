@@ -49,7 +49,7 @@
         insert into forum_comments (post_id, commentator_id, content,
         report_number, like_number, reply_number, info_date, created)
         values (#{toId,jdbcType=BIGINT}, #{fromId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR},
-        #{reportNumber,jdbcType=INTEGER}, #{likeNumber,jdbcType=INTEGER}, #{replyNumber,jdbcType=INTEGER}
+        #{reportNumber,jdbcType=INTEGER}, #{likeNumber,jdbcType=INTEGER}, #{replyNumber,jdbcType=INTEGER},
         #{infoDate,jdbcType=TIMESTAMP}, #{created,jdbcType=TIMESTAMP})
     </insert>
 

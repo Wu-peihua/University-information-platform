@@ -88,7 +88,10 @@ public class ForumFragment extends Fragment {
         } else {
             rootView = inflater.inflate(R.layout.fragment_cu_forum, null);
             tv_blank_text = rootView.findViewById(R.id.tv_blank);
+            posts = new ArrayList<>();
             getPosts();
+            initView();
+            setListener();
         }
         return rootView;
     }
@@ -112,12 +115,11 @@ public class ForumFragment extends Fragment {
                     case SUCCESS:
                         Log.i("获取帖子: ", "成功");
                         tv_blank_text.setVisibility(View.GONE);
+                        posts.clear();
+                        posts.addAll(whole);
+                        adapter.notifyDataSetChanged();
                         break;
                 }
-                posts = new ArrayList<>();
-                posts.addAll(whole);
-                initView();
-                setListener();
                 super.handleMessage(msg);
             }
         };

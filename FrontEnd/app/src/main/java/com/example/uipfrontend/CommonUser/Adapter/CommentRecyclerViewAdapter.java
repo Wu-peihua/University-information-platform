@@ -1,8 +1,12 @@
 package com.example.uipfrontend.CommonUser.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,34 +23,56 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.CommonUser.Activity.CommentDetailActivity;
 import com.example.uipfrontend.Entity.PostComment;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.lzy.widget.CircleImageView;
 import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.sunbinqiang.iconcountview.IconCountView;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /*
  * 这是帖子详情页的评论列表的adapter
  */
 
 public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
+    
+    private static final int FAILURE = -1;
+    private static final int SUCCESS = 1;
+    
+    private UserInfo user;
 
     private Context             context;
     private List<PostComment>   list;
-    private onItemClickListener itemClickListener;
+    private OnMoreClickListener onMoreClickListener;
+    private OnLikeClickListener onLikeClickListener;
 
     public CommentRecyclerViewAdapter(Context context, List<PostComment> list) {
         this.context = context;
         this.list = list;
+        user = (UserInfo) context.getApplicationContext();
     }
 
     public void setList(List<PostComment> list) { this.list = list; }
     
-    public void setOnItemClickListener(onItemClickListener clickListener) {
-        this.itemClickListener = clickListener;
+    public void setOnMoreClickListener(OnMoreClickListener clickListener) {
+        this.onMoreClickListener = clickListener;
     }
-
+    public void setOnLikeClickListener(OnLikeClickListener clickListener) {
+        this.onLikeClickListener = clickListener;
+    }
+    
     private static class ViewHolder extends RecyclerView.ViewHolder {
 
         CircleImageView    portrait;        // 评论者头像
@@ -91,8 +117,9 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(viewHolder.portrait);
         viewHolder.portrait.setBorderWidth(0);
-
-        viewHolder.tv_userName.setText(list.get(position).getFromName());
+        
+        String isMe = user.getUserId().equals(list.get(position).getFromId()) ? "(我)" : "";
+        viewHolder.tv_userName.setText(list.get(position).getFromName() + isMe);
         viewHolder.tv_content.setContentText(list.get(position).getContent());
         viewHolder.tv_time.setText(list.get(position).getCreated());
         
@@ -120,21 +147,9 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
             context.startActivity(intent);
         });
         
-        // 举报监听
-        viewHolder.iv_report.setOnClickListener(view -> {
-            AlertDialog dialog = new AlertDialog.Builder(context)
-                    .setTitle("提示")
-                    .setMessage("如果该条评论含有不恰当的内容，请点击确定")
-                    .setPositiveButton("确定", (dialog1, which) -> {
-                        Toast.makeText(context, "感谢您的反馈", Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton("取消", null)
-                    .setCancelable(false)
-                    .create();
-            dialog.show();
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.blue));
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.blue));
-        });
+        // 举报or删除监听
+        viewHolder.iv_report.setOnClickListener(view -> onMoreClickListener.onClick(view, position));
+
     }
 
     @Override
@@ -153,8 +168,11 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
         return position;
     }
     
-    public interface onItemClickListener {
+    public interface OnMoreClickListener {
         void onClick(View view, int pos);
     }
-
+    
+    public interface OnLikeClickListener {
+        void onClick(View view, int pos);
+    }
 }

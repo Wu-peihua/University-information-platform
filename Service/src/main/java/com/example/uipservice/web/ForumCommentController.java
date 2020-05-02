@@ -3,6 +3,7 @@ package com.example.uipservice.web;
 import com.example.uipservice.entity.ForumComments;
 import com.example.uipservice.service.ForumCommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,9 +23,9 @@ public class ForumCommentController {
      * @return modelMap
      */
     @RequestMapping(value = "/insertcomment", method = RequestMethod.POST)
-    private Map<String, Object> insertComment(ForumComments comment) {
+    private Map<String, Object> insertComment(@RequestBody ForumComments comment) {
         Map<String, Object> modelMap = new HashMap<>();
-        modelMap.put("success", forumCommentService.insertComment(comment));
+        modelMap.put("resId", forumCommentService.insertComment(comment));
         return modelMap;
     }
 

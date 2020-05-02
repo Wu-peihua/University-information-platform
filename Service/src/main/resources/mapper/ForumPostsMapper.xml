@@ -30,6 +30,15 @@
     order by str_to_date(forum_posts.created,'%Y-%m-%d') desc, reply_number desc, like_number desc
   </select>
 
+  <select id="selectPostsById" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.ForumPosts">
+    select info_id, title, content, pictures, info_date, poster, reply_number,
+    like_number, report_number, forum_posts.created, user_name, portrait
+    from forum_posts inner join user_info
+    on poster = user_id
+    where poster = #{userId,jdbcType=BIGINT}
+    order by created desc
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
@@ -157,8 +166,6 @@
     set title = #{title,jdbcType=VARCHAR},
       content = #{content,jdbcType=VARCHAR},
       pictures = #{pictures,jdbcType=VARCHAR},
-      info_date = #{infoDate,jdbcType=TIMESTAMP},
-      poster = #{userId,jdbcType=BIGINT},
       report_number = #{reportNumber,jdbcType=INTEGER},
       like_number = #{likeNumber,jdbcType=INTEGER},
       reply_number = #{replyNumber, jdbcType=INTEGER},

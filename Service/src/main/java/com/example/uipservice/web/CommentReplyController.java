@@ -3,6 +3,7 @@ package com.example.uipservice.web;
 import com.example.uipservice.entity.CommentReply;
 import com.example.uipservice.service.CommentReplyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,9 +23,9 @@ public class CommentReplyController {
      * @return modelMap
      */
     @RequestMapping(value = "/insertreply", method = RequestMethod.POST)
-    private Map<String, Object> insertReply(CommentReply reply) {
+    private Map<String, Object> insertReply(@RequestBody CommentReply reply) {
         Map<String, Object> modelMap = new HashMap<>();
-        modelMap.put("success", commentReplyService.insertReply(reply));
+        modelMap.put("resId", commentReplyService.insertReply(reply));
         return modelMap;
     }
 

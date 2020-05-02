@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 // 评论：包括帖子的评论和评论的评论
 public class PostComment implements Serializable {
-    private Long    id;           // 评论ID
+    private Long    infoId;       // 评论ID
     private String  content;      // 评论内容
     private String  created;      // 发表时间
     private Integer replyNumber;  // 评论的回复数
@@ -17,12 +17,12 @@ public class PostComment implements Serializable {
     private String  toName;       // 被评论者用户名
     private String  reference;    // 被评论的内容
 
-    public Long getId() {
-        return id;
+    public Long getInfoId() {
+        return infoId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setInfoId(Long infoId) {
+        this.infoId = infoId;
     }
 
     public String getContent() {

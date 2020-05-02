@@ -14,6 +14,9 @@ public interface ForumPostsService {
     // 根据id删除帖子
     boolean deletePost(Long infoId);
 
+    // 根据id获取帖子
+    Map selectPostsById(Long userId);
+
     // 根据id更新帖子
     boolean updatePost(ForumPosts post);
 
