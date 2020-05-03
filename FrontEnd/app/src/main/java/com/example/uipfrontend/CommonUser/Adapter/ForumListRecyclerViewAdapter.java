@@ -32,6 +32,8 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
         this.list = list;
     }
 
+    public void setList(List<ForumPosts> list) { this.list = list; }
+    
     public void setOnItemClickListener(onItemClickListener clickListener) {
         this.itemClickListener = clickListener;
     }

@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.uipfrontend.CommonUser.Adapter.MyReleasePostAdapter;
 import com.example.uipfrontend.Entity.ForumPosts;
+import com.example.uipfrontend.Entity.ResponsePosts;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.google.gson.Gson;
@@ -48,6 +49,9 @@ public class MyReleasePostFragment extends Fragment {
     private static final int ZERO = 0;
     private static final int SUCCESS = 1;
 
+    private static final int PAGE_SIZE = 10; // 默认一次请求10条数据
+    private int CUR_PAGE_NUM = 1;
+
     private View rootView;
     
     private List<ForumPosts> list;
@@ -68,10 +72,15 @@ public class MyReleasePostFragment extends Fragment {
             rootView = inflater.inflate(R.layout.fragment_my_release_forum,null);
             tv_blank_text = rootView.findViewById(R.id.tv_blank);
         }
+        list = new ArrayList<>();
         getPosts();
+        initRecyclerView();
         return rootView;
     }
 
+    /**
+     * 描述：分页获取用户发过的帖子
+     */
     private void getPosts() {
         
         @SuppressLint("HandlerLeak")
@@ -79,40 +88,55 @@ public class MyReleasePostFragment extends Fragment {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case FAILURE:
-                        Log.i("获取帖子: ", "失败");
+                        Log.i("获取发过的帖子: ", "失败");
                         tv_blank_text.setText("好像出了点问题");
                         tv_blank_text.setVisibility(View.VISIBLE);
                         break;
                     case ZERO:
-                        Log.i("获取帖子: ", "空");
-                        tv_blank_text.setText("还没有帖子，去发一条");
+                        Log.i("获取发过的帖子: ", "空");
+                        tv_blank_text.setText("还没有发过的帖子，去发一条");
                         tv_blank_text.setVisibility(View.VISIBLE);
                         break;
                     case SUCCESS:
-                        Log.i("获取帖子: ", "成功");
+                        Log.i("获取发过的帖子: ", "成功");
                         tv_blank_text.setVisibility(View.GONE);
+                        adapter.setList(list);
+                        adapter.notifyDataSetChanged();
                         break;
                 }
-                initRecyclerView();
                 super.handleMessage(msg);
             }
         };
 
-        new Thread(() -> {
+        queryPosts(handler, false);
+    }
+
+    /**
+     * 描述：启动线程获取帖子
+     * 参数: handler: 消息处理
+     * 参数: isLoadMore: 加载处理
+     * 返回：void
+     */
+    private void queryPosts(Handler handler, boolean isLoadMore) {
+
+        UserInfo user = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();
+        
+        new Thread(()->{
+
             Message msg = new Message();
             OkHttpClient client = new OkHttpClient();
-            UserInfo user = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();
             Request request = new Request.Builder()
-                    .url(getResources().getString(R.string.serverBasePath) 
-                            + getResources().getString(R.string.selectPosts) 
-                            + "/?userId=" + user.getUserId())
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.selectPosts)
+                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE
+                            + "&userId=" + user.getUserId())
                     .get()
                     .build();
             Call call = client.newCall(request);
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("获取帖子: ", e.getMessage());
+                    Log.i("获取发过的帖子: ", e.getMessage());
                     msg.what = FAILURE;
                     handler.sendMessage(msg);
                 }
@@ -120,21 +144,32 @@ public class MyReleasePostFragment extends Fragment {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String resStr = Objects.requireNonNull(response.body()).string();
-                    JsonObject object = new JsonParser().parse(resStr).getAsJsonObject();
-                    JsonArray array = object.getAsJsonArray("postsList");
 
-                    Log.i("获取帖子: ", resStr);
+                    ResponsePosts responsePosts = new Gson().fromJson(resStr, ResponsePosts.class);
 
-                    list = new ArrayList<>();
-                    for (JsonElement element : array) {
-                        ForumPosts post = new Gson().fromJson(element, new TypeToken<ForumPosts>(){}.getType());
-                        list.add(post);
+                    if (isLoadMore) {
+                        list.addAll(responsePosts.getPostsList());
+                        if (CUR_PAGE_NUM * PAGE_SIZE >= responsePosts.getTotal()) {
+                            msg.what = ZERO;
+                        } else {
+                            msg.what = SUCCESS;
+                        }
+                    } else {
+                        list = responsePosts.getPostsList();
+                        if (list == null) {
+                            list = new ArrayList<>();
+                            msg.what = FAILURE;
+                        } else if (list.size() == 0) {
+                            msg.what = ZERO;
+                        } else {
+                            Log.i("获取发过的帖子: ", list.toString());
+                            msg.what = SUCCESS;
+                        }
                     }
-
-                    msg.what = list.size() == 0 ? ZERO : SUCCESS;
                     handler.sendMessage(msg);
                 }
             });
+
         }).start();
     }
     
@@ -153,12 +188,62 @@ public class MyReleasePostFragment extends Fragment {
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                xRecyclerView.refreshComplete();
+                new Handler().postDelayed(()->{
+
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("刷新发过的帖子", "成功");
+                                    adapter.setList(list);
+                                    adapter.notifyDataSetChanged();
+                                    break;
+                                case FAILURE:
+                                    Log.i("刷新发过的帖子", "失败");
+                                    break;
+                                case ZERO:
+                                    Log.i("刷新发过的帖子", "0");
+                                    break;
+                            }
+                            xRecyclerView.refreshComplete();
+                        }
+                    };
+                    CUR_PAGE_NUM = 1;
+                    queryPosts(handler, false);
+
+                }, 1500);
             }
 
             @Override
             public void onLoadMore() {
-                xRecyclerView.setNoMore(true);
+                new Handler().postDelayed(()->{
+
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            xRecyclerView.loadMoreComplete();
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("加载发过的帖子", "成功");
+                                    adapter.notifyDataSetChanged();
+                                    break;
+                                case FAILURE:
+                                    Log.i("加载发过的帖子", "失败");
+                                    break;
+                                case ZERO:
+                                    Log.i("加载发过的帖子", "0");
+                                    xRecyclerView.setNoMore(true);
+                                    break;
+                            }
+                        }
+                    };
+                    CUR_PAGE_NUM++;
+                    queryPosts(handler, true);
+
+                }, 1500);
             }
         });
     }

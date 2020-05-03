@@ -30,16 +30,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.CommonUser.Adapter.CommentRecyclerViewAdapter;
 import com.example.uipfrontend.Entity.ForumPosts;
 import com.example.uipfrontend.Entity.PostComment;
+import com.example.uipfrontend.Entity.ResponsePostComment;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.lzy.ninegrid.ImageInfo;
@@ -80,6 +76,9 @@ public class PostDetailActivity extends AppCompatActivity {
     private static final int FAILURE = -1;
     private static final int ZERO = 0;
     private static final int SUCCESS = 1;
+
+    private static final int PAGE_SIZE = 10; // 默认一次请求10条数据
+    private int CUR_PAGE_NUM = 1;
 
     private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -146,6 +145,9 @@ public class PostDetailActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 描述：分页获取评论
+     */
     private void getComment() {
         
         @SuppressLint("HandlerLeak")
@@ -161,21 +163,35 @@ public class PostDetailActivity extends AppCompatActivity {
                         break;
                     case SUCCESS:
                         Log.i("获取评论: ", "成功");
-                        setCommentSum();
+                        adapter.setList(list);
                         adapter.notifyDataSetChanged();
+                        setCommentSum();
                         break;
                 }
                 super.handleMessage(msg);
             }
         };
 
+        queryComment(handler, false);
+    }
+
+    /**
+     * 描述：启动线程获取评论
+     * 参数: handler: 消息处理
+     * 参数: isLoadMore: 加载处理
+     * 返回：void
+     */
+    private void queryComment(Handler handler, boolean isLoadMore) {
+        
         new Thread(()-> {
+            
             Message msg = new Message();
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(getResources().getString(R.string.serverBasePath)
                             + getResources().getString(R.string.queryCommentById)
-                            + "/?infoId=" + post.getInfoId())
+                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE
+                            + "&infoId=" + post.getInfoId())
                     .get()
                     .build();
             Call call = client.newCall(request);
@@ -190,24 +206,35 @@ public class PostDetailActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String resStr = Objects.requireNonNull(response.body()).string();
-                    JsonObject object = new JsonParser().parse(resStr).getAsJsonObject();
-                    JsonArray array = object.getAsJsonArray("commentsList");
-                    
-                    Log.i("获取评论：", resStr);
 
-                    list.clear();
-                    for (JsonElement element : array) {
-                        PostComment comment = new Gson().fromJson(element, new TypeToken<PostComment>(){}.getType());
-                        list.add(comment);
-                    }
+                    ResponsePostComment responsePostComment = new Gson().fromJson(resStr, ResponsePostComment.class);
                     
-                    msg.what = list.size() == 0 ? ZERO : SUCCESS;
+                    if (isLoadMore) {
+                        list.addAll(responsePostComment.getCommentList());
+                        if (CUR_PAGE_NUM * PAGE_SIZE >= responsePostComment.getTotal()) {
+                            msg.what = ZERO;
+                        } else {
+                            msg.what = SUCCESS;
+                        }
+                    } else {
+                        list = responsePostComment.getCommentList();
+                        if (list == null) {
+                            list = new ArrayList<>();
+                            msg.what = FAILURE;
+                        } else if (list.size() == 0) {
+                            msg.what = ZERO;
+                        } else {
+                            Log.i("获取评论：", list.toString());
+                            msg.what = SUCCESS;
+                        }
+                    }
                     handler.sendMessage(msg);
                 }
             });
+            
         }).start();
     }
-
+    
     private void insertComment(PostComment comment) {
 
         @SuppressLint("HandlerLeak")
@@ -411,12 +438,66 @@ public class PostDetailActivity extends AppCompatActivity {
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                xRecyclerView.refreshComplete();
+                new Handler().postDelayed(()->{
+
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("刷新评论", "成功");
+                                    adapter.setList(list);
+                                    adapter.notifyDataSetChanged();
+                                    setCommentSum();
+                                    break;
+                                case FAILURE:
+                                    Log.i("刷新评论", "失败");
+                                    break;
+                                case ZERO:
+                                    Log.i("刷新评论", "0");
+                                    setCommentSum();
+                                    break;
+                            }
+                            xRecyclerView.refreshComplete();
+                        }
+                    };
+                    CUR_PAGE_NUM = 1;
+                    queryComment(handler, false);
+
+                }, 1500);
             }
 
             @Override
             public void onLoadMore() {
-                xRecyclerView.setNoMore(true);
+                new Handler().postDelayed(()->{
+
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            xRecyclerView.loadMoreComplete();
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("加载评论", "成功");
+                                    adapter.notifyDataSetChanged();
+                                    setCommentSum();
+                                    break;
+                                case FAILURE:
+                                    Log.i("加载评论", "失败");
+                                    break;
+                                case ZERO:
+                                    Log.i("加载评论", "0");
+                                    setCommentSum();
+                                    xRecyclerView.setNoMore(true);
+                                    break;
+                            }
+                        }
+                    };
+                    CUR_PAGE_NUM++;
+                    queryComment(handler, true);
+
+                }, 1500);
             }
         });
 

@@ -3,6 +3,8 @@ package com.example.uipservice.service.Impl;
 import com.example.uipservice.dao.ForumCommentsMapper;
 import com.example.uipservice.entity.ForumComments;
 import com.example.uipservice.service.ForumCommentService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,11 +51,15 @@ public class ForumCommentServiceImpl implements ForumCommentService {
     }
 
     @Override
-    public Map queryComments(Long infoId) {
+    public Map queryComments(Integer pageNum, Integer pageSize, Long infoId) {
         Map resMap = new HashMap();
+        PageHelper.startPage(pageNum, pageSize);
         try {
-            List<ForumComments> commentsList = forumCommentsMapper.queryComments(infoId);
-            resMap.put("commentsList", commentsList);
+            Page<ForumComments> res = forumCommentsMapper.queryComments(infoId);
+            resMap.put("commentList", res);
+            resMap.put("total", res.getTotal());
+            resMap.put("pageSize", res.getPageSize());
+            resMap.put("pageNum", pageNum);
             return resMap;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());

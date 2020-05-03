@@ -3,6 +3,8 @@ package com.example.uipservice.service.Impl;
 import com.example.uipservice.dao.ForumPostsMapper;
 import com.example.uipservice.entity.ForumPosts;
 import com.example.uipservice.service.ForumPostsService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,11 +51,15 @@ public class ForumPostsServiceImpl implements ForumPostsService {
     }
 
     @Override
-    public Map selectPostsById(Long userId) {
+    public Map selectPostsById(Integer pageNum, Integer pageSize, Long userId) {
         Map resMap = new HashMap();
+        PageHelper.startPage(pageNum, pageSize);
         try {
-            List<ForumPosts> postsList = forumPostsMapper.selectPostsById(userId);
-            resMap.put("postsList", postsList);
+            Page<ForumPosts> res = forumPostsMapper.selectPostsById(userId);
+            resMap.put("postsList", res);
+            resMap.put("total", res.getTotal());
+            resMap.put("pageSize", res.getPageSize());
+            resMap.put("pageNum", pageNum);
             return resMap;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -76,11 +82,15 @@ public class ForumPostsServiceImpl implements ForumPostsService {
     }
 
     @Override
-    public Map queryPosts() {
+    public Map queryPosts(Integer pageNum, Integer pageSize) {
         Map resMap = new HashMap();
+        PageHelper.startPage(pageNum, pageSize);
         try {
-            List<ForumPosts> postsList = forumPostsMapper.queryPosts();
-            resMap.put("postsList", postsList);
+            Page<ForumPosts> res = forumPostsMapper.queryPosts();
+            resMap.put("postsList", res);
+            resMap.put("total", res.getTotal());
+            resMap.put("pageSize", res.getPageSize());
+            resMap.put("pageNum", pageNum);
             return resMap;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());

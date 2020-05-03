@@ -45,8 +45,8 @@ public class ForumPostsController {
      * @return modelMap
      */
     @RequestMapping(value = "/selectposts", method = RequestMethod.GET)
-    private Map selectPosts(Long userId) {
-        return forumPostsService.selectPostsById(userId);
+    private Map selectPosts(Integer pageNum, Integer pageSize, Long userId) {
+        return forumPostsService.selectPostsById(pageNum, pageSize, userId);
     }
 
     /**
@@ -65,7 +65,7 @@ public class ForumPostsController {
      * @return modelMap
      */
     @RequestMapping(value = "/queryposts", method = RequestMethod.GET)
-    private Map queryPosts() {
-        return forumPostsService.queryPosts();
+    private Map queryPosts(Integer pageNum, Integer pageSize) {
+        return forumPostsService.queryPosts(pageNum, pageSize);
     }
 }

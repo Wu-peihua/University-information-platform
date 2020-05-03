@@ -28,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.CommonUser.Adapter.ReplyRecyclerViewAdapter;
 import com.example.uipfrontend.Entity.PostComment;
+import com.example.uipfrontend.Entity.ResponseCommentReply;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -76,6 +77,9 @@ public class CommentDetailActivity extends AppCompatActivity {
     private static final int FAILURE = -1;
     private static final int ZERO = 0;
     private static final int SUCCESS = 1;
+
+    private static final int PAGE_SIZE = 10; // 默认一次请求10条数据
+    private int CUR_PAGE_NUM = 1;
 
     private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -138,6 +142,9 @@ public class CommentDetailActivity extends AppCompatActivity {
         setListListener();
     }
     
+    /**
+     * 描述：分页获取回复
+     */
     private void getReply() {
 
         @SuppressLint("HandlerLeak")
@@ -153,6 +160,7 @@ public class CommentDetailActivity extends AppCompatActivity {
                         break;
                     case SUCCESS:
                         Log.i("获取回复: ", "成功");
+                        adapter.setList(list);
                         adapter.notifyDataSetChanged();
                         setReplySum();
                         break;
@@ -161,13 +169,26 @@ public class CommentDetailActivity extends AppCompatActivity {
             }
         };
         
+        queryReply(handler, false);
+    }
+
+    /**
+     * 描述：启动线程获取回复
+     * 参数: handler: 消息处理
+     * 参数: isLoadMore: 加载处理
+     * 返回：void
+     */
+    private void queryReply(Handler handler, boolean isLoadMore) {
+        
         new Thread(()->{
+            
             Message msg = new Message();
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(getResources().getString(R.string.serverBasePath)
                             + getResources().getString(R.string.queryReplyById)
-                            + "/?infoId=" + comment.getInfoId())
+                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE
+                            + "&infoId=" + comment.getInfoId())
                     .get()
                     .build();
             Call call = client.newCall(request);
@@ -182,24 +203,35 @@ public class CommentDetailActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String resStr = Objects.requireNonNull(response.body()).string();
-                    JsonObject object = new JsonParser().parse(resStr).getAsJsonObject();
-                    JsonArray array = object.getAsJsonArray("replyList");
 
-                    Log.i("获取回复：", resStr);
+                    ResponseCommentReply responseCommentReply = new Gson().fromJson(resStr, ResponseCommentReply.class);
 
-                    list.clear();
-                    for (JsonElement element : array) {
-                        PostComment comment = new Gson().fromJson(element, new TypeToken<PostComment>(){}.getType());
-                        list.add(comment);
+                    if (isLoadMore) {
+                        list.addAll(responseCommentReply.getReplyList());
+                        if (CUR_PAGE_NUM * PAGE_SIZE >= responseCommentReply.getTotal()) {
+                            msg.what = ZERO;
+                        } else {
+                            msg.what = SUCCESS;
+                        }
+                    } else {
+                        list = responseCommentReply.getReplyList();
+                        if (list == null) {
+                            list = new ArrayList<>();
+                            msg.what = FAILURE;
+                        } else if (list.size() == 0) {
+                            msg.what = ZERO;
+                        } else {
+                            Log.i("获取回复：", list.toString());
+                            msg.what = SUCCESS;
+                        }
                     }
-
-                    msg.what = list.size() == 0 ? ZERO : SUCCESS;
                     handler.sendMessage(msg);
                 }
             });
+            
         }).start();
     }
-
+    
     private void insertReply(PostComment reply) {
 
         @SuppressLint("HandlerLeak")
@@ -308,12 +340,66 @@ public class CommentDetailActivity extends AppCompatActivity {
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                xRecyclerView.refreshComplete();
+                new Handler().postDelayed(()->{
+
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("刷新回复", "成功");
+                                    adapter.setList(list);
+                                    adapter.notifyDataSetChanged();
+                                    setReplySum();
+                                    break;
+                                case FAILURE:
+                                    Log.i("刷新回复", "失败");
+                                    break;
+                                case ZERO:
+                                    Log.i("刷新回复", "0");
+                                    setReplySum();
+                                    break;
+                            }
+                            xRecyclerView.refreshComplete();
+                        }
+                    };
+                    CUR_PAGE_NUM = 1;
+                    queryReply(handler, false);
+
+                }, 1500);
             }
 
             @Override
             public void onLoadMore() {
-                xRecyclerView.setNoMore(true);
+                new Handler().postDelayed(()->{
+
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            xRecyclerView.loadMoreComplete();
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("加载回复", "成功");
+                                    adapter.notifyDataSetChanged();
+                                    setReplySum();
+                                    break;
+                                case FAILURE:
+                                    Log.i("加载回复", "失败");
+                                    break;
+                                case ZERO:
+                                    Log.i("加载回复", "0");
+                                    setReplySum();
+                                    xRecyclerView.setNoMore(true);
+                                    break;
+                            }
+                        }
+                    };
+                    CUR_PAGE_NUM++;
+                    queryReply(handler, true);
+
+                }, 1500);
             }
         });
 

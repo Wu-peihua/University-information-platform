@@ -3,6 +3,8 @@ package com.example.uipservice.service.Impl;
 import com.example.uipservice.dao.CommentReplyMapper;
 import com.example.uipservice.entity.CommentReply;
 import com.example.uipservice.service.CommentReplyService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,11 +51,15 @@ public class CommentReplyServiceImpl implements CommentReplyService {
     }
 
     @Override
-    public Map queryReply(Long infoId) {
+    public Map queryReply(Integer pageNum, Integer pageSize, Long infoId) {
         Map resMap = new HashMap();
+        PageHelper.startPage(pageNum, pageSize);
         try {
-            List<CommentReply> replyList = commentReplyMapper.queryReply(infoId);
-            resMap.put("replyList", replyList);
+            Page<CommentReply> res = commentReplyMapper.queryReply(infoId);
+            resMap.put("replyList", res);
+            resMap.put("total", res.getTotal());
+            resMap.put("pageSize", res.getPageSize());
+            resMap.put("pageNum", pageNum);
             return resMap;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());

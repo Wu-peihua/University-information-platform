@@ -29,14 +29,10 @@ import com.example.uipfrontend.CommonUser.Activity.PostDetailActivity;
 import com.example.uipfrontend.CommonUser.Activity.WritePostActivity;
 import com.example.uipfrontend.CommonUser.Adapter.ForumListRecyclerViewAdapter;
 import com.example.uipfrontend.Entity.ForumPosts;
+import com.example.uipfrontend.Entity.ResponsePosts;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
@@ -58,6 +54,9 @@ public class ForumFragment extends Fragment {
     private static final int FAILURE = -1;
     private static final int ZERO = 0;
     private static final int SUCCESS = 1;
+    
+    private static final int PAGE_SIZE = 10; // 默认一次请求10条数据
+    private int CUR_PAGE_NUM = 1;
 
     private View rootView;
     
@@ -96,6 +95,9 @@ public class ForumFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * 描述：分页获取论坛帖子
+     */
     private void getPosts() {
 
         @SuppressLint("HandlerLeak")
@@ -115,7 +117,6 @@ public class ForumFragment extends Fragment {
                     case SUCCESS:
                         Log.i("获取帖子: ", "成功");
                         tv_blank_text.setVisibility(View.GONE);
-                        posts.clear();
                         posts.addAll(whole);
                         adapter.notifyDataSetChanged();
                         break;
@@ -124,12 +125,25 @@ public class ForumFragment extends Fragment {
             }
         };
 
-        new Thread(() -> {
+        queryPosts(handler, false);
+    }
+
+    /**
+     * 描述：启动线程获取帖子
+     * 参数: handler: 消息处理
+     * 参数: isLoadMore: 加载处理
+     * 返回：void
+     */
+    private void queryPosts(Handler handler, boolean isLoadMore) {
+        
+        new Thread(()->{
+
             Message msg = new Message();
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url(getResources().getString(R.string.serverBasePath) 
-                            + getResources().getString(R.string.queryPosts))
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.queryPosts)
+                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE )
                     .get()
                     .build();
             Call call = client.newCall(request);
@@ -144,36 +158,43 @@ public class ForumFragment extends Fragment {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String resStr = Objects.requireNonNull(response.body()).string();
-                    JsonObject object = new JsonParser().parse(resStr).getAsJsonObject();
-                    JsonArray array = object.getAsJsonArray("postsList");
 
-                    Log.i("获取帖子: ", resStr);
+                    ResponsePosts responsePosts = new Gson().fromJson(resStr, ResponsePosts.class);
 
-                    whole = new ArrayList<>();
-                    for (JsonElement element : array) {
-                        ForumPosts post = new Gson().fromJson(element, new TypeToken<ForumPosts>(){}.getType());
-                        whole.add(post);
+                    if (isLoadMore) {
+                        whole.addAll(responsePosts.getPostsList());
+                        posts.addAll(responsePosts.getPostsList());
+                        if (CUR_PAGE_NUM * PAGE_SIZE >= responsePosts.getTotal()) {
+                            msg.what = ZERO;
+                        } else {
+                            msg.what = SUCCESS;
+                        }
+                    } else {
+                        whole = responsePosts.getPostsList();
+                        if (whole == null) {
+                            whole = new ArrayList<>();
+                            msg.what = FAILURE;
+                        } else if (whole.size() == 0) {
+                            msg.what = ZERO;
+                        } else {
+                            Log.i("获取帖子: ", whole.toString());
+                            msg.what = SUCCESS;
+                        }
                     }
-
-                    msg.what = whole.size() == 0 ? ZERO : SUCCESS;
                     handler.sendMessage(msg);
                 }
             });
+            
         }).start();
-
     }
-
+    
     private void setListener() {
         et_search.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {  }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {  }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -212,12 +233,63 @@ public class ForumFragment extends Fragment {
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                xRecyclerView.refreshComplete();
+                new Handler().postDelayed(()->{
+
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("刷新帖子", "成功");
+                                    posts.clear();
+                                    posts.addAll(whole);
+                                    adapter.notifyDataSetChanged();
+                                    break;
+                                case FAILURE:
+                                    Log.i("刷新帖子", "失败");
+                                    break;
+                                case ZERO:
+                                    Log.i("刷新帖子", "0");
+                                    break;
+                            }
+                            xRecyclerView.refreshComplete();
+                        }
+                    };
+                    CUR_PAGE_NUM = 1;
+                    queryPosts(handler, false);
+                    
+                }, 1500);
             }
 
             @Override
             public void onLoadMore() {
-                xRecyclerView.setNoMore(true);
+                new Handler().postDelayed(()->{
+
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            xRecyclerView.loadMoreComplete();
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("加载帖子", "成功");
+                                    adapter.notifyDataSetChanged();
+                                    break;
+                                case FAILURE:
+                                    Log.i("加载帖子", "失败");
+                                    break;
+                                case ZERO:
+                                    Log.i("加载帖子", "0");
+                                    xRecyclerView.setNoMore(true);
+                                    break;
+                            }
+                        }
+                    };
+                    CUR_PAGE_NUM++;
+                    queryPosts(handler, true);
+                    
+                }, 1500);
             }
         });
     }

@@ -27,6 +27,8 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
         this.context = context;
         this.list = list;
     }
+    
+    public void setList(List<ForumPosts> list) { this.list = list; }
 
     public static class EmptyViewHolder extends RecyclerView.ViewHolder {
         EmptyViewHolder(View view) {

@@ -15,6 +15,6 @@ public interface ForumCommentService {
     boolean deleteComment(Long infoId);
 
     // 获取评论
-    Map queryComments(Long infoId);
+    Map queryComments(Integer pageNum, Integer pageSize, Long infoId);
 
 }

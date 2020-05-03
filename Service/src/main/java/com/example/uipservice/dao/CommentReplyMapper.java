@@ -1,6 +1,7 @@
 package com.example.uipservice.dao;
 
 import com.example.uipservice.entity.CommentReply;
+import com.github.pagehelper.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,5 +12,5 @@ public interface CommentReplyMapper {
 
     int deleteByPrimaryKey(Long infoId);
 
-    List<CommentReply> queryReply(Long commentId);
+    Page<CommentReply> queryReply(Long commentId);
 }

@@ -1,6 +1,7 @@
 package com.example.uipservice.dao;
 
 import com.example.uipservice.entity.ForumPosts;
+import com.github.pagehelper.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface ForumPostsMapper {
 
     int updateByPrimaryKey(ForumPosts record);
 
-    List<ForumPosts> selectPostsById(Long userId);
+    Page<ForumPosts> selectPostsById(Long userId);
 
-    List<ForumPosts> queryPosts();
+    Page<ForumPosts> queryPosts();
 }

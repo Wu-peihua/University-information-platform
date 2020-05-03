@@ -15,11 +15,11 @@ public interface ForumPostsService {
     boolean deletePost(Long infoId);
 
     // 根据id获取帖子
-    Map selectPostsById(Long userId);
+    Map selectPostsById(Integer pageNum, Integer pageSize, Long userId);
 
     // 根据id更新帖子
     boolean updatePost(ForumPosts post);
 
     // 分页获取帖子
-    Map queryPosts();
+    Map queryPosts(Integer pageNum, Integer pageSize);
 }
