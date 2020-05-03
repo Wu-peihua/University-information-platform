@@ -18,8 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 
+import com.example.uipfrontend.CommonUser.Activity.PostDetailActivity;
 import com.example.uipfrontend.Entity.Course;
 import com.example.uipfrontend.Entity.ResponseCourseComment;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Entity.CourseComment;
 
@@ -86,6 +88,7 @@ public class CourseDetailActivity extends AppCompatActivity {
     private static final int PAGE_SIZE = 6;   //默认一次请求6条数据
     private static int CUR_PAGE_NUM = 1;
 
+    private UserInfo user;//全局用户信息
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +111,7 @@ public class CourseDetailActivity extends AppCompatActivity {
         //评论列表初始化
         //initCommentData();
         //课程卡片详情
+        user = (UserInfo) getApplication();
         initCardView(coursedetail);
         getCommentData();
 
@@ -206,15 +210,23 @@ public class CourseDetailActivity extends AppCompatActivity {
                 //添加到列表中
                 //CourseComment newcomment = new CourseComment(commentid,UserName,"2020-4-25 22:44",CommentEidt.getText().toString(),UserRating.getRating(),0);
                 //commentatorid + courseid + content+ score+ date
-                final long testuserid = 4;//默认用户评论id
+                //final long testuserid = 4;//默认用户评论id
+                long globalUserid = user.getUserId();
                 String commentContent = CommentEidt.getText().toString();
                 Integer commentRating = (int)UserRating.getRating();
                 Date commentDate = new Date();
 
 
                 //更新数据库记录
-                CourseComment newcomment = new CourseComment(testuserid,globalcourseid,commentContent,commentRating,commentDate);
+                CourseComment newcomment = new CourseComment(globalUserid,globalcourseid,commentContent,commentRating,commentDate);
+
+                newcomment.setLikeCount(0);
+                newcomment.setBadReportCount(0);
+                newcomment.setFromName(user.getUserName());
+                newcomment.setPortrait(user.getPortrait());
+
                 insertComment(newcomment);
+
 
                 //更新几个列表
                 comments.add(newcomment);
@@ -629,6 +641,8 @@ public class CourseDetailActivity extends AppCompatActivity {
                     public void onFailure(Call call, IOException e) {
                         //请求失败的处理
                         System.out.println("请求失败："+e.getMessage());
+                        Toast.makeText(CourseDetailActivity.this, "网络出了点问题，请稍候再试",
+                                Toast.LENGTH_LONG).show();
                         //Log.i("RESPONSE:","fail"+e.getMessage());
                     }
                     @Override

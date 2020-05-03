@@ -24,8 +24,10 @@ public interface CourseEvaluationService {
     Map queryCourseEvaluationByInfoId(Integer pageNum, Integer pageSize, Long infoId);
 
     /*分页获取所有的课程点评信息*/
+    //Map queryCourseEvaluation(Integer pageNum, Integer pageSize);
+    //获取课程点评信息列表
     Map queryCourseEvaluation(Integer pageNum, Integer pageSize);
     /*根据评论的courseId分页获取评论信息*/
-    Map queryCourseEvaluationByCourseId(Integer pageNum, Integer pageSize, Long courseId);
+    Map queryCourseEvaluationByCourseId(Integer pageNum, Integer pageSize,Long courseId);
 
 }

@@ -2,6 +2,7 @@ package com.example.uipservice.service.Impl;
 
 import com.example.uipservice.dao.CourseEvaluationMapper;
 import com.example.uipservice.entity.CourseEvaluation;
+import com.example.uipservice.entity.ForumComments;
 import com.example.uipservice.service.CourseEvaluationService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -101,6 +103,7 @@ public class CourseEvaluationServiceImpl implements CourseEvaluationService {
 
     @Override
     public Map queryCourseEvaluation(Integer pageNum, Integer pageSize) {
+
         Map CourseEvaluationMap = new HashMap();
         PageHelper.startPage(pageNum,pageSize);
         Page<CourseEvaluation> data = courseEvaluationMapper.queryCourseEvaluation();
@@ -113,7 +116,7 @@ public class CourseEvaluationServiceImpl implements CourseEvaluationService {
     }
 
     @Override
-    public Map queryCourseEvaluationByCourseId(Integer pageNum, Integer pageSize, Long courseId) {
+    public Map queryCourseEvaluationByCourseId(Integer pageNum, Integer pageSize,Long courseId) {
         Map CourseEvaluationMap = new HashMap();
         PageHelper.startPage(pageNum,pageSize);
         Page<CourseEvaluation> data = courseEvaluationMapper.queryCourseEvaluationByCourseId(courseId);

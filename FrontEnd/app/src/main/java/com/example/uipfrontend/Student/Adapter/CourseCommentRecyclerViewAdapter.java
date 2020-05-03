@@ -46,8 +46,9 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     private Context context;
     private List<CourseComment> courseComments = new ArrayList<>();
 
+    private UserInfo user;//全局用户id
     //用户数据测试
-    private Map<Long,UserInfo> userInfos = new HashMap<>() ;//<userid,Userinfo>
+    //private Map<Long,UserInfo> userInfos = new HashMap<>() ;//<userid,Userinfo>
 
     private onItemClickListener itemClickListener;//设置点击监听器
 
@@ -59,6 +60,7 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     //评论用户
 
 
+    /*
     public void getAllCommentUser(){
 
         for(CourseComment c:courseComments){
@@ -66,7 +68,9 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
         }
     }
 
-    public void requestUserInfo(Long userId){
+     */
+
+    /*public void requestUserInfo(Long userId){
 
         //final UserInfo[] temp = {new UserInfo()};
         //查询评论者的信息
@@ -127,24 +131,27 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
     }
 
+     */
+
 
     public void setOnItemClickListener(onItemClickListener clickListener) {
         this.itemClickListener = clickListener;
     }
 
 
+
     public void setList(List<CourseComment> list) {
         this.courseComments= list;
-        if(!userInfos.isEmpty()){
-            userInfos.clear();
-        }
-        getAllCommentUser();//刷新列表数据
+
     }
+
+
 
     public CourseCommentRecyclerViewAdapter(Context context, List<CourseComment> list) {
         this.context = context;
         this.courseComments = list;
-        getAllCommentUser();//根据评论列表获取
+        user = (UserInfo) context.getApplicationContext();
+        //getAllCommentUser();//根据评论列表获取
     }
 
 
@@ -198,6 +205,7 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
         CourseComment comment = courseComments.get(pos);
 
         //查询User map
+        /*
         UserInfo currentUser = userInfos.get(comment.getCommentatorId());
 
         if(currentUser!=null) {
@@ -209,6 +217,16 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
             viewHolder.userName.setText("未知用户");
             setImage(context,viewHolder.userimg,"http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg");
         }
+
+         */
+        //设置 commentator id
+        //设置评论用户名字与头像
+        //System.out.println("user id:"+user.getUserId());
+        //System.out.println("commentator id:"+comment.getCommentatorId());
+        String isMe = user.getUserId().equals(comment.getCommentatorId()) ? "(我)" : "";
+
+        viewHolder.userName.setText(comment.getFromName()+isMe);
+        setImage(context,viewHolder.userimg,comment.getPortrait());;
 
         DateFormat datefomat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
         String commentDate = datefomat.format(comment.getInfoDate());

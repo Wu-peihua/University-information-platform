@@ -9,6 +9,10 @@ public class CourseEvaluation {
 
     private Long commentatorId;
 
+    private String fromName;
+
+    private String portrait;
+
     private Long courseId;
 
     private String content;
@@ -86,5 +90,21 @@ public class CourseEvaluation {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public String getFromName() {
+        return fromName;
+    }
+
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
     }
 }

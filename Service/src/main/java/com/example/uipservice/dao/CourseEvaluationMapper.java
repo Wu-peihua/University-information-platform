@@ -1,7 +1,10 @@
 package com.example.uipservice.dao;
 
 import com.example.uipservice.entity.CourseEvaluation;
+import com.example.uipservice.entity.ForumComments;
 import com.github.pagehelper.Page;
+
+import java.util.List;
 
 public interface CourseEvaluationMapper {
     int deleteByPrimaryKey(Long infoId);
@@ -16,6 +19,7 @@ public interface CourseEvaluationMapper {
 
     int updateByPrimaryKey(CourseEvaluation record);
 
+    //Page<CourseEvaluation> queryCourseEvaluation();
     Page<CourseEvaluation> queryCourseEvaluation();
 
     Page<CourseEvaluation> queryCourseEvaluationByInfoId(Long infoId);

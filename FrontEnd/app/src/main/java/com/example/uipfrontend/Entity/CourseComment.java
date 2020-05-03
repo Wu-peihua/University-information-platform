@@ -27,6 +27,9 @@ public class CourseComment implements Serializable {
     private int BadReportCount;//举报次数
     private int LikeCount;//点赞次数
 
+    private String fromName;//评论用户名字
+    private String  portrait;     // 评论者头像
+
     /*private Integer CourseId;//评论的课程id
     private String CourseName;//课程名称
     private Integer CommentId;//评论的id
@@ -55,7 +58,21 @@ public class CourseComment implements Serializable {
         this.BadReportCount = 0;
     }
 
+    public String getFromName() {
+        return fromName;
+    }
 
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
+    }
     public Long getInfoId() {
         return infoId;
     }

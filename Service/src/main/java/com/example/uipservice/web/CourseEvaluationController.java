@@ -87,7 +87,7 @@ public class CourseEvaluationController {
      * @return modelMap
      */
     @RequestMapping(value = "/querycourseevalbycourseid", method = RequestMethod.GET)
-    private Map queryCourseEvaluationByCourseId(Integer pageNum, Integer pageSize, Long courseId){
+    private Map queryCourseEvaluationByCourseId(Integer pageNum, Integer pageSize,Long courseId){
         return courseEvaluationService.queryCourseEvaluationByCourseId(pageNum,pageSize,courseId);
     }
 

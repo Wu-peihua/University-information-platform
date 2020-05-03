@@ -7,14 +7,18 @@
     <result column="course_id" property="courseId" jdbcType="BIGINT" />
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="report_number" property="reportNumber" jdbcType="INTEGER" />
+    <result column="like_number" property="likeNumber" jdbcType="INTEGER" />
     <result column="info_date" property="infoDate" jdbcType="TIMESTAMP" />
     <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="user_name" property="fromName" jdbcType="VARCHAR" />
+    <result column="portrait" property="portrait" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    info_id, commentator_id, course_id, content, score, info_date, created
+    info_id, commentator_id, course_id, content, score, report_number,like_number,info_date, created
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from course_evaluation
     where info_id = #{infoId,jdbcType=BIGINT}
@@ -27,12 +31,12 @@
     <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into course_evaluation (commentator_id, course_id, content, 
-      score, info_date, created
-      )
-    values (#{commentatorId,jdbcType=BIGINT}, #{courseId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, 
-      #{score,jdbcType=INTEGER}, #{infoDate,jdbcType=TIMESTAMP}, #{created,jdbcType=TIMESTAMP}
-      )
+    insert into course_evaluation (commentator_id, course_id, content,
+    score,  report_number,like_number,info_date, created
+    )
+    values (#{commentatorId,jdbcType=BIGINT}, #{courseId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR},
+    #{score,jdbcType=INTEGER}, #{reportNumber,jdbcType=INTEGER},#{likeNumber,jdbcType=INTEGER}, #{infoDate,jdbcType=TIMESTAMP}, #{created,jdbcType=TIMESTAMP}
+    )
   </insert>
   <insert id="insertSelective" parameterType="com.example.uipservice.entity.CourseEvaluation" >
     <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
@@ -51,6 +55,12 @@
       </if>
       <if test="score != null" >
         score,
+      </if>
+      <if test="reportNumber != null" >
+        report_number,
+      </if>
+      <if test="likeNumber != null" >
+        like_number,
       </if>
       <if test="infoDate != null" >
         info_date,
@@ -71,6 +81,12 @@
       </if>
       <if test="score != null" >
         #{score,jdbcType=INTEGER},
+      </if>
+      <if test="reportNumber != null" >
+        #{reportNumber,jdbcType=INTEGER},
+      </if>
+      <if test="likeNumber != null" >
+        #{likeNumber,jdbcType=INTEGER},
       </if>
       <if test="infoDate != null" >
         #{infoDate,jdbcType=TIMESTAMP},
@@ -95,6 +111,12 @@
       <if test="score != null" >
         score = #{score,jdbcType=INTEGER},
       </if>
+      <if test="reportNumber != null" >
+        report_number = #{reportNumber,jdbcType=INTEGER},
+      </if>
+      <if test="likeNumber != null" >
+        like_number = #{likeNumber,jdbcType=INTEGER},
+      </if>
       <if test="infoDate != null" >
         info_date = #{infoDate,jdbcType=TIMESTAMP},
       </if>
@@ -107,11 +129,50 @@
   <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.CourseEvaluation" >
     update course_evaluation
     set commentator_id = #{commentatorId,jdbcType=BIGINT},
-      course_id = #{courseId,jdbcType=BIGINT},
-      content = #{content,jdbcType=VARCHAR},
-      score = #{score,jdbcType=INTEGER},
-      info_date = #{infoDate,jdbcType=TIMESTAMP},
-      created = #{created,jdbcType=TIMESTAMP}
+    course_id = #{courseId,jdbcType=BIGINT},
+    content = #{content,jdbcType=VARCHAR},
+    score = #{score,jdbcType=INTEGER},
+    report_number = #{reportNumber,jdbcType=INTEGER},
+    like_number = #{likeNumber,jdbcType=INTEGER},
+    info_date = #{infoDate,jdbcType=TIMESTAMP},
+    created = #{created,jdbcType=TIMESTAMP}
     where info_id = #{infoId,jdbcType=BIGINT}
   </update>
+
+
+  <!--分页查找-->
+
+  <select id="queryCourseEvaluationByUserId" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from course_evaluation
+    where commentator_id = #{commentatorId}
+
+  </select>
+
+
+  <select id="queryCourseEvaluationByInfoId" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from course_evaluation
+    where info_id = #{infoId}
+  </select>
+
+
+  <select id="queryCourseEvaluation" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from course_evaluation
+
+  </select>
+
+  <select id="queryCourseEvaluationByCourseId" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select info_id, commentator_id, course_id, content, score, report_number,like_number, info_date,
+    course_evaluation.created, user_name, portrait
+    from course_evaluation inner join user_info
+    on commentator_id = user_id
+    where course_id = #{courseId, jdbcType=BIGINT}
+    order by like_number desc
+  </select>
+
 </mapper>
