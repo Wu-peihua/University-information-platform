@@ -38,91 +38,134 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.android.support:appcompat-v7:29.0.0'
 
-
-    //butterknife依赖
+    // ButterKnife依赖
     implementation 'com.jakewharton:butterknife:10.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
-    //底部导航栏依赖
-    implementation 'com.aurelhubert:ahbottomnavigation:2.3.4'
-    implementation 'com.ms-square:etsyblur:0.2.1'
-    //顶部可下拉条件筛选框
-    implementation 'com.github.wzgl5533:DropMenu:1.0.1'
-    //可显示图片九宫格卡片
-    implementation 'com.lzy.widget:ninegridview:0.2.0'
-    //下拉刷新和加载更多recyclerview
+
+
+    /*
+     * 布局
+     */
+
+    // 下拉刷新和加载更多recyclerview
     implementation 'com.jcodecraeer:xrecyclerview:1.6.0'
-    //组队信息item
-    implementation 'com.lzy.widget:ninegridview:0.2.0'
-    //头像图片控件
-    implementation 'com.lzy.widget:view-core:0.2.1'
-    //个人主页圆形头像
-    implementation 'com.vivifarm.view:circleimageview:1.2.0'
-    //图片加载
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
-    //图片加载器
-    implementation 'com.squareup.picasso:picasso:2.5.2'
 
-    // 点赞
-    implementation 'com.github.BILL-CS:IconCountView:1.0.0'
-
-    //Material design Edittext
-    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
-
-    //Material design RatingBar
-    implementation 'me.zhanghai.android.materialratingbar:library:1.4.0'
-
-    //cardview 依赖
+    // CardView 依赖
     implementation "androidx.cardview:cardview:1.0.0"
 
-    //卡片UI
+    // 卡片UI 组队信息item
     implementation 'com.lzy.widget:ninegridview:0.2.0'
 
-    //底部评论 BottomSheet依赖
+    // 底部评论 BottomSheet依赖
     //noinspection GradleCompatible
     implementation 'com.android.support:design:24.2.1'
 
-    //刷新RecycleView
-    implementation 'com.jcodecraeer:xrecyclerview:1.6.0'
 
-    //alert dialog依赖
-    implementation 'com.github.f0ris.sweetalert:library:1.5.1'
+    /*
+     * 菜单
+     */
 
-    //扁平化按钮
-    implementation 'com.github.jd-alexander:android-flat-button:v1.1'
+    // 底部导航栏
+    implementation 'com.aurelhubert:ahbottomnavigation:2.3.4'
+    implementation 'com.ms-square:etsyblur:0.2.1'
 
-    //悬浮按钮
-    implementation 'com.google.android.material:material:1.0.0'
-    //editText简约风编辑框
-    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
-    //带字符数统计TextView
-    implementation 'com.github.FJ917:FJEditTextCount:1.0.4'
+    // 顶部可下拉条件筛选框
+    implementation 'com.github.wzgl5533:DropMenu:1.0.1'
 
-    //多条件下拉筛选另外测试
+    // 多条件下拉筛选另外测试
     implementation 'com.github.JayFang1993:DropDownMenu:v0.9'
     implementation 'com.github.dongjunkun:DropDownMenu:1.0.4'
-    //照片上传
-    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.9'
-    //dialog弹框
-    implementation 'com.github.sd6352051:NiftyDialogEffects:v1.0.3'
-    //底部弹窗
-    implementation 'com.bigkoo:alertview:1.0.3'
 
-    //发布资源的editText
-    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
-    //选择器
+    // 选择器
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
-    //可扩展文本框
+
+
+    /*
+     * 图片
+     */
+
+    // 图片九宫格
+    implementation 'com.lzy.widget:ninegridview:0.2.0'
+
+    // 头像图片控件
+    implementation 'com.lzy.widget:view-core:0.2.1'
+
+    // 个人主页圆形头像
+    implementation 'com.vivifarm.view:circleimageview:1.2.0'
+
+    // 图片加载
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+
+    // 图片加载器
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
+    // 照片上传
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.9'
+
+
+    /*
+     * 文本
+     */
+
+    // editText简约风编辑框、发布资源的editText
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+
+    // 带字符数统计TextView
+    implementation 'com.github.FJ917:FJEditTextCount:1.0.4'
+
+    // 可扩展文本框
     implementation 'com.github.ParfoisMeng:ExpandableTextView:1.0.1'
 
-    //动画单选按钮
+
+    /*
+     * 按钮
+     */
+
+    // 扁平化按钮
+    implementation 'com.github.jd-alexander:android-flat-button:v1.1'
+
+    // 悬浮按钮
+    implementation 'com.google.android.material:material:1.0.0'
+
+    // 动画单选按钮
     implementation 'com.github.ceryle:RadioRealButton:v2.1.1'
-    
+
+    // Material design RatingBar 评分
+    implementation 'me.zhanghai.android.materialratingbar:library:1.4.0'
+
+    //  点赞
+    implementation 'com.github.BILL-CS:IconCountView:1.0.0'
+
+
+    /*
+     * dialog
+     */
+
+    // alert dialog依赖
+    implementation 'com.github.f0ris.sweetalert:library:1.5.1'
+
+    // dialog弹框
+    implementation 'com.github.sd6352051:NiftyDialogEffects:v1.0.3'
+
+    // 底部弹窗
+    implementation 'com.bigkoo:alertview:1.0.3'
+
+    // 加载动画
     implementation 'net.steamcrafted:load-toast:1.0.12'
+
     
-    //okhttp请求
+
+    /*
+     * 网络
+     */
+
+    // OkHttp请求
     implementation 'com.squareup.okhttp3:okhttp:4.0.1'
-    //Gson解析数据
+
+    // Gson解析数据
     implementation 'com.google.code.gson:gson:2.8.5'
+
+
 
 
 }
