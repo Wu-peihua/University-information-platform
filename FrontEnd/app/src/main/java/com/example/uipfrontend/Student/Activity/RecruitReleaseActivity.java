@@ -228,25 +228,20 @@ public class RecruitReleaseActivity extends AppCompatActivity {
                                 //确定
                                 case -1:
                                     Intent intent = new Intent();
-//                                    String username = "张咩阿";
-//                                    String strTitle = title.getText().toString().trim();
-//                                    String strDescription = description.getText().trim();
-//                                    String strContact = contact.getText().toString();
-//                                    Date date = new Date(System.currentTimeMillis());
-//                                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
-//                                    String strTime = format.format(date);
-//
+
 //                                    setResult(1, intent);
 
                                     recruitInfo.setUserId(Long.valueOf(1)); //默认设置为1
                                     recruitInfo.setContact(contact.getText().toString());
                                     recruitInfo.setContent(description.getText());
-                                    recruitInfo.setInfoDate(new Date());
-                                    recruitInfo.setUniversityId(schoolOption);
-                                    recruitInfo.setInstituteId(instituteOption);
+                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                                    recruitInfo.setInfoDate(simpleDateFormat.format(new Date()));
+                                    recruitInfo.setUniversityId(schoolOption+1);
+                                    recruitInfo.setInstituteId(instituteOption+1);
+                                    recruitInfo.setTitle(title.getText().toString());
                                     recruitInfo.setPortrait("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587898699610&di=c7b2fc839b41a4eb285279b781112427&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F09%2F20190109072726_aNNZd.thumb.700_0.jpeg");
 
-
+                                    insertRecruitInfo();
 
                                     Toast.makeText(RecruitReleaseActivity.this, "组队信息发布成功", Toast.LENGTH_SHORT).show();
 
@@ -481,6 +476,7 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("SetTextI18n")
     public void initData() {
 
         Intent intent = getIntent();
@@ -523,7 +519,6 @@ public class RecruitReleaseActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 String json = gson.toJson(recruitInfo);
 
-                System.out.println("json:"+json);
                 //设置请求体并设置contentType
                 RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"),json);
                 //请求

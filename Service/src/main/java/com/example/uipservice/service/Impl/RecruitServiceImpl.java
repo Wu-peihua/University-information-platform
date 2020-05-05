@@ -23,7 +23,7 @@ public class RecruitServiceImpl implements RecruitService {
     public boolean insertRecruit(Recruit recruit) {
         if(recruit.getUserId()!=null  ){
             try{
-                int effectNum = recruitMapper.insert(recruit);
+                int effectNum = recruitMapper.insertSelective(recruit);
                 if(effectNum > 0){
                     return true;
                 }else{

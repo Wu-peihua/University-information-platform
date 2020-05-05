@@ -1,5 +1,7 @@
 package com.example.uipservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class Recruit {
@@ -10,18 +12,18 @@ public class Recruit {
     private String content;
 
     private String pictures;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date infoDate;
 
     private Long userId;
 
-    private Integer subjectId;
+    private Integer instituteId;
 
     private Integer universityId;
 
     private Integer reportNumber;
 
-    private Boolean contact;
+    private String contact;
 
     private Date created;
 
@@ -73,12 +75,12 @@ public class Recruit {
         this.userId = userId;
     }
 
-    public Integer getSubjectId() {
-        return subjectId;
+    public Integer getInstituteId() {
+        return instituteId;
     }
 
-    public void setSubjectId(Integer subjectId) {
-        this.subjectId = subjectId;
+    public void setInstituteId(Integer instituteId) {
+        this.instituteId = instituteId;
     }
 
     public Integer getUniversityId() {
@@ -97,11 +99,11 @@ public class Recruit {
         this.reportNumber = reportNumber;
     }
 
-    public Boolean getContact() {
+    public String getContact() {
         return contact;
     }
 
-    public void setContact(Boolean contact) {
+    public void setContact(String contact) {
         this.contact = contact;
     }
 
