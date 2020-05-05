@@ -142,7 +142,7 @@ dependencies {
      */
 
     // alert dialog依赖
-    implementation 'com.github.f0ris.sweetalert:library:1.5.1'
+    implementation 'com.github.f0ris.sweetalert:library:1.6.2'
 
     // dialog弹框
     implementation 'com.github.sd6352051:NiftyDialogEffects:v1.0.3'

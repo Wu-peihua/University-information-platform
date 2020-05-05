@@ -1,7 +1,10 @@
 package com.example.uipfrontend.CommonUser.Activity;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -58,6 +61,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -67,7 +71,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-/*
+/**
  * 当某条帖子被点击时跳转到这个Activity
  * 跳转时携带该条帖子对象
  */
@@ -79,14 +83,31 @@ public class PostDetailActivity extends AppCompatActivity {
 
     private static final int PAGE_SIZE = 10; // 默认一次请求10条数据
     private int CUR_PAGE_NUM = 1;
+    
+    private static final int myResultCode2 = 2; // 从帖子列表进入时删除帖子的resultCode
+    private static final int myResultCode3 = 3; // 从帖子记录进入时删除帖子的resultCode
+
+    private static final String s1 = "insertComment";
+    private static final String s2 = "deleteComment";
+    private static final String s3 = "increaseLikeInPostDetail";
+    private static final String s4 = "decreaseLikeInPostDetail";
+    private static final String s5 = "insertReply";
+    private static final String s6 = "deleteReply";
+    private static final String s7 = "increaseLikeInCommentDetail";
+    private static final String s8 = "decreaseLikeInCommentDetail";
+
+    private MyBroadcastReceiver receiver1, receiver2, // 评论增减
+                                receiver3, receiver4; // 点赞数增减
 
     private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private static boolean flag = true;
     
-    private UserInfo user;
+    private static UserInfo user;
     
-    private ForumPosts post; // intent传递过来的对象
+    private String     beginFrom; // 标识从哪里启动这个Activity
+    private int        postPos;   // 该条帖子在list的位置
+    private ForumPosts post;      // intent传递过来的对象
 
     private View headView; // 帖子详情作为 RecyclerView 的头部
 
@@ -118,6 +139,8 @@ public class PostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forum_post_detail);
         
+        beginFrom = getIntent().getStringExtra("beginFrom");
+        postPos = getIntent().getIntExtra("pos", -1);
         post = (ForumPosts) Objects.requireNonNull(getIntent().getExtras())
                 .get("detail"); // 获取intent传递来的帖子对象
         list = new ArrayList<>();
@@ -234,78 +257,13 @@ public class PostDetailActivity extends AppCompatActivity {
             
         }).start();
     }
-    
-    private void insertComment(PostComment comment) {
 
-        @SuppressLint("HandlerLeak")
-        Handler handler = new Handler() {
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case FAILURE:
-                        Log.i("插入评论: ", "失败");
-                        Toast.makeText(PostDetailActivity.this, "网络出了点问题，请稍候再试",
-                                Toast.LENGTH_LONG).show();
-                        break;
-                    case SUCCESS:
-                        Log.i("插入评论: ", "成功");
-                        
-                        if (order_by_time.getText().toString().equals("时间↑")) {
-                            list.add(0, comment);
-                        } else {
-                            list.add(comment);
-                        }
-                        adapter.notifyDataSetChanged();
-                        setCommentSum();
-                        commentText.setText("");
-                        break;
-                }
-                super.handleMessage(msg);
-            }
-        };
-        
-        new Thread(()->{
-            Message msg = new Message();
-            OkHttpClient client = new OkHttpClient();
-            Gson gson = new Gson();
-            String json = gson.toJson(comment);
-
-            Log.i("提交表单-评论：", json);
-
-            RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"), json);
-
-            Request request = new Request.Builder()
-                    .url(getResources().getString(R.string.serverBasePath)
-                            + getResources().getString(R.string.insertComment))
-                    .post(requestBody)
-                    .build();
-            Call call = client.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("插入评论: ", e.getMessage());
-                    msg.what = FAILURE;
-                    handler.sendMessage(msg);
-                }
-
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    String resStr = Objects.requireNonNull(response.body()).string();
-                    Log.i("插入评论：", resStr);
-                    String resId = resStr.substring(1, resStr.length()-1).split(":")[1];
-                    if (isNumber(resId)) {
-                        comment.setInfoId(Long.valueOf(resId));
-                        msg.what = SUCCESS;
-                    } else {
-                        msg.what = FAILURE;
-                    }
-                    handler.sendMessage(msg);
-                }
-            });
-
-        }).start();
-    }
-    
-    private void deletePost() {
+    /**
+     * 描述：用户删除帖子
+     * 参数：sDialog: 结果显示
+     * 返回：void
+     */
+    private void deletePost(SweetAlertDialog sDialog) {
         
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -313,14 +271,33 @@ public class PostDetailActivity extends AppCompatActivity {
                 switch (msg.what) {
                     case FAILURE:
                         Log.i("删除帖子: ", "失败");
-                        Toast.makeText(PostDetailActivity.this, "网络出了点问题，请稍候再试", 
-                                Toast.LENGTH_LONG).show();
+                        sDialog.setTitleText("删除失败")
+                                .setContentText("出了点问题，请稍候再试")
+                                .showCancelButton(false)
+                                .setConfirmText("确定")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
                         break;
                     case SUCCESS:
                         Log.i("删除帖子: ", "成功");
-                        Toast.makeText(PostDetailActivity.this, "删除成功",
-                                Toast.LENGTH_LONG).show();
-                        // finish();
+                        sDialog.setTitleText("删除成功")
+                                .setContentText("")
+                                .showCancelButton(false)
+                                .setConfirmText("关闭")
+                                .setConfirmClickListener(sweetAlertDialog -> {
+                                    Intent intent = new Intent();
+                                    intent.putExtra("pos", postPos);
+                                    int resultCode = -1;
+                                    if (beginFrom != null) {
+                                        switch (beginFrom) {
+                                            case "forumList": resultCode = myResultCode2; break;
+                                            case "myReleasePost": resultCode = myResultCode3; break;
+                                        }
+                                    }
+                                    setResult(resultCode, intent);
+                                    finish();
+                                })
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                         break;
                 }
                 super.handleMessage(msg);
@@ -362,11 +339,12 @@ public class PostDetailActivity extends AppCompatActivity {
     
     private void init() {
         user = (UserInfo) getApplication();
+        registerBroadCast();
         initRecyclerView();
         initPostDetail();
         setPostDetail();
         initCommentDialog();
-        setHeadListener();
+        setListener();
         setListListener();
     }
 
@@ -387,52 +365,13 @@ public class PostDetailActivity extends AppCompatActivity {
         xRecyclerView.addHeaderView(headView);
     }
 
-    private void setHeadListener() {
-        
-        // 按热度从高到低排序
-        order_by_like.setOnClickListener(view -> {
-            if(!order_by_time.getText().toString().equals("时间")) {
-                order_by_like.setTextColor(getResources().getColor(R.color.blue));
-                order_by_time.setTextColor(getResources().getColor(R.color.gray));
-                order_by_time.setText("时间");
-                flag = true;
-                sortByLikeNum();
-                adapter.setList(list);
-                adapter.notifyDataSetChanged();
-            }
-        });
-        
-        // 按时间排序
-        order_by_time.setOnClickListener(view -> {
-            order_by_time.setTextColor(getResources().getColor(R.color.blue));
-            order_by_like.setTextColor(getResources().getColor(R.color.gray));
-            String text = order_by_time.getText().toString();
-            if (flag) { sortByTimeAsc(); flag = false; }
-            else { Collections.reverse(list); }
-            
-            if (text.contains("↑")) {
-                order_by_time.setText("时间↓");
-            } else if (text.contains("↓")) {
-                order_by_time.setText("时间↑");
-            } else {
-                order_by_time.setText("时间↓");
-            }
-            adapter.setList(list);
-            adapter.notifyDataSetChanged();
-        });
-
-        // 点赞按钮监听
-        praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
-            @Override
-            public void select(boolean isSelected) {
-                if (isSelected) {
-                    post.setLikeNumber(post.getLikeNumber() + 1);
-                }
-                else {
-                    post.setLikeNumber(post.getLikeNumber() - 1);
-                }
-            }
-        });
+    /**
+     * 描述：刷新和加载更多监听
+     *      帖子的点赞、举报、删除监听
+     *      排序按钮监听
+     *      底部评论栏监听
+     */
+    private void setListener() {
 
         // 刷新和加载更多
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
@@ -501,21 +440,37 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
+        // 点赞按钮监听
+        praise.setOnStateChangedListener(isSelected -> {
+            if (isSelected) {
+                post.setLikeNumber(post.getLikeNumber() + 1);
+            }
+            else {
+                post.setLikeNumber(post.getLikeNumber() - 1);
+            }
+        });
+
         // 举报or删除监听
         detail_report.setOnClickListener(view -> {
             if (user.getUserId().equals(post.getUserId())) {
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle("提示")
-                        .setMessage("确定要删除吗")
-                        .setPositiveButton("确定", (dialog1, which) -> {
-                            deletePost();
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("提示")
+                        .setContentText("确定要删除这条帖子吗？")
+                        .setConfirmText("确定")
+                        .setCancelText("点错了")
+                        .showCancelButton(true)
+                        .setConfirmClickListener(sweetAlertDialog -> {
+                            sweetAlertDialog.changeAlertType(SweetAlertDialog.PROGRESS_TYPE);
+                            sweetAlertDialog.setTitle("请稍后");
+                            sweetAlertDialog.setContentText("");
+                            sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                            sweetAlertDialog.setCancelable(false);
+                            sweetAlertDialog.showCancelButton(false);
+                            sweetAlertDialog.show();
+                            deletePost(sweetAlertDialog);
                         })
-                        .setNegativeButton("点错了", null)
-                        .setCancelable(false)
-                        .create();
-                dialog.show();
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                        .setCancelClickListener(SweetAlertDialog::cancel)
+                        .show();
             } else {
                 AlertDialog dialog = new AlertDialog.Builder(this)
                         .setTitle("提示")
@@ -531,6 +486,38 @@ public class PostDetailActivity extends AppCompatActivity {
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
                 dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
             }
+        });
+
+        // 按热度从高到低排序
+        order_by_like.setOnClickListener(view -> {
+            if(!order_by_time.getText().toString().equals("时间")) {
+                order_by_like.setTextColor(getResources().getColor(R.color.blue));
+                order_by_time.setTextColor(getResources().getColor(R.color.gray));
+                order_by_time.setText("时间");
+                flag = true;
+                sortByLikeNum();
+                adapter.setList(list);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        // 按时间排序
+        order_by_time.setOnClickListener(view -> {
+            order_by_time.setTextColor(getResources().getColor(R.color.blue));
+            order_by_like.setTextColor(getResources().getColor(R.color.gray));
+            String text = order_by_time.getText().toString();
+            if (flag) { sortByTimeAsc(); flag = false; }
+            else { Collections.reverse(list); }
+
+            if (text.contains("↑")) {
+                order_by_time.setText("时间↓");
+            } else if (text.contains("↓")) {
+                order_by_time.setText("时间↑");
+            } else {
+                order_by_time.setText("时间↓");
+            }
+            adapter.setList(list);
+            adapter.notifyDataSetChanged();
         });
 
         // 弹出评论框
@@ -585,21 +572,31 @@ public class PostDetailActivity extends AppCompatActivity {
         
     }
 
+    /**
+     * 描述：评论的点赞、举报、删除监听
+     */
     private void setListListener() {
+        
         adapter.setOnMoreClickListener((view, pos) -> {
             if (user.getUserId().equals(list.get(pos).getFromId())) {
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle("提示")
-                        .setMessage("确定要删除吗")
-                        .setPositiveButton("确定", (dialog1, which) -> {
-                            deleteComment(list.get(pos).getInfoId(), pos);
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("提示")
+                        .setContentText("确定要删除这条评论吗？")
+                        .setConfirmText("确定")
+                        .setCancelText("点错了")
+                        .showCancelButton(true)
+                        .setConfirmClickListener(sweetAlertDialog -> {
+                            sweetAlertDialog.changeAlertType(SweetAlertDialog.PROGRESS_TYPE);
+                            sweetAlertDialog.setTitle("请稍后");
+                            sweetAlertDialog.setContentText("");
+                            sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                            sweetAlertDialog.setCancelable(false);
+                            sweetAlertDialog.showCancelButton(false);
+                            sweetAlertDialog.show();
+                            deleteComment(list.get(pos).getInfoId(), pos, sweetAlertDialog);
                         })
-                        .setNegativeButton("点错了", null)
-                        .setCancelable(false)
-                        .create();
-                dialog.show();
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                        .setCancelClickListener(SweetAlertDialog::cancel)
+                        .show();
             } else {
                 AlertDialog dialog = new AlertDialog.Builder(this)
                         .setTitle("提示")
@@ -616,7 +613,10 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
     }
-    
+
+    /**
+     * 设置评论数目
+     */
     private void setCommentSum() {
         if (list.size() == 0) {
             commentSum.setText("还没有人评论，快来抢沙发吧。");
@@ -693,6 +693,9 @@ public class PostDetailActivity extends AppCompatActivity {
         order_by_like = headView.findViewById(R.id.tv_cu_forum_detail_comment_order_by_like);
     }
 
+    /**
+     * 初始化评论框
+     */
     private void initCommentDialog() {
         commentBar = findViewById(R.id.ll_cu_forum_post_detail_comment_bar);
 
@@ -737,6 +740,12 @@ public class PostDetailActivity extends AppCompatActivity {
         });
     }
     
+    /**
+     * 描述：判断字符串是否全部为数字，用于插入评论的返回值判断
+     * 参数：插入评论的返回值字符串
+     * 返回：true：全部为数字，插入成功，返回的是评论的infoId
+     *      false：包含非数字，插入失败，返回的是错误信息
+     */
     private boolean isNumber(String s) {
         for (int i = 0; i < s.length(); i++) {
             if (!Character.isDigit(s.charAt(i))) {
@@ -746,7 +755,92 @@ public class PostDetailActivity extends AppCompatActivity {
         return true;
     }
 
-    private void deleteComment(Long id, int pos) {
+    /**
+     * 描述：用户发表评论
+     * 参数：comment: 评论对象
+     * 返回：void
+     */
+    private void insertComment(PostComment comment) {
+
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAILURE:
+                        Log.i("插入评论: ", "失败");
+                        Toast.makeText(PostDetailActivity.this, "网络出了点问题，请稍候再试",
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case SUCCESS:
+                        Log.i("插入评论: ", "成功");
+
+                        if (order_by_time.getText().toString().equals("时间↑")) {
+                            list.add(0, comment);
+                        } else {
+                            list.add(comment);
+                        }
+                        adapter.setList(list);
+                        adapter.notifyDataSetChanged();
+                        setCommentSum();
+                        commentText.setText("");
+
+                        mySendBroadCast(s1);
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+        new Thread(()->{
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+            Gson gson = new Gson();
+            String json = gson.toJson(comment);
+
+            Log.i("提交表单-评论：", json);
+
+            RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"), json);
+
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.insertComment))
+                    .post(requestBody)
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("插入评论: ", e.getMessage());
+                    msg.what = FAILURE;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String resStr = Objects.requireNonNull(response.body()).string();
+                    Log.i("插入评论：", resStr);
+                    String resId = resStr.substring(1, resStr.length()-1).split(":")[1];
+                    if (isNumber(resId)) {
+                        comment.setInfoId(Long.valueOf(resId));
+                        msg.what = SUCCESS;
+                    } else {
+                        msg.what = FAILURE;
+                    }
+                    handler.sendMessage(msg);
+                }
+            });
+
+        }).start();
+    }
+
+    /**
+     * 描述：用户删除评论
+     * 参数：id: 评论的infoId
+     *      pos: 该条评论在list中的位置
+     *      sDialog: 结果显示
+     * 返回：void
+     */
+    private void deleteComment(Long id, int pos, SweetAlertDialog sDialog) {
 
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -754,16 +848,26 @@ public class PostDetailActivity extends AppCompatActivity {
                 switch (msg.what) {
                     case FAILURE:
                         Log.i("删除评论: ", "失败");
-                        Toast.makeText(PostDetailActivity.this, "网络出了点问题，请稍候再试",
-                                Toast.LENGTH_LONG).show();
+                        sDialog.setTitleText("删除失败")
+                                .setContentText("出了点问题，请稍候再试")
+                                .showCancelButton(false)
+                                .setConfirmText("确定")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
                         break;
                     case SUCCESS:
                         Log.i("删除评论: ", "成功");
-                        Toast.makeText(PostDetailActivity.this, "删除成功",
-                                Toast.LENGTH_LONG).show();
+                        sDialog.setTitleText("删除成功")
+                                .setContentText("")
+                                .showCancelButton(false)
+                                .setConfirmText("关闭")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                         list.remove(pos);
                         setCommentSum();
                         adapter.notifyDataSetChanged();
+                        
+                        mySendBroadCast(s2);
                         break;
                 }
                 super.handleMessage(msg);
@@ -801,5 +905,82 @@ public class PostDetailActivity extends AppCompatActivity {
             });
 
         }).start();
+    }
+    
+    /**
+     * 描述：自定义广播
+     */
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+
+        /**
+         * 描述：处理广播
+         * 参数：intent: 广播发送的数据
+         *      isIncrease: 增or减
+         *      where: 1~ReplyNumber; 2~LikeNumber
+         * 返回：void
+         */
+        private void solve(Intent intent, boolean isIncrease, int where) {
+            int pos = intent.getIntExtra("pos", -1);
+            if (pos != -1) {
+                switch (where) {
+                    case 1:
+                        int n = list.get(pos).getReplyNumber();
+                        n = isIncrease ? n+1 : n-1;
+                        list.get(pos).setReplyNumber(n);
+                        break;
+                    case 2:
+                        break;
+                }
+                adapter.notifyDataSetChanged();
+            }
+        }
+        
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (Objects.requireNonNull(intent.getAction())) {
+                case s5: solve(intent, true, 1); break;
+                case s6: solve(intent, false, 1); break;
+                case s7: solve(intent, true, 2); break;
+                case s8: solve(intent, false, 2); break;
+            }
+        }
+    }
+
+    /**
+     * 描述：注册广播
+     */
+    private void registerBroadCast() {
+        receiver1 = new MyBroadcastReceiver();
+        registerReceiver(receiver1, new IntentFilter(s5));
+
+        receiver2 = new MyBroadcastReceiver();
+        registerReceiver(receiver2, new IntentFilter(s6));
+
+        receiver3 = new MyBroadcastReceiver();
+        registerReceiver(receiver3, new IntentFilter(s7));
+
+        receiver4 = new MyBroadcastReceiver();
+        registerReceiver(receiver4, new IntentFilter(s8));
+    }
+
+    /**
+     * 描述：取消广播注册
+     */
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver1);
+        unregisterReceiver(receiver2);
+        unregisterReceiver(receiver3);
+        unregisterReceiver(receiver4);
+    }
+    
+    /**
+     * 描述：评论、点赞后发送广播(给ForumFragment)
+     */
+    private void mySendBroadCast(String s) {
+        Intent intent = new Intent();
+        intent.putExtra("pos", postPos);
+        intent.setAction(s);
+        sendBroadcast(intent);
     }
 }

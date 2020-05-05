@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -55,7 +57,7 @@ import okhttp3.Response;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-/*
+/**
  * 1、点击搜索框旁边的+号跳转到这个Activity
  * 跳转时携带用户ID；
  * 2、发布记录里点击详情跳转到这个Activity
@@ -66,10 +68,14 @@ public class WritePostActivity extends AppCompatActivity {
     private static final int SUCCESS = 1;
     private static final int FAILURE = 0;
 
-    private final int maxSelectNum = 9; //最大照片数
+    private static final int myResultCode1 = 1; // 新建帖子
+    private static final int myResultCode4 = 4; // 修改帖子
+
+    private final int     maxSelectNum = 9; //最大照片数
     private final Boolean SELECT_FROM_PHOTO_ALBUM = true;
     private final Boolean TAKING_PHOTO = false;
     
+    private int        postPos;
     private ForumPosts post;  // 修改：intent 传递过来帖子对象
     private Long     userId;  // 新建：intent 传递过来的用户id
     
@@ -79,8 +85,6 @@ public class WritePostActivity extends AppCompatActivity {
     private EditText et_title;           // 帖子标题
     private EditText et_content;         // 帖子内容
     private List<LocalMedia> selectList; // 帖子配图
-
-    private LoadToast lt; // 提交动画
 
     private GridImageAdapter adapter;
 
@@ -110,17 +114,20 @@ public class WritePostActivity extends AppCompatActivity {
 
         getData();
         initToolBar();
-        initSubmitAnim();
         initRecyclerView();
         setTextChangedWatcher();
     }
 
+    /**
+     * 描述：获取intent传递的数据
+     */
     private void getData() {
         Intent intent = getIntent();
         if(intent != null) {
             userId = intent.getLongExtra("userId", -1);
             if(userId == -1) {
                 isUpdate = true;
+                postPos = intent.getIntExtra("pos", -1);
                 post = (ForumPosts) Objects.requireNonNull(intent.getExtras()).get("post");
                 et_title.setText(post.getTitle());
                 et_content.setText(post.getContent());
@@ -128,11 +135,13 @@ public class WritePostActivity extends AppCompatActivity {
         }
     }
 
-    private void submit(ForumPosts post) {
-        lt.show();
-        
-        String tipText = isUpdate ? "修改成功" : "发布成功";
-        
+    /**
+     * 描述：提交帖子
+     * 参数：帖子对象
+     * 返回：void
+     */
+    private void submit(ForumPosts post, SweetAlertDialog sDialog) {
+
         new Handler().postDelayed(()->{
             
             @SuppressLint("HandlerLeak")
@@ -140,14 +149,33 @@ public class WritePostActivity extends AppCompatActivity {
                 public void handleMessage(Message message) {
                     switch (message.what) {
                         case SUCCESS:
-                            lt.success();
-                            Toast.makeText(WritePostActivity.this, tipText, Toast.LENGTH_SHORT).show();
+                            String tipText = isUpdate ? "修改成功" : "发布成功";
+
+                            sDialog.setTitleText(tipText)
+                                    .setContentText("")
+                                    .showCancelButton(false)
+                                    .setConfirmText("关闭")
+                                    .setConfirmClickListener(sweetAlertDialog -> {
+                                        if (isUpdate) {
+                                            Intent intent = new Intent();
+                                            intent.putExtra("newPost", post);
+                                            intent.putExtra("pos", postPos);
+                                            setResult(myResultCode4, intent);
+                                        } else {
+                                            setResult(myResultCode1);
+                                        }
+                                        finish();
+                                    })
+                                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                             editFlag = false;
                             break;
                         case FAILURE:
-                            lt.error();
-                            Toast.makeText(WritePostActivity.this, "网络出了点问题，请稍后再试",
-                                    Toast.LENGTH_SHORT).show();
+                            sDialog.setTitleText("提交失败")
+                                    .setContentText("出了点问题，请稍候再试")
+                                    .showCancelButton(false)
+                                    .setConfirmText("确定")
+                                    .setConfirmClickListener(null)
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
                             break;
                     }
                 }
@@ -199,18 +227,15 @@ public class WritePostActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (editFlag) {
-                    AlertDialog dialog = new AlertDialog.Builder(this)
-                            .setTitle("提示")
-                            .setMessage("编辑的内容还未发布，真的要离开吗？离开后内容将丢失！")
-                            .setPositiveButton("确定", (dialog1, which) -> {
-                                finish();
-                            })
-                            .setNegativeButton("取消", null)
-                            .setCancelable(false)
-                            .create();
-                    dialog.show();
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
-                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                    new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("真的要离开吗？")
+                            .setContentText("离开后内容将丢失！")
+                            .setConfirmText("确定")
+                            .setCancelText("点错了")
+                            .showCancelButton(true)
+                            .setConfirmClickListener(sweetAlertDialog -> finish())
+                            .setCancelClickListener(SweetAlertDialog::cancel)
+                            .show();
                 } else { finish(); }
                 break;
             case R.id.submit:
@@ -221,18 +246,23 @@ public class WritePostActivity extends AppCompatActivity {
                 } else if (TextUtils.isEmpty(content)) {
                     Toast.makeText(this, "内容不能为空", Toast.LENGTH_SHORT).show();
                 } else {
+                    SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                    pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                    pDialog.setTitleText("请稍后");
+                    pDialog.setCancelable(false);
+                    pDialog.show();
                     if (isUpdate) {
                         post.setTitle(title);
                         post.setContent(content);
                         // post.setPictures(selectList);
-                        submit(post);
+                        submit(post, pDialog);
                     } else {
                         ForumPosts newPost = new ForumPosts();
                         newPost.setUserId(userId);
                         newPost.setTitle(title);
                         newPost.setContent(content);
                         // newPost.setPictures(selectList);
-                        submit(newPost);
+                        submit(newPost, pDialog);
                     }
                 }
                 break;
@@ -269,8 +299,9 @@ public class WritePostActivity extends AppCompatActivity {
         Rect outSize = new Rect();
         getWindowManager().getDefaultDisplay().getRectSize(outSize);
         int height = outSize.bottom;
-        
-        lt = new LoadToast(this);
+
+        // 提交动画
+        LoadToast lt = new LoadToast(this);
         lt.setTranslationY(height / 2);
         lt.setText("正在提交");
         lt.setTextColor(getResources().getColor(R.color.gray));

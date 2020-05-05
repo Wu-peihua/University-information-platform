@@ -1,7 +1,10 @@
 package com.example.uipfrontend.CommonUser.Fragment;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,6 +60,20 @@ public class ForumFragment extends Fragment {
     
     private static final int PAGE_SIZE = 10; // 默认一次请求10条数据
     private int CUR_PAGE_NUM = 1;
+    
+    private static final int myRequestCode = 233;
+    private static final int myResultCode1 = 1; // 新建帖子
+    private static final int myResultCode2 = 2; // 删除帖子
+    
+    private static final String s1 = "insertComment";
+    private static final String s2 = "deleteComment";
+    private static final String s3 = "increaseLikeInPostDetail";
+    private static final String s4 = "decreaseLikeInPostDetail";
+    private static final String s5  = "refresh";
+    
+    private MyBroadcastReceiver receiver1, receiver2, // 评论增减
+                                receiver3, receiver4, // 点赞数增减
+                                receiver5; // 刷新
 
     private View rootView;
     
@@ -90,6 +107,7 @@ public class ForumFragment extends Fragment {
             posts = new ArrayList<>();
             getPosts();
             initView();
+            registerBroadCast();
             setListener();
         }
         return rootView;
@@ -99,6 +117,7 @@ public class ForumFragment extends Fragment {
      * 描述：分页获取论坛帖子
      */
     private void getPosts() {
+        CUR_PAGE_NUM = 1;
 
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -117,7 +136,9 @@ public class ForumFragment extends Fragment {
                     case SUCCESS:
                         Log.i("获取帖子: ", "成功");
                         tv_blank_text.setVisibility(View.GONE);
+                        posts.clear();
                         posts.addAll(whole);
+                        adapter.setList(posts);
                         adapter.notifyDataSetChanged();
                         break;
                 }
@@ -213,8 +234,10 @@ public class ForumFragment extends Fragment {
         // 进入帖子详情页面
         adapter.setOnItemClickListener((view, pos) -> {
             Intent intent = new Intent(rootView.getContext(), PostDetailActivity.class);
+            intent.putExtra("pos", pos);
+            intent.putExtra("beginFrom", "forumList");
             intent.putExtra("detail", posts.get(pos));
-            startActivity(intent);
+            startActivityForResult(intent, myRequestCode);
         });
         
         // 进入新建帖子页面
@@ -225,7 +248,7 @@ public class ForumFragment extends Fragment {
             } else {
                 Intent intent = new Intent(rootView.getContext(), WritePostActivity.class);
                 intent.putExtra("userId", user.getUserId());
-                startActivity(intent);
+                startActivityForResult(intent, myRequestCode);
             }
         });
         
@@ -380,5 +403,102 @@ public class ForumFragment extends Fragment {
 //                "法外狂徒张三", "2020/3/26", 666));
 //        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
 //                "法外狂徒张三", "2020/3/26", 666));
+    }
+
+    
+    /**
+     * 描述：result1: 用户发表了帖子
+     *      result2: 用户删除了帖子
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == myRequestCode) {
+            if (resultCode == myResultCode1) {
+                getPosts();
+            } else if (resultCode == myResultCode2) {
+                int pos = data.getIntExtra("pos", -1);
+                if (pos != -1) {
+                    whole.remove(pos);
+                    posts.clear();
+                    posts.addAll(whole);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }
+    }
+    
+    /**
+     * 描述：自定义广播
+     */
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+        
+        /**
+         * 描述：处理广播
+         * 参数：intent: 广播发送的数据
+         *      isIncrease: 增or减
+         *      where: 1~ReplyNumber; 2~LikeNumber
+         * 返回：void
+         */
+        private void solve(Intent intent, boolean isIncrease, int where) {
+            int pos = intent.getIntExtra("pos", -1);
+            if (pos != -1) {
+                switch (where) {
+                    case 1:
+                        int n = whole.get(pos).getReplyNumber();
+                        n = isIncrease ? n+1 : n-1;
+                        whole.get(pos).setReplyNumber(n);
+                        posts.get(pos).setReplyNumber(n);
+                        break;
+                    case 2:
+                        break;
+                }
+                adapter.notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (Objects.requireNonNull(intent.getAction())) {
+                case s1: solve(intent, true, 1); break;
+                case s2: solve(intent, false, 1); break;
+                case s3: solve(intent, true, 2); break;
+                case s4: solve(intent, false, 2); break;
+                case s5: getPosts(); break;
+            }
+        }
+    }
+    
+    /**
+     * 描述：注册广播
+     */
+    private void registerBroadCast() {
+        receiver1 = new MyBroadcastReceiver();
+        rootView.getContext().registerReceiver(receiver1, new IntentFilter(s1));
+
+        receiver2 = new MyBroadcastReceiver();
+        rootView.getContext().registerReceiver(receiver2, new IntentFilter(s2));
+
+        receiver3 = new MyBroadcastReceiver();
+        rootView.getContext().registerReceiver(receiver3, new IntentFilter(s3));
+
+        receiver4 = new MyBroadcastReceiver();
+        rootView.getContext().registerReceiver(receiver4, new IntentFilter(s4));
+        
+        receiver5 = new MyBroadcastReceiver();
+        rootView.getContext().registerReceiver(receiver5, new IntentFilter(s5));
+        
+    }
+
+    /**
+     * 描述：取消广播注册
+     */
+    public void onDestroy() {
+        super.onDestroy();
+        Objects.requireNonNull(getActivity()).unregisterReceiver(receiver1);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(receiver2);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(receiver3);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(receiver4);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(receiver5);
     }
 }

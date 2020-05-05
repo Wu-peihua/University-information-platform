@@ -22,6 +22,8 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
 
     private Context context;
     private List<ForumPosts> list;
+    private OnDetailClickListener onDetailClickListener;
+    private OnModifyClickListener onModifyClickListener;
     
     public MyReleasePostAdapter(Context context, List<ForumPosts> list) {
         this.context = context;
@@ -30,6 +32,14 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
     
     public void setList(List<ForumPosts> list) { this.list = list; }
 
+    public void setOnDetailClickListener(OnDetailClickListener listener) {
+        this.onDetailClickListener = listener;
+    }
+    
+    public void setOnModifyClickListener(OnModifyClickListener listener) {
+        this.onModifyClickListener = listener;
+    }
+    
     public static class EmptyViewHolder extends RecyclerView.ViewHolder {
         EmptyViewHolder(View view) {
             super(view);
@@ -85,11 +95,7 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
             viewHolder.tv_time.setText(list.get(position).getCreated());
 
             // 跳转到帖子详情
-            viewHolder.tv_detail.setOnClickListener(view -> {
-                Intent intent = new Intent(context, PostDetailActivity.class);
-                intent.putExtra("detail", list.get(position));
-                context.startActivity(intent);
-            });
+            viewHolder.tv_detail.setOnClickListener(view -> onDetailClickListener.onClick(view, position));
 
             // 删除
 //            viewHolder.tv_delete.setOnClickListener(view -> {
@@ -110,11 +116,8 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
 //            });
 
             // 跳转到帖子编辑
-            viewHolder.tv_modify.setOnClickListener(view -> {
-                Intent intent = new Intent(context, WritePostActivity.class);
-                intent.putExtra("post", list.get(position));
-                context.startActivity(intent);
-            });
+            viewHolder.tv_modify.setOnClickListener(view -> onModifyClickListener.onClick(view, position));
+            
         }
     }
 
@@ -130,4 +133,11 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
         return list.size() == 0 ? -1 : super.getItemViewType(position);
     }
     
+    public interface OnDetailClickListener {
+        void onClick(View view, int pos);
+    }
+    
+    public interface OnModifyClickListener {
+        void onClick(View view, int pos);
+    }
 }

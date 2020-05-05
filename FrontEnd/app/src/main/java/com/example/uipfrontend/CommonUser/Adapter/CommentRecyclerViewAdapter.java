@@ -42,7 +42,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-/*
+/**
  * 这是帖子详情页的评论列表的adapter
  */
 
@@ -143,6 +143,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
         // 跳转到评论详情
         viewHolder.ll_click_write.setOnClickListener(view -> {
             Intent intent = new Intent(context, CommentDetailActivity.class);
+            intent.putExtra("pos", position);
             intent.putExtra("comment", list.get(position));
             context.startActivity(intent);
         });

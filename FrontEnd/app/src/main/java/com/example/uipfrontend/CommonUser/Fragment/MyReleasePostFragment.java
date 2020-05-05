@@ -2,6 +2,7 @@ package com.example.uipfrontend.CommonUser.Fragment;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -16,17 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.uipfrontend.CommonUser.Activity.PostDetailActivity;
+import com.example.uipfrontend.CommonUser.Activity.WritePostActivity;
 import com.example.uipfrontend.CommonUser.Adapter.MyReleasePostAdapter;
 import com.example.uipfrontend.Entity.ForumPosts;
 import com.example.uipfrontend.Entity.ResponsePosts;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
@@ -52,6 +50,10 @@ public class MyReleasePostFragment extends Fragment {
     private static final int PAGE_SIZE = 10; // 默认一次请求10条数据
     private int CUR_PAGE_NUM = 1;
 
+    private static final int myRequestCode = 2333;
+    private static final int myResultCode3 = 3; // 删除帖子
+    private static final int myResultCode4 = 4; // 修改帖子
+
     private View rootView;
     
     private List<ForumPosts> list;
@@ -75,6 +77,7 @@ public class MyReleasePostFragment extends Fragment {
         list = new ArrayList<>();
         getPosts();
         initRecyclerView();
+        setListener();
         return rootView;
     }
 
@@ -173,7 +176,25 @@ public class MyReleasePostFragment extends Fragment {
         }).start();
     }
     
-    public void initRecyclerView(){
+    private void setListener() {
+        
+        adapter.setOnDetailClickListener((view, pos) -> {
+            Intent intent = new Intent(rootView.getContext(), PostDetailActivity.class);
+            intent.putExtra("pos", pos);
+            intent.putExtra("beginFrom", "myReleasePost");
+            intent.putExtra("detail", list.get(pos));
+            startActivityForResult(intent, myRequestCode);
+        });
+        
+        adapter.setOnModifyClickListener((view, pos) -> {
+            Intent intent = new Intent(rootView.getContext(), WritePostActivity.class);
+            intent.putExtra("pos", pos);
+            intent.putExtra("post", list.get(pos));
+            startActivityForResult(intent, myRequestCode);
+        });
+    }
+    
+    private void initRecyclerView(){
         adapter = new MyReleasePostAdapter(rootView.getContext(), list);
         
         xRecyclerView = rootView.findViewById(R.id.xrv_mr_forum);
@@ -263,5 +284,38 @@ public class MyReleasePostFragment extends Fragment {
             tv_blank_text.setVisibility(View.VISIBLE);
         }
     }
+
+    /**
+     * 描述：result3 用户删除了帖子
+     *      result4 用户修改了帖子
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == myRequestCode) {
+            if (resultCode == myResultCode3) {
+                int pos = data.getIntExtra("pos", -1);
+                if (pos != -1) {
+                    list.remove(pos);
+                    adapter.notifyDataSetChanged();
+                }
+            } else if (resultCode == myResultCode4) {
+                int pos = data.getIntExtra("pos", -1);
+                ForumPosts post = (ForumPosts) Objects.requireNonNull(data.getExtras()).get("newPost");
+                if (pos != -1 && post != null) {
+                    list.get(pos).setTitle(post.getTitle());
+                    list.get(pos).setContent(post.getContent());
+                    
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }
+    }
     
+    public void onStop() {
+        Intent intent = new Intent();
+        intent.setAction("refresh");
+        rootView.getContext().sendBroadcast(intent);
+        super.onStop();
+    }
 }
