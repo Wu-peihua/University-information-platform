@@ -149,45 +149,52 @@
                     android:textColor="@color/item_time"
                     android:textSize="@dimen/fontSize_xs" />
 
-                <!-- 点赞按钮 -->
-                <com.sunbinqiang.iconcountview.IconCountView
-                    android:id="@+id/praise_view_cu_forum_comment_like"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginRight="30dp"
-                    android:layout_alignParentRight="true"
-                    app:normalRes="@drawable/icon_praise_normal"
-                    app:selectedRes="@drawable/icon_praise_selected"
-                    app:textNormalColor="@color/darkGray"
-                    app:textSelectedColor="#FF0000"
-                    app:count="9999"
-                    app:checked="false"
-                    app:zeroText="赞" />
-
-                <!-- 回复按钮 -->
                 <LinearLayout
-                    android:id="@+id/ll_cu_forum_comment_write"
-                    android:layout_width="30dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:orientation="horizontal">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true">
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/reply" />
+                    <!-- 点赞按钮 -->
+                    <com.sunbinqiang.iconcountview.IconCountView
+                        android:id="@+id/praise_view_cu_forum_comment_like"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_marginRight="3dp"
+                        app:normalRes="@drawable/icon_praise_normal"
+                        app:selectedRes="@drawable/icon_praise_selected"
+                        app:textNormalColor="@color/darkGray"
+                        app:textSelectedColor="#FF0000"
+                        app:count="9999"
+                        app:checked="false"
+                        app:zeroText="赞" />
 
-                    <!-- <TextView-->
-                    <!--     android:layout_width="wrap_content"-->
-                    <!--     android:layout_height="wrap_content"-->
-                    <!--     android:layout_marginLeft="3dp"-->
-                    <!--     android:layout_marginTop="5dp"-->
-                    <!--     android:text="点击回复"-->
-                    <!--     android:textSize="11sp" />-->
+                    <!-- 回复按钮 -->
+                    <LinearLayout
+                        android:id="@+id/ll_cu_forum_comment_write"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="horizontal">
 
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/reply" />
+
+                        <TextView
+                            android:id="@+id/tv_cu_forum_comment_sum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="3dp"
+                            android:text="33"
+                            android:textSize="14sp"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+                    
                 </LinearLayout>
 
             </RelativeLayout>

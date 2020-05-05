@@ -3,11 +3,15 @@
 
     <!--url配置-->
     <string name="serverBasePath">http://192.168.1.101:8080/uip</string>
+    <!--<string name="serverBasePath">http://192.168.0.103:8080/uip</string>-->
+    <!--string name="serverBasePath">http://192.168.1.107:8080/uip</string-->
+    <string name="serverBasePath">http://192.168.1.104:8080/uip</string>
     <!--获取顶部筛选菜单-->
     <string name="queryUniversity">/university/queryuniversity</string>
     <string name="queryInstitute">/institute/queryinstitute</string>
     <!--分页获取所有组队信息-->
     <string name="queryRecruit">/recruit/queryrecruit</string>
+
     <!--根据学校ID和学院ID分页获取所有组队信息-->
     <string name="queryRecruitByUniAndIns">/recruit/queryrecruitbyuniandins</string>
     <!--根据信息主键id分页获取组队信息-->
@@ -17,5 +21,42 @@
     <!--提交组队信息-->
     <string name="insertRecruit">/recruit/insertrecruit</string>
 
+    <!--分页获取所有课程信息-->
+    <string name="queryCourse">/courses/querycourses</string>
+    <!--分页获取所有课程评论信息-->
+    <string name="queryCourseEvaluation">/courseeval/querycourseeval</string>
+    <!--根据course id查询课程评论信息-->
+    <string name="queryCourseEvaluationByCourseId">/courseeval/querycourseevalbycourseid</string>
+    <!--插入课程评论信息-->
+    <string name="insertCourseComment">/courseeval/insertcourseeval</string>
+    <!--根据user id 获取用户信息-->
+    <string name="queryUserInfoByUserid">/userinfo//getuserinfobyuserid</string>
+    <!--根据信息主键id分页获取课程信息-->
+    <string name="queryCourseByInfoid">/courses/querycoursebyinfoid</string>
+    <!--根据用户id分页获取评论信息-->
+    <string name="queryCourseByUserId">/recruit/queryrecruitbyuserid</string>
+    
+    <!--获取帖子-->
+    <string name="queryPosts">/forumposts/queryposts</string>
+    <!--获取用户发表过的帖子-->
+    <string name="selectPosts">/forumposts/selectposts</string>
+    <!--获取评论-->
+    <string name="queryCommentById">/postcomment/querycomments</string>
+    <!--获取评论的回复-->
+    <string name="queryReplyById">//commentreply/queryreply</string>
+    <!--新建帖子-->
+    <string name="insertPost">/forumposts/insertpost</string>
+    <!--修改帖子-->
+    <string name="updatePost">/forumposts/updatepost</string>
+    <!--删除帖子-->
+    <string name="deletePost">/forumposts/deletepost</string>
+    <!--新建评论-->
+    <string name="insertComment">/postcomment/insertcomment</string>
+    <!--删除评论-->
+    <string name="deleteComment">/postcomment/deletecomment</string>
+    <!--新建回复-->
+    <string name="insertReply">/commentreply/insertreply</string>
+    <!--删除回复-->
+    <string name="deleteReply">/commentreply/deletereply</string>
 
 </resources>

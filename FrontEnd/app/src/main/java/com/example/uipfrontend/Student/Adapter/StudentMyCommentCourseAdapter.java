@@ -114,13 +114,13 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(commentViewHolder.iv_portrait);
 
-            commentViewHolder.tv_coursename.setText(courseComment.getCourseName());
-            commentViewHolder.tv_username.setText(courseComment.getUserName());
+            //commentViewHolder.tv_coursename.setText(courseComment.getCourseName());
+            //commentViewHolder.tv_username.setText(courseComment.getUserName());
             commentViewHolder.tv_content.setText(courseComment.getContent());
             commentViewHolder.rb_score.setRating((float)courseComment.getScore());
             //格式化
-            //commentViewHolder.tv_comment_date.setText(DateFormat.getInstance().format(courseComment.getCommentDate()));
-            commentViewHolder.tv_comment_date.setText(courseComment.getCommentDate());
+            commentViewHolder.tv_comment_date.setText(DateFormat.getInstance().format(courseComment.getInfoDate()));
+            //commentViewHolder.tv_comment_date.setText(courseComment.getCommentDate());
 
             commentViewHolder.icv_like.setCount(courseComment.getLikeCount());
             commentViewHolder.icv_like.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {

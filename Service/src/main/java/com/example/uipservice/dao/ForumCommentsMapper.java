@@ -1,7 +1,12 @@
 package com.example.uipservice.dao;
 
 import com.example.uipservice.entity.ForumComments;
+import com.github.pagehelper.Page;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Service
 public interface ForumCommentsMapper {
     int deleteByPrimaryKey(Long infoId);
 
@@ -14,4 +19,6 @@ public interface ForumCommentsMapper {
     int updateByPrimaryKeySelective(ForumComments record);
 
     int updateByPrimaryKey(ForumComments record);
+
+    Page<ForumComments> queryComments(Long toId);
 }

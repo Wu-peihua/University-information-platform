@@ -5,10 +5,10 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_course"
     android:descendantFocusability="blocksDescendants"
+    android:clickable="true"
     >
-
-
     <androidx.cardview.widget.CardView
         tools:targetApi="lollipop"
         android:layout_width="wrap_content"
@@ -19,9 +19,9 @@
         android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="5dp"
         app:cardUseCompatPadding="true"
-        app:cardPreventCornerOverlap="false">
-    android:focusable="false"
-    android:focusableInTouchMode="false">
+        app:cardPreventCornerOverlap="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

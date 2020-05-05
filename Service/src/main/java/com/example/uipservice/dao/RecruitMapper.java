@@ -2,9 +2,7 @@ package com.example.uipservice.dao;
 
 import com.example.uipservice.entity.Recruit;
 import com.github.pagehelper.Page;
-import org.springframework.stereotype.Service;
 
-@Service
 public interface RecruitMapper {
     int deleteByPrimaryKey(Long infoId);
 
@@ -17,6 +15,7 @@ public interface RecruitMapper {
     int updateByPrimaryKeySelective(Recruit record);
 
     int updateByPrimaryKey(Recruit record);
+
 
     Page<Recruit> queryRecruit();
 

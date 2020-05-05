@@ -118,7 +118,7 @@
                     android:textColor="@color/white"
                     fbutton:fButtonColor="@color/colorPrimary"
                     fbutton:shadowEnabled="true"
-                    fbutton:shadowHeight="3dp"
+                    fbutton:shadowHeight="0dp"
                     fbutton:cornerRadius="7dp"
                     />
                 <info.hoang8f.widget.FButton
@@ -134,7 +134,7 @@
                     android:textColor="@color/white"
                     fbutton:fButtonColor="@color/colorPrimary"
                     fbutton:shadowEnabled="true"
-                    fbutton:shadowHeight="3dp"
+                    fbutton:shadowHeight="0dp"
                     fbutton:cornerRadius="7dp"
                     />
             </RelativeLayout>

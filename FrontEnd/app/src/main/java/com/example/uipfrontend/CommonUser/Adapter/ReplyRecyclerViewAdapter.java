@@ -1,7 +1,11 @@
 package com.example.uipfrontend.CommonUser.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +21,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.PostComment;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.lzy.widget.CircleImageView;
 import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.sunbinqiang.iconcountview.IconCountView;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /*
  * 这是评论详情下的回复列表的adapter
@@ -30,19 +46,33 @@ import java.util.List;
 
 public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
 
+    private static final int FAILURE = -1;
+    private static final int SUCCESS = 1;
+    
+    private UserInfo user;
+
     private Context             context;
     private List<PostComment>   list;
-    private onItemClickListener itemClickListener;
+    private OnReplyClickListener onReplyClickListener;
+    private OnMoreClickListener onMoreClickListener;
+    private OnLikeClickListener onLikeClickListener;
 
     public ReplyRecyclerViewAdapter(Context context, List<PostComment> list) {
         this.context = context;
         this.list = list;
+        user = (UserInfo) context.getApplicationContext();
     }
     
     public void setList(List<PostComment> list) { this.list = list; }
 
-    public void setOnItemClickListener(onItemClickListener clickListener) {
-        this.itemClickListener = clickListener;
+    public void setReplyClickListener(OnReplyClickListener clickListener) {
+        this.onReplyClickListener = clickListener;
+    }
+    public void setOnMoreClickListener(OnMoreClickListener clickListener) {
+        this.onMoreClickListener = clickListener;
+    }
+    public void setOnLikeClickListener(OnLikeClickListener clickListener) {
+        this.onLikeClickListener = clickListener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -86,10 +116,10 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
         // 回复按钮监听
-        viewHolder.ll_click_write.setOnClickListener(view -> itemClickListener.onClick(view, position));
+        viewHolder.ll_click_write.setOnClickListener(view -> onReplyClickListener.onClick(view, position));
 
-        String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
-        //        String uri = list.get(position).getPortrait();
+        // String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
+        String uri = list.get(position).getPortrait();
         Glide.with(context).load(Uri.parse(uri))
                 .placeholder(R.drawable.portrait_default)
                 .error(R.drawable.portrait_default)
@@ -97,7 +127,8 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
                 .into(viewHolder.portrait);
         viewHolder.portrait.setBorderWidth(0);
 
-        viewHolder.tv_fromUserName.setText(list.get(position).getFromName());
+        String isMe = user.getUserId().equals(list.get(position).getFromId()) ? "(我)" : "";
+        viewHolder.tv_fromUserName.setText(list.get(position).getFromName() + isMe);
 
         String toName = list.get(position).getToName();
         if (toName != null) {
@@ -109,36 +140,23 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
         }
 
         viewHolder.tv_content.setContentText(list.get(position).getContent());
-        viewHolder.tv_time.setText(list.get(position).getDate());
+        viewHolder.tv_time.setText(list.get(position).getCreated());
         
-        viewHolder.praise.setCount(list.get(position).getLikeNum());
+        viewHolder.praise.setCount(list.get(position).getLikeNumber());
         // 如果是本人查看自己发的帖子，则需查找否点过赞
         
         // 点赞监听
         viewHolder.praise.setOnStateChangedListener(isSelected -> {
             if (isSelected) {
-                list.get(position).setLikeNum(list.get(position).getLikeNum() + 1);
+                list.get(position).setLikeNumber(list.get(position).getLikeNumber() + 1);
             } else {
-                list.get(position).setLikeNum(list.get(position).getLikeNum() - 1);
+                list.get(position).setLikeNumber(list.get(position).getLikeNumber() - 1);
             }
             notifyDataSetChanged();
         });
 
-        // 举报监听
-        viewHolder.iv_report.setOnClickListener(view -> {
-            AlertDialog dialog = new AlertDialog.Builder(context)
-                    .setTitle("提示")
-                    .setMessage("如果该条评论含有不恰当的内容，请点击确定")
-                    .setPositiveButton("确定", (dialog1, which) -> {
-                        Toast.makeText(context, "感谢您的反馈", Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton("取消", null)
-                    .setCancelable(false)
-                    .create();
-            dialog.show();
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.blue));
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.blue));
-        });
+        // 举报or删除监听
+        viewHolder.iv_report.setOnClickListener(view -> onMoreClickListener.onClick(view, position));
     }
 
     @Override
@@ -157,7 +175,16 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
         return position;
     }
 
-    public interface onItemClickListener {
+    public interface OnReplyClickListener {
         void onClick(View view, int pos);
     }
+    
+    public interface OnMoreClickListener {
+        void onClick(View view, int pos);
+    }
+    
+    public interface OnLikeClickListener {
+        void onClick(View view, int pos);
+    }
+
 }

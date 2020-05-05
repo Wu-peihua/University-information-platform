@@ -8,14 +8,14 @@
     <result column="pictures" property="pictures" jdbcType="VARCHAR" />
     <result column="info_date" property="infoDate" jdbcType="TIMESTAMP" />
     <result column="user_id" property="userId" jdbcType="BIGINT" />
-    <result column="institute_id" property="instituteId" jdbcType="INTEGER" />
+    <result column="subject_id" property="subjectId" jdbcType="INTEGER" />
     <result column="university_id" property="universityId" jdbcType="INTEGER" />
     <result column="report_number" property="reportNumber" jdbcType="INTEGER" />
-    <result column="contact" property="contact" jdbcType="VARCHAR" />
+    <result column="contact" property="contact" jdbcType="BIT" />
     <result column="created" property="created" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    info_id, title, content, pictures, info_date, user_id, institute_id, university_id, 
+    info_id, title, content, pictures, info_date, user_id, subject_id, university_id, 
     report_number, contact, created
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
@@ -33,12 +33,12 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into recruit (title, content, pictures, 
-      info_date, user_id, institute_id, 
+      info_date, user_id, subject_id, 
       university_id, report_number, contact, 
       created)
     values (#{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{pictures,jdbcType=VARCHAR}, 
-      #{infoDate,jdbcType=TIMESTAMP}, #{userId,jdbcType=BIGINT}, #{instituteId,jdbcType=INTEGER}, 
-      #{universityId,jdbcType=INTEGER}, #{reportNumber,jdbcType=INTEGER}, #{contact,jdbcType=VARCHAR}, 
+      #{infoDate,jdbcType=TIMESTAMP}, #{userId,jdbcType=BIGINT}, #{subjectId,jdbcType=INTEGER}, 
+      #{universityId,jdbcType=INTEGER}, #{reportNumber,jdbcType=INTEGER}, #{contact,jdbcType=BIT}, 
       #{created,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.example.uipservice.entity.Recruit" >
@@ -62,8 +62,8 @@
       <if test="userId != null" >
         user_id,
       </if>
-      <if test="instituteId != null" >
-        institute_id,
+      <if test="subjectId != null" >
+        subject_id,
       </if>
       <if test="universityId != null" >
         university_id,
@@ -94,8 +94,8 @@
       <if test="userId != null" >
         #{userId,jdbcType=BIGINT},
       </if>
-      <if test="instituteId != null" >
-        #{instituteId,jdbcType=INTEGER},
+      <if test="subjectId != null" >
+        #{subjectId,jdbcType=INTEGER},
       </if>
       <if test="universityId != null" >
         #{universityId,jdbcType=INTEGER},
@@ -104,7 +104,7 @@
         #{reportNumber,jdbcType=INTEGER},
       </if>
       <if test="contact != null" >
-        #{contact,jdbcType=VARCHAR},
+        #{contact,jdbcType=BIT},
       </if>
       <if test="created != null" >
         #{created,jdbcType=TIMESTAMP},
@@ -129,8 +129,8 @@
       <if test="userId != null" >
         user_id = #{userId,jdbcType=BIGINT},
       </if>
-      <if test="instituteId != null" >
-        institute_id = #{instituteId,jdbcType=INTEGER},
+      <if test="subjectId != null" >
+        subject_id = #{subjectId,jdbcType=INTEGER},
       </if>
       <if test="universityId != null" >
         university_id = #{universityId,jdbcType=INTEGER},
@@ -139,7 +139,7 @@
         report_number = #{reportNumber,jdbcType=INTEGER},
       </if>
       <if test="contact != null" >
-        contact = #{contact,jdbcType=VARCHAR},
+        contact = #{contact,jdbcType=BIT},
       </if>
       <if test="created != null" >
         created = #{created,jdbcType=TIMESTAMP},
@@ -154,10 +154,10 @@
       pictures = #{pictures,jdbcType=VARCHAR},
       info_date = #{infoDate,jdbcType=TIMESTAMP},
       user_id = #{userId,jdbcType=BIGINT},
-      institute_id = #{instituteId,jdbcType=INTEGER},
+      subject_id = #{subjectId,jdbcType=INTEGER},
       university_id = #{universityId,jdbcType=INTEGER},
       report_number = #{reportNumber,jdbcType=INTEGER},
-      contact = #{contact,jdbcType=VARCHAR},
+      contact = #{contact,jdbcType=BIT},
       created = #{created,jdbcType=TIMESTAMP}
     where info_id = #{infoId,jdbcType=BIGINT}
   </update>

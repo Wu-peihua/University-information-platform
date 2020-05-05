@@ -19,6 +19,7 @@ import com.example.uipfrontend.Admin.AdminHomeActivity;
 import com.example.uipfrontend.CommonUser.CommonUserActivity;
 import com.example.uipfrontend.Entity.Institute;
 import com.example.uipfrontend.Entity.University;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.Student.StudentActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -60,12 +61,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        UserInfo user = (UserInfo) getApplication();
+        user.setUserId(4L);
+        user.setUserName("悟空");
+        user.setPortrait("http://pic4.zhimg.com/50/v2-6ecab2cd6c1bbf9835030682db83543d_hd.jpg");
 
         commonUser = findViewById(R.id.btn_commonUser);
         student = findViewById(R.id.btn_student);
         admin = findViewById(R.id.btn_admin);
 
         getMenusData();
+        initListener();
 
     }
 
@@ -95,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     Response responseInstitute = client.newCall(requestInstitute).execute();
                     String resultUniversity = Objects.requireNonNull(responseUniversity.body()).string();
                     String resultInstitute = Objects.requireNonNull(responseInstitute.body()).string();
+
 
                     //解析大学json字符串数组
                     JsonObject jsonObjectUniversity = new JsonParser().parse(resultUniversity).getAsJsonObject();

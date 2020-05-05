@@ -4,24 +4,25 @@ import java.io.Serializable;
 
 // 评论：包括帖子的评论和评论的评论
 public class PostComment implements Serializable {
-    private Integer id;        // 评论ID
-    private String content;    // 评论内容
-    private String date;       // 发表时间
-    private Integer likeNum;   // 点赞数
-    private Integer reportNum; // 举报数
-    private Integer from;      // 评论者ID
-    private String fromName;   // 评论者用户名
-    private String portrait;   // 评论者头像
-    private Integer to;        // 所评论的帖子或评论的ID
-    private String toName;     // 被评论者用户名
-    private String reference;  // 被评论的内容
+    private Long    infoId;       // 评论ID
+    private String  content;      // 评论内容
+    private String  created;      // 发表时间
+    private Integer replyNumber;  // 评论的回复数
+    private Integer likeNumber;   // 点赞数
+    private Integer reportNumber; // 举报数
+    private Long    fromId;       // 评论者ID
+    private String  fromName;     // 评论者用户名
+    private String  portrait;     // 评论者头像
+    private Long    toId;         // 所评论的帖子或评论的ID
+    private String  toName;       // 被评论者用户名
+    private String  reference;    // 被评论的内容
 
-    public Integer getId() {
-        return id;
+    public Long getInfoId() {
+        return infoId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setInfoId(Long infoId) {
+        this.infoId = infoId;
     }
 
     public String getContent() {
@@ -32,40 +33,43 @@ public class PostComment implements Serializable {
         this.content = content;
     }
 
-    public String getDate() {
-        return date;
+    public String getCreated() {
+        return created;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setCreated(String created) {
+        this.created = created;
+    }
+    
+    public Integer getReplyNumber() { return replyNumber; }
+    
+    public void setReplyNumber(Integer replyNumber) { this.replyNumber = replyNumber; }
+
+    public Integer getLikeNumber() {
+        return likeNumber;
     }
 
-    public Integer getLikeNum() {
-        return likeNum;
+    public void setLikeNumber(Integer likeNumber) {
+        this.likeNumber = likeNumber;
     }
 
-    public void setLikeNum(Integer likeNum) {
-        this.likeNum = likeNum;
+    public Integer getReportNumber() {
+        return reportNumber;
     }
 
-    public Integer getReportNum() {
-        return reportNum;
+    public void setReportNumber(Integer reportNumber) {
+        this.reportNumber = reportNumber;
     }
 
-    public void setReportNum(Integer reportNum) {
-        this.reportNum = reportNum;
+    public Long getFromId() {
+        return fromId;
     }
 
-    public Integer getFrom() {
-        return from;
-    }
-
-    public void setFrom(Integer from) {
-        this.from = from;
+    public void setFromId(Long fromId) {
+        this.fromId = fromId;
     }
 
     public String getFromName() {
-        // 从用户表获取
         return fromName;
     }
 
@@ -74,7 +78,6 @@ public class PostComment implements Serializable {
     }
 
     public String getPortrait() {
-        // 从用户表获取
         return portrait;
     }
 
@@ -82,16 +85,15 @@ public class PostComment implements Serializable {
         this.portrait = portrait;
     }
 
-    public Integer getTo() {
-        return to;
+    public Long getToId() {
+        return toId;
     }
 
-    public void setTo(Integer to) {
-        this.to = to;
+    public void setToId(Long toId) {
+        this.toId = toId;
     }
 
     public String getToName() {
-        // 从用户表获取
         return toName;
     }
 

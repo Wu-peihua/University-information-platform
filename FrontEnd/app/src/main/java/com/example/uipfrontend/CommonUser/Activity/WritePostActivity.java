@@ -1,56 +1,88 @@
 package com.example.uipfrontend.CommonUser.Activity;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bigkoo.alertview.AlertView;
 import com.example.uipfrontend.Entity.ForumPosts;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.GridImageAdapter;
 import com.example.uipfrontend.Student.FullyGridLayoutManager;
+import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 
+import net.steamcrafted.loadtoast.LoadToast;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import fj.edittextcount.lib.FJEditTextCount;
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-/*
+/**
  * 1、点击搜索框旁边的+号跳转到这个Activity
  * 跳转时携带用户ID；
  * 2、发布记录里点击详情跳转到这个Activity
  * 跳转时携带帖子对象
  */
 public class WritePostActivity extends AppCompatActivity {
+    
+    private static final int SUCCESS = 1;
+    private static final int FAILURE = 0;
 
-    private final int maxSelectNum = 9; //最大照片数
+    private static final int myResultCode1 = 1; // 新建帖子
+    private static final int myResultCode4 = 4; // 修改帖子
+
+    private final int     maxSelectNum = 9; //最大照片数
     private final Boolean SELECT_FROM_PHOTO_ALBUM = true;
     private final Boolean TAKING_PHOTO = false;
     
-    private ForumPosts post;  // intent 传递过来帖子对象
-    private Integer userId;   // intent 传递过来的用户id
+    private int        postPos;
+    private ForumPosts post;  // 修改：intent 传递过来帖子对象
+    private Long     userId;  // 新建：intent 传递过来的用户id
     
-    private EditText et_title;    // 帖子标题
+    private static boolean isUpdate = false;
+    private static boolean editFlag = false;
+    
+    private EditText et_title;           // 帖子标题
     private EditText et_content;         // 帖子内容
     private List<LocalMedia> selectList; // 帖子配图
 
@@ -70,12 +102,179 @@ public class WritePostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forum_write_post);
+        
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        
+        init();
+    }
+    
+    private void init() {
         et_title = findViewById(R.id.edt_cu_forum_write_title);
         et_content = findViewById(R.id.edt_cu_forum_write_content);
-        initToolBar();
+
         getData();
+        initToolBar();
         initRecyclerView();
+        setTextChangedWatcher();
+    }
+
+    /**
+     * 描述：获取intent传递的数据
+     */
+    private void getData() {
+        Intent intent = getIntent();
+        if(intent != null) {
+            userId = intent.getLongExtra("userId", -1);
+            if(userId == -1) {
+                isUpdate = true;
+                postPos = intent.getIntExtra("pos", -1);
+                post = (ForumPosts) Objects.requireNonNull(intent.getExtras()).get("post");
+                et_title.setText(post.getTitle());
+                et_content.setText(post.getContent());
+            }
+        }
+    }
+
+    /**
+     * 描述：提交帖子
+     * 参数：帖子对象
+     * 返回：void
+     */
+    private void submit(ForumPosts post, SweetAlertDialog sDialog) {
+
+        new Handler().postDelayed(()->{
+            
+            @SuppressLint("HandlerLeak")
+            Handler handler = new Handler() {
+                public void handleMessage(Message message) {
+                    switch (message.what) {
+                        case SUCCESS:
+                            String tipText = isUpdate ? "修改成功" : "发布成功";
+
+                            sDialog.setTitleText(tipText)
+                                    .setContentText("")
+                                    .showCancelButton(false)
+                                    .setConfirmText("关闭")
+                                    .setConfirmClickListener(sweetAlertDialog -> {
+                                        if (isUpdate) {
+                                            Intent intent = new Intent();
+                                            intent.putExtra("newPost", post);
+                                            intent.putExtra("pos", postPos);
+                                            setResult(myResultCode4, intent);
+                                        } else {
+                                            setResult(myResultCode1);
+                                        }
+                                        finish();
+                                    })
+                                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                            editFlag = false;
+                            break;
+                        case FAILURE:
+                            sDialog.setTitleText("提交失败")
+                                    .setContentText("出了点问题，请稍候再试")
+                                    .showCancelButton(false)
+                                    .setConfirmText("确定")
+                                    .setConfirmClickListener(null)
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            break;
+                    }
+                }
+            };
+
+            new Thread(()->{
+                Message msg = new Message();
+                OkHttpClient okHttpClient = new OkHttpClient();
+                Gson gson = new Gson();
+                String json = gson.toJson(post);
+
+                Log.i("提交表单-帖子：", json);
+
+                RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"), json);
+
+                String requestUrl = isUpdate ? getResources().getString(R.string.updatePost) : 
+                                                getResources().getString(R.string.insertPost);
+                        
+                Request request = new Request.Builder()
+                        .url(getResources().getString(R.string.serverBasePath) + requestUrl)
+                        .post(requestBody)
+                        .build();
+                Call call = okHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        Log.i("提交失败:", e.getMessage());
+                        msg.what = FAILURE;
+                        handler.sendMessage(msg);
+                    }
+
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        Log.i("提交成功:", response.body().string());
+                        msg.what = SUCCESS;
+                        handler.sendMessage(msg);
+                    }
+                });
+
+            }).start();
+            
+        }, 2000);
+
+    }
+
+    // toolbar按钮监听
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (editFlag) {
+                    new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("真的要离开吗？")
+                            .setContentText("离开后内容将丢失！")
+                            .setConfirmText("确定")
+                            .setCancelText("点错了")
+                            .showCancelButton(true)
+                            .setConfirmClickListener(sweetAlertDialog -> finish())
+                            .setCancelClickListener(SweetAlertDialog::cancel)
+                            .show();
+                } else { finish(); }
+                break;
+            case R.id.submit:
+                String title = et_title.getText().toString().trim();
+                String content = et_content.getText().toString().trim();
+                if(TextUtils.isEmpty(title)) {
+                    Toast.makeText(this, "标题不能为空", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(content)) {
+                    Toast.makeText(this, "内容不能为空", Toast.LENGTH_SHORT).show();
+                } else {
+                    SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                    pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                    pDialog.setTitleText("请稍后");
+                    pDialog.setCancelable(false);
+                    pDialog.show();
+                    if (isUpdate) {
+                        post.setTitle(title);
+                        post.setContent(content);
+                        // post.setPictures(selectList);
+                        submit(post, pDialog);
+                    } else {
+                        ForumPosts newPost = new ForumPosts();
+                        newPost.setUserId(userId);
+                        newPost.setTitle(title);
+                        newPost.setContent(content);
+                        // newPost.setPictures(selectList);
+                        submit(newPost, pDialog);
+                    }
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // 使toolbar带有保存按钮
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.submit_menu, menu);
+        return true;
     }
 
     private void initToolBar() {
@@ -92,49 +291,53 @@ public class WritePostActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
-    
-    private void getData() {
-        Intent intent = getIntent();
-        if(intent != null) {
-            userId = intent.getIntExtra("userId", -1);
-            if(userId == -1) {
-                post = (ForumPosts) Objects.requireNonNull(intent.getExtras()).get("post");
-                et_title.setText(post.getTitle());
-                et_content.setText(post.getContent());
+
+    // 提交的动画
+    private void initSubmitAnim() {
+
+        // 获取屏幕高度
+        Rect outSize = new Rect();
+        getWindowManager().getDefaultDisplay().getRectSize(outSize);
+        int height = outSize.bottom;
+
+        // 提交动画
+        LoadToast lt = new LoadToast(this);
+        lt.setTranslationY(height / 2);
+        lt.setText("正在提交");
+        lt.setTextColor(getResources().getColor(R.color.gray));
+        lt.setBackgroundColor(getResources().getColor(R.color.white));
+        lt.setProgressColor(getResources().getColor(R.color.colorPrimary));
+        lt.setBorderWidthDp(1);
+        lt.setBorderColor(getResources().getColor(R.color.darkGray));
+    }
+
+    // 文本改动监听
+    private void setTextChangedWatcher() {
+        et_title.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {  }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {  }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() > 0) editFlag = true;
             }
-        }
-    }
+        });
 
-    // 使toolbar带有保存按钮
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.submit_menu, menu);
-        return true;
-    }
+        et_content.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {  }
 
-    // toolbar按钮监听
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-            case R.id.submit:
-                if(TextUtils.isEmpty(et_title.getText().toString().trim())) {
-                    Toast.makeText(this, "标题不能为空", Toast.LENGTH_SHORT).show();
-                } else if (TextUtils.isEmpty(et_content.getText().toString().trim())) {
-                    Toast.makeText(this, "内容不能为空", Toast.LENGTH_SHORT).show();
-                } else {
-                    ForumPosts posts = new ForumPosts();
-//                    posts.setUserId(userId);
-                    posts.setTitle(et_title.getText().toString().trim());
-                    posts.setContent(et_content.getText().toString().trim());
-//                    posts.setPictures(selectList);
-                    Toast.makeText(this, "发布成功", Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {  }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() > 0) editFlag = true;
+            }
+        });
     }
 
     // 照片显示的recyclerview

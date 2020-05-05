@@ -1,13 +1,20 @@
 package com.example.uipservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 public class ForumComments {
     private Long infoId;
 
-    private Long postId;
+    private Long toId;
 
-    private Long commentatorId;
+    private Long fromId;
+
+    private String fromName;
+
+    private String portrait;
 
     private String content;
 
@@ -15,8 +22,12 @@ public class ForumComments {
 
     private Integer likeNumber;
 
+    private Integer replyNumber;
+
     private Date infoDate;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date created;
 
     public Long getInfoId() {
@@ -27,20 +38,20 @@ public class ForumComments {
         this.infoId = infoId;
     }
 
-    public Long getPostId() {
-        return postId;
+    public Long getToId() {
+        return toId;
     }
 
-    public void setPostId(Long postId) {
-        this.postId = postId;
+    public void setToId(Long toId) {
+        this.toId = toId;
     }
 
-    public Long getCommentatorId() {
-        return commentatorId;
+    public Long getFromId() {
+        return fromId;
     }
 
-    public void setCommentatorId(Long commentatorId) {
-        this.commentatorId = commentatorId;
+    public void setFromId(Long fromId) {
+        this.fromId = fromId;
     }
 
     public String getContent() {
@@ -67,6 +78,12 @@ public class ForumComments {
         this.likeNumber = likeNumber;
     }
 
+    public Integer getReplyNumber() { return replyNumber; }
+
+    public void setReplyNumber(Integer replyNumber) {
+        this.replyNumber = replyNumber;
+    }
+
     public Date getInfoDate() {
         return infoDate;
     }
@@ -81,5 +98,21 @@ public class ForumComments {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public String getFromName() {
+        return fromName;
+    }
+
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
     }
 }

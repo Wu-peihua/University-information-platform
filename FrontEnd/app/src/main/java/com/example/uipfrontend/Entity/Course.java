@@ -1,40 +1,65 @@
 package com.example.uipfrontend.Entity;
 
+import android.content.Intent;
+
 import java.io.Serializable;
+import java.util.Date;
 
 public class Course implements Serializable {
 
-    private Integer courseID;//课程唯一标识
-    private String courseName;//课程名称
-    private String imageUrl;//课程图片URL
-    private Integer schoolId;//学校ID
-    private Integer academyId;//学院ID
+    /*private Integer courseid;//课程唯一标识
+    private String coursename;//课程名称
+    private String imageurl;//课程图片URL
+    private Integer schoolid;//学校ID
+    private Integer academyid;//学院ID
     private String description;//课程简介
-    private String teacher;//教师名
-    private double score;//总评分
+    private String teachername;//教师名
+    private double averagescore;//总评分
+*/
+    private Long infoId;
 
-    public Course(Integer courseID,String _name, String _teacher,String _description,double _score){
-        this.courseID = courseID;
+    private Integer userId;
+
+    private Integer universityId;
+
+    private Integer instituteId;
+
+    private String courseName;
+
+    private String teacherName;
+
+    private String coursePicture;
+
+    private Date infoDate;
+
+    private String description;
+
+    private Integer averageScore;
+
+    private Date created;
+
+    public Course(Long courseID,String _name, String _teacher,String _description,Integer _score){
+        this.infoId = courseID;
         this.courseName = _name;
-        this.teacher = _teacher;
+        this.teacherName = _teacher;
         this.description = _description;
-        this.score = _score;
+        this.averageScore = _score;
     }
 
-    public Integer getCourseID(){
-        return this.courseID;
+    public Long getCourseID(){
+        return this.infoId;
     }
 
     public Integer getSchoolId() {
-        return this.schoolId;
+        return this.universityId;
     }
 
     public  Integer getAcademyId() {
-        return this.academyId;
+        return this.instituteId;
     }
 
     public String getImageurl(){
-        return this.imageUrl;
+        return this.coursePicture;
     }
 
     public String getName(){
@@ -42,18 +67,18 @@ public class Course implements Serializable {
     }
 
     public  String getTeacher(){
-        return this.teacher;
+        return this.teacherName;
     }
     public String getDescription(){
         return this.description;
     }
 
     public double getScore(){
-        return this.score;
+        return this.averageScore;
     }
 
-    public void setCourseID(Integer id) {
-        this.courseID = id;
+    public void setCourseID(Long id) {
+        this.infoId = id;
     }
 
     public void setCourseName(String name) {
@@ -61,15 +86,15 @@ public class Course implements Serializable {
     }
 
     public void setImageUrl(String Url) {
-        this.imageUrl = Url;
+        this.coursePicture = Url;
     }
 
     public void setSchoolId(Integer schoolId){
-        this.schoolId =schoolId;
+        this.universityId =schoolId;
     }
 
     public void setAcademyId(Integer academyId){
-        this.academyId = academyId;
+        this.instituteId = academyId;
 
     }
 
@@ -78,16 +103,16 @@ public class Course implements Serializable {
     }
 
     public  void setTeacher(String teacher) {
-        this.teacher = teacher;
+        this.teacherName = teacher;
     }
 
-    public  void  setScore(double score) {
-        this.score = score;
+    public  void  setScore(Integer score) {
+        this.averageScore = score;
     }
 
     @Override
     public String toString(){
-        return "CourseInfo[ courseId:" + courseID + ",courseName:" + courseName + ",imageUrl:" +imageUrl +  ",schoolId:" + schoolId+
-                "academyId:" + academyId+",description:" + description  + ",teacher:" + teacher  + ",score:" + score +"]";
+        return "CourseInfo[ courseId:" + infoId + ",courseName:" + courseName + ",imageUrl:" +coursePicture +  ",schoolId:" + universityId+
+                "academyId:" + instituteId+",description:" + description  + ",teacher:" + teacherName  + ",score:" + averageScore +"]";
     }
 }

@@ -1,10 +1,36 @@
 package com.example.uipfrontend.Entity;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CourseComment implements Serializable {
-    private Integer CourseId;//评论的课程id
+
+    private Long infoId;
+
+    private Long commentatorId;
+
+    private Long courseId;
+
+    private String content;
+
+    private Integer score;
+
+
+    private Date infoDate;
+
+
+    private Date created;
+
+    private int BadReportCount;//举报次数
+    private int LikeCount;//点赞次数
+
+    private String fromName;//评论用户名字
+    private String  portrait;     // 评论者头像
+
+    /*private Integer CourseId;//评论的课程id
     private String CourseName;//课程名称
     private Integer CommentId;//评论的id
     private Integer UserId;//用户id
@@ -13,86 +39,96 @@ public class CourseComment implements Serializable {
     private String CommentDate;//评论日期
     private String Content;//评论内容
     private double Score;//评分
-    private int BadReportCount;//举报次数
-    private int LikeCount;//点赞次数
 
 
-    public CourseComment(String courseName,Integer commentId, String _name, String _commentdate,String _content,double _score,int likeCount){
-        this.CourseName = courseName;
-        this.CommentId = commentId;
-        this.UserName = _name;
-        this.CommentDate = _commentdate;
-        this.Content = _content;
-        this.Score = _score;
-        this.LikeCount=likeCount;
+     */
+
+    //commentatorid + courseid + content+ score+ date
+
+
+    public CourseComment(Long _userid, Long _courseId,String _content,Integer _score,Date _infodate){
+
+
+        this.commentatorId = _userid;
+        this.courseId = _courseId;
+        this.content = _content;
+        this.score = _score;
+        this.infoDate = _infodate;
+        this.LikeCount=0;//新增评论点赞数
+        this.BadReportCount = 0;
     }
 
-    public CourseComment(Integer commentId, String _name, String _commentdate,String _content,double _score,int likeCount){
-        this.CommentId = commentId;
-        this.UserName = _name;
-        this.CommentDate = _commentdate;
-        this.Content = _content;
-        this.Score = _score;
-        this.LikeCount=likeCount;
+    public String getFromName() {
+        return fromName;
     }
 
-    public void setCourseId(Integer courseId){
-        this.CourseId = courseId;
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
     }
 
-    public  void setCourseName(String courseName){
-        this.CourseName = courseName;
+    public String getPortrait() {
+        return portrait;
     }
 
-    public void setCommentId(Integer commentId){ this.CommentId = commentId;}
-
-    public  void setUserName(String _name) {
-        this.UserName = _name;
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
+    }
+    public Long getInfoId() {
+        return infoId;
     }
 
-    public void setUserId(Integer userId) {
-        this.UserId = userId;
+    public void setInfoId(Long infoId) {
+        this.infoId = infoId;
     }
 
-    public  void setScore(double _score) {
-        this.Score = _score;
+    public Long getCommentatorId() {
+        return commentatorId;
     }
 
-    public  void setUserImgUrl(String urlImg) {
-        this.UserImgUrl = urlImg;
+    public void setCommentatorId(Long commentatorId) {
+        this.commentatorId = commentatorId;
     }
 
-    public void setCommentDate(String commentDate) {
-        this.CommentDate = commentDate;
+    public Long getCourseId() {
+        return courseId;
     }
 
-    public  void setContent(String content) {
-        this.Content = content;
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 
-    public void setBadReportCount(int bad) {
-        this.BadReportCount = bad;
+    public String getContent() {
+        return content;
     }
 
-    public void setLikeCount(int like) {
-        this.LikeCount = like;
+    public void setContent(String content) {
+        this.content = content == null ? null : content.trim();
     }
 
-    public String getUserName() {
-        return this.UserName;
+    public Integer getScore() {
+        return score;
     }
 
-    public  String getUserImgUrl() {
-        return this.UserImgUrl;
+    public void setScore(Integer score) {
+        this.score = score;
     }
 
-    public String getCommentDate() {
-        return this.CommentDate;
+    public Date getInfoDate() {
+        return infoDate;
     }
 
-    public  String getContent() {
-        return this.Content;
+    public void setInfoDate(Date infoDate) {
+        this.infoDate = infoDate;
     }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
 
     public  int getBadReportCount() {
         return  this.BadReportCount;
@@ -102,21 +138,18 @@ public class CourseComment implements Serializable {
         return this.LikeCount;
     }
 
-    public double getScore(){
-        return this.Score;
+    public void setBadReportCount(int _badreport){
+        this.BadReportCount = _badreport;
     }
 
-    public Integer getCommentId() {
-        return this.CommentId;
+    public void setLikeCount(int likeCount){
+        this.LikeCount = likeCount;
     }
 
-    public Integer getCourseId() {return this.CourseId;}
 
-    public String getCourseName() {return this.CourseName;}
-    @Override
+
     public String toString(){
-        return "CourseComment[ commentId:" + CommentId + ",UserId:" + UserId + ",UserImg:" + UserImgUrl + ",Content:" + Content + ",CommentDate:" + CommentDate
-                + ",userName:" + UserName +
-                ",score:" + Score + "]";
+        return "CourseComment[ commentId:" + infoId + ",UserId:" + commentatorId  + ",Content:" + content + ",CommentDate:" + infoDate
+                +",score:" + score + "]";
     }
 }
