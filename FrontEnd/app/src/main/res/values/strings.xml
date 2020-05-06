@@ -4,13 +4,15 @@
     <!--url配置-->
     <!--<string name="serverBasePath">http://192.168.0.103:8080/uip</string>-->
     <!--string name="serverBasePath">http://192.168.1.107:8080/uip</string-->
-    <string name="serverBasePath">http://192.168.1.105:8080/uip</string>
+    <string name="serverBasePath">http://192.168.1.102:8080/uip</string>
     <!--获取顶部筛选菜单-->
     <string name="queryUniversity">/university/queryuniversity</string>
     <string name="queryInstitute">/institute/queryinstitute</string>
+    <!--图片上传-->
+    <string name="uploadImage">/image/upload</string>
+
     <!--分页获取所有组队信息-->
     <string name="queryRecruit">/recruit/queryrecruit</string>
-
     <!--根据学校ID和学院ID分页获取所有组队信息-->
     <string name="queryRecruitByUniAndIns">/recruit/queryrecruitbyuniandins</string>
     <!--根据信息主键id分页获取组队信息-->
@@ -19,6 +21,7 @@
     <string name="queryRecruitByUserId">/recruit/queryrecruitbyuserid</string>
     <!--提交组队信息-->
     <string name="insertRecruit">/recruit/insertrecruit</string>
+
 
     <!--分页获取所有课程信息-->
     <string name="queryCourse">/courses/querycourses</string>
@@ -57,5 +60,6 @@
     <string name="insertReply">/commentreply/insertreply</string>
     <!--删除回复-->
     <string name="deleteReply">/commentreply/deletereply</string>
+
 
 </resources>

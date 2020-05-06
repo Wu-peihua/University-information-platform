@@ -27,16 +27,23 @@ import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.example.uipfrontend.Entity.RecruitInfo;
+import com.example.uipfrontend.Entity.University;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.GridImageAdapter;
 import com.example.uipfrontend.Student.FullyGridLayoutManager;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,6 +57,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -94,6 +102,13 @@ public class RecruitReleaseActivity extends AppCompatActivity {
 
     //用于发送的组队信息
     private RecruitInfo recruitInfo;
+
+    //上传图片的本地路径
+    List<String> selectString = new ArrayList<>();
+    //服务器返回的图片url
+    String url = "";  //url字符串，逗号分隔，存入数据库中
+
+
 
 
 
@@ -241,7 +256,8 @@ public class RecruitReleaseActivity extends AppCompatActivity {
                                     recruitInfo.setTitle(title.getText().toString());
                                     recruitInfo.setPortrait("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587898699610&di=c7b2fc839b41a4eb285279b781112427&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F09%2F20190109072726_aNNZd.thumb.700_0.jpeg");
 
-                                    insertRecruitInfo();
+                                    uploadImage();
+//                                    insertRecruitInfo();
 
                                     Toast.makeText(RecruitReleaseActivity.this, "组队信息发布成功", Toast.LENGTH_SHORT).show();
 
@@ -453,19 +469,13 @@ public class RecruitReleaseActivity extends AppCompatActivity {
                 case PictureConfig.CHOOSE_REQUEST:
                     // 图片选择结果回调
                     selectList = PictureSelector.obtainMultipleResult(data);
-                    String selectString = "";
-                    // 例如 LocalMedia 里面返回三种path
-                    // 1.media.getPath(); 为原图path
-                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
-                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
-                    // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
-                    // 4.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
+
                     for (LocalMedia media : selectList) {
-                        selectString += media.getPath();
-                        Log.i(TAG, "压缩---->" + media.getCompressPath());
-                        Log.i(TAG, "原图---->" + media.getPath());
-                        Log.i(TAG, "裁剪---->" + media.getCutPath());
-                        Log.i(TAG, "Android Q 特有Path---->" + media.getAndroidQToPath());
+                        selectString.add(media.getPath());
+//                        Log.i(TAG, "压缩---->" + media.getCompressPath());
+//                        Log.i(TAG, "原图---->" + media.getPath());
+//                        Log.i(TAG, "裁剪---->" + media.getCutPath());
+//                        Log.i(TAG, "Android Q 特有Path---->" + media.getAndroidQToPath());
                     }
 
                     adapter.setList(selectList);
@@ -546,6 +556,60 @@ public class RecruitReleaseActivity extends AppCompatActivity {
 
     }
 
+    public void uploadImage(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //建立client
+                final OkHttpClient[] client = {new OkHttpClient()};
 
+                //创建MultipartBody.Builder，用于添加请求的数据
+                MultipartBody.Builder builder = new MultipartBody.Builder();
+                for (String tempName : selectString) { //对文件进行遍历
+                    File file = new File(tempName); //生成文件
+                    //根据文件的后缀名，获得文件类型
+                    builder.addFormDataPart( //给Builder添加上传的文件
+                            "image",  //请求的名字
+                            file.getName(), //文件的文字，服务器端用来解析的
+                            RequestBody.create(MediaType.parse("multipart/form-data"), file) //创建RequestBody，把上传的文件放入
+                    );
+                }
+
+                Request.Builder requestBuilder = new Request.Builder();
+                requestBuilder.url(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.uploadImage))
+                        .post(builder.build());
+
+
+                //新建call联结client和request
+                Call call= client[0].newCall(requestBuilder.build());
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        //请求失败的处理
+                        Log.i("RESPONSE:","fail"+e.getMessage());
+                    }
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String responseBody = response.body().string();
+                        Log.i("RESPONSE:",responseBody);
+                        //图片上传成功后再上传表单信息
+                        //解析大学json字符串数组
+                        JsonObject jsonObjectUrl = new JsonParser().parse(responseBody).getAsJsonObject();
+                        JsonArray jsonArrayUrl = jsonObjectUrl.getAsJsonArray("urlList");
+
+                        //循环遍历数组
+                        for (JsonElement jsonElement : jsonArrayUrl) {
+                            url += jsonElement.toString() + ",";
+                        }
+                        recruitInfo.setPictures(url);
+
+                        insertRecruitInfo();
+                    }
+
+                });
+            }
+        }).start();
+
+    }
 
 }
