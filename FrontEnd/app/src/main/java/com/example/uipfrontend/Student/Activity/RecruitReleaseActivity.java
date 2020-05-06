@@ -503,19 +503,19 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         //通过sharepreference获取大学选项和学院选项
         SharedPreferences sp = getSharedPreferences("data",MODE_PRIVATE);
         //第二个参数为缺省值，如果不存在该key，返回缺省值
-        Set<String> setUniversity = sp.getStringSet("university",null);
-        Set<String> setInstitute = sp.getStringSet("institute",null);
+        String strUniversity = sp.getString("university",null);
+        String strInstitute = sp.getString("institute",null);
 
-        assert setUniversity != null;
-        List<String> universityList = new ArrayList<>(setUniversity);
-        assert setInstitute != null;
-        List<String> instituteList = new ArrayList<>(setInstitute);
+        List<String> universityList = new ArrayList<>();
+        List<String> instituteList = new ArrayList<>();
+        //将String转为List
+        String str1[] = strUniversity.split(",");
+        universityList = Arrays.asList(str1);
+        String str[] = strInstitute.split(",");
+        instituteList = Arrays.asList(str);
 
         option1 = universityList.toArray(new String[0]);
         option2 = instituteList.toArray(new String[0]);
-
-        System.out.println("InstituteList:"+instituteList.toString());
-
 
     }
 

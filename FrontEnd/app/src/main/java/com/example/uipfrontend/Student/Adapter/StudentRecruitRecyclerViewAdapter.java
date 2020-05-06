@@ -34,7 +34,7 @@ import butterknife.OnClick;
 public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
 
     private Context context;
-    private List list;
+    private List<RecruitInfo> list;
 
     public StudentRecruitRecyclerViewAdapter(Context context, List list) {
         this.context = context;
@@ -86,12 +86,12 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
 
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
-        viewHolder.contact.setText("联系方式："+"13665665676");
-        viewHolder.userName.setText("联系人："+"小红");
-        viewHolder.infoDate.setText("2020-03-26 15:30");
-        viewHolder.title.setText("比赛组队");
-        viewHolder.content.setText("青研杯找队友，要求：认真负责，人数：2");
-        //临时图片地址
+        viewHolder.contact.setText("联系方式："+ list.get(pos).getContact());
+        viewHolder.userName.setText("联系人："+ list.get(pos).getUserId());
+        viewHolder.infoDate.setText(list.get(pos).getInfoDate());
+        viewHolder.title.setText(list.get(pos).getTitle());
+        viewHolder.content.setText(list.get(pos).getContent());
+        //发布人头像
         setImage(context,viewHolder.portrait,"http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg");
         viewHolder.portrait.setBorderWidth(0);
 
@@ -125,11 +125,13 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
         //临时显示组队信息图片
         ArrayList<ImageInfo> imageInfo = new ArrayList<>();
         ImageInfo info = new ImageInfo();
-        info.setThumbnailUrl("http://image.biaobaiju.com/uploads/20180111/00/1515601824-VFslzoEJkU.jpg");
-        info.setBigImageUrl("http://image.biaobaiju.com/uploads/20180111/00/1515601824-VFslzoEJkU.jpg");
-        imageInfo.add(info);
-        imageInfo.add(info);
-        imageInfo.add(info);
+        String tempUrl[] = list.get(pos).getPictures().split(",");
+        for(String url : tempUrl){
+            //localhost需改为服务器的ip
+            info.setThumbnailUrl(url); //略缩图
+            info.setBigImageUrl(url);  //点击放大图
+            imageInfo.add(info);
+        }
 
         viewHolder.nineGridView.setAdapter(new NineGridViewClickAdapter(context, imageInfo));
    }
