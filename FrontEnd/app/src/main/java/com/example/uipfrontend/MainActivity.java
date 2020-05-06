@@ -174,11 +174,6 @@ public class MainActivity extends AppCompatActivity {
                     et.putString("institute",instituteStrBuilder.toString());
                     et.commit();
 
-
-//                    Log.d(TAG, "resultUniversity: " + resultUniversity);
-//                    Log.d(TAG, "resultInstitute: " + resultInstitute);
-
-
                     Message msg = new Message();
                     msg.what = MenuDataOk;
                     handler.sendMessage(msg);

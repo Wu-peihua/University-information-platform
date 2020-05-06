@@ -57,6 +57,7 @@ public class StudentRecruitFragment extends Fragment {
     private StudentRecruitRecyclerViewAdapter studentRecruitRecyclerViewAdapter;     //每条组队信息内容适配器
 
     private List<RecruitInfo> list;   //组队信息实体类数组
+    private List<String> userNameList;   //存放组队信息发布人用户名
     private View rootView;  //根视图（下拉筛选框）
     private View rootContentView;    //根视图内容
 
@@ -72,6 +73,10 @@ public class StudentRecruitFragment extends Fragment {
     private static final int ZERO = 0; //记录请求回来的数据条数是否为零
     private static final int PAGE_SIZE = 6;   //默认一次请求6条数据
     private static int CUR_PAGE_NUM = 1;
+
+    //记录下拉筛选菜单选择的学校ID和学院ID
+    private int selectedUniversity = 0; //默认为0
+    private int selectedInstitute = -1;  //默认为-1
 
 
     @Nullable
@@ -93,15 +98,15 @@ public class StudentRecruitFragment extends Fragment {
 
     private void init() {
 
-
         //获取下拉目录显示数据
         getMenusData();
 
         initMenus();
         initListener();
         //获取列表数据
-        getData();
-
+        getData(getResources().getString(R.string.serverBasePath) +
+                getResources().getString(R.string.queryRecruit)
+                + "/?pageNum=1&pageSize=" + PAGE_SIZE );
 
         //初始化浮动按钮
         initFAB();
@@ -133,8 +138,6 @@ public class StudentRecruitFragment extends Fragment {
 
     }
 
-
-
     private void initMenus() {
 
         dropDownMenu = rootView.findViewById(R.id.dropDownMenu_student_group);
@@ -157,11 +160,20 @@ public class StudentRecruitFragment extends Fragment {
             @Override
             public void getMenuOne(String var1, int position) {
                 Toast.makeText(rootContentView.getContext(),var1,Toast.LENGTH_SHORT).show();
+                selectedUniversity = position + 1;
+
             }
 
             @Override
             public void getMenuTwo(String var1, int position) {
                 Toast.makeText(rootContentView.getContext(),var1,Toast.LENGTH_SHORT).show();
+                selectedInstitute = position + 1;
+
+                System.out.println("id1:"+selectedUniversity);
+                System.out.println("id2:"+selectedInstitute);
+
+                getData(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitByUniAndIns)
+                        + "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE  + "universityId=" + selectedUniversity + "instituteId=" + selectedInstitute);
 
                 dropDownMenu.setTabText(var1);
                 dropDownMenu.closeMenu();
@@ -170,7 +182,7 @@ public class StudentRecruitFragment extends Fragment {
 
     }
 
-    private void getData(){
+    private void getData(String requestUrl){
         list = new ArrayList<>();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -197,9 +209,7 @@ public class StudentRecruitFragment extends Fragment {
 
         new Thread(()->{
             Request request = new Request.Builder()
-                    .url(getResources().getString(R.string.serverBasePath) +
-                            getResources().getString(R.string.queryRecruit)
-                            + "/?pageNum=1&pageSize=" + PAGE_SIZE )
+                    .url(requestUrl)
                     .get()
                     .build();
             Message msg = new Message();
@@ -215,12 +225,12 @@ public class StudentRecruitFragment extends Fragment {
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                   // System.out.println("recruit 请求返回数据:"+response.body().string());
                     ResponseRecruit responseRecruit = new Gson().fromJson(response.body().string(),
                             ResponseRecruit.class);
 
 
                     list = responseRecruit.getRecruitInfoList();
+                    userNameList = responseRecruit.getUserNameList();
                     if(list.size() == 0) { //获取的数量为0
                         msg.what = ZERO;
                     } else {
@@ -242,7 +252,7 @@ public class StudentRecruitFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        studentRecruitRecyclerViewAdapter = new StudentRecruitRecyclerViewAdapter(this.getContext(), list);
+        studentRecruitRecyclerViewAdapter = new StudentRecruitRecyclerViewAdapter(this.getContext(), list,userNameList);
         recyclerView.setAdapter(studentRecruitRecyclerViewAdapter);
 
         recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
@@ -253,129 +263,16 @@ public class StudentRecruitFragment extends Fragment {
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                new Handler().postDelayed(() -> {
-                    @SuppressLint("HandlerLeak")
-                    Handler handler = new Handler(){
-                        @Override
-                        public void handleMessage(Message msg){
-                            switch (msg.what){
-                                case SUCCESS:
-                                    Log.i("刷新", "成功");
-                                    studentRecruitRecyclerViewAdapter.setList(list);
-                                    studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
-                                    break;
-                                case FAIL:
-                                    Log.i("刷新", "失败");
-                                    break;
-                                case ZERO:
-                                    Log.i("刷新", "0");
-                                    break;
-                            }
-                            recyclerView.refreshComplete();
-                        }
-                    };
-
-                    new Thread(()->{
-                        CUR_PAGE_NUM = 1;
-                        Request request = new Request.Builder()
-                                .url(getResources().getString(R.string.serverBasePath) +
-                                        getResources().getString(R.string.queryRecruit)
-                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE +"&state=0")
-                                .get()
-                                .build();
-                        Message msg = new Message();
-                        OkHttpClient okHttpClient = new OkHttpClient();
-                        Call call = okHttpClient.newCall(request);
-                        call.enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                Log.i("获取: ", e.getMessage());
-                                msg.what = FAIL;
-                                handler.sendMessage(msg);
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-
-                                ResponseRecruit responseRecruit = new Gson().fromJson(response.body().string(),
-                                        ResponseRecruit.class);
-                                list = responseRecruit.getRecruitInfoList();
-                                if(list.size() == 0) {
-                                    msg.what = ZERO;
-                                } else {
-                                    msg.what = SUCCESS;
-                                }
-                                handler.sendMessage(msg);
-                                Log.i("获取: ", String.valueOf(list.size()));
-                            }
-                        });
-                    }).start();
-                }, 1500);
+                fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruit) +
+                        "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE );
                 recyclerView.refreshComplete();
 
             }
 
             @Override
             public void onLoadMore() {
-                new Handler().postDelayed(() -> {
-                    @SuppressLint("HandlerLeak")
-                    Handler handler = new Handler(){
-                        @Override
-                        public void handleMessage(Message msg){
-                            switch (msg.what){
-                                case SUCCESS:
-                                    Log.i("加载", "成功");
-                                    recyclerView.refreshComplete();
-                                    studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
-                                    break;
-                                case FAIL:
-                                    Log.i("加载", "失败");
-                                    break;
-                                case ZERO:
-                                    Log.i("加载", "0");
-                                    recyclerView.setNoMore(true);
-                                    break;
-                            }
-                        }
-                    };
-
-                    new Thread(()->{
-                        CUR_PAGE_NUM++;
-                        Request request = new Request.Builder()
-                                .url(getResources().getString(R.string.serverBasePath) +
-                                        getResources().getString(R.string.queryRecruit)
-                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize=" + PAGE_SIZE + "&state=0")
-                                .get()
-                                .build();
-                        Message msg = new Message();
-                        OkHttpClient okHttpClient = new OkHttpClient();
-                        Call call = okHttpClient.newCall(request);
-                        call.enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                Log.i("获取: ", e.getMessage());
-                                msg.what = FAIL;
-                                handler.sendMessage(msg);
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-
-                                ResponseRecruit responseRecruit = new Gson().fromJson(response.body().string(),
-                                        ResponseRecruit.class);
-                                list.addAll(responseRecruit.getRecruitInfoList());
-                                if((CUR_PAGE_NUM - 2) * PAGE_SIZE + responseRecruit.getPageSize() <
-                                        responseRecruit.getTotal() ){
-                                    msg.what = ZERO;
-                                } else {
-                                    msg.what = SUCCESS;
-                                }
-                                handler.sendMessage(msg);
-                                Log.i("获取: ", String.valueOf(list.size()));
-                            }
-                        });
-                    }).start();
-                }, 1500);
+                fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruit) +
+                        "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE );
                 recyclerView.setNoMore(true);
             }
         });
@@ -393,4 +290,70 @@ public class StudentRecruitFragment extends Fragment {
         });
     }
 
+
+    private void fetchRecruitInfo(String requestUrl){
+        new Handler().postDelayed(() -> {
+            @SuppressLint("HandlerLeak")
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg){
+                    switch (msg.what){
+                        case SUCCESS:
+                            Log.i("获取", "成功");
+                            studentRecruitRecyclerViewAdapter.setList(list, userNameList);
+                            studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
+                            break;
+                        case FAIL:
+                            Log.i("获取", "失败");
+                            break;
+                        case ZERO:
+                            Log.i("获取", "0");
+                            break;
+                    }
+                    recyclerView.refreshComplete();
+                }
+            };
+
+            new Thread(()->{
+                CUR_PAGE_NUM = 1;
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .get()
+                        .build();
+                Message msg = new Message();
+                OkHttpClient okHttpClient = new OkHttpClient();
+                Call call = okHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("获取: ", e.getMessage());
+                        msg.what = FAIL;
+                        handler.sendMessage(msg);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+
+                        ResponseRecruit responseRecruit = new Gson().fromJson(response.body().string(),
+                                ResponseRecruit.class);
+                        list = responseRecruit.getRecruitInfoList();
+                        userNameList = responseRecruit.getUserNameList();
+                        if(list == null || list.size() == 0 ) {
+                            msg.what = ZERO;
+                        } else {
+                            msg.what = SUCCESS;
+                        }
+                        handler.sendMessage(msg);
+                        if(list != null){
+                            Log.i("获取 ", String.valueOf(list.size()));
+                        }else{
+                            Log.i("获取 ", "0");
+
+                        }
+                    }
+                });
+            }).start();
+        }, 1500);
+
+    }
 }

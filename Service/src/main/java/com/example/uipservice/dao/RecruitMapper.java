@@ -2,6 +2,7 @@ package com.example.uipservice.dao;
 
 import com.example.uipservice.entity.Recruit;
 import com.github.pagehelper.Page;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +22,7 @@ public interface RecruitMapper {
 
     Page<Recruit> queryRecruit();
 
-    Page<Recruit> queryRecruitByUniAndIns(Integer universityId,Integer instituteId);
+    Page<Recruit> queryRecruitByUniAndIns(@Param("universityId")Integer universityId, @Param("instituteId")Integer instituteId);
 
     Page<Recruit> queryRecruitByInfoId(Long infoId);
 

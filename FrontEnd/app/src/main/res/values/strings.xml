@@ -21,6 +21,8 @@
     <string name="queryRecruitByUserId">/recruit/queryrecruitbyuserid</string>
     <!--提交组队信息-->
     <string name="insertRecruit">/recruit/insertrecruit</string>
+    <!--根据学校和学院id获取组队信息-->
+    <string name="queryrecruitbyUniandIns">/recruit/queryrecruitbyuniandins</string>
 
 
     <!--分页获取所有课程信息-->

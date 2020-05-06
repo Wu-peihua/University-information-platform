@@ -35,10 +35,12 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List<RecruitInfo> list;
+    private List<String> userNameList;
 
-    public StudentRecruitRecyclerViewAdapter(Context context, List list) {
+    public StudentRecruitRecyclerViewAdapter(Context context, List list, List userNameList) {
         this.context = context;
         this.list = list;
+        this.userNameList = userNameList;
     }
 
 
@@ -71,7 +73,7 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
     }
 
 
-    public void setList(List<RecruitInfo> list) { this.list = list; }
+    public void setList(List<RecruitInfo> list , List<String> userNameList) { this.list = list; this.userNameList = userNameList; }
 
 
     @NonNull
@@ -87,7 +89,7 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
         viewHolder.contact.setText("联系方式："+ list.get(pos).getContact());
-        viewHolder.userName.setText("联系人："+ list.get(pos).getUserId());
+        viewHolder.userName.setText("联系人："+ userNameList.get(pos));
         viewHolder.infoDate.setText(list.get(pos).getInfoDate());
         viewHolder.title.setText(list.get(pos).getTitle());
         viewHolder.content.setText(list.get(pos).getContent());

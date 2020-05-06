@@ -12,6 +12,16 @@ public class ResponseRecruit {
     private Integer total;
     private List<RecruitInfo> recruitInfoList;
 
+    public List<String> getUserNameList() {
+        return userNameList;
+    }
+
+    public void setUserNameList(List<String> userNameList) {
+        this.userNameList = userNameList;
+    }
+
+    private List<String> userNameList;
+
     public ResponseRecruit(){}
 
     public Integer getPageSize() {
