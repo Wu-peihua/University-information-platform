@@ -110,88 +110,18 @@ public class StudentRecruitFragment extends Fragment {
 
 
     private void getMenusData(){
-//        @SuppressLint("HandlerLeak")
-//        Handler handler = new Handler() {
-//            public void handleMessage(Message msg) {
-//                if (msg.what == MenuDataOk) {//初始化下拉筛选
-//
-//                }
-//                super.handleMessage(msg);
-//            }
-//        };
-
-
-//        //发送http请求
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                OkHttpClient client = new OkHttpClient();
-//                Request requestUniversity = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryuniversity)).build();
-//                Request requestInstitute = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryinstitute)).build();
-//
-//                try {
-//                   //请求大学目录
-//                    Response responseUniversity = client.newCall(requestUniversity).execute();//发送请求
-//                    Response responseInstitute = client.newCall(requestInstitute).execute();
-//                    String resultUniversity = Objects.requireNonNull(responseUniversity.body()).string();
-//                    String resultInstitute = Objects.requireNonNull(responseInstitute.body()).string();
-//
-//                    //解析大学json字符串数组
-//                    JsonObject jsonObjectUniversity = new JsonParser().parse(resultUniversity).getAsJsonObject();
-//                    JsonArray jsonArrayUniversity = jsonObjectUniversity.getAsJsonArray("universityList");
-//                    //解析专业json字符串数组
-//                    JsonObject jsonObjectInstitute = new JsonParser().parse(resultInstitute).getAsJsonObject();
-//                    JsonArray jsonArrayInstitute = jsonObjectInstitute.getAsJsonArray("instituteList");
-//
-//                    //初始化菜单栏
-//                    levelOneMenu = new String[jsonArrayUniversity.size()];
-//                    levelTwoMenu = new String[jsonArrayUniversity.size()][jsonArrayInstitute.size()];
-//
-//                    //循环遍历数组
-//                    int index = 0;
-//                    for (JsonElement jsonElement : jsonArrayUniversity) {
-//                        University university = new Gson().fromJson(jsonElement, new TypeToken<University>() {
-//                        }.getType());
-//                        levelOneMenu[index] = university.getUniversityName();
-//                        ++index;
-//                    }
-//
-//                    index = 0;
-//                    for(int i=0;i<jsonArrayUniversity.size();++i){
-//                        for (JsonElement jsonElement : jsonArrayInstitute) {
-//                            Institute institute = new Gson().fromJson(jsonElement, new TypeToken<Institute>() {
-//                            }.getType());
-//
-//                            levelTwoMenu[i][index] = institute.getInstituteName();
-//                            ++index;
-//                        }
-//                    }
-//
-//
-//                    Log.d(TAG, "resultUniversity: " + resultUniversity);
-//                    Log.d(TAG, "resultInstitute: " + resultInstitute);
-//
-//
-//                    Message msg = new Message();
-//                    msg.what = MenuDataOk;
-//                    handler.sendMessage(msg);
-//
-//                } catch(IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-
-        //通过sharepreference获取顶部筛选菜单数据
         SharedPreferences sp = Objects.requireNonNull(getActivity()).getSharedPreferences("data",MODE_PRIVATE);
         //第二个参数为缺省值，如果不存在该key，返回缺省值
-        Set<String> setUniversity = sp.getStringSet("university",null);
-        Set<String> setInstitute = sp.getStringSet("institute",null);
+        String strUniversity = sp.getString("university",null);
+        String strInstitute = sp.getString("institute",null);
 
-        assert setUniversity != null;
-        List<String> universityList = new ArrayList<>(setUniversity);
-        assert setInstitute != null;
-        List<String> instituteList = new ArrayList<>(setInstitute);
+        List<String> universityList = new ArrayList<>();
+        List<String> instituteList = new ArrayList<>();
+        //将String转为List
+        String str1[] = strUniversity.split(",");
+        universityList = Arrays.asList(str1);
+        String str[] = strInstitute.split(",");
+        instituteList = Arrays.asList(str);
 
         levelOneMenu = universityList.toArray(new String[0]);
         String[] temp = instituteList.toArray(new String[0]);

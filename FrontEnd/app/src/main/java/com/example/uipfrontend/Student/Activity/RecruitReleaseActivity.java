@@ -514,6 +514,8 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         option1 = universityList.toArray(new String[0]);
         option2 = instituteList.toArray(new String[0]);
 
+        System.out.println("InstituteList:"+instituteList.toString());
+
 
     }
 

@@ -107,17 +107,18 @@ public class StudentCommentFragment extends Fragment {
     }
 
     private void getMenusData(){
-
-        //通过sharepreference获取顶部筛选菜单数据
         SharedPreferences sp = Objects.requireNonNull(getActivity()).getSharedPreferences("data",MODE_PRIVATE);
         //第二个参数为缺省值，如果不存在该key，返回缺省值
-        Set<String> setUniversity = sp.getStringSet("university",null);
-        Set<String> setInstitute = sp.getStringSet("institute",null);
+        String strUniversity = sp.getString("university",null);
+        String strInstitute = sp.getString("institute",null);
 
-        assert setUniversity != null;
-        List<String> universityList = new ArrayList<>(setUniversity);
-        assert setInstitute != null;
-        List<String> instituteList = new ArrayList<>(setInstitute);
+        List<String> universityList = new ArrayList<>();
+        List<String> instituteList = new ArrayList<>();
+        //将String转为List
+        String str1[] = strUniversity.split(",");
+        universityList = Arrays.asList(str1);
+        String str[] = strInstitute.split(",");
+        instituteList = Arrays.asList(str);
 
         levelOneMenu = universityList.toArray(new String[0]);
         String[] temp = instituteList.toArray(new String[0]);
@@ -244,23 +245,23 @@ public class StudentCommentFragment extends Fragment {
 
         dropDownMenu = rootView.findViewById(R.id.dropDownMenu_student_course);
         headers = new String[]{"所属院校"};
-        /*
-        //初始化多级菜单
-        final String[] levelOneMenu = {"全部", "华南师范大学", "华南理工大学", "中山大学"};
-        //学院 暂定18个
-        final String[][] levelTwoMenu = {
-                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
-                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"},
-                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
-                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"},
-                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
-                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"},
-                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
-                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"}
 
-        };
+//        //初始化多级菜单
+//        final String[] levelOneMenu = {"全部", "华南师范大学", "华南理工大学", "中山大学"};
+//        //学院 暂定18个
+//        final String[][] levelTwoMenu = {
+//                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
+//                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"},
+//                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
+//                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"},
+//                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
+//                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"},
+//                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
+//                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"}
+//
+//        };
 
-         */
+
         multiMenusView = new MultiMenusView(this.getContext(),levelOneMenu,levelTwoMenu);
         popupViews.add(multiMenusView);
         //初始化内容视图
