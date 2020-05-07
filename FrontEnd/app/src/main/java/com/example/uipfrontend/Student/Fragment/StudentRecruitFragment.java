@@ -267,8 +267,14 @@ public class StudentRecruitFragment extends Fragment {
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruit) +
-                        "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE );
+                if(selectedUniversity <= 0 && selectedInstitute <=0 ){
+                    fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruit) +
+                            "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE );
+                }else{
+                    fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitByUniAndIns) +
+                            "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
+                }
+
                 recyclerView.refreshComplete();
 
             }
@@ -277,6 +283,14 @@ public class StudentRecruitFragment extends Fragment {
             public void onLoadMore() {
                 fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruit) +
                         "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE );
+
+                if(selectedUniversity <= 0 && selectedInstitute <=0 ){
+                    fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruit) +
+                            "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE );
+                }else{
+                    fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitByUniAndIns) +
+                            "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
+                }
                 recyclerView.setNoMore(true);
             }
         });
