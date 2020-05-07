@@ -166,14 +166,15 @@ public class StudentRecruitFragment extends Fragment {
 
             @Override
             public void getMenuTwo(String var1, int position) {
-                Toast.makeText(rootContentView.getContext(),var1,Toast.LENGTH_SHORT).show();
                 selectedInstitute = position + 1;
 
-                System.out.println("id1:"+selectedUniversity);
-                System.out.println("id2:"+selectedInstitute);
+                if(selectedUniversity <= 0 )
+                    selectedUniversity = 1;
+                System.out.println("university:"+selectedUniversity+"  institute:"+selectedInstitute);
 
                 getData(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitByUniAndIns)
-                        + "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE  + "universityId=" + selectedUniversity + "instituteId=" + selectedInstitute);
+                        + "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE  + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
+
 
                 dropDownMenu.setTabText(var1);
                 dropDownMenu.closeMenu();
@@ -189,17 +190,17 @@ public class StudentRecruitFragment extends Fragment {
             public void handleMessage(Message message){
                 switch (message.what){
                     case SUCCESS:
-                        Log.i("获取: ", "成功");
+                        Log.i("获取 ", "成功");
                         //初始化列表
                         initRecyclerView();
                         break;
 
                     case FAIL:
-                        Log.i("获取: ", "失败");
+                        Log.i("获取 ", "失败");
                         break;
 
                     case ZERO:
-                        Log.i("获取: ", "0");
+                        Log.i("获取", "0");
                         Toast.makeText(rootContentView.getContext(),"暂时没有新的信息！",Toast.LENGTH_SHORT).show();
                         initRecyclerView();
                         break;
@@ -225,19 +226,22 @@ public class StudentRecruitFragment extends Fragment {
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
+
+
                     ResponseRecruit responseRecruit = new Gson().fromJson(response.body().string(),
                             ResponseRecruit.class);
 
-
                     list = responseRecruit.getRecruitInfoList();
                     userNameList = responseRecruit.getUserNameList();
+
+
                     if(list.size() == 0) { //获取的数量为0
                         msg.what = ZERO;
                     } else {
                         msg.what = SUCCESS;
                     }
                     handler.sendMessage(msg);
-                    Log.i("获取: ", String.valueOf(list.size()));
+                    Log.i("获取", String.valueOf(list.size()));
                 }
             });
         }).start();
@@ -338,18 +342,14 @@ public class StudentRecruitFragment extends Fragment {
                                 ResponseRecruit.class);
                         list = responseRecruit.getRecruitInfoList();
                         userNameList = responseRecruit.getUserNameList();
-                        if(list == null || list.size() == 0 ) {
+                        if( list.size() == 0 ) {
                             msg.what = ZERO;
                         } else {
                             msg.what = SUCCESS;
                         }
                         handler.sendMessage(msg);
-                        if(list != null){
-                            Log.i("获取 ", String.valueOf(list.size()));
-                        }else{
-                            Log.i("获取 ", "0");
+                        Log.i("获取 ", String.valueOf(list.size()));
 
-                        }
                     }
                 });
             }).start();

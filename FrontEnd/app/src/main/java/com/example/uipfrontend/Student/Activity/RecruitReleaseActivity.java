@@ -603,6 +603,7 @@ public class RecruitReleaseActivity extends AppCompatActivity {
                         for (JsonElement jsonElement : jsonArrayUrl) {
                             url += jsonElement.toString() + ",";
                         }
+
                         recruitInfo.setPictures(url);
 
                         insertRecruitInfo();

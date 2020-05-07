@@ -138,6 +138,4 @@ public class RecruitInfo implements Serializable {
 
 
 
-
-
 }
