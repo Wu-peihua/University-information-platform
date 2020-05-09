@@ -24,6 +24,7 @@ import com.example.uipfrontend.Entity.ResponseRecruit;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Activity.RecruitReleaseActivity;
 import com.example.uipfrontend.Student.Adapter.StudentRecruitRecyclerViewAdapter;
+import com.example.uipfrontend.Utils.LoadingViewManager;
 import com.example.uipfrontend.Utils.MultiMenusView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -317,6 +318,9 @@ public class StudentRecruitFragment extends Fragment {
 
 
     private void fetchRecruitInfo(String requestUrl){
+        LoadingViewManager.with(getActivity()).setHintText("加载提示").build();   //加载动画
+
+
         new Handler().postDelayed(() -> {
             @SuppressLint("HandlerLeak")
             Handler handler = new Handler(){
@@ -328,6 +332,8 @@ public class StudentRecruitFragment extends Fragment {
                             tv_blank.setVisibility(View.GONE);
                             studentRecruitRecyclerViewAdapter.setList(list, userNameList);
                             studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
+                            LoadingViewManager.dismiss();
+
                             break;
                         case FAIL:
                             Log.i("获取", "失败");
