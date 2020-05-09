@@ -6,13 +6,14 @@
     <result column="commentator_id" property="commentatorId" jdbcType="BIGINT" />
     <result column="course_id" property="courseId" jdbcType="BIGINT" />
     <result column="content" property="content" jdbcType="VARCHAR" />
-    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="DECIMAL" />
     <result column="report_number" property="reportNumber" jdbcType="INTEGER" />
     <result column="like_number" property="likeNumber" jdbcType="INTEGER" />
     <result column="info_date" property="infoDate" jdbcType="TIMESTAMP" />
     <result column="created" property="created" jdbcType="TIMESTAMP" />
     <result column="user_name" property="fromName" jdbcType="VARCHAR" />
     <result column="portrait" property="portrait" jdbcType="VARCHAR" />
+    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     info_id, commentator_id, course_id, content, score, report_number,like_number,info_date, created
@@ -143,11 +144,11 @@
   <!--分页查找-->
 
   <select id="queryCourseEvaluationByUserId" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
-    select
-    *
-    from course_evaluation
-    where commentator_id = #{commentatorId}
-
+    select course_evaluation.info_id, commentator_id, course_id, content, score, report_number,like_number, course_evaluation.info_date,
+    course_evaluation.created,course_name
+    from course_evaluation inner join courses
+    on course_id = courses.info_id
+    where commentator_id = #{commentatorId, jdbcType=BIGINT}
   </select>
 
 

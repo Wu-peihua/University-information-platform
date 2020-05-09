@@ -36,7 +36,7 @@ public class CourseEvaluationController {
      * @return modelMap
      */
     @RequestMapping(value = "/updatecourseeval", method = RequestMethod.POST)
-    private Map<String,Object> updateCourseEvaluation(CourseEvaluation courseEvaluation){
+    private Map<String,Object> updateCourseEvaluation(@RequestBody CourseEvaluation courseEvaluation){
         Map<String,Object> modelMap = new HashMap<String, Object>();
         modelMap.put("success", courseEvaluationService.updateCourseEvaluation(courseEvaluation));
         return modelMap;

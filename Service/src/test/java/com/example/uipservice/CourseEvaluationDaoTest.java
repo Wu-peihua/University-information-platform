@@ -25,7 +25,7 @@ public class CourseEvaluationDaoTest {
         courseEval.setCommentatorId((long)4);
         courseEval.setContent("难度大！");
         courseEval.setCourseId((long)4);
-        courseEval.setScore(3);
+        courseEval.setScore((float)3.0);
         courseEval.setInfoDate(new Date());
 
         int effectedNum = courseEvaluationMapper.insert(courseEval);

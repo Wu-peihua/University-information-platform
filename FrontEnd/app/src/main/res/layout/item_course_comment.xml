@@ -102,7 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="8dp"
-                    android:layout_toLeftOf="@id/ll_cu_forum_comment_write"
+                    android:layout_toLeftOf="@id/ll_comment_write"
                     app:count="100"
                     app:normalRes="@drawable/icon_praise_normal"
                     app:selectedRes="@drawable/icon_praise_selected"
@@ -114,7 +114,7 @@
 
                 <!-- 回复按钮 -->
                 <LinearLayout
-                    android:id="@+id/ll_cu_forum_comment_write"
+                    android:id="@+id/ll_comment_write"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -123,7 +123,7 @@
                     <Button
                         android:layout_toRightOf="@+id/btnlike_student_comment"
                         android:id="@+id/BtnBadReport"
-                        android:background="@drawable/report"
+                        android:background="@drawable/more"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_centerVertical="true"

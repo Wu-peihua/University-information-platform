@@ -21,8 +21,7 @@ public class Courses {
 
     private String description;
 
-    private Integer averageScore;
-
+    private  Float averageScore;
     private Date created;
 
     public Long getInfoId() {
@@ -97,11 +96,11 @@ public class Courses {
         this.description = description == null ? null : description.trim();
     }
 
-    public Integer getAverageScore() {
+    public Float getAverageScore() {
         return averageScore;
     }
 
-    public void setAverageScore(Integer averageScore) {
+    public void setAverageScore(Float averageScore) {
         this.averageScore = averageScore;
     }
 

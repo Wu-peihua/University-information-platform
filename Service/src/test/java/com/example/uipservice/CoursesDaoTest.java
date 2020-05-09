@@ -21,7 +21,7 @@ public class CoursesDaoTest {
     public void insertCourses(){
         Courses courses = new Courses();
         courses.setCourseName("计算机网络");
-        courses.setAverageScore(5);
+        courses.setAverageScore((float)5.0);
         courses.setCoursePicture("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587898699610&di=c7b2fc839b41a4eb285279b781112427&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F09%2F20190109072726_aNNZd.thumb.700_0.jpeg");
         courses.setDescription("互联网的世界");
         courses.setTeacherName("唐华");

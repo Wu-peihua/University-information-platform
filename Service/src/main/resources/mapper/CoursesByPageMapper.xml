@@ -5,28 +5,35 @@
 <mapper namespace="com.example.uipservice.dao.CoursesMapper" >
 
 
-    <!--分页查找-->
-
-   
-    <select id="queryCourseByInfoId" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
-    select
-    *
-    from courses
+    <!--根据课程id分页查找,根据课程评论情况查询课程的平均分，默认为0-->
+    <!--select id="queryCourseByInfoId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        courses.info_id, user_id, courses.university_id, courses.institute_id, course_name, teacher_name, course_picture,
+        courses.info_date, description, ifnull(avg(course_evaluation.score),0) as average_score, courses.created
+        from courses inner join course_evaluation
+        on courses.info_id = course_evaluation.course_id
     where info_id = #{infoId}
-    </select>
+    </select-->
 
-
+<!--根据课程所属学校以及学院查找-->
     <select id="queryCoursesByUniAndIns" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
-    select
-    *
-    from courses
-    where university_id = #{universityId} and institute_id = #{instituteId}
+        select
+        courses.info_id, user_id, courses.university_id, courses.institute_id, course_name, teacher_name, course_picture,
+        courses.info_date, description, ifnull(avg(course_evaluation.score),0) as average_score, courses.created
+        from courses left join course_evaluation
+        on courses.info_id = course_evaluation.course_id
+        where university_id = #{universityId} and institute_id = #{instituteId}
+        group by courses.info_id
     </select>
 
+    <!--分页查找所有课程,根据课程评论情况查询课程的平均分，默认为0-->
     <select id="queryCourses" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
-    select
-    *
-    from courses
+        select
+        courses.info_id, user_id, courses.university_id, courses.institute_id, course_name, teacher_name, course_picture,
+        courses.info_date, description, ifnull(avg(course_evaluation.score),0) as average_score, courses.created
+        from courses left join course_evaluation
+        on courses.info_id = course_evaluation.course_id
+        group by courses.info_id
     </select>
 
 

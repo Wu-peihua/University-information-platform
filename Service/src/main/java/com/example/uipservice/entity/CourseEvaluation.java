@@ -17,11 +17,14 @@ public class CourseEvaluation {
 
     private String content;
 
-    private Integer score;
+    private Float score;
 
     private Integer reportNumber;
 
     private  Integer likeNumber;
+
+    private  String courseName;
+
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm",  timezone="GMT+8")
     private Date infoDate;
@@ -37,7 +40,7 @@ public class CourseEvaluation {
     }
 
     public Long getCommentatorId() {
-        return commentatorId;
+        return this.commentatorId;
     }
 
     public void setCommentatorId(Long commentatorId) {
@@ -60,11 +63,11 @@ public class CourseEvaluation {
         this.content = content == null ? null : content.trim();
     }
 
-    public Integer getScore() {
-        return score;
+    public Float getScore() {
+        return this.score;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(Float score) {
         this.score = score;
     }
 
@@ -107,4 +110,8 @@ public class CourseEvaluation {
     public void setPortrait(String portrait) {
         this.portrait = portrait;
     }
+
+    public String getCourseName(){return this.courseName;}
+
+    public void setCourseName(String courseName){this.courseName = courseName;}
 }

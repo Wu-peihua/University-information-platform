@@ -16,7 +16,7 @@ public class CourseComment implements Serializable {
 
     private String content;
 
-    private Integer score;
+    private Float score;
 
 
     private Date infoDate;
@@ -24,11 +24,12 @@ public class CourseComment implements Serializable {
 
     private Date created;
 
-    private int BadReportCount;//举报次数
-    private int LikeCount;//点赞次数
+    private int reportNumber;//举报次数
+    private int likeNumber;;//点赞次数
 
     private String fromName;//评论用户名字
     private String  portrait;     // 评论者头像
+    private String courseName;//课程名称
 
     /*private Integer CourseId;//评论的课程id
     private String CourseName;//课程名称
@@ -46,7 +47,7 @@ public class CourseComment implements Serializable {
     //commentatorid + courseid + content+ score+ date
 
 
-    public CourseComment(Long _userid, Long _courseId,String _content,Integer _score,Date _infodate){
+    public CourseComment(Long _userid, Long _courseId,String _content,Float _score,Date _infodate){
 
 
         this.commentatorId = _userid;
@@ -54,8 +55,8 @@ public class CourseComment implements Serializable {
         this.content = _content;
         this.score = _score;
         this.infoDate = _infodate;
-        this.LikeCount=0;//新增评论点赞数
-        this.BadReportCount = 0;
+        this.likeNumber=0;//新增评论点赞数
+        this.reportNumber = 0;
     }
 
     public String getFromName() {
@@ -105,11 +106,11 @@ public class CourseComment implements Serializable {
         this.content = content == null ? null : content.trim();
     }
 
-    public Integer getScore() {
+    public Float getScore() {
         return score;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(Float score) {
         this.score = score;
     }
 
@@ -130,22 +131,25 @@ public class CourseComment implements Serializable {
     }
 
 
-    public  int getBadReportCount() {
-        return  this.BadReportCount;
+    public int getBadReportCount() {
+        return  reportNumber;
     }
 
     public int getLikeCount() {
-        return this.LikeCount;
+        return likeNumber;
     }
 
     public void setBadReportCount(int _badreport){
-        this.BadReportCount = _badreport;
+        this.reportNumber = _badreport;
     }
 
     public void setLikeCount(int likeCount){
-        this.LikeCount = likeCount;
+        this.likeNumber = likeCount;
     }
 
+    public String getCourseName(){return this.courseName;}
+
+    public void setCourseName(String courseName){this.courseName = courseName;}
 
 
     public String toString(){

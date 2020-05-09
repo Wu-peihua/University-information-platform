@@ -155,7 +155,7 @@ public class SubFragment2 extends Fragment {
             e.printStackTrace();
         }
         for(int i=0;i<10;i++) {
-            mTags.add(new CourseComment((long) 1, (long) 3, "interesting", 4, commentDate));
+            mTags.add(new CourseComment((long) 1, (long) 3, "interesting", (float)4, commentDate));
 
         }
         //count = mTags.size();

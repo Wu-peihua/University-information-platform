@@ -2,6 +2,7 @@ package com.example.uipservice.service.Impl;
 
 import com.example.uipservice.dao.CoursesMapper;
 import com.example.uipservice.entity.Courses;
+import com.example.uipservice.entity.UserInfo;
 import com.example.uipservice.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,16 +77,25 @@ public class CourseServiceImpl implements CourseService {
 
 
         @Override
-        public Map queryCourseByInfoId(Integer pageNum, Integer pageSize, Long infoId) {
-            Map recruitMap = new HashMap();
-            PageHelper.startPage(pageNum,pageSize);
-            Page<Courses> data = courseMapper.queryCoursesByInfoId(infoId);
-            recruitMap.put("courseInfoList",data);  //分页获取的数据
-            recruitMap.put("total",data.getTotal());       //总页数
-            recruitMap.put("pageSize",data.getPageSize());     //每页大小
-            recruitMap.put("pageNum",pageNum);     //页数
-    
-            return recruitMap;    
+        public Courses queryCourseByInfoId(Long infoId) {
+
+            //PageHelper.startPage(pageNum,pageSize);
+            //Page<Courses> data = courseMapper.queryCoursesByInfoId(infoId);
+            //recruitMap.put("courseInfoList",data);  //分页获取的数据
+            //recruitMap.put("total",data.getTotal());       //总页数
+            //recruitMap.put("pageSize",data.getPageSize());     //每页大小
+            //recruitMap.put("pageNum",pageNum);     //页数
+            if(infoId != null){
+                try {
+                    Courses courses = courseMapper.queryCoursesByInfoId(infoId);
+                    return courses;
+                }catch (Exception e){
+                    throw new RuntimeException("服务器操作错误: " + e.getMessage());
+                }
+            }else {
+                throw new RuntimeException("课程id为空！");
+            }
+
         }
 
 
