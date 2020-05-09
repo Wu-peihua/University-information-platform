@@ -34,11 +34,24 @@ public class Course implements Serializable {
 
     private String description;
 
-    private Integer averageScore;
+    //修改平均分属性 float
+    //private Integer averageScore;
+
+    private Float averageScore;
 
     private Date created;
 
-    public Course(Long courseID,String _name, String _teacher,String _description,Integer _score){
+    /*public Course(Long courseID,String _name, String _teacher,String _description,Integer _score){
+        this.infoId = courseID;
+        this.courseName = _name;
+        this.teacherName = _teacher;
+        this.description = _description;
+        this.averageScore = _score;
+    }
+
+     */
+
+    public Course(Long courseID,String _name, String _teacher,String _description,Float _score){
         this.infoId = courseID;
         this.courseName = _name;
         this.teacherName = _teacher;
@@ -73,7 +86,7 @@ public class Course implements Serializable {
         return this.description;
     }
 
-    public double getScore(){
+    public Float getScore(){
         return this.averageScore;
     }
 
@@ -106,7 +119,12 @@ public class Course implements Serializable {
         this.teacherName = teacher;
     }
 
-    public  void  setScore(Integer score) {
+    /*public  void  setScore(Integer score) {
+        this.averageScore = score;
+    }
+
+     */
+    public  void  setScore(Float score) {
         this.averageScore = score;
     }
 

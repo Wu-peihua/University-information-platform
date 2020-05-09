@@ -45,14 +45,14 @@
                 android:orientation="horizontal">
 
                 <!-- 评论者 -->
-                <TextView
+                <!--TextView
                     android:id="@+id/my_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_xs"
                     android:text="Yuzz"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/fontSize_s" />
+                    android:textSize="@dimen/fontSize_s" /-->
 
                 <RatingBar
                     android:id="@+id/my_user_rating_bar"
@@ -61,7 +61,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/margin_xs"
-                    android:layout_toRightOf="@+id/my_user_name"
                     android:isIndicator="true"
                     android:layout_centerVertical="true"
                     android:numStars="5"

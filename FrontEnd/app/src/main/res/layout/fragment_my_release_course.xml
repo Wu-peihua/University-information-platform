@@ -14,6 +14,16 @@
         android:clipToPadding="false"
         android:padding="@dimen/padding" />
 
+    <!-- 空白提示 -->
+    <TextView
+        android:id="@+id/tv_blank_my_course"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text=""
+        android:textColor="@color/blue"
+        android:visibility="gone"/>
+
 
 
 </RelativeLayout>

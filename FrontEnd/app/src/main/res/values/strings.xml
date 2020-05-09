@@ -4,7 +4,9 @@
     <!--url配置-->
     <!--<string name="serverBasePath">http://192.168.0.103:8080/uip</string>-->
     <!--string name="serverBasePath">http://192.168.1.107:8080/uip</string-->
-    <string name="serverBasePath">http://192.168.1.105:8080/uip</string>
+    <!--string name="serverBasePath">http://192.168.1.105:8080/uip</string-->
+    <string name="serverBasePath">http://192.168.1.104:8080/uip</string>
+
     <!--获取顶部筛选菜单-->
     <string name="queryUniversity">/university/queryuniversity</string>
     <string name="queryInstitute">/institute/queryinstitute</string>
@@ -31,6 +33,8 @@
     <string name="queryCourseEvaluation">/courseeval/querycourseeval</string>
     <!--根据course id查询课程评论信息-->
     <string name="queryCourseEvaluationByCourseId">/courseeval/querycourseevalbycourseid</string>
+    <!--根据学校和学院id获取课程的信息-->
+    <string name="queryCourseByUniAndIns">/courses/querycoursebyuniandins</string>
     <!--插入课程评论信息-->
     <string name="insertCourseComment">/courseeval/insertcourseeval</string>
     <!--根据user id 获取用户信息-->
@@ -38,7 +42,11 @@
     <!--根据信息主键id分页获取课程信息-->
     <string name="queryCourseByInfoid">/courses/querycoursebyinfoid</string>
     <!--根据用户id分页获取评论信息-->
-    <string name="queryCourseByUserId">/recruit/queryrecruitbyuserid</string>
+    <string name="queryCourseEvaluationByUserId">/courseeval/querycourseevalbyuserid</string>
+    <!--删除课程评论-->
+    <string name="deleteCourseEvaluation">/courseeval/deletecourseeval</string>
+    <!--修改课程评论-->
+    <string name="updateCourseEvaluation">/courseeval/updatecourseeval</string>
     
     <!--获取帖子-->
     <string name="queryPosts">/forumposts/queryposts</string>

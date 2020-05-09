@@ -21,7 +21,7 @@ public interface CourseService {
     /*根据发布人的用户id分页获取组队信息*/
     //Map queryRecruitByUserId(Integer pageNum, Integer pageSize, Long userId);
     //根据信息主键id分页获取
-    Map queryCourseByInfoId(Integer pageNum, Integer pageSize, Long infoId);
+    Courses queryCourseByInfoId(Long infoId);
     /*根据学校ID和学院ID分页获取所有课程信息*/
     Map queryCourseByUniAndIns(Integer pageNum, Integer pageSize, Integer universityId,Integer instituteId);
     /*分页获取所有的课程信息*/

@@ -286,7 +286,7 @@ public class AdminCourseFragment extends Fragment {
 
     }
 
-
+/*
     public void initData() {
 
 
@@ -320,6 +320,8 @@ public class AdminCourseFragment extends Fragment {
         //count = mTags.size();
     }
 
+
+ */
     private void initRecyclerView() {
         recyclerView = rootContentView.findViewById(R.id.rv_admin_group);
 
