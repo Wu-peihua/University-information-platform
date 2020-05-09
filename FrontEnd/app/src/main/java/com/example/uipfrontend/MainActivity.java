@@ -63,18 +63,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
         UserInfo user = (UserInfo) getApplication();
         user.setUserId(4L);
         user.setUserName("悟空");
         user.setPortrait("http://pic4.zhimg.com/50/v2-6ecab2cd6c1bbf9835030682db83543d_hd.jpg");
 
+
         commonUser = findViewById(R.id.btn_commonUser);
         student = findViewById(R.id.btn_student);
         admin = findViewById(R.id.btn_admin);
 
+        initUser();
         getMenusData();
         initListener();
+
+    }
+
+    private void initUser(){
 
     }
 

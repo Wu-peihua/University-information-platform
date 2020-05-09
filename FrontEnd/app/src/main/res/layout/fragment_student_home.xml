@@ -66,6 +66,45 @@
         <!--            android:background="@color/divider" />-->
 
         <RelativeLayout
+            android:id="@+id/rl_student_personalInfo"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="@dimen/margin"
+            android:background="@drawable/home_select_bg"
+            android:paddingLeft="@dimen/padding_xxl">
+
+            <ImageView
+                android:id="@+id/iv_student_personalInfo"
+                android:layout_width="@dimen/layoutWeight_s"
+                android:layout_height="@dimen/layoutHeight_s"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/margin_xl"
+                android:src="@drawable/ic_vertify" />
+
+            <TextView
+                android:id="@+id/tv_student_personalInfoLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/iv_student_personalInfo"
+                android:text="个人信息"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"
+                android:typeface="serif" />
+
+            <ImageView
+                android:layout_width="@dimen/layoutWeight_xs"
+                android:layout_height="@dimen/layoutHeight_xs"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/margin_xxl"
+                android:src="@drawable/ic_back" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
             android:id="@+id/rl_student_home_vertify"
             android:layout_width="match_parent"
             android:layout_height="65dp"

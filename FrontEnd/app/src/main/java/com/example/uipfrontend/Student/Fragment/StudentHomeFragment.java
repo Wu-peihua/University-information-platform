@@ -53,6 +53,7 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
     }
 
     private void init(){
+        rootView.findViewById(R.id.rl_student_personalInfo).setOnClickListener(this);
         rootView.findViewById(R.id.rl_student_home_release).setOnClickListener(this);
         rootView.findViewById(R.id.rl_studentModifyPassword).setOnClickListener(this);
         rootView.findViewById(R.id.rl_studentInfo).setOnClickListener(this);
@@ -66,14 +67,14 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
 
         Glide.with(rootView.getContext()).load(portrait).into(imPortrait);
         name.setText("用户名");
-        isVertify.setText("否");
+        isVertify.setText("是");
     }
 
     @Override
     public void onClick(View view) {
 
         switch (view.getId()) {
-            case R.id.rl_studentInfo:
+            case R.id.rl_student_personalInfo:
                 Intent intent0 = new Intent(activity, StudentPersonalInfoActivity.class);
                 startActivity(intent0);
                 break;

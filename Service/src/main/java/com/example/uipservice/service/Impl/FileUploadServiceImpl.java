@@ -46,7 +46,6 @@ public class FileUploadServiceImpl implements FileUploadService {
                     // 这里使用Apache的FileUtils方法来进行保存
                     FileUtils.copyInputStreamToFile(tempFile.getInputStream(), new File(realPath, newFilename));
                     list.add(basePath + "/UIPImages/" + newFilename);
-                    System.out.println("上传文件的url：" + basePath + "/UIPImages/" + newFilename);
                 } catch (IOException e) {
                     modelMap.put("code", 500);
                     System.out.println("文件上传失败");

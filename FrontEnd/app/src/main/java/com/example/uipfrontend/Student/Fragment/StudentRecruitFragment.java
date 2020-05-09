@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -49,7 +50,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class StudentRecruitFragment extends Fragment {
 
-    private String[] headers;//菜单头部选项
     private List<View> popupViews = new ArrayList<>();//菜单列表视图
     private DropDownMenu dropDownMenu;
     private MultiMenusView multiMenusView;//多级菜单
@@ -60,8 +60,7 @@ public class StudentRecruitFragment extends Fragment {
     private List<String> userNameList;   //存放组队信息发布人用户名
     private View rootView;  //根视图（下拉筛选框）
     private View rootContentView;    //根视图内容
-
-    private FloatingActionButton fabtn;  //浮动按钮，发布新的组队信息
+    private TextView tv_blank;
 
     private String[] levelOneMenu;
     private String[][] levelTwoMenu;
@@ -91,6 +90,7 @@ public class StudentRecruitFragment extends Fragment {
         } else {
             rootView = inflater.inflate(R.layout.fragment_student_recruit, null);
             rootContentView = inflater.inflate(R.layout.fragment_student_recruit_content,null);
+            tv_blank = rootContentView.findViewById(R.id.tv_blank);
             init();
         }
         return rootView;
@@ -142,7 +142,8 @@ public class StudentRecruitFragment extends Fragment {
 
         dropDownMenu = rootView.findViewById(R.id.dropDownMenu_student_group);
 
-        headers = new String[]{"所属院校"};
+        //菜单头部选项
+        String[] headers = new String[]{"所属院校"};
 
         multiMenusView = new MultiMenusView(this.getContext(),levelOneMenu,levelTwoMenu);
         popupViews.add(multiMenusView);
@@ -193,15 +194,20 @@ public class StudentRecruitFragment extends Fragment {
                         Log.i("获取 ", "成功");
                         //初始化列表
                         initRecyclerView();
+                        tv_blank.setVisibility(View.GONE);
                         break;
 
                     case FAIL:
                         Log.i("获取 ", "失败");
+                        tv_blank.setText("获取信息失败");
+                        tv_blank.setVisibility(View.VISIBLE);
                         break;
 
                     case ZERO:
                         Log.i("获取", "0");
                         Toast.makeText(rootContentView.getContext(),"暂时没有新的信息！",Toast.LENGTH_SHORT).show();
+                        tv_blank.setText("还没有发布组队信息，去发一条吧");
+                        tv_blank.setVisibility(View.VISIBLE);
                         initRecyclerView();
                         break;
                 }
@@ -298,7 +304,8 @@ public class StudentRecruitFragment extends Fragment {
     }
 
     private void initFAB(){
-        fabtn = rootContentView.findViewById(R.id.fabtn_student_recruit);
+        //浮动按钮，发布新的组队信息
+        FloatingActionButton fabtn = rootContentView.findViewById(R.id.fabtn_student_recruit);
         fabtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -318,14 +325,19 @@ public class StudentRecruitFragment extends Fragment {
                     switch (msg.what){
                         case SUCCESS:
                             Log.i("获取", "成功");
+                            tv_blank.setVisibility(View.GONE);
                             studentRecruitRecyclerViewAdapter.setList(list, userNameList);
                             studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
                             break;
                         case FAIL:
                             Log.i("获取", "失败");
+                            tv_blank.setText("获取信息失败");
+                            tv_blank.setVisibility(View.VISIBLE);
                             break;
                         case ZERO:
                             Log.i("获取", "0");
+                            tv_blank.setText("还没有发布组队信息，去发一条吧");
+                            tv_blank.setVisibility(View.VISIBLE);
                             break;
                     }
                     recyclerView.refreshComplete();
