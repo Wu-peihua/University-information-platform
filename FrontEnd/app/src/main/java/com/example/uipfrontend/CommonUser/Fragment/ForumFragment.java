@@ -54,7 +54,8 @@ import okhttp3.Response;
 
 public class ForumFragment extends Fragment {
 
-    private static final int FAILURE = -1;
+    private static final int NETWORK_ERR = -2;
+    private static final int SERVER_ERR = -1;
     private static final int ZERO = 0;
     private static final int SUCCESS = 1;
     
@@ -69,7 +70,7 @@ public class ForumFragment extends Fragment {
     private static final String s2 = "deleteComment";
     private static final String s3 = "increaseLikeInPostDetail";
     private static final String s4 = "decreaseLikeInPostDetail";
-    private static final String s5  = "refresh";
+    private static final String s5 = "refresh";
     
     private MyBroadcastReceiver receiver1, receiver2, // 评论增减
                                 receiver3, receiver4, // 点赞数增减
@@ -94,7 +95,8 @@ public class ForumFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) 
+    {
 
         if (rootView != null) {
             ViewGroup parent = (ViewGroup) rootView.getParent();
@@ -123,11 +125,15 @@ public class ForumFragment extends Fragment {
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case FAILURE:
-                        Log.i("获取帖子: ", "失败");
-                        tv_blank_text.setText("好像出了点问题");
+                    case NETWORK_ERR:
+                        Log.i("获取帖子: ", "失败 - 网络错误");
+                        tv_blank_text.setText("网络好像出了点问题，请检查网络设置");
                         tv_blank_text.setVisibility(View.VISIBLE);
                         break;
+                    case SERVER_ERR:
+                        Log.i("获取帖子: ", "失败 - 服务器错误");
+                        tv_blank_text.setText("好像出了点问题，请稍候再试");
+                        tv_blank_text.setVisibility(View.VISIBLE);
                     case ZERO:
                         Log.i("获取帖子: ", "空");
                         tv_blank_text.setText("还没有帖子，去发一条");
@@ -171,8 +177,8 @@ public class ForumFragment extends Fragment {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("获取帖子: ", e.getMessage());
-                    msg.what = FAILURE;
+                    Log.i("获取帖子: ", Objects.requireNonNull(e.getMessage()));
+                    msg.what = NETWORK_ERR;
                     handler.sendMessage(msg);
                 }
 
@@ -194,7 +200,7 @@ public class ForumFragment extends Fragment {
                         whole = responsePosts.getPostsList();
                         if (whole == null) {
                             whole = new ArrayList<>();
-                            msg.what = FAILURE;
+                            msg.what = SERVER_ERR;
                         } else if (whole.size() == 0) {
                             msg.what = ZERO;
                         } else {
@@ -244,6 +250,7 @@ public class ForumFragment extends Fragment {
         iv_new.setOnClickListener(view -> {
             UserInfo user = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();
             if (user.getUserId() == null) {
+                // todo: 跳转到登录界面
                 Toast.makeText(rootView.getContext(), "请登录", Toast.LENGTH_LONG).show();
             } else {
                 Intent intent = new Intent(rootView.getContext(), WritePostActivity.class);
@@ -269,11 +276,14 @@ public class ForumFragment extends Fragment {
                                     posts.addAll(whole);
                                     adapter.notifyDataSetChanged();
                                     break;
-                                case FAILURE:
-                                    Log.i("刷新帖子", "失败");
-                                    break;
                                 case ZERO:
                                     Log.i("刷新帖子", "0");
+                                    break;
+                                case SERVER_ERR:
+                                    Log.i("刷新帖子", "失败 - 服务器错误");
+                                    break;
+                                case NETWORK_ERR:
+                                    Log.i("刷新帖子", "失败 - 网络错误");
                                     break;
                             }
                             xRecyclerView.refreshComplete();
@@ -293,20 +303,23 @@ public class ForumFragment extends Fragment {
                     Handler handler = new Handler() {
                         @Override
                         public void handleMessage(Message msg) {
-                            xRecyclerView.loadMoreComplete();
                             switch (msg.what) {
                                 case SUCCESS:
                                     Log.i("加载帖子", "成功");
                                     adapter.notifyDataSetChanged();
                                     break;
-                                case FAILURE:
-                                    Log.i("加载帖子", "失败");
-                                    break;
                                 case ZERO:
                                     Log.i("加载帖子", "0");
                                     xRecyclerView.setNoMore(true);
                                     break;
+                                case SERVER_ERR:
+                                    Log.i("加载帖子", "失败 - 服务器错误");
+                                    break;
+                                case NETWORK_ERR:
+                                    Log.i("加载帖子", "失败 - 网络错误");
+                                    break;
                             }
+                            xRecyclerView.loadMoreComplete();
                         }
                     };
                     CUR_PAGE_NUM++;
@@ -317,6 +330,7 @@ public class ForumFragment extends Fragment {
         });
     }
 
+    // todo: 当前在list中搜索，后期改为在数据库搜索
     private void changeKeyWordColor(String keyWord){
         // 搜索帖子标题，关键词：keyWord
         if (!keyWord.equals("")) {
@@ -365,46 +379,6 @@ public class ForumFragment extends Fragment {
         xRecyclerView.setLayoutAnimation(animationController);
     }
     
-    private void initData() {
-
-//        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
-//                "法外狂徒张三", "2020/3/26", 0));
-//        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(95588,"震惊！一名男子疫情期间仍然在外捡垃圾，即使遇到古董也没有察觉，反而砸掉了。网友：太可怜了",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(10086,"震惊！著名LOL玩家和DOTA玩家互斥对方不算男人，现场数万人围观！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(10010,"震惊！管理层出游竟包下一辆火车！上市公司员工曝出惊天内幕！",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(800820,"天呐!喝了这么多年，你也不一定知道的小秘密!看完我马上转了!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(8820,"生死极限!他竟和一个陌生男人在孤岛生活28年!",
-//                "法外狂徒张三", "2020/3/26", 666));
-//        posts.add(new ForumPosts(12135,"震惊！男人看了会沉默，女人看了会流泪！不转不是中国人！",
-//                "法外狂徒张三", "2020/3/26", 666));
-    }
-
     
     /**
      * 描述：result1: 用户发表了帖子
@@ -420,8 +394,7 @@ public class ForumFragment extends Fragment {
                 int pos = data.getIntExtra("pos", -1);
                 if (pos != -1) {
                     whole.remove(pos);
-                    posts.clear();
-                    posts.addAll(whole);
+                    posts.remove(pos);
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -450,7 +423,7 @@ public class ForumFragment extends Fragment {
                         whole.get(pos).setReplyNumber(n);
                         posts.get(pos).setReplyNumber(n);
                         break;
-                    case 2:
+                    case 2: // todo: 点赞处理，在PostDetail操作后
                         break;
                 }
                 adapter.notifyDataSetChanged();

@@ -64,16 +64,18 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
  * 跳转时携带帖子对象
  */
 public class WritePostActivity extends AppCompatActivity {
-    
+
+    private static final int NETWORK_ERR = -2;
+    private static final int SERVER_ERR = -1;
     private static final int SUCCESS = 1;
     private static final int FAILURE = 0;
 
     private static final int myResultCode1 = 1; // 新建帖子
     private static final int myResultCode4 = 4; // 修改帖子
 
-    private final int     maxSelectNum = 9; //最大照片数
+    private final int     maxSelectNum            = 9; //最大照片数
     private final Boolean SELECT_FROM_PHOTO_ALBUM = true;
-    private final Boolean TAKING_PHOTO = false;
+    private final Boolean TAKING_PHOTO            = false;
     
     private int        postPos;
     private ForumPosts post;  // 修改：intent 传递过来帖子对象
@@ -129,8 +131,10 @@ public class WritePostActivity extends AppCompatActivity {
                 isUpdate = true;
                 postPos = intent.getIntExtra("pos", -1);
                 post = (ForumPosts) Objects.requireNonNull(intent.getExtras()).get("post");
-                et_title.setText(post.getTitle());
-                et_content.setText(post.getContent());
+                if (post != null) {
+                    et_title.setText(post.getTitle());
+                    et_content.setText(post.getContent());
+                }
             }
         }
     }
@@ -164,12 +168,13 @@ public class WritePostActivity extends AppCompatActivity {
                                         } else {
                                             setResult(myResultCode1);
                                         }
+                                        sDialog.dismiss();
                                         finish();
                                     })
                                     .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                             editFlag = false;
                             break;
-                        case FAILURE:
+                        case NETWORK_ERR:
                             sDialog.setTitleText("提交失败")
                                     .setContentText("出了点问题，请稍候再试")
                                     .showCancelButton(false)
@@ -189,7 +194,7 @@ public class WritePostActivity extends AppCompatActivity {
 
                 Log.i("提交表单-帖子：", json);
 
-                RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"), json);
+                RequestBody requestBody = FormBody.create(json, MediaType.parse("application/json;charset=utf-8"));
 
                 String requestUrl = isUpdate ? getResources().getString(R.string.updatePost) : 
                                                 getResources().getString(R.string.insertPost);
@@ -202,14 +207,16 @@ public class WritePostActivity extends AppCompatActivity {
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                        Log.i("提交失败:", e.getMessage());
-                        msg.what = FAILURE;
+                        Log.i("提交失败:", Objects.requireNonNull(e.getMessage()));
+                        msg.what = NETWORK_ERR;
                         handler.sendMessage(msg);
                     }
 
                     @Override
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                        Log.i("提交成功:", response.body().string());
+                        String resStr = Objects.requireNonNull(response.body()).string();
+                        Log.i("提交成功:", resStr);
+                        // TODO: 解析返回结果
                         msg.what = SUCCESS;
                         handler.sendMessage(msg);
                     }
@@ -254,14 +261,14 @@ public class WritePostActivity extends AppCompatActivity {
                     if (isUpdate) {
                         post.setTitle(title);
                         post.setContent(content);
-                        // post.setPictures(selectList);
+                        // todo: 添加图片
                         submit(post, pDialog);
                     } else {
                         ForumPosts newPost = new ForumPosts();
                         newPost.setUserId(userId);
                         newPost.setTitle(title);
                         newPost.setContent(content);
-                        // newPost.setPictures(selectList);
+                        // todo: 添加图片
                         submit(newPost, pDialog);
                     }
                 }

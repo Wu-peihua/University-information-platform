@@ -43,7 +43,8 @@ import okhttp3.Response;
 
 public class MyReleasePostFragment extends Fragment {
 
-    private static final int FAILURE = -1;
+    private static final int NETWORK_ERR = -2;
+    private static final int SERVER_ERR = -1;
     private static final int ZERO = 0;
     private static final int SUCCESS = 1;
 
@@ -64,7 +65,8 @@ public class MyReleasePostFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState ){
+    public View onCreateView(@NotNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState)
+    {
         if(rootView != null) {
             ViewGroup parent = (ViewGroup) rootView.getParent();
             if (parent != null) {
@@ -73,11 +75,11 @@ public class MyReleasePostFragment extends Fragment {
         } else {
             rootView = inflater.inflate(R.layout.fragment_my_release_forum,null);
             tv_blank_text = rootView.findViewById(R.id.tv_blank);
+            list = new ArrayList<>();
+            getPosts();
+            initRecyclerView();
+            setListener();
         }
-        list = new ArrayList<>();
-        getPosts();
-        initRecyclerView();
-        setListener();
         return rootView;
     }
 
@@ -90,8 +92,13 @@ public class MyReleasePostFragment extends Fragment {
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case FAILURE:
-                        Log.i("获取发过的帖子: ", "失败");
+                    case NETWORK_ERR:
+                        Log.i("获取发过的帖子: ", "失败 - 网络错误");
+                        tv_blank_text.setText("网络好像出了点问题");
+                        tv_blank_text.setVisibility(View.VISIBLE);
+                        break; 
+                    case SERVER_ERR:
+                        Log.i("获取发过的帖子: ", "失败 - 服务器错误");
                         tv_blank_text.setText("好像出了点问题");
                         tv_blank_text.setVisibility(View.VISIBLE);
                         break;
@@ -139,8 +146,8 @@ public class MyReleasePostFragment extends Fragment {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("获取发过的帖子: ", e.getMessage());
-                    msg.what = FAILURE;
+                    Log.i("获取发过的帖子: ", Objects.requireNonNull(e.getMessage()));
+                    msg.what = NETWORK_ERR;
                     handler.sendMessage(msg);
                 }
 
@@ -161,7 +168,7 @@ public class MyReleasePostFragment extends Fragment {
                         list = responsePosts.getPostsList();
                         if (list == null) {
                             list = new ArrayList<>();
-                            msg.what = FAILURE;
+                            msg.what = SERVER_ERR;
                         } else if (list.size() == 0) {
                             msg.what = ZERO;
                         } else {
@@ -177,6 +184,74 @@ public class MyReleasePostFragment extends Fragment {
     }
     
     private void setListener() {
+        // 刷新和加载更多
+        xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(()->{
+
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("刷新发过的帖子", "成功");
+                                    adapter.setList(list);
+                                    adapter.notifyDataSetChanged();
+                                    break;
+                                case ZERO:
+                                    Log.i("刷新发过的帖子", "0");
+                                    break;
+                                case SERVER_ERR:
+                                    Log.i("刷新发过的帖子", "失败 - 服务器错误");
+                                    break;
+                                case NETWORK_ERR:
+                                    Log.i("刷新发过的帖子", "失败 - 网络错误");
+                                    break;
+                            }
+                            xRecyclerView.refreshComplete();
+                        }
+                    };
+                    CUR_PAGE_NUM = 1;
+                    queryPosts(handler, false);
+
+                }, 1500);
+            }
+
+            @Override
+            public void onLoadMore() {
+                new Handler().postDelayed(()->{
+
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            xRecyclerView.loadMoreComplete();
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("加载发过的帖子", "成功");
+                                    adapter.notifyDataSetChanged();
+                                    break;
+                                case ZERO:
+                                    Log.i("加载发过的帖子", "0");
+                                    xRecyclerView.setNoMore(true);
+                                    break;
+                                case SERVER_ERR:
+                                    Log.i("加载发过的帖子", "失败 - 服务器错误");
+                                    break;
+                                case NETWORK_ERR:
+                                    Log.i("加载发过的帖子", "失败 - 网络错误");
+                                    break;
+                            }
+                        }
+                    };
+                    CUR_PAGE_NUM++;
+                    queryPosts(handler, true);
+
+                }, 1500);
+            }
+        });
         
         adapter.setOnDetailClickListener((view, pos) -> {
             Intent intent = new Intent(rootView.getContext(), PostDetailActivity.class);
@@ -205,85 +280,8 @@ public class MyReleasePostFragment extends Fragment {
         xRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
 
-        // 刷新和加载更多
-        xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(()->{
-
-                    @SuppressLint("HandlerLeak")
-                    Handler handler = new Handler() {
-                        @Override
-                        public void handleMessage(Message msg) {
-                            switch (msg.what) {
-                                case SUCCESS:
-                                    Log.i("刷新发过的帖子", "成功");
-                                    adapter.setList(list);
-                                    adapter.notifyDataSetChanged();
-                                    break;
-                                case FAILURE:
-                                    Log.i("刷新发过的帖子", "失败");
-                                    break;
-                                case ZERO:
-                                    Log.i("刷新发过的帖子", "0");
-                                    break;
-                            }
-                            xRecyclerView.refreshComplete();
-                        }
-                    };
-                    CUR_PAGE_NUM = 1;
-                    queryPosts(handler, false);
-
-                }, 1500);
-            }
-
-            @Override
-            public void onLoadMore() {
-                new Handler().postDelayed(()->{
-
-                    @SuppressLint("HandlerLeak")
-                    Handler handler = new Handler() {
-                        @Override
-                        public void handleMessage(Message msg) {
-                            xRecyclerView.loadMoreComplete();
-                            switch (msg.what) {
-                                case SUCCESS:
-                                    Log.i("加载发过的帖子", "成功");
-                                    adapter.notifyDataSetChanged();
-                                    break;
-                                case FAILURE:
-                                    Log.i("加载发过的帖子", "失败");
-                                    break;
-                                case ZERO:
-                                    Log.i("加载发过的帖子", "0");
-                                    xRecyclerView.setNoMore(true);
-                                    break;
-                            }
-                        }
-                    };
-                    CUR_PAGE_NUM++;
-                    queryPosts(handler, true);
-
-                }, 1500);
-            }
-        });
     }
     
-    private void initData() {
-        list = new ArrayList<>();
-        
-        for(int i = 10; i > 0; i--) {
-            ForumPosts post = new ForumPosts();
-            post.setTitle("我发布的我发布的我发布的我发布的我发布的我发布的我发布的我发布的我发布的我发布的");
-            post.setUserName("荣耀");
-            post.setCreated("2020-4-" + i + " 14:30");
-            list.add(post);
-        }
-        
-        if(list == null || list.size() == 0) {
-            tv_blank_text.setVisibility(View.VISIBLE);
-        }
-    }
 
     /**
      * 描述：result3 用户删除了帖子
@@ -305,7 +303,7 @@ public class MyReleasePostFragment extends Fragment {
                 if (pos != -1 && post != null) {
                     list.get(pos).setTitle(post.getTitle());
                     list.get(pos).setContent(post.getContent());
-                    
+                    // todo: 更新图片
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -315,7 +313,7 @@ public class MyReleasePostFragment extends Fragment {
     public void onStop() {
         Intent intent = new Intent();
         intent.setAction("refresh");
-        rootView.getContext().sendBroadcast(intent);
+        Objects.requireNonNull(getActivity()).sendBroadcast(intent);
         super.onStop();
     }
 }

@@ -43,7 +43,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
 
 
-    /*
+    /**
      * 布局
      */
 
@@ -61,7 +61,7 @@ dependencies {
     implementation 'com.android.support:design:24.2.1'
 
 
-    /*
+    /**
      * 菜单
      */
 
@@ -80,7 +80,7 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
 
 
-    /*
+    /**
      * 图片
      */
 
@@ -103,7 +103,7 @@ dependencies {
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.9'
 
 
-    /*
+    /**
      * 文本
      */
 
@@ -117,7 +117,7 @@ dependencies {
     implementation 'com.github.ParfoisMeng:ExpandableTextView:1.0.1'
 
 
-    /*
+    /**
      * 按钮
      */
 
@@ -137,7 +137,7 @@ dependencies {
     implementation 'com.github.BILL-CS:IconCountView:1.0.0'
 
 
-    /*
+    /**
      * dialog
      */
 
@@ -157,7 +157,7 @@ dependencies {
 
 
 
-    /*
+    /**
      * 网络
      */
 

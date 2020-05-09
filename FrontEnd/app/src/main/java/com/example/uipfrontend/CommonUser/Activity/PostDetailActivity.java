@@ -77,7 +77,8 @@ import okhttp3.Response;
  */
 public class PostDetailActivity extends AppCompatActivity {
 
-    private static final int FAILURE = -1;
+    private static final int NETWORK_ERR = -2;
+    private static final int SERVER_ERR = -1;
     private static final int ZERO = 0;
     private static final int SUCCESS = 1;
 
@@ -177,20 +178,22 @@ public class PostDetailActivity extends AppCompatActivity {
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case FAILURE:
-                        Log.i("获取评论: ", "失败");
+                    case NETWORK_ERR:
+                        Log.i("获取评论: ", "失败 - 网络错误");
+                        break;
+                    case SERVER_ERR:
+                        Log.i("获取评论: ", "失败 - 服务器错误");
                         break;
                     case ZERO:
                         Log.i("获取评论: ", "空");
-                        setCommentSum();
                         break;
                     case SUCCESS:
                         Log.i("获取评论: ", "成功");
                         adapter.setList(list);
                         adapter.notifyDataSetChanged();
-                        setCommentSum();
                         break;
                 }
+                setCommentSum();
                 super.handleMessage(msg);
             }
         };
@@ -221,8 +224,8 @@ public class PostDetailActivity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("获取评论: ", e.getMessage());
-                    msg.what = FAILURE;
+                    Log.i("获取评论: ", Objects.requireNonNull(e.getMessage()));
+                    msg.what = NETWORK_ERR;
                     handler.sendMessage(msg);
                 }
 
@@ -243,7 +246,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         list = responsePostComment.getCommentList();
                         if (list == null) {
                             list = new ArrayList<>();
-                            msg.what = FAILURE;
+                            msg.what = SERVER_ERR;
                         } else if (list.size() == 0) {
                             msg.what = ZERO;
                         } else {
@@ -269,7 +272,7 @@ public class PostDetailActivity extends AppCompatActivity {
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case FAILURE:
+                    case NETWORK_ERR:
                         Log.i("删除帖子: ", "失败");
                         sDialog.setTitleText("删除失败")
                                 .setContentText("出了点问题，请稍候再试")
@@ -295,6 +298,7 @@ public class PostDetailActivity extends AppCompatActivity {
                                         }
                                     }
                                     setResult(resultCode, intent);
+                                    sDialog.dismiss();
                                     finish();
                                 })
                                 .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
@@ -321,14 +325,16 @@ public class PostDetailActivity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("删除帖子: ", e.getMessage());
-                    msg.what = FAILURE;
+                    Log.i("删除帖子: ", Objects.requireNonNull(e.getMessage()));
+                    msg.what = NETWORK_ERR;
                     handler.sendMessage(msg);
                 }
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.i("删除帖子：", response.body().string());
+                    String resStr = Objects.requireNonNull(response.body()).string();
+                    Log.i("删除帖子：", resStr);
+                    // TODO: 解析返回结果
                     msg.what = SUCCESS;
                     handler.sendMessage(msg);
                 }
@@ -388,16 +394,19 @@ public class PostDetailActivity extends AppCompatActivity {
                                     Log.i("刷新评论", "成功");
                                     adapter.setList(list);
                                     adapter.notifyDataSetChanged();
-                                    setCommentSum();
-                                    break;
-                                case FAILURE:
-                                    Log.i("刷新评论", "失败");
                                     break;
                                 case ZERO:
                                     Log.i("刷新评论", "0");
-                                    setCommentSum();
                                     break;
+                                case SERVER_ERR:
+                                    Log.i("刷新评论", "失败 - 服务器错误");
+                                    break;
+                                case NETWORK_ERR:
+                                    Log.i("刷新评论", "失败 - 网络错误");
+                                    break;
+                                    
                             }
+                            setCommentSum();
                             xRecyclerView.refreshComplete();
                         }
                     };
@@ -415,22 +424,24 @@ public class PostDetailActivity extends AppCompatActivity {
                     Handler handler = new Handler() {
                         @Override
                         public void handleMessage(Message msg) {
-                            xRecyclerView.loadMoreComplete();
                             switch (msg.what) {
                                 case SUCCESS:
                                     Log.i("加载评论", "成功");
                                     adapter.notifyDataSetChanged();
-                                    setCommentSum();
-                                    break;
-                                case FAILURE:
-                                    Log.i("加载评论", "失败");
                                     break;
                                 case ZERO:
                                     Log.i("加载评论", "0");
-                                    setCommentSum();
                                     xRecyclerView.setNoMore(true);
                                     break;
+                                case SERVER_ERR:
+                                    Log.i("加载评论", "失败 - 服务器错误");
+                                    break;
+                                case NETWORK_ERR:
+                                    Log.i("加载评论", "失败 - 网络错误");
+                                    break;
                             }
+                            setCommentSum();
+                            xRecyclerView.loadMoreComplete();
                         }
                     };
                     CUR_PAGE_NUM++;
@@ -440,7 +451,7 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
-        // 点赞按钮监听
+        // todo: 点赞按钮监听
         praise.setOnStateChangedListener(isSelected -> {
             if (isSelected) {
                 post.setLikeNumber(post.getLikeNumber() + 1);
@@ -472,6 +483,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         .setCancelClickListener(SweetAlertDialog::cancel)
                         .show();
             } else {
+                // todo: 帖子举报
                 AlertDialog dialog = new AlertDialog.Builder(this)
                         .setTitle("提示")
                         .setMessage("如果该条帖子含有不恰当的内容，请点击确定")
@@ -521,9 +533,7 @@ public class PostDetailActivity extends AppCompatActivity {
         });
 
         // 弹出评论框
-        commentBar.setOnClickListener(view -> {
-            commentDialog.show();
-        });
+        commentBar.setOnClickListener(view -> commentDialog.show());
 
         // 提交评论
         btn_submit.setOnClickListener(view1 -> {
@@ -551,9 +561,7 @@ public class PostDetailActivity extends AppCompatActivity {
         // 改变按钮颜色
         commentText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {  }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -565,9 +573,7 @@ public class PostDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) {  }
         });
         
     }
@@ -576,6 +582,7 @@ public class PostDetailActivity extends AppCompatActivity {
      * 描述：评论的点赞、举报、删除监听
      */
     private void setListListener() {
+        // todo: 评论点赞
         
         adapter.setOnMoreClickListener((view, pos) -> {
             if (user.getUserId().equals(list.get(pos).getFromId())) {
@@ -598,6 +605,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         .setCancelClickListener(SweetAlertDialog::cancel)
                         .show();
             } else {
+                // todo: 评论举报
                 AlertDialog dialog = new AlertDialog.Builder(this)
                         .setTitle("提示")
                         .setMessage("如果该条评论含有不恰当的内容，请点击确定")
@@ -618,10 +626,14 @@ public class PostDetailActivity extends AppCompatActivity {
      * 设置评论数目
      */
     private void setCommentSum() {
-        if (list.size() == 0) {
-            commentSum.setText("还没有人评论，快来抢沙发吧。");
+        if (list == null) {
+            commentSum.setText("");
         } else {
-            commentSum.setText(list.size() + "条评论");
+            if (list.size() == 0) {
+                commentSum.setText("还没有人评论，快来抢沙发吧。");
+            } else {
+                commentSum.setText(list.size() + "条评论");
+            }
         }
     }
     
@@ -644,7 +656,8 @@ public class PostDetailActivity extends AppCompatActivity {
         detail_poster.setText(post.getUserName() + isMe);
         detail_content.setContentText(post.getContent());
 
-        //        List<String> picUris = post.getPictures();
+        // todo: 显示帖子配图
+        // List<String> picUris = post.getPictures();
         List<ImageInfo> imageList = new ArrayList<>();
         //        for(String picUri : picUris) {
         //            ImageInfo image = new ImageInfo();
@@ -669,7 +682,7 @@ public class PostDetailActivity extends AppCompatActivity {
         detail_time.setText(post.getCreated());
 
         praise.setCount(post.getLikeNumber());
-        // 如果是本人查看自己发的帖子，则需查找否点过赞
+        // todo: 如果是本人查看自己发的帖子，则需查找否点过赞
         
         setCommentSum();
     }
@@ -766,9 +779,14 @@ public class PostDetailActivity extends AppCompatActivity {
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case FAILURE:
-                        Log.i("插入评论: ", "失败");
+                    case NETWORK_ERR:
+                        Log.i("插入评论: ", "失败 - 网络错误");
                         Toast.makeText(PostDetailActivity.this, "网络出了点问题，请稍候再试",
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case SERVER_ERR:
+                        Log.i("插入评论: ", "失败 - 服务器错误");
+                        Toast.makeText(PostDetailActivity.this, "出了点问题，请稍候再试",
                                 Toast.LENGTH_LONG).show();
                         break;
                     case SUCCESS:
@@ -799,7 +817,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
             Log.i("提交表单-评论：", json);
 
-            RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"), json);
+            RequestBody requestBody = FormBody.create(json, MediaType.parse("application/json;charset=utf-8"));
 
             Request request = new Request.Builder()
                     .url(getResources().getString(R.string.serverBasePath)
@@ -810,8 +828,8 @@ public class PostDetailActivity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("插入评论: ", e.getMessage());
-                    msg.what = FAILURE;
+                    Log.i("插入评论: ", Objects.requireNonNull(e.getMessage()));
+                    msg.what = NETWORK_ERR;
                     handler.sendMessage(msg);
                 }
 
@@ -824,7 +842,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         comment.setInfoId(Long.valueOf(resId));
                         msg.what = SUCCESS;
                     } else {
-                        msg.what = FAILURE;
+                        msg.what = SERVER_ERR;
                     }
                     handler.sendMessage(msg);
                 }
@@ -846,7 +864,7 @@ public class PostDetailActivity extends AppCompatActivity {
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case FAILURE:
+                    case NETWORK_ERR:
                         Log.i("删除评论: ", "失败");
                         sDialog.setTitleText("删除失败")
                                 .setContentText("出了点问题，请稍候再试")
@@ -864,8 +882,8 @@ public class PostDetailActivity extends AppCompatActivity {
                                 .setConfirmClickListener(null)
                                 .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                         list.remove(pos);
-                        setCommentSum();
                         adapter.notifyDataSetChanged();
+                        setCommentSum();
                         
                         mySendBroadCast(s2);
                         break;
@@ -891,14 +909,16 @@ public class PostDetailActivity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("删除评论: ", e.getMessage());
-                    msg.what = FAILURE;
+                    Log.i("删除评论: ", Objects.requireNonNull(e.getMessage()));
+                    msg.what = NETWORK_ERR;
                     handler.sendMessage(msg);
                 }
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.i("删除评论：", response.body().string());
+                    String resStr = Objects.requireNonNull(response.body()).string();
+                    Log.i("删除评论：", resStr);
+                    // TODO: 解析返回结果
                     msg.what = SUCCESS;
                     handler.sendMessage(msg);
                 }
@@ -928,7 +948,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         n = isIncrease ? n+1 : n-1;
                         list.get(pos).setReplyNumber(n);
                         break;
-                    case 2:
+                    case 2: // todo: 更新评论的点赞，在CommentDetail操作后
                         break;
                 }
                 adapter.notifyDataSetChanged();

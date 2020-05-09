@@ -16,16 +16,26 @@
     info_id, user_id, stu_name, stu_number, institude_id, university_id, stu_card, stu_cer, 
     created
   </sql>
+
+  <select id="selectUncheck" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from stu_certification
+    where user_id = #{userId,jdbcType=BIGINT} and stu_cer = 0
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from stu_certification
     where info_id = #{infoId,jdbcType=BIGINT}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from stu_certification
     where info_id = #{infoId,jdbcType=BIGINT}
   </delete>
+
   <insert id="insert" parameterType="com.example.uipservice.entity.StuCertification" >
     <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
       SELECT LAST_INSERT_ID()
@@ -37,6 +47,7 @@
       #{institudeId,jdbcType=INTEGER}, #{universityId,jdbcType=INTEGER}, #{stuCard,jdbcType=VARCHAR}, 
       #{stuCer,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP})
   </insert>
+
   <insert id="insertSelective" parameterType="com.example.uipservice.entity.StuCertification" >
     <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
       SELECT LAST_INSERT_ID()
@@ -95,6 +106,7 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.example.uipservice.entity.StuCertification" >
     update stu_certification
     <set >
@@ -125,6 +137,7 @@
     </set>
     where info_id = #{infoId,jdbcType=BIGINT}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.StuCertification" >
     update stu_certification
     set user_id = #{userId,jdbcType=BIGINT},

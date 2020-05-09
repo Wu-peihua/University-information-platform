@@ -9,7 +9,7 @@ public class ForumPosts implements Serializable {
     private String title;           // 帖子标题
     private String content;         // 帖子内容
     private String created;         // 发布时间
-    private List<String> pictures;  // 图片
+    private String pictures;        // 图片
     private int replyNumber;        // 评论数
     private int likeNumber;         // 点赞数
     private int reportNumber;       // 举报数
@@ -60,11 +60,11 @@ public class ForumPosts implements Serializable {
         this.created = created;
     }
 
-    public List<String> getPictures() {
+    public String getPictures() {
         return pictures;
     }
 
-    public void setPictures(List<String> pictures) {
+    public void setPictures(String pictures) {
         this.pictures = pictures;
     }
     

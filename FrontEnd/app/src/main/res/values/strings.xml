@@ -2,14 +2,16 @@
     <string name="app_name">UIPFrontEnd</string>
 
     <!--url配置-->
-    <string name="serverBasePath">http://192.168.1.105:8080/uip</string>
+    <string name="serverBasePath">http://192.168.0.103:8080/uip</string>
 
     <!--获取顶部筛选菜单-->
     <string name="queryUniversity">/university/queryuniversity</string>
     <string name="queryInstitute">/institute/queryinstitute</string>
+    <!--图片上传-->
+    <string name="uploadImage">/image/upload</string>
+
     <!--分页获取所有组队信息-->
     <string name="queryRecruit">/recruit/queryrecruit</string>
-
     <!--根据学校ID和学院ID分页获取所有组队信息-->
     <string name="queryRecruitByUniAndIns">/recruit/queryrecruitbyuniandins</string>
     <!--根据信息主键id分页获取组队信息-->
@@ -18,6 +20,9 @@
     <string name="queryRecruitByUserId">/recruit/queryrecruitbyuserid</string>
     <!--提交组队信息-->
     <string name="insertRecruit">/recruit/insertrecruit</string>
+    <!--根据学校和学院id获取组队信息-->
+    <string name="queryrecruitbyUniandIns">/recruit/queryrecruitbyuniandins</string>
+
 
     <!--分页获取所有课程信息-->
     <string name="queryCourse">/courses/querycourses</string>
@@ -25,6 +30,8 @@
     <string name="queryCourseEvaluation">/courseeval/querycourseeval</string>
     <!--根据course id查询课程评论信息-->
     <string name="queryCourseEvaluationByCourseId">/courseeval/querycourseevalbycourseid</string>
+    <!--根据学校和学院id获取课程的信息-->
+    <string name="queryCourseByUniAndIns">/courses/querycoursebyuniandins</string>
     <!--插入课程评论信息-->
     <string name="insertCourseComment">/courseeval/insertcourseeval</string>
     <!--根据user id 获取用户信息-->
@@ -32,8 +39,12 @@
     <!--根据信息主键id分页获取课程信息-->
     <string name="queryCourseByInfoid">/courses/querycoursebyinfoid</string>
     <!--根据用户id分页获取评论信息-->
-    <string name="queryCourseByUserId">/recruit/queryrecruitbyuserid</string>
-    
+    <string name="queryCourseEvaluationByUserId">/courseeval/querycourseevalbyuserid</string>
+    <!--删除课程评论-->
+    <string name="deleteCourseEvaluation">/courseeval/deletecourseeval</string>
+    <!--修改课程评论-->
+    <string name="updateCourseEvaluation">/courseeval/updatecourseeval</string>
+
     <!--获取帖子-->
     <string name="queryPosts">/forumposts/queryposts</string>
     <!--获取用户发表过的帖子-->
@@ -56,5 +67,10 @@
     <string name="insertReply">/commentreply/insertreply</string>
     <!--删除回复-->
     <string name="deleteReply">/commentreply/deletereply</string>
+    <!--新建认证-->
+    <string name="insertCertification">/certification/insertcertification</string>
+    <!--查看待审核的认证-->
+    <string name="selectUncheckCertification">/certification/selectuncheckcertification</string>
+
 
 </resources>

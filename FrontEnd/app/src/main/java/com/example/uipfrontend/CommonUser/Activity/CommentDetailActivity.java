@@ -76,7 +76,8 @@ import okhttp3.Response;
 
 public class CommentDetailActivity extends AppCompatActivity {
 
-    private static final int FAILURE = -1;
+    private static final int NETWORK_ERR = -2;
+    private static final int SERVER_ERR = -1;
     private static final int ZERO = 0;
     private static final int SUCCESS = 1;
 
@@ -158,20 +159,22 @@ public class CommentDetailActivity extends AppCompatActivity {
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case FAILURE:
-                        Log.i("获取回复: ", "失败");
+                    case NETWORK_ERR:
+                        Log.i("获取回复: ", "失败 - 网络错误");
+                        break;
+                    case SERVER_ERR:
+                        Log.i("获取回复: ", "失败 - 服务器错误");
                         break;
                     case ZERO:
                         Log.i("获取回复: ", "空");
-                        setReplySum();
                         break;
                     case SUCCESS:
                         Log.i("获取回复: ", "成功");
                         adapter.setList(list);
                         adapter.notifyDataSetChanged();
-                        setReplySum();
                         break;
                 }
+                setReplySum();
                 super.handleMessage(msg);
             }
         };
@@ -202,8 +205,8 @@ public class CommentDetailActivity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("获取回复: ", e.getMessage());
-                    msg.what = FAILURE;
+                    Log.i("获取回复: ", Objects.requireNonNull(e.getMessage()));
+                    msg.what = NETWORK_ERR;
                     handler.sendMessage(msg);
                 }
 
@@ -224,7 +227,7 @@ public class CommentDetailActivity extends AppCompatActivity {
                         list = responseCommentReply.getReplyList();
                         if (list == null) {
                             list = new ArrayList<>();
-                            msg.what = FAILURE;
+                            msg.what = SERVER_ERR;
                         } else if (list.size() == 0) {
                             msg.what = ZERO;
                         } else {
@@ -262,16 +265,18 @@ public class CommentDetailActivity extends AppCompatActivity {
                                     Log.i("刷新回复", "成功");
                                     adapter.setList(list);
                                     adapter.notifyDataSetChanged();
-                                    setReplySum();
-                                    break;
-                                case FAILURE:
-                                    Log.i("刷新回复", "失败");
                                     break;
                                 case ZERO:
                                     Log.i("刷新回复", "0");
-                                    setReplySum();
+                                    break;
+                                case SERVER_ERR:
+                                    Log.i("刷新回复", "失败 - 服务器错误");
+                                    break;
+                                case NETWORK_ERR:
+                                    Log.i("刷新回复", "失败 - 网络错误");
                                     break;
                             }
+                            setReplySum();
                             xRecyclerView.refreshComplete();
                         }
                     };
@@ -289,22 +294,24 @@ public class CommentDetailActivity extends AppCompatActivity {
                     Handler handler = new Handler() {
                         @Override
                         public void handleMessage(Message msg) {
-                            xRecyclerView.loadMoreComplete();
                             switch (msg.what) {
                                 case SUCCESS:
                                     Log.i("加载回复", "成功");
                                     adapter.notifyDataSetChanged();
-                                    setReplySum();
-                                    break;
-                                case FAILURE:
-                                    Log.i("加载回复", "失败");
                                     break;
                                 case ZERO:
                                     Log.i("加载回复", "0");
-                                    setReplySum();
                                     xRecyclerView.setNoMore(true);
                                     break;
+                                case SERVER_ERR:
+                                    Log.i("加载回复", "失败 - 服务器错误");
+                                    break;
+                                case NETWORK_ERR:
+                                    Log.i("加载回复", "失败 - 网络错误");
+                                    break;
                             }
+                            setReplySum();
+                            xRecyclerView.loadMoreComplete();
                         }
                     };
                     CUR_PAGE_NUM++;
@@ -314,19 +321,16 @@ public class CommentDetailActivity extends AppCompatActivity {
             }
         });
 
-        // 点赞按钮监听
-        praise.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
-            @Override
-            public void select(boolean isSelected) {
-                if (isSelected) {
-                    comment.setLikeNumber(comment.getLikeNumber() + 1);
-                } else {
-                    comment.setLikeNumber(comment.getLikeNumber() - 1);
-                }
+        // todo: 点赞按钮监听
+        praise.setOnStateChangedListener(isSelected -> {
+            if (isSelected) {
+                comment.setLikeNumber(comment.getLikeNumber() + 1);
+            } else {
+                comment.setLikeNumber(comment.getLikeNumber() - 1);
             }
         });
 
-        // 举报监听
+        // todo: 举报监听
         report.setOnClickListener(view -> {
             if (user.getUserId().equals(comment.getFromId())) {
                 report.setVisibility(View.GONE);
@@ -392,7 +396,7 @@ public class CommentDetailActivity extends AppCompatActivity {
         btn_submit.setOnClickListener(view1 -> {
             String commentContent = commentText.getText().toString().trim();
             if (!TextUtils.isEmpty(commentContent)) {
-                UserInfo user = (UserInfo) getApplication();
+                
                 commentDialog.dismiss();
                 PostComment postComment = new PostComment();
                 postComment.setToId(comment.getInfoId());
@@ -416,9 +420,7 @@ public class CommentDetailActivity extends AppCompatActivity {
         // 改变按钮颜色
         commentText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {  }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -430,9 +432,7 @@ public class CommentDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) {  }
         });
     }
 
@@ -470,6 +470,7 @@ public class CommentDetailActivity extends AppCompatActivity {
                         .setCancelClickListener(SweetAlertDialog::cancel)
                         .show();
             } else {
+                // todo: 回复的举报
                 AlertDialog dialog = new AlertDialog.Builder(this)
                         .setTitle("提示")
                         .setMessage("如果该条评论含有不恰当的内容，请点击确定")
@@ -490,10 +491,14 @@ public class CommentDetailActivity extends AppCompatActivity {
      * 设置回复数目
      */
     private void setReplySum() {
-        if(list.size() == 0) {
-            replySum.setText("还没有人回复，快来抢沙发吧。");
+        if (list == null) {
+            replySum.setText("");
         } else {
-            replySum.setText(list.size() + "条对话");
+            if (list.size() == 0) {
+                replySum.setText("还没有人回复，快来抢沙发吧。");
+            } else {
+                replySum.setText(list.size() + "条对话");
+            }
         }
     }
     
@@ -551,7 +556,7 @@ public class CommentDetailActivity extends AppCompatActivity {
         time.setText(comment.getCreated());
         
         praise.setCount(comment.getLikeNumber());
-        // 如果是本人查看自己发的帖子，则需查找否点过赞
+        // todo: 如果是本人查看自己发的帖子，则需查找否点过赞
         
         rv_division.setVisibility(View.VISIBLE);
         setReplySum();
@@ -615,9 +620,14 @@ public class CommentDetailActivity extends AppCompatActivity {
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case FAILURE:
-                        Log.i("插入回复: ", "失败");
+                    case NETWORK_ERR:
+                        Log.i("插入回复: ", "失败 - 网络错误");
                         Toast.makeText(CommentDetailActivity.this, "网络出了点问题，请稍候再试",
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case SERVER_ERR:
+                        Log.i("插入回复: ", "失败 - 服务器错误");
+                        Toast.makeText(CommentDetailActivity.this, "出了点问题，请稍候再试",
                                 Toast.LENGTH_LONG).show();
                         break;
                     case SUCCESS:
@@ -648,7 +658,7 @@ public class CommentDetailActivity extends AppCompatActivity {
 
             Log.i("提交表单-回复：", json);
 
-            RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"), json);
+            RequestBody requestBody = FormBody.create(json, MediaType.parse("application/json;charset=utf-8"));
 
             Request request = new Request.Builder()
                     .url(getResources().getString(R.string.serverBasePath)
@@ -659,8 +669,8 @@ public class CommentDetailActivity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("插入评论: ", e.getMessage());
-                    msg.what = FAILURE;
+                    Log.i("插入评论: ", Objects.requireNonNull(e.getMessage()));
+                    msg.what = NETWORK_ERR;
                     handler.sendMessage(msg);
                 }
 
@@ -673,7 +683,7 @@ public class CommentDetailActivity extends AppCompatActivity {
                         reply.setInfoId(Long.valueOf(resId));
                         msg.what = SUCCESS;
                     } else {
-                        msg.what = FAILURE;
+                        msg.what = SERVER_ERR;
                     }
                     handler.sendMessage(msg);
                 }
@@ -695,7 +705,7 @@ public class CommentDetailActivity extends AppCompatActivity {
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case FAILURE:
+                    case NETWORK_ERR:
                         Log.i("删除回复: ", "失败");
                         sDialog.setTitleText("删除失败")
                                 .setContentText("出了点问题，请稍候再试")
@@ -713,8 +723,8 @@ public class CommentDetailActivity extends AppCompatActivity {
                                 .setConfirmClickListener(null)
                                 .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                         list.remove(pos);
-                        setReplySum();
                         adapter.notifyDataSetChanged();
+                        setReplySum();
                         
                         mySendBroadCast(s6);
                         break;
@@ -740,14 +750,16 @@ public class CommentDetailActivity extends AppCompatActivity {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("删除回复: ", e.getMessage());
-                    msg.what = FAILURE;
+                    Log.i("删除回复: ", Objects.requireNonNull(e.getMessage()));
+                    msg.what = NETWORK_ERR;
                     handler.sendMessage(msg);
                 }
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.i("删除回复：", response.body().string());
+                    String resStr = Objects.requireNonNull(response.body()).string();
+                    Log.i("删除回复：", resStr);
+                    // TODO: 解析返回结果
                     msg.what = SUCCESS;
                     handler.sendMessage(msg);
                 }
