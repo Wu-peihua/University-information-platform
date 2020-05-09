@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.CourseComment;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.sunbinqiang.iconcountview.IconCountView;
 
@@ -24,11 +25,13 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
 
     private List<CourseComment> commentList;
     private Context context;
+    private UserInfo user;
 
     public StudentMyCommentCourseAdapter(List<CourseComment> commentList, Context context) {
         super();
         this.commentList = commentList;
         this.context = context;
+        user = (UserInfo) context.getApplicationContext();
     }
 
     static class MyCommentCourseViewHolder extends RecyclerView.ViewHolder {
@@ -48,7 +51,6 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
             super(view);
             ll_item = view.findViewById(R.id.ll_item_my_comment);
             iv_portrait = view.findViewById(R.id.my_user_img);
-            tv_username = view.findViewById(R.id.my_user_name);
             tv_coursename = view.findViewById(R.id.my_comment_course_name);
             tv_comment_date = view.findViewById(R.id.my_comment_date);
             tv_content  = view.findViewById(R.id.my_content);
@@ -108,21 +110,21 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
             CourseComment courseComment = commentList.get(position);
 
             //预设用户头像
-            Glide.with(context).load("")
+            Glide.with(context).load(user.getPortrait())
                     .placeholder(R.drawable.portrait_default)
                     .error(R.drawable.portrait_default)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(commentViewHolder.iv_portrait);
 
-            //commentViewHolder.tv_coursename.setText(courseComment.getCourseName());
-            //commentViewHolder.tv_username.setText(courseComment.getUserName());
+            commentViewHolder.tv_coursename.setText(courseComment.getCourseName());
             commentViewHolder.tv_content.setText(courseComment.getContent());
-            commentViewHolder.rb_score.setRating((float)courseComment.getScore());
+            commentViewHolder.rb_score.setStepSize((float) 0.5);
+            commentViewHolder.rb_score.setRating(courseComment.getScore());
             //格式化
             commentViewHolder.tv_comment_date.setText(DateFormat.getInstance().format(courseComment.getInfoDate()));
             //commentViewHolder.tv_comment_date.setText(courseComment.getCommentDate());
 
-            commentViewHolder.icv_like.setCount(courseComment.getLikeCount());
+            commentViewHolder.icv_like.setCount(0);
             commentViewHolder.icv_like.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
                 @Override
                 public void select(boolean isSelected) {
@@ -133,41 +135,6 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
                 }
             });
 
-            /*
-            if (resInfo.isAnonymous()) {
-                Glide.with(context).load("")
-                        .placeholder(R.drawable.portrait_default)
-                        .error(R.drawable.portrait_default)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(infoViewHolder.iv_portrait);
-                infoViewHolder.tv_username.setText("匿名者");
-            } else {
-                Glide.with(context).load(resInfo.getPortraitUri())
-                        .placeholder(R.drawable.portrait_default)
-                        .error(R.drawable.portrait_default)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(infoViewHolder.iv_portrait);
-                infoViewHolder.tv_username.setText(resInfo.getUsername());
-            }
-            infoViewHolder.tv_title.setText(resInfo.getTitle());
-            if (resInfo.getDescription() == null || resInfo.getDescription().trim().length() == 0)
-                infoViewHolder.etv_description.setContentText("(暂无相关描述信息)");
-            else
-                infoViewHolder.etv_description.setContentText(resInfo.getDescription());
-            infoViewHolder.tv_link.setText(resInfo.getLink());
-            infoViewHolder.tv_time.setText(resInfo.getTime());
-            infoViewHolder.icv_like.setCount(resInfo.getLikeNum());
-            infoViewHolder.icv_like.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
-                @Override
-                public void select(boolean isSelected) {
-                    if (isSelected)
-                        resInfo.setLikeNum(resInfo.getLikeNum() + 1);
-                    else
-                        resInfo.setLikeNum(resInfo.getLikeNum() - 1);
-                }
-            });
-
-             */
             commentViewHolder.tv_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -185,6 +152,7 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
         }
     }
 
+    public void setList(List<CourseComment> list) { this.commentList = list; }
     @Override
     public int getItemCount() {
         if (commentList == null)

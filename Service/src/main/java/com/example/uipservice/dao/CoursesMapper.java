@@ -21,5 +21,5 @@ public interface CoursesMapper {
 
     Page<Courses> queryCoursesByUniAndIns(Integer universityId,Integer instituteId);
 
-    Page<Courses> queryCoursesByInfoId(Long infoId);
+    Courses queryCoursesByInfoId(Long infoId);
 }

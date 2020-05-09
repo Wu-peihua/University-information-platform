@@ -86,7 +86,6 @@ public class StudentMyReleaseRecruitRecyclerViewAdapter extends RecyclerView.Ada
         viewHolder.portrait.setBorderWidth(0);
 
 
-
         //临时显示组队信息图片
         ArrayList<ImageInfo> imageInfo = new ArrayList<>();
         ImageInfo info = new ImageInfo();
@@ -141,6 +140,10 @@ public class StudentMyReleaseRecruitRecyclerViewAdapter extends RecyclerView.Ada
 
     public void setOnItemModifyClickListener(MyReleaseResInfoAdapter.OnItemModifyClickListener onItemModifyClickListener) {
         this.onItemModifyClickListener = onItemModifyClickListener;
+    }
+
+    public void setList(List<RecruitInfo> list){
+        this.list = list;
     }
 
 

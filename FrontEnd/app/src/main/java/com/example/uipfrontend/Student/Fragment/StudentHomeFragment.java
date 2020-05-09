@@ -18,10 +18,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Activity.StudentModifyPasswordActivity;
 import com.example.uipfrontend.Student.Activity.StudentMyReleaseActivity;
 import com.example.uipfrontend.Student.Activity.StudentPersonalInfoActivity;
+import com.example.uipfrontend.Utils.ImageDialog;
+
+import java.util.Objects;
 
 
 public class StudentHomeFragment extends Fragment  implements View.OnClickListener{
@@ -33,6 +37,8 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
     private TextView isVertify; //是否认证身份
     private ImageView imPortrait;  //头像
     private Uri portrait;  //头像uri
+
+    private UserInfo userInfo;
 
     @Nullable
     @Override
@@ -53,27 +59,29 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
     }
 
     private void init(){
+        rootView.findViewById(R.id.rl_student_personalInfo).setOnClickListener(this);
         rootView.findViewById(R.id.rl_student_home_release).setOnClickListener(this);
         rootView.findViewById(R.id.rl_studentModifyPassword).setOnClickListener(this);
         rootView.findViewById(R.id.rl_studentInfo).setOnClickListener(this);
 
+        userInfo = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();  //获取登录用户信息
 
-        //初始化头像、昵称、手机号
         imPortrait = rootView.findViewById(R.id.iv_student_home_portrait);
         portrait = getResourcesUri(R.drawable.ic_default_portrait);
         name = rootView.findViewById(R.id.tv_student_home_name);
         isVertify = rootView.findViewById(R.id.tv_student_home_isvertify);
 
-        Glide.with(rootView.getContext()).load(portrait).into(imPortrait);
-        name.setText("用户名");
-        isVertify.setText("否");
+        Glide.with(rootView.getContext()).load(userInfo.getPortrait()).into(imPortrait);
+        name.setText(userInfo.getUserName());
+        //已完成学生身份认证
+        isVertify.setText("是");
     }
 
     @Override
     public void onClick(View view) {
 
         switch (view.getId()) {
-            case R.id.rl_studentInfo:
+            case R.id.rl_student_personalInfo:
                 Intent intent0 = new Intent(activity, StudentPersonalInfoActivity.class);
                 startActivity(intent0);
                 break;
@@ -90,6 +98,8 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
                 Intent intent3 = new Intent(activity, StudentModifyPasswordActivity.class);
                 startActivity(intent3);
                 break;
+
+
         }
 
 

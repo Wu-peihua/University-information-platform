@@ -22,7 +22,7 @@ public class FileUploadController {
     private FileUploadService fileUploadService;
 
     @RequestMapping(value="/upload",method = RequestMethod.POST)
-    public Map uploadApk(@RequestParam("image") MultipartFile multipartFiles, HttpServletRequest request, HttpServletResponse response) {
+    public Map uploadApk(@RequestParam("image") MultipartFile multipartFiles[], HttpServletRequest request, HttpServletResponse response) {
         Map modelMap = fileUploadService.upload(multipartFiles);
         return modelMap;
     }

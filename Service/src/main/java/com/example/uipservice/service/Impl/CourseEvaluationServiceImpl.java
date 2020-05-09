@@ -40,10 +40,10 @@ public class CourseEvaluationServiceImpl implements CourseEvaluationService {
     }
 
     @Override
-    public boolean updateCourseEvaluation(CourseEvaluation CourseEvaluation) {
-        if(CourseEvaluation.getCommentatorId()!=null  ){
+    public boolean updateCourseEvaluation(CourseEvaluation courseEvaluation) {
+        if(courseEvaluation.getCommentatorId()!=null&&courseEvaluation.getScore()!=null){
             try{
-                int effectNum = courseEvaluationMapper.updateByPrimaryKey(CourseEvaluation);
+                int effectNum = courseEvaluationMapper.updateByPrimaryKey(courseEvaluation);
                 if(effectNum > 0){
                     return true;
                 }else{
@@ -52,8 +52,9 @@ public class CourseEvaluationServiceImpl implements CourseEvaluationService {
             }catch (Exception e){
                 throw new RuntimeException(e.getMessage());
             }
-        }else{
-            throw new RuntimeException("更新课程评论信息用户的id为空！");
+        }
+        else{
+            throw new RuntimeException("更新课程评论信息用户的id或者评分为空！");
         }
     }
 
@@ -65,7 +66,7 @@ public class CourseEvaluationServiceImpl implements CourseEvaluationService {
                 if(effectNum > 0){
                     return true;
                 }else{
-                    throw new RuntimeException("服务器错误，删除组队信息失败！");
+                    throw new RuntimeException("服务器错误，删除课程评论信息失败！");
                 }
             }catch (Exception e){
                 throw new RuntimeException(e.getMessage());

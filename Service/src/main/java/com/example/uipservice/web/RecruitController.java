@@ -3,6 +3,7 @@ package com.example.uipservice.web;
 import com.example.uipservice.entity.Recruit;
 import com.example.uipservice.service.RecruitService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,7 +25,6 @@ public class RecruitController {
      */
     @RequestMapping(value = "/insertrecruit", method = RequestMethod.POST)
     private Map<String, Object> insertRecruit(@RequestBody Recruit recruit){
-//        System.out.println("insert recruit: " + recruit);
         Map<String, Object> modelMap = new HashMap<>();
         modelMap.put("success", recruitService.insertRecruit(recruit));
         return modelMap;
@@ -76,7 +76,7 @@ public class RecruitController {
      * @return modelMap
      */
     @RequestMapping(value = "/queryrecruitbyuniandins", method = RequestMethod.GET)
-    private Map queryRecruitByUniAndIns(Integer pageNum, Integer pageSize, Integer universityId,Integer instituteId){
+    private Map queryRecruitByUniAndIns(Integer pageNum, Integer pageSize, Integer universityId, Integer instituteId){
         return recruitService.queryRecruitByUniAndIns(pageNum, pageSize, universityId,instituteId);
     }
 

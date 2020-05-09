@@ -11,7 +11,7 @@
     <result column="course_picture" property="coursePicture" jdbcType="VARCHAR" />
     <result column="info_date" property="infoDate" jdbcType="TIMESTAMP" />
     <result column="description" property="description" jdbcType="VARCHAR" />
-    <result column="average_score" property="averageScore" jdbcType="INTEGER" />
+    <result column="average_score" property="averageScore" jdbcType="DECIMAL" />
     <result column="created" property="created" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
@@ -161,4 +161,16 @@
       created = #{created,jdbcType=TIMESTAMP}
     where info_id = #{infoId,jdbcType=BIGINT}
   </update>
+
+
+  <!--根据课程id分页查找,根据课程评论情况查询课程的平均分，默认为0-->
+  <select id="queryCoursesByInfoId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select
+    courses.info_id, user_id, courses.university_id, courses.institute_id, course_name, teacher_name, course_picture,
+    courses.info_date, description, ifnull(avg(course_evaluation.score),0) as average_score, courses.created
+    from courses inner join course_evaluation
+    on courses.info_id = course_evaluation.course_id
+    where courses.info_id = #{infoId}
+  </select>
+
 </mapper>

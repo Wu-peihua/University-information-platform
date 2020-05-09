@@ -38,11 +38,11 @@ public class RecruitInfo implements Serializable {
         this.pictures = pictures;
     }
 
-    public Date getInfoDate() {
+    public String getInfoDate() {
         return infoDate;
     }
 
-    public void setInfoDate(Date infoDate) {
+    public void setInfoDate(String infoDate) {
         this.infoDate = infoDate;
     }
 
@@ -74,7 +74,7 @@ public class RecruitInfo implements Serializable {
 
     }
 
-    public  RecruitInfo(Long infoId,String title,String contact,String content,Date infoDate,String portrait,String pictures,Integer universityId,Integer instituteId){
+    public  RecruitInfo(Long infoId,String title,String contact,String content,String infoDate,String portrait,String pictures,Integer universityId,Integer instituteId){
         this.infoId = infoId;
         this.title = title;
         this.contact = contact;
@@ -123,7 +123,7 @@ public class RecruitInfo implements Serializable {
     //组队信息图片
     private String pictures;
     //组队信息发布日期
-    private Date infoDate;
+    private String infoDate;
     //信息发布人ID
     private Long userId;
     //组队信息发布人头像
@@ -134,8 +134,6 @@ public class RecruitInfo implements Serializable {
     private Integer universityId;
     //发布者联系方式
     private String contact;
-
-
 
 
 

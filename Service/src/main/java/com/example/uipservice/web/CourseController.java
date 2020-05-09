@@ -53,12 +53,12 @@ public class CourseController {
     }
 
     /**
-     * 根据信息主键id分页获取组队信息
+     * 根据信息主键id分页获取课程信息
      * @return modelMap
      */
     @RequestMapping(value = "/querycoursebyinfoid", method = RequestMethod.GET)
-    private Map queryCourseByInfoId(Integer pageNum, Integer pageSize, Long infoId){
-        return courseService.queryCourseByInfoId(pageNum, pageSize, infoId);
+    private Courses queryCourseByInfoId(Long infoId){
+        return courseService.queryCourseByInfoId(infoId);
     }
 
     /**

@@ -2,6 +2,11 @@ package com.example.uipfrontend.Student.Activity;
 
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,12 +19,15 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.UiThread;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 
 import com.example.uipfrontend.CommonUser.Activity.PostDetailActivity;
 import com.example.uipfrontend.Entity.Course;
+import com.example.uipfrontend.Entity.ResponseCourse;
 import com.example.uipfrontend.Entity.ResponseCourseComment;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
@@ -32,7 +40,10 @@ import com.google.gson.GsonBuilder;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,6 +54,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import info.hoang8f.widget.FButton;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -55,7 +67,6 @@ import okhttp3.Response;
 
 public class CourseDetailActivity extends AppCompatActivity {
 
-    //private ListView CommentList;
 
     private TextView commentSum;//评论数目
     private FButton AddComment;//添加评论按钮
@@ -67,6 +78,7 @@ public class CourseDetailActivity extends AppCompatActivity {
     private TextView Teacher;
     private TextView Description;
     private TextView Score ;
+    private  RatingBar BarScore;//评分平均分
 
     private TextView order_by_time; // 评论按时间排序
     private TextView order_by_like; // 评论按热度排序
@@ -75,11 +87,9 @@ public class CourseDetailActivity extends AppCompatActivity {
     private XRecyclerView recyclerView;  //评论列表下拉刷新上拉加载
     private CourseCommentRecyclerViewAdapter commentAdapter;//用户评论适配器
 
-    //private View rootView;
     private Long globalcourseid ;//课程id
     private List<CourseComment> comments =new ArrayList<>();//用户评论列表
-    private List<CourseComment> list_order_by_asc= new ArrayList<>(); // ↓：按时间从远到近
-    private List<CourseComment> list_order_by_des= new ArrayList<>(); // ↑：按时间从近到远
+
 
     //分页请求课程评论数据
     private static final int SUCCESS = 1;
@@ -89,6 +99,20 @@ public class CourseDetailActivity extends AppCompatActivity {
     private static int CUR_PAGE_NUM = 1;
 
     private UserInfo user;//全局用户信息
+    private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private static boolean flag = true;
+
+    private String     beginFrom; // 标识从哪里启动这个Activity
+    private int        coursePos;   // 该条课程在list的位置
+
+    // 课程评分变化
+    private static final String s1 = "insertCoursecomment";
+    private static final String s2 = "deleteCourseComment";
+
+
+    private  Course coursedetail;//全局的课程
+
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,26 +123,22 @@ public class CourseDetailActivity extends AppCompatActivity {
         setContentView(R.layout.item_course_details);
 
         //接受点击事件传参数
-        Course coursedetail = (Course) Objects.requireNonNull(getIntent().getExtras()).get("coursedetail");
+        beginFrom = getIntent().getStringExtra("beginFrom");
+        coursePos = getIntent().getIntExtra("pos", -1);
 
+        coursedetail = (Course) Objects.requireNonNull(getIntent().getExtras()).get("coursedetail");
         globalcourseid = coursedetail.getCourseID();
-        //Bundle bundle = getIntent().getExtras();
-        //String nameID = bundle.getString("name");
+
         init(coursedetail);
     }
 
     public void init(Course coursedetail){
-        //评论列表初始化
-        //initCommentData();
         //课程卡片详情
         user = (UserInfo) getApplication();
         initCardView(coursedetail);
         getCommentData();
-
-
-        //initRecyclerView();
+        //setListListener();
     }
-
 
     public  void initCardView(Course course) {
 
@@ -126,11 +146,7 @@ public class CourseDetailActivity extends AppCompatActivity {
         Teacher = (TextView)this.findViewById(R.id.TeacherName);
         Description = (TextView)this.findViewById(R.id.courseDescription);
         Score = (TextView)this.findViewById(R.id.RatingScore);
-
-        Name.setText(course.getName());
-        Teacher.setText(course.getTeacher());
-        Description.setText(course.getDescription());
-        Score.setText(String.valueOf(course.getScore()));
+        BarScore = (RatingBar)this.findViewById(R.id.courseRatingBar);
 
         //CommentList = (ListView) findViewById(R.id.CommentList);
         AddComment = (FButton) findViewById(R.id.fbtn_Addcomment);
@@ -140,34 +156,17 @@ public class CourseDetailActivity extends AppCompatActivity {
         order_by_time = findViewById(R.id.tv_course_comment_order_by_time);
         order_by_like = findViewById(R.id.tv_course_comment_order_by_like);
 
-        // 按热度从高到低排序
-        order_by_like.setOnClickListener(view -> {
-            if(!order_by_time.getText().toString().equals("时间")) {
-                order_by_like.setTextColor(getResources().getColor(R.color.blue));
-                order_by_time.setTextColor(getResources().getColor(R.color.gray));
-                order_by_time.setText("时间");
-                commentAdapter.setList(comments);
-                commentAdapter.notifyDataSetChanged();
-            }
-        });
+        Name.setText(course.getName());
+        Teacher.setText(course.getTeacher());
+        Description.setText(course.getDescription());
 
-        // 按时间排序
-        order_by_time.setOnClickListener(view -> {
-            order_by_time.setTextColor(getResources().getColor(R.color.blue));
-            order_by_like.setTextColor(getResources().getColor(R.color.gray));
-            String text = order_by_time.getText().toString();
-            if(text.contains("↑")){
-                order_by_time.setText("时间↓");
-                commentAdapter.setList(list_order_by_asc);
-            } else if(text.contains("↓")) {
-                order_by_time.setText("时间↑");
-                commentAdapter.setList(list_order_by_des);
-            } else {
-                order_by_time.setText("时间↓");
-                commentAdapter.setList(list_order_by_asc);
-            }
-            commentAdapter.notifyDataSetChanged();
-        });
+        //评分文本bar显示设置精确到0.1
+        BarScore.setStepSize((float) 0.1);
+        BigDecimal b   =   new   BigDecimal(course.getScore());
+        float trimScore =   b.setScale(1,   BigDecimal.ROUND_HALF_UP).floatValue();
+        Score.setText(String.valueOf(trimScore));
+        BarScore.setRating(trimScore);
+        setCommentSum();
 
 
         /***************************添加评论**********************************************/
@@ -213,7 +212,7 @@ public class CourseDetailActivity extends AppCompatActivity {
                 //final long testuserid = 4;//默认用户评论id
                 long globalUserid = user.getUserId();
                 String commentContent = CommentEidt.getText().toString();
-                Integer commentRating = (int)UserRating.getRating();
+                Float commentRating = UserRating.getRating();
                 Date commentDate = new Date();
 
 
@@ -225,21 +224,11 @@ public class CourseDetailActivity extends AppCompatActivity {
                 newcomment.setFromName(user.getUserName());
                 newcomment.setPortrait(user.getPortrait());
 
-                insertComment(newcomment);
-
-
                 //更新几个列表
-                comments.add(newcomment);
-                list_order_by_asc.add(newcomment);
-                list_order_by_des.add(0, newcomment);
-
+                //comments.add(newcomment);
+                insertComment(newcomment);
                 commentAdapter.notifyDataSetChanged();
-                commentSum.setText(comments.size() + "条评论");
-
-                /*System.out.println("用户评分"+UserRating.getRating());
-                System.out.println("用户描述内容"+CommentEidt.getText().toString());
-                Log.i("submit","成功添加评分");
-                 */
+                //commentSum.setText(comments.size() + "条评论");
                 Commentdialog.dismiss();
                 Toast.makeText(getApplicationContext(), "提交成功", Toast.LENGTH_SHORT).show();
 
@@ -249,6 +238,109 @@ public class CourseDetailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 评论的删除监听
+     */
+    private void setListListener() {
+
+        //adpter删除用户评论/举报用户评论
+        commentAdapter.setOnMoreClickListener((view, pos) -> {
+            if (user.getUserId().equals(comments.get(pos).getCommentatorId())) {
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("提示")
+                        .setContentText("确定要删除这条评论吗？")
+                        .setConfirmText("确定")
+                        .setCancelText("点错了")
+                        .showCancelButton(true)
+                        .setConfirmClickListener(sweetAlertDialog -> {
+                            sweetAlertDialog.changeAlertType(SweetAlertDialog.PROGRESS_TYPE);
+                            sweetAlertDialog.setTitle("请稍后");
+                            sweetAlertDialog.setContentText("");
+                            sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                            sweetAlertDialog.setCancelable(false);
+                            sweetAlertDialog.showCancelButton(false);
+                            sweetAlertDialog.show();
+                            deleteComment(comments.get(pos).getInfoId(), pos, sweetAlertDialog);
+                        })
+                        .setCancelClickListener(SweetAlertDialog::cancel)
+                        .show();
+            }else{
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("您确定举报这条评论吗？")
+                        .setContentText("举报后不能取消！")
+                        .setConfirmText("确认")
+                        .setCancelText("取消")
+                        .showCancelButton(true)
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.cancel();
+                            }
+                        })
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.setTitleText("举报成功！")
+                                        .showCancelButton(false)
+                                        .setContentText("OK")
+                                        .setConfirmClickListener(null)
+                                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                            }
+                        })
+                        .show();
+
+                Log.i("click","举报一次！");
+            }
+        });
+
+        // 按热度从高到低排序
+        order_by_like.setOnClickListener(view -> {
+            if(!order_by_time.getText().toString().equals("时间")) {
+                order_by_like.setTextColor(getResources().getColor(R.color.blue));
+                order_by_time.setTextColor(getResources().getColor(R.color.gray));
+                order_by_time.setText("时间");
+                flag = true;
+                sortByLikeNum();
+                commentAdapter.setList(comments);
+                commentAdapter.notifyDataSetChanged();
+            }
+        });
+
+        // 按时间排序
+        order_by_time.setOnClickListener(view -> {
+            order_by_time.setTextColor(getResources().getColor(R.color.blue));
+            order_by_like.setTextColor(getResources().getColor(R.color.gray));
+            String text = order_by_time.getText().toString();
+            if (flag) { sortByTimeAsc(); flag = false; }
+            else { Collections.reverse(comments); }
+
+            if (text.contains("↑")) {
+                order_by_time.setText("时间↓");
+            } else if (text.contains("↓")) {
+                order_by_time.setText("时间↑");
+            } else {
+                order_by_time.setText("时间↓");
+            }
+            commentAdapter.setList(comments);
+            commentAdapter.notifyDataSetChanged();
+        });
+
+    }
+
+    /**
+     * 设置评论数目
+     */
+    private void setCommentSum() {
+        if (comments.size() == 0) {
+            commentSum.setText("还没有人评论，快来抢沙发吧。");
+        } else {
+            commentSum.setText(comments.size() + "条评论");
+        }
+    }
+
+
+    /**获取评论数据
+     * */
     public void getCommentData(){
         //courses = new ArrayList<>();
         @SuppressLint("HandlerLeak")
@@ -259,6 +351,8 @@ public class CourseDetailActivity extends AppCompatActivity {
                         Log.i("获取: ", "成功");
                         //初始化列表
                         initRecyclerView();
+                        setListListener();
+                        setCommentSum();
                         break;
 
                     case FAIL:
@@ -269,6 +363,8 @@ public class CourseDetailActivity extends AppCompatActivity {
                         Log.i("获取: ", "0");
                         //Toast.makeText(recyclerView.getContext(),"暂时没有新的信息！",Toast.LENGTH_SHORT).show();
                         initRecyclerView();
+                        setListListener();
+                        setCommentSum();
                         break;
                 }
             }
@@ -319,62 +415,10 @@ public class CourseDetailActivity extends AppCompatActivity {
                         if (comments.size() == 0) { //获取的数量为0
                             msg.what = ZERO;
                             System.out.println("评论列表为空\n");
-                        } else {
+                        }else {
                             msg.what = SUCCESS;
-                    //两个排序列表同步更新
-                            //升序
-                            list_order_by_asc = new ArrayList<>();
-                            list_order_by_asc.addAll(comments);
-                            Collections.sort(list_order_by_asc, new Comparator<CourseComment>() {
-                                DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                                @Override
-                                public int compare(CourseComment p1, CourseComment p2) {
-                                    //try {
-                                    return  p1.getInfoDate().compareTo(p2.getInfoDate());
-                                    //return f.parse(p1.getInfoDate().toString()).compareTo(f.parse(p2.getInfoDate().toString()));
-                                    //} catch (ParseException e) {
-                                    //    throw new IllegalArgumentException(e);
-                                    // }
-                                }
-                            });
 
-                            //降序排列
-                            Collections.sort(comments, new Comparator<CourseComment>() {
-                                @Override
-                                public int compare(CourseComment c1, CourseComment c2) {
-                                    int s1 = c1.getLikeCount();
-                                    int s2 = c2.getLikeCount();
-                                    return s1 < s2 ? s1 : (s1 == s2) ? 0 : -1;
-                                }
-                            });
-
-                            //count = mTags.size();
-                            list_order_by_des = new ArrayList<>();
-                            list_order_by_des.addAll(comments);
-                            Collections.sort(list_order_by_des, new Comparator<CourseComment>() {
-                                DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                                @Override
-                                public int compare(CourseComment p1, CourseComment p2) {
-                                    //try {
-                                    //    return f.parse(p2.getInfoDate().toString()).compareTo(f.parse(p1.getInfoDate().toString()));
-                                    // } catch (ParseException e) {
-                                    //     throw new IllegalArgumentException(e);
-                                    // }
-                                    return p2.getInfoDate().compareTo(p1.getInfoDate());
-                                }
-                            });
-
-                            Collections.sort(comments, new Comparator<CourseComment>() {
-                                @Override
-                                public int compare(CourseComment p1, CourseComment p2) {
-                                    int s1 = p1.getLikeCount();
-                                    int s2 = p2.getLikeCount();
-                                    return s1 < s2 ? s1 : (s1 == s2) ? 0 : -1;
-                                }
-                            });
-
-
-                            System.out.println("评论列表为:"+comments.toString());
+                            //System.out.println("评论列表为:"+comments.toString());
                         }
                         handler.sendMessage(msg);
                         Log.i("获取: ", String.valueOf(comments.size()));
@@ -385,6 +429,7 @@ public class CourseDetailActivity extends AppCompatActivity {
 
 
     }
+
 
     public void initCommentData() {
 
@@ -407,59 +452,9 @@ public class CourseDetailActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         for(int i=0;i<10;i++) {
-            comments.add(new CourseComment((long) 1, (long) 3, "interesting", 4, commentDate));
+            comments.add(new CourseComment((long) 1, (long) 3, "interesting", (float)4, commentDate));
 
         }
-        //升序
-        list_order_by_asc = new ArrayList<>();
-        list_order_by_asc.addAll(comments);
-        Collections.sort(list_order_by_asc, new Comparator<CourseComment>() {
-            DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            @Override
-            public int compare(CourseComment p1, CourseComment p2) {
-                //try {
-                   return  p1.getInfoDate().compareTo(p2.getInfoDate());
-                    //return f.parse(p1.getInfoDate().toString()).compareTo(f.parse(p2.getInfoDate().toString()));
-                //} catch (ParseException e) {
-                //    throw new IllegalArgumentException(e);
-               // }
-            }
-        });
-
-        //降序排列
-        Collections.sort(comments, new Comparator<CourseComment>() {
-            @Override
-            public int compare(CourseComment c1, CourseComment c2) {
-                int s1 = c1.getLikeCount();
-                int s2 = c2.getLikeCount();
-                return s1 < s2 ? s1 : (s1 == s2) ? 0 : -1;
-            }
-        });
-
-        //count = mTags.size();
-        list_order_by_des = new ArrayList<>();
-        list_order_by_des.addAll(comments);
-        Collections.sort(list_order_by_des, new Comparator<CourseComment>() {
-            DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            @Override
-            public int compare(CourseComment p1, CourseComment p2) {
-                //try {
-                //    return f.parse(p2.getInfoDate().toString()).compareTo(f.parse(p1.getInfoDate().toString()));
-               // } catch (ParseException e) {
-               //     throw new IllegalArgumentException(e);
-               // }
-                return p2.getInfoDate().compareTo(p1.getInfoDate());
-            }
-        });
-
-        Collections.sort(comments, new Comparator<CourseComment>() {
-            @Override
-            public int compare(CourseComment p1, CourseComment p2) {
-                int s1 = p1.getLikeCount();
-                int s2 = p2.getLikeCount();
-                return s1 < s2 ? s1 : (s1 == s2) ? 0 : -1;
-            }
-        });
 
     }
 
@@ -493,12 +488,14 @@ public class CourseDetailActivity extends AppCompatActivity {
                                     Log.i("刷新", "成功");
                                     commentAdapter.setList(comments);
                                     commentAdapter.notifyDataSetChanged();
+                                    setCommentSum();
                                     break;
                                 case FAIL:
                                     Log.i("刷新", "失败");
                                     break;
                                 case ZERO:
                                     Log.i("刷新", "0");
+                                    setCommentSum();
                                     break;
                             }
                             recyclerView.refreshComplete();
@@ -558,6 +555,7 @@ public class CourseDetailActivity extends AppCompatActivity {
                                     Log.i("加载", "成功");
                                     recyclerView.refreshComplete();
                                     commentAdapter.notifyDataSetChanged();
+                                    setCommentSum();
                                     break;
                                 case FAIL:
                                     Log.i("加载", "失败");
@@ -565,6 +563,7 @@ public class CourseDetailActivity extends AppCompatActivity {
                                 case ZERO:
                                     Log.i("加载", "0");
                                     recyclerView.setNoMore(true);
+                                    setCommentSum();
                                     break;
                             }
                         }
@@ -615,7 +614,79 @@ public class CourseDetailActivity extends AppCompatActivity {
 
     }
 
+    /**用户添加新评分 数据库更新
+     * */
+    private void insertComment(CourseComment comment) {
+
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAIL:
+                        Log.i("插入评论: ", "失败");
+                        Toast.makeText(CourseDetailActivity.this, "网络出了点问题，请稍候再试",
+                                Toast.LENGTH_LONG).show();
+                        break;
+                    case SUCCESS:
+                        Log.i("插入评论: ", "成功");
+                        if (order_by_time.getText().toString().equals("时间↑")) {
+                            comments.add(0, comment);
+                        } else {
+                           comments.add(comment);
+                        }
+                        commentAdapter.setList(comments);
+                        commentAdapter.notifyDataSetChanged();
+                        queryUpdatedAverageScore(globalcourseid);
+                        setCommentSum();
+                        mySendBroadCast(s1);
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+        new Thread(()->{
+            Message msg = new Message();
+            //建立client
+            final OkHttpClient[] client = {new OkHttpClient()};
+
+            //将传送实体类转为string类型的键值对，设置日期格式，与后端实体类的Date对应
+            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd hh:mm").create();
+            String json = gson.toJson(comment);
+
+            System.out.println("json:"+json);
+            //设置请求体并设置contentType
+            RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"),json);
+            //请求
+            Request request=new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.insertCourseComment))
+                    .post(requestBody)
+                    .build();
+            //新建call联结client和request
+            Call call= client[0].newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    //请求失败的处理
+                    msg.what = FAIL;
+                    handler.sendMessage(msg);
+                    Log.i("RESPONSE:","fail"+e.getMessage());
+                }
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    System.out.println("请求成功："+response.body().string());
+                    msg.what=SUCCESS;
+                    handler.sendMessage(msg);
+                }
+
+            });
+
+    }).start();
+    }
+
+    /*
     public void insertComment(CourseComment courseComment){
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -649,6 +720,9 @@ public class CourseDetailActivity extends AppCompatActivity {
                     public void onResponse(Call call, Response response) throws IOException {
                         System.out.println("请求成功："+response.body().string());
                         //Log.i("RESPONSE:",response.body().string());
+                        Toast.makeText(CourseDetailActivity.this, "添加评论成功！",
+                                Toast.LENGTH_LONG).show();
+                        mySendBroadCast(s1);//发送评分更新的广播
                     }
 
                 });
@@ -657,6 +731,261 @@ public class CourseDetailActivity extends AppCompatActivity {
     }
 
 
+     */
 
 
+    /**
+     * 用户删除评论 数据库更新
+     */
+    private void deleteComment(Long id, int pos, SweetAlertDialog sDialog) {
+
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAIL:
+                        Log.i("删除评论: ", "失败");
+                        sDialog.setTitleText("删除失败")
+                                .setContentText("出了点问题，请稍候再试")
+                                .showCancelButton(false)
+                                .setConfirmText("确定")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        break;
+                    case SUCCESS:
+                        Log.i("删除评论: ", "成功");
+                        sDialog.setTitleText("删除成功")
+                                .setContentText("")
+                                .showCancelButton(false)
+                                .setConfirmText("关闭")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                        comments.remove(pos);
+                        commentAdapter.notifyDataSetChanged();
+                        setCommentSum();
+                        queryUpdatedAverageScore(globalcourseid);
+                        mySendBroadCast(s2);//course列表view更新
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+        new Thread(()->{
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+
+            FormBody.Builder builder = new FormBody.Builder();
+            builder.add("infoId", String.valueOf(id));
+            RequestBody requestBody = builder.build();
+
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.deleteCourseEvaluation))
+                    .post(requestBody)
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("删除评论: ", e.getMessage());
+                    msg.what = FAIL;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.i("删除评论：", response.body().string());
+                    msg.what = SUCCESS;
+                    handler.sendMessage(msg);
+                }
+            });
+
+        }).start();
+    }
+
+    private void queryUpdatedAverageScore(Long courseId){
+
+
+        //更新card view 中的Score UI
+        final Handler UIhandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                super.handleMessage(msg);
+                if(msg.what == 1){
+                    //String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());//String类
+                    //mText.setText(date);
+                    BarScore.setStepSize((float) 0.1);
+                    BigDecimal b   =   new   BigDecimal(coursedetail.getScore());
+                    float trimScore =   b.setScale(1,   BigDecimal.ROUND_HALF_UP).floatValue();
+                    Score.setText(String.valueOf(trimScore));
+                    BarScore.setRating(trimScore);
+
+                }
+            }
+        };
+
+
+        //mText.setText("更新前");
+        final Thread UIthread = new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                Message message = new Message();
+                message.what = 1;
+                UIhandler.sendMessage(message);
+            }
+
+        });
+
+        new Handler().postDelayed(() -> {
+
+            @SuppressLint("HandlerLeak")
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg){
+                    switch (msg.what){
+                        case SUCCESS:
+                            Log.i("获取", "成功");
+                            UIthread.start();
+                            break;
+                        case FAIL:
+                            Log.i("获取", "失败");
+                            break;
+                        case ZERO:
+                            Log.i("获取", "0");
+                            break;
+                    }
+
+                }
+            };
+
+            new Thread(()->{
+                Request request = new Request.Builder()
+                        .url(getResources().getString(R.string.serverBasePath) +
+                                getResources().getString(R.string.queryCourseByInfoid)
+                                + "/?infoId="+globalcourseid)
+                        .get()
+                        .build();
+                Message msg = new Message();
+                OkHttpClient okHttpClient = new OkHttpClient();
+                Call call = okHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("获取: ", e.getMessage());
+                        msg.what = FAIL;
+                        handler.sendMessage(msg);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String data = response.body().string();
+                        Course responseCourse = new Gson().fromJson(data,
+                                Course.class);
+
+                        coursedetail = responseCourse;
+                        System.out.println("删除后更新分数："+coursedetail.getScore());
+                        msg.what = SUCCESS;
+                        handler.sendMessage(msg);
+
+
+                    }
+                });
+            }).start();
+        }, 1500);
+
+
+
+
+    }
+
+
+    private void sortByLikeNum() {
+        Collections.sort(comments, (p1, p2) -> {
+            int s1 = p1.getLikeCount();
+            int s2 = p2.getLikeCount();
+            return s1 < s2 ? s1 : (s1 == s2) ? 0 : -1;
+        });
+    }
+
+    private void sortByTimeAsc() {
+        Collections.sort(comments, (p1, p2) -> {
+
+                return Objects.requireNonNull(p1.getInfoDate()).compareTo(p2.getInfoDate());
+
+        });
+    }
+
+    /**
+     * 描述：自定义广播
+     */
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+
+        private void solve(Intent intent, boolean isIncrease, int where) {
+            int pos = intent.getIntExtra("pos", -1);
+            if (pos != -1) {
+                /*switch (where) {
+                    case 1:
+                        int n = list.get(pos).getReplyNumber();
+                        n = isIncrease ? n+1 : n-1;
+                        list.get(pos).setReplyNumber(n);
+                        break;
+                    case 2:
+                        break;
+                }
+
+                 */
+                //adapter.notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (Objects.requireNonNull(intent.getAction())) {
+               // case s3:
+               //     updateAverageScore(coursedetail);
+               //     break;
+                /*case s5: solve(intent, true, 1); break;
+                case s6: solve(intent, false, 1); break;
+                case s7: solve(intent, true, 2); break;
+                case s8: solve(intent, false, 2); break;
+
+                 */
+            }
+        }
+    }
+
+    /**
+     * 描述：注册广播
+     */
+    private void registerBroadCast() {
+        //receiver1 = new MyBroadcastReceiver();
+        //registerReceiver(receiver1, new IntentFilter(s5));
+
+        //receiver3 = new MyBroadcastReceiver();
+        //registerReceiver(receiver3, new IntentFilter(s3));
+
+    }
+
+    /**
+     * 描述：取消广播注册
+     */
+    public void onDestroy() {
+        super.onDestroy();
+        //unregisterReceiver(receiver3);
+        //unregisterReceiver(receiver2);
+        //unregisterReceiver(receiver3);
+        //unregisterReceiver(receiver4);
+    }
+
+    /**
+     * 描述：评论、点赞后发送广播(给StudentCommentFragment)
+     */
+    private void mySendBroadCast(String s) {
+        Intent intent = new Intent();
+        intent.putExtra("pos", coursePos);
+        intent.setAction(s);
+        sendBroadcast(intent);
+    }
 }

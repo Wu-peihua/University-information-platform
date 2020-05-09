@@ -15,6 +15,16 @@
     android:scrollbars="vertical" >
     </com.jcodecraeer.xrecyclerview.XRecyclerView>
 
+    <!-- 空白提示 -->
+    <TextView
+        android:id="@+id/tv_blank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="还没有组队记录，快去发布吧"
+        android:textColor="@color/blue"
+        android:visibility="gone"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabtn_student_recruit"
         android:layout_width="wrap_content"

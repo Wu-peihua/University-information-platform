@@ -11,6 +11,17 @@ public class ResponseRecruit {
     private Integer pageNum;
     private Integer total;
     private List<RecruitInfo> recruitInfoList;
+    private List<String> userNameList;
+
+
+    public List<String> getUserNameList() {
+        return userNameList;
+    }
+
+    public void setUserNameList(List<String> userNameList) {
+        this.userNameList = userNameList;
+    }
+
 
     public ResponseRecruit(){}
 
@@ -44,5 +55,10 @@ public class ResponseRecruit {
 
     public void setRecruitInfoList(List<RecruitInfo> recruitInfoList) {
         this.recruitInfoList = recruitInfoList;
+    }
+
+    @Override
+    public String toString(){
+        return "userNameList:"+userNameList.toString() + "recruitList:"+recruitInfoList.toString();
     }
 }

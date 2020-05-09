@@ -5,26 +5,6 @@ import android.app.Application;
 import java.util.Date;
 
 public class UserInfo extends Application {
-    private Long userId;
-
-    private String userName;
-
-    private String pw;
-
-    private String stuNumber;
-
-    private String stuCard;
-
-    private String portrait;
-
-    private Integer universityId;
-
-    private Integer instituteId;
-
-    private Integer userType;
-
-    private Date created;
-
     public Long getUserId() {
         return userId;
     }
@@ -38,7 +18,7 @@ public class UserInfo extends Application {
     }
 
     public void setUserName(String userName) {
-        this.userName = userName == null ? null : userName.trim();
+        this.userName = userName;
     }
 
     public String getPw() {
@@ -46,7 +26,7 @@ public class UserInfo extends Application {
     }
 
     public void setPw(String pw) {
-        this.pw = pw == null ? null : pw.trim();
+        this.pw = pw;
     }
 
     public String getStuNumber() {
@@ -54,7 +34,7 @@ public class UserInfo extends Application {
     }
 
     public void setStuNumber(String stuNumber) {
-        this.stuNumber = stuNumber == null ? null : stuNumber.trim();
+        this.stuNumber = stuNumber;
     }
 
     public String getStuCard() {
@@ -62,7 +42,7 @@ public class UserInfo extends Application {
     }
 
     public void setStuCard(String stuCard) {
-        this.stuCard = stuCard == null ? null : stuCard.trim();
+        this.stuCard = stuCard;
     }
 
     public String getPortrait() {
@@ -70,7 +50,7 @@ public class UserInfo extends Application {
     }
 
     public void setPortrait(String portrait) {
-        this.portrait = portrait == null ? null : portrait.trim();
+        this.portrait = portrait;
     }
 
     public Integer getUniversityId() {
@@ -104,4 +84,26 @@ public class UserInfo extends Application {
     public void setCreated(Date created) {
         this.created = created;
     }
+
+    private Long userId;
+
+    private String userName;
+
+    private String pw;
+
+    private String stuNumber;
+
+    private String stuCard;
+
+    private String portrait;
+
+    private Integer universityId;
+
+    private Integer instituteId;
+
+    private Integer userType;
+
+    private Date created;
+
+
 }

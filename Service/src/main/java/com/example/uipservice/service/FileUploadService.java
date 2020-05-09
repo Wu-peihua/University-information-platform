@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface FileUploadService {
 
-    Map upload(MultipartFile file);
+    Map upload(MultipartFile file[]);
 
     Boolean removeFile(String fileName);
 }

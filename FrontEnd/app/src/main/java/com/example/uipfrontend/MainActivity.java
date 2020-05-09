@@ -29,8 +29,10 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -61,18 +63,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
         UserInfo user = (UserInfo) getApplication();
         user.setUserId(4L);
         user.setUserName("悟空");
         user.setPortrait("http://pic4.zhimg.com/50/v2-6ecab2cd6c1bbf9835030682db83543d_hd.jpg");
 
+
         commonUser = findViewById(R.id.btn_commonUser);
         student = findViewById(R.id.btn_student);
         admin = findViewById(R.id.btn_admin);
 
+        initUser();
         getMenusData();
         initListener();
+
+    }
+
+    private void initUser(){
 
     }
 
@@ -120,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
                     @SuppressLint("CommitPrefEdits")
                     SharedPreferences.Editor et = sp.edit();
 
-                    Set setUniversity = new HashSet();
-                    Set setInstitute = new HashSet();
+                    List<String> universityList = new ArrayList<>();
+                    List<String> instituteList = new ArrayList<>();
 
 
                     //循环遍历数组
@@ -130,27 +138,47 @@ public class MainActivity extends AppCompatActivity {
                         University university = new Gson().fromJson(jsonElement, new TypeToken<University>() {
                         }.getType());
                         levelOneUniversityMenu[index] = university.getUniversityName();
-                        setUniversity.add(levelOneUniversityMenu[index]);
+                        universityList.add(levelOneUniversityMenu[index]);
                         ++index;
                     }
 
                     for (JsonElement jsonElement : jsonArrayInstitute) {
                         Institute institute = new Gson().fromJson(jsonElement, new TypeToken<Institute>() {
                         }.getType());
-                        setInstitute.add(institute.getInstituteName());
+                        instituteList.add(institute.getInstituteName());
+                    }
+
+                    StringBuilder universityStrBuilder = new StringBuilder();
+                    StringBuilder instituteStrBuilder = new StringBuilder();
+                    boolean first = true;
+
+                    //将universityList转为String
+                    for(String string :universityList) {
+                        if(first) {
+                            first=false;
+                        }else{
+                            universityStrBuilder.append(",");
+                        }
+                        universityStrBuilder.append(string);
+                    }
+
+                    first = true;
+                    //将universityList转为String
+                    for(String string :instituteList) {
+                        if(first) {
+                            first=false;
+                        }else{
+                            instituteStrBuilder.append(",");
+                        }
+                        instituteStrBuilder.append(string);
                     }
 
 
 
                     //将大学数组和专业数组添加到shareprefernece
-                    et.putStringSet("university", setUniversity);
-                    et.putStringSet("institute",setInstitute);
+                    et.putString("university", universityStrBuilder.toString());
+                    et.putString("institute",instituteStrBuilder.toString());
                     et.commit();
-
-
-                    Log.d(TAG, "resultUniversity: " + resultUniversity);
-                    Log.d(TAG, "resultInstitute: " + resultInstitute);
-
 
                     Message msg = new Message();
                     msg.what = MenuDataOk;

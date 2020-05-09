@@ -17,6 +17,7 @@ public class ImageDialog extends Dialog {
     private ImageView magnifiedImage;
     private int intImageId;
     private Uri uriImageId;
+    private String urlImageId;
 
     public ImageDialog(@NonNull Context context, int intImageId) {
         super(context);
@@ -27,6 +28,12 @@ public class ImageDialog extends Dialog {
     public ImageDialog(@NonNull Context context, Uri uriImageId) {
         super(context);
         this.uriImageId = uriImageId;
+        intImageId = 0;
+    }
+
+    public ImageDialog(@NonNull Context context, String urlImageId) {
+        super(context);
+        this.urlImageId = urlImageId;
         intImageId = 0;
     }
 
@@ -42,10 +49,12 @@ public class ImageDialog extends Dialog {
 
         magnifiedImage = findViewById(R.id.image_dialog);
 
-        if (uriImageId == null)
-            Glide.with(getContext()).load(intImageId).into(magnifiedImage);
-        else
+        if (uriImageId != null)
             Glide.with(getContext()).load(uriImageId).into(magnifiedImage);
+        else if(urlImageId != null)
+            Glide.with(getContext()).load(urlImageId).into(magnifiedImage);
+        else
+            Glide.with(getContext()).load(intImageId).into(magnifiedImage);
 
         magnifiedImage.setOnClickListener(view -> dismiss());
 

@@ -23,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.bigkoo.alertview.AlertView;
 import com.bumptech.glide.Glide;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Utils.ImageDialog;
 import com.luck.picture.lib.PictureSelector;
@@ -32,6 +33,7 @@ import com.luck.picture.lib.entity.LocalMedia;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 public class StudentPersonalInfoActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -52,6 +54,8 @@ public class StudentPersonalInfoActivity extends AppCompatActivity implements Vi
     private int chooseMode = PictureMimeType.ofAll();
 
     private TextView tv_studentPersonalName;
+
+    private UserInfo userInfo;
 
 
     @Override
@@ -94,6 +98,11 @@ public class StudentPersonalInfoActivity extends AppCompatActivity implements Vi
         iv_Portrait = findViewById(R.id.iv_studentPersonalPortrait);
         tv_studentPersonalName = findViewById(R.id.tv_studentPersonalName);
 
+        userInfo = (UserInfo)getApplication();  //获取登录用户信息
+        Glide.with(this).load(userInfo.getPortrait()).into(iv_Portrait);
+        tv_studentPersonalName.setText(userInfo.getUserName());
+
+
 //        Intent receivedIntent = getIntent();
 //        portrait = Uri.parse(receivedIntent.getStringExtra("oldPortrait"));
 //        imPortrait = findViewById(R.id.user_iv_portrait2);
@@ -109,10 +118,7 @@ public class StudentPersonalInfoActivity extends AppCompatActivity implements Vi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_studentPersonalPortrait:
-                if(portrait == null){
-                    portrait = getResourcesUri(R.drawable.ic_default_portrait);
-                }
-                ImageDialog dialog = new ImageDialog(this, portrait);
+                ImageDialog dialog = new ImageDialog(this, userInfo.getPortrait());
                 dialog.show();
                 break;
             case R.id.rl_studentPersonalPortrait:
