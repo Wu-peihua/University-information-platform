@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.uipfrontend.Entity.RecruitInfo;
@@ -24,7 +25,6 @@ import com.example.uipfrontend.Entity.ResponseRecruit;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Activity.RecruitReleaseActivity;
 import com.example.uipfrontend.Student.Adapter.StudentRecruitRecyclerViewAdapter;
-import com.example.uipfrontend.Utils.LoadingViewManager;
 import com.example.uipfrontend.Utils.MultiMenusView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -32,6 +32,9 @@ import com.google.gson.Gson;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.qlh.dropdownmenu.DropDownMenu;
+import com.wang.avi.AVLoadingIndicatorView;
+
+import net.steamcrafted.loadtoast.LoadToast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -186,6 +189,8 @@ public class StudentRecruitFragment extends Fragment {
     }
 
     private void getData(String requestUrl){
+
+
         list = new ArrayList<>();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -318,7 +323,6 @@ public class StudentRecruitFragment extends Fragment {
 
 
     private void fetchRecruitInfo(String requestUrl){
-        LoadingViewManager.with(getActivity()).setHintText("加载提示").build();   //加载动画
 
 
         new Handler().postDelayed(() -> {
@@ -332,8 +336,6 @@ public class StudentRecruitFragment extends Fragment {
                             tv_blank.setVisibility(View.GONE);
                             studentRecruitRecyclerViewAdapter.setList(list, userNameList);
                             studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
-                            LoadingViewManager.dismiss();
-
                             break;
                         case FAIL:
                             Log.i("获取", "失败");
