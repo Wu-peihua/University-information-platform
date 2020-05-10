@@ -36,7 +36,7 @@ public class CommentReplyController {
     @RequestMapping(value = "/deletereply", method = RequestMethod.POST)
     private Map<String, Object> deleteReply(Long infoId) {
         Map<String, Object> modelMap = new HashMap<>();
-        modelMap.put("success", commentReplyService.deleteReply(infoId));
+        modelMap.put("result", commentReplyService.deleteReply(infoId));
         return modelMap;
     }
 

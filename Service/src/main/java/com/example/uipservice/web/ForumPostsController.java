@@ -25,7 +25,7 @@ public class ForumPostsController {
     @RequestMapping(value = "/insertpost", method = RequestMethod.POST)
     private Map<String, Object> insertPost(@RequestBody ForumPosts post) {
         Map<String, Object> modelMap = new HashMap<>();
-        modelMap.put("success", forumPostsService.insertPost(post));
+        modelMap.put("result", forumPostsService.insertPost(post));
         return modelMap;
     }
 
@@ -36,7 +36,7 @@ public class ForumPostsController {
     @RequestMapping(value = "/deletepost", method = RequestMethod.POST)
     private Map<String, Object> deletePost(Long infoId) {
         Map<String, Object> modelMap = new HashMap<>();
-        modelMap.put("success", forumPostsService.deletePost(infoId));
+        modelMap.put("result", forumPostsService.deletePost(infoId));
         return modelMap;
     }
 
@@ -56,7 +56,7 @@ public class ForumPostsController {
     @RequestMapping(value = "/updatepost", method = RequestMethod.POST)
     private Map<String, Object> updatePost(@RequestBody ForumPosts post) {
         Map<String, Object> modelMap = new HashMap<>();
-        modelMap.put("success", forumPostsService.updatePost(post));
+        modelMap.put("result", forumPostsService.updatePost(post));
         return modelMap;
     }
 

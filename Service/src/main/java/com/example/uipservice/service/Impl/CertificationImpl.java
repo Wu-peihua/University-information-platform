@@ -29,10 +29,10 @@ public class CertificationImpl implements CertificationService {
     }
 
     @Override
-    public Map selectUncheckCertification(Long userId) {
+    public Map selectCertificationByUserId(Long userId) {
         Map resMap = new HashMap();
         try {
-            StuCertification certification = certificationMapper.selectUncheck(userId);
+            StuCertification certification = certificationMapper.selectByUserId(userId);
             resMap.put("certification", certification);
             return resMap;
         } catch (Exception e) {

@@ -25,7 +25,7 @@ public class CertificationController {
     @RequestMapping(value = "/insertcertification", method = RequestMethod.POST)
     private Map<String, Object> insertCertification(@RequestBody StuCertification certification) {
         Map<String, Object> modelMap = new HashMap<>();
-        modelMap.put("success", certificationService.insertCertification(certification));
+        modelMap.put("result", certificationService.insertCertification(certification));
         return modelMap;
     }
 
@@ -33,8 +33,8 @@ public class CertificationController {
      * 获取认证信息
      * @return modelMap
      */
-    @RequestMapping(value = "/selectuncheckcertification", method = RequestMethod.GET)
+    @RequestMapping(value = "/selectcertificationbyuserid", method = RequestMethod.GET)
     private Map selectCertification(Long userId) {
-        return certificationService.selectUncheckCertification(userId);
+        return certificationService.selectCertificationByUserId(userId);
     }
 }

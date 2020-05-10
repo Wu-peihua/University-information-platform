@@ -11,7 +11,7 @@ public interface StuCertificationMapper {
 
     int insertSelective(StuCertification record);
 
-    StuCertification selectUncheck(Long userId);
+    StuCertification selectByUserId(Long userId);
 
     StuCertification selectByPrimaryKey(Long infoId);
 

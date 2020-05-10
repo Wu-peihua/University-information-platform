@@ -12,5 +12,5 @@ public interface CertificationService {
     boolean insertCertification(StuCertification certification);
 
     // 获取认证信息
-    Map selectUncheckCertification(Long userId);
+    Map selectCertificationByUserId(Long userId);
 }

@@ -71,7 +71,7 @@
     <!--新建认证-->
     <string name="insertCertification">/certification/insertcertification</string>
     <!--查看待审核的认证-->
-    <string name="selectUncheckCertification">/certification/selectuncheckcertification</string>
+    <string name="selectCertificationByUserId">/certification/selectcertificationbyuserid</string>
 
 
 </resources>

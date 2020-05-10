@@ -39,6 +39,9 @@ import com.example.uipfrontend.R;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.lzy.ninegrid.ImageInfo;
@@ -275,6 +278,15 @@ public class PostDetailActivity extends AppCompatActivity {
                     case NETWORK_ERR:
                         Log.i("删除帖子: ", "失败");
                         sDialog.setTitleText("删除失败")
+                                .setContentText("网络出了点问题，请稍候再试")
+                                .showCancelButton(false)
+                                .setConfirmText("确定")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        break;
+                    case SERVER_ERR:
+                        Log.i("删除帖子: ", "失败");
+                        sDialog.setTitleText("删除失败")
                                 .setContentText("出了点问题，请稍候再试")
                                 .showCancelButton(false)
                                 .setConfirmText("确定")
@@ -334,8 +346,12 @@ public class PostDetailActivity extends AppCompatActivity {
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String resStr = Objects.requireNonNull(response.body()).string();
                     Log.i("删除帖子：", resStr);
-                    // TODO: 解析返回结果
-                    msg.what = SUCCESS;
+
+                    JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonElement element = jsonObject.get("result");
+
+                    boolean res = new Gson().fromJson(element, boolean.class);
+                    msg.what = res ? SUCCESS : SERVER_ERR;
                     handler.sendMessage(msg);
                 }
             });
@@ -655,15 +671,17 @@ public class PostDetailActivity extends AppCompatActivity {
         detail_content.setContentText(post.getContent());
         
         String pics = post.getPictures();
-        String[] picUrls = pics.split(",");
         List<ImageInfo> imageList = new ArrayList<>();
-        for(String picUrl : picUrls) {
-            picUrl = picUrl.replace("localhost", getResources().getString(R.string.myIP));
-            picUrl = picUrl.replace("\"", "");
-            ImageInfo image = new ImageInfo();
-            image.setThumbnailUrl(picUrl);
-            image.setBigImageUrl(picUrl);
-            imageList.add(image);
+        if (pics != null) {
+            String[] picUrls = pics.split(",");
+            for (String picUrl : picUrls) {
+                picUrl = picUrl.replace("localhost", getResources().getString(R.string.myIP));
+                picUrl = picUrl.replace("\"", "");
+                ImageInfo image = new ImageInfo();
+                image.setThumbnailUrl(picUrl);
+                image.setBigImageUrl(picUrl);
+                imageList.add(image);
+            }
         }
         detail_pictures.setAdapter(new NineGridViewClickAdapter(this, imageList));
 
@@ -855,6 +873,15 @@ public class PostDetailActivity extends AppCompatActivity {
                     case NETWORK_ERR:
                         Log.i("删除评论: ", "失败");
                         sDialog.setTitleText("删除失败")
+                                .setContentText("网络出了点问题，请稍候再试")
+                                .showCancelButton(false)
+                                .setConfirmText("确定")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        break;
+                    case SERVER_ERR:
+                        Log.i("删除评论: ", "失败");
+                        sDialog.setTitleText("删除失败")
                                 .setContentText("出了点问题，请稍候再试")
                                 .showCancelButton(false)
                                 .setConfirmText("确定")
@@ -906,8 +933,12 @@ public class PostDetailActivity extends AppCompatActivity {
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String resStr = Objects.requireNonNull(response.body()).string();
                     Log.i("删除评论：", resStr);
-                    // TODO: 解析返回结果
-                    msg.what = SUCCESS;
+                    
+                    JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonElement element = jsonObject.get("result");
+
+                    boolean res = new Gson().fromJson(element, boolean.class);
+                    msg.what = res ? SUCCESS : SERVER_ERR;
                     handler.sendMessage(msg);
                 }
             });

@@ -36,7 +36,7 @@ public class ForumCommentController {
     @RequestMapping(value = "/deletecomment", method = RequestMethod.POST)
     private Map<String, Object> deleteComment(Long infoId) {
         Map<String, Object> modelMap = new HashMap<>();
-        modelMap.put("success", forumCommentService.deleteComment(infoId));
+        modelMap.put("result", forumCommentService.deleteComment(infoId));
         return modelMap;
     }
 

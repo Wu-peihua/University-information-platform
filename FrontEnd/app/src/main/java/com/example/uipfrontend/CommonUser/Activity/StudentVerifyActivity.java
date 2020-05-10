@@ -142,7 +142,11 @@ public class StudentVerifyActivity extends AppCompatActivity {
     }
     
     /**
-     * 描述：从本地获取高校列表和对应的学院列表，再查找用户是否提交过认证申请
+     * 描述：从本地获取高校列表和对应的学院列表，
+     * 再查找用户是否提交过认证申请，
+     * 如果有过提交，则使用默认toolbar，
+     * 隐藏添加照片，显示提交状态
+     * 并将所有编辑框设置为不可编辑
      */
     void getData() {
         user = (UserInfo) getApplication();
@@ -189,7 +193,7 @@ public class StudentVerifyActivity extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(getResources().getString(R.string.serverBasePath)
-                            + getResources().getString(R.string.selectUncheckCertification)
+                            + getResources().getString(R.string.selectCertificationByUserId)
                             + "/?userId=" + user.getUserId())
                     .get()
                     .build();
@@ -214,7 +218,10 @@ public class StudentVerifyActivity extends AppCompatActivity {
                     
                     if (certification == null) {
                         msg.what = ZERO;
-                    } else {
+                    } else { 
+                        // TODO: 通过 - 提示重新登录，状态改为"已通过"；
+                        //  不通过 - 弹框提示，点击关闭按钮时删除原来提交的认证信息，回到原始提交页面；
+                        //  待审核 - (已经实现)
                         msg.what = SUCCESS;
                     }
                     handler.sendMessage(msg);
@@ -224,7 +231,7 @@ public class StudentVerifyActivity extends AppCompatActivity {
     }
     
     /**
-     * 描述：用户已提交认证申请
+     * 描述：用户已提交认证申请，显示用户提交的信息
      */
     void setData() {
         
@@ -248,10 +255,6 @@ public class StudentVerifyActivity extends AppCompatActivity {
         
         url = certification.getStuCard();
         selectString = Arrays.asList(url.split(","));
-
-        NineGridView.setImageLoader(new PicassoImageLoader());
-        NineGridView verifyPic = findViewById(R.id.nineGrid_cu_verify_picture);
-        verifyPic.setVisibility(View.VISIBLE);
         
         List<ImageInfo> imageList = new ArrayList<>();
         for(String picUrl : selectString) {
@@ -262,7 +265,10 @@ public class StudentVerifyActivity extends AppCompatActivity {
             image.setBigImageUrl(picUrl);
             imageList.add(image); 
         }
+        NineGridView.setImageLoader(new PicassoImageLoader());
+        NineGridView verifyPic = findViewById(R.id.nineGrid_cu_verify_picture);
         verifyPic.setAdapter(new NineGridViewClickAdapter(this, imageList));
+        verifyPic.setVisibility(View.VISIBLE);
     }
     
     // 不联动的多级选项
@@ -342,6 +348,7 @@ public class StudentVerifyActivity extends AppCompatActivity {
         });
     }
 
+    // 自定义toolbar
     public void initToolBar() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().setStatusBarColor(getResources().getColor(R.color.blue));
@@ -372,10 +379,10 @@ public class StudentVerifyActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.submit:
-                String no = this.stuNumber.getText().toString().trim();
-                String name = this.stuName.getText().toString().trim();
+                String no = Objects.requireNonNull(stuNumber.getText()).toString().trim();
+                String name = Objects.requireNonNull(stuName.getText()).toString().trim();
                 
-                if(TextUtils.isEmpty(school.getText().toString().trim())) {
+                if(TextUtils.isEmpty(Objects.requireNonNull(school.getText()).toString().trim())) {
                     hideSystemKeyboard(StudentVerifyActivity.this, school);
                     Toast.makeText(this, "请选择学校和学院", Toast.LENGTH_SHORT).show();
                 } else if(TextUtils.isEmpty(no)) {
@@ -593,7 +600,7 @@ public class StudentVerifyActivity extends AppCompatActivity {
                     case SUCCESS:
                         Log.i("上传认证信息: ", "成功");
                         sDialog.setTitleText("提交成功")
-                                .setContentText("")
+                                .setContentText("请耐心等待管理员审核")
                                 .showCancelButton(false)
                                 .setConfirmText("关闭")
                                 .setConfirmClickListener(sweetAlertDialog -> {
@@ -677,8 +684,12 @@ public class StudentVerifyActivity extends AppCompatActivity {
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String resStr = Objects.requireNonNull(response.body()).string();
                     Log.i("上传认证: ", resStr);
-                    // TODO: 解析返回结果
-                    msg.what = SUCCESS;
+                    
+                    JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonElement element = jsonObject.get("result");
+
+                    boolean res = new Gson().fromJson(element, boolean.class);
+                    msg.what = res ? SUCCESS : SERVER_ERR;
                     handler.sendMessage(msg);
                 }
             });

@@ -17,11 +17,11 @@
     created
   </sql>
 
-  <select id="selectUncheck" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List" />
     from stu_certification
-    where user_id = #{userId,jdbcType=BIGINT} and stu_cer = 0
+    where user_id = #{userId,jdbcType=BIGINT}
   </select>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >

@@ -1,12 +1,5 @@
 package com.example.uipfrontend.CommonUser.Activity;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
@@ -24,9 +17,14 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bigkoo.alertview.AlertView;
 import com.example.uipfrontend.Entity.ForumPosts;
-import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.GridImageAdapter;
 import com.example.uipfrontend.Student.FullyGridLayoutManager;
@@ -74,17 +72,16 @@ public class WritePostActivity extends AppCompatActivity {
     private static final int NETWORK_ERR = -2;
     private static final int SERVER_ERR = -1;
     private static final int SUCCESS = 1;
-    private static final int FAILURE = 0;
 
     private static final int myResultCode1 = 1; // 新建帖子
     private static final int myResultCode4 = 4; // 修改帖子
 
-    private final int     maxSelectNum            = 9; //最大照片数
-    private final Boolean SELECT_FROM_PHOTO_ALBUM = true;
-    private final Boolean TAKING_PHOTO            = false;
+    private final int    maxSelectNum            = 9; //最大照片数
+    private final String SELECT_FROM_PHOTO_ALBUM = "SELECT_FROM_PHOTO_ALBUM";
+    private final String TAKING_PHOTO            = "TAKING_PHOTO";
     
-    private int        postPos;
-    private ForumPosts post;  // 修改：intent 传递过来帖子对象
+    private int     postPos;  // 修改的帖子在论坛记录列表的位置
+    private ForumPosts post;  // 修改：intent 传递过来帖子对象; 提交的帖子对象
     private Long     userId;  // 新建：intent 传递过来的用户id
     
     private static boolean isUpdate = false;
@@ -98,15 +95,9 @@ public class WritePostActivity extends AppCompatActivity {
 
     private GridImageAdapter adapter;
 
-    private boolean mode; //记录用户选择，拍照或从相册选择
-
     private int themeId; //主题风格
-
     private int statusBarColorPrimaryDark; //状态栏背景色
-
     private int upResId, downResId; //向上箭头、向下箭头
-
-    private int chooseMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -228,9 +219,17 @@ public class WritePostActivity extends AppCompatActivity {
                                     .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                             editFlag = false;
                             break;
-                        case NETWORK_ERR:
+                        case SERVER_ERR:
                             sDialog.setTitleText("提交失败")
                                     .setContentText("出了点问题，请稍候再试")
+                                    .showCancelButton(false)
+                                    .setConfirmText("确定")
+                                    .setConfirmClickListener(null)
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            break;
+                        case NETWORK_ERR:
+                            sDialog.setTitleText("提交失败")
+                                    .setContentText("网络出了点问题，请稍候再试")
                                     .showCancelButton(false)
                                     .setConfirmText("确定")
                                     .setConfirmClickListener(null)
@@ -270,8 +269,12 @@ public class WritePostActivity extends AppCompatActivity {
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         String resStr = Objects.requireNonNull(response.body()).string();
                         Log.i("提交成功:", resStr);
-                        // TODO: 解析返回结果
-                        msg.what = SUCCESS;
+
+                        JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
+                        JsonElement element = jsonObject.get("result");
+                        
+                        boolean res = new Gson().fromJson(element, boolean.class);
+                        msg.what = res ? SUCCESS : SERVER_ERR;
                         handler2.sendMessage(msg);
                     }
                 });
@@ -302,6 +305,7 @@ public class WritePostActivity extends AppCompatActivity {
             case R.id.submit:
                 String title = et_title.getText().toString().trim();
                 String content = et_content.getText().toString().trim();
+                
                 if(TextUtils.isEmpty(title)) {
                     Toast.makeText(this, "标题不能为空", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(content)) {
@@ -332,12 +336,12 @@ public class WritePostActivity extends AppCompatActivity {
         return true;
     }
 
+    // 自定义toolbar
     private void initToolBar() {
 
         setTitle("");
 
         Toolbar toolbar = findViewById(R.id.toolbar_cu_forum_write_post);
-
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -405,7 +409,6 @@ public class WritePostActivity extends AppCompatActivity {
         statusBarColorPrimaryDark = R.color.blue;
         upResId = R.drawable.arrow_up;
         downResId = R.drawable.arrow_down;
-        chooseMode = PictureMimeType.ofAll();
 
         adapter = new GridImageAdapter(this, onAddPicClickListener);
         adapter.setList(selectList);
@@ -441,130 +444,128 @@ public class WritePostActivity extends AppCompatActivity {
     }
 
     // 选择图片
-    public void selectPhotos() {
-        if (mode) {
-            // 进入相册 以下是例子：不需要的api可以不写
-            PictureSelector.create(WritePostActivity.this)
-                    .openGallery(PictureMimeType.ofImage())// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
-                    .theme(themeId)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style
-                    .maxSelectNum(maxSelectNum)// 最大图片选择数量
-                    .minSelectNum(1)// 最小选择数量
-                    .imageSpanCount(4)// 每行显示个数
-                    .cameraFileName("")// 使用相机时保存至本地的文件名称,注意这个只在拍照时可以使用，选图时不要用
-                    .selectionMode(PictureConfig.MULTIPLE)// PictureConfig.MULTIPLE : PictureConfig.SINGLE 多选 or 单选
-                    .isSingleDirectReturn(false)// 单选模式下是否直接返回
-                    .previewImage(true)// 是否可预览图片
-                    .isCamera(true)// 是否显示拍照按钮
-//                        .isChangeStatusBarFontColor(isChangeStatusBarFontColor)// 是否关闭白色状态栏字体颜色
-                    .setStatusBarColorPrimaryDark(statusBarColorPrimaryDark)// 状态栏背景色
-                    .setUpArrowDrawable(upResId)// 设置标题栏右侧箭头图标
-                    .setDownArrowDrawable(downResId)// 设置标题栏右侧箭头图标
-                    .isOpenStyleCheckNumMode(false)// 是否开启数字选择模式 类似QQ相册
-                    .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
-                    //.imageFormat(PictureMimeType.PNG)// 拍照保存图片格式后缀,默认jpeg
-                    //.setOutputCameraPath("/CustomPath")// 自定义拍照保存路径
-//                        .enableCrop(cb_crop.isChecked())// 是否裁剪
-//                        .compress(cb_compress.isChecked())// 是否压缩
-                    .synOrAsy(false)// 同步true或异步false 压缩 默认同步
-                    //.compressSavePath(getPath())// 压缩图片保存地址
-                    //.sizeMultiplier(0.5f)// glide 加载图片大小 0~1之间 如设置 .glideOverride()无效
-                    .glideOverride(160, 160)// glide 加载宽高，越小图片列表越流畅，但会影响列表图片浏览的清晰度
-//                        .withAspectRatio(aspect_ratio_x, aspect_ratio_y)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
-//                        .hideBottomControls(cb_hide.isChecked() ? false : true)// 是否显示uCrop工具栏，默认不显示
-//                        .isGif(cb_isGif.isChecked())// 是否显示gif图片
-//                        .freeStyleCropEnabled(true)// 裁剪框是否可拖拽
-//                        .circleDimmedLayer(cb_crop_circular.isChecked())// 是否圆形裁剪
-//                        .showCropFrame(cb_showCropFrame.isChecked())// 是否显示裁剪矩形边框 圆形裁剪时建议设为false
-//                        .showCropGrid(cb_showCropGrid.isChecked())// 是否显示裁剪矩形网格 圆形裁剪时建议设为false
-                    .openClickSound(false)// 是否开启点击声音
-                    .selectionMedia(selectList)// 是否传入已选图片
-                    //.isDragFrame(false)// 是否可拖动裁剪框(固定)
-//                        .videoMaxSecond(15)
-//                        .videoMinSecond(10)
-                    //.previewEggs(false)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
-                    //.cropCompressQuality(90)// 废弃 改用cutOutQuality()
-                    .cutOutQuality(90)// 裁剪输出质量 默认100
-                    .minimumCompressSize(100)// 小于100kb的图片不压缩
-                    //.cropWH()// 裁剪宽高比，设置如果大于图片本身宽高则无效
-                    //.rotateEnabled(true)// 裁剪是否可旋转图片
-                    //.scaleEnabled(true)// 裁剪是否可放大缩小图片
-                    //.videoQuality()// 视频录制质量 0 or 1
-                    //.videoSecond()// 显示多少秒以内的视频or音频也可适用
-                    //.recordVideoSecond()// 录制视频秒数 默认60s
-                    .forResult(PictureConfig.CHOOSE_REQUEST);// 结果回调onActivityResult code
-        } else {
-            // 单独拍照
-            PictureSelector.create(WritePostActivity.this)
-                    .openCamera(chooseMode)// 单独拍照，也可录像或也可音频 看你传入的类型是图片or视频
-                    .theme(themeId)// 主题样式设置 具体参考 values/styles
-                    .maxSelectNum(maxSelectNum)// 最大图片选择数量
-                    .minSelectNum(1)// 最小选择数量
-                    //.querySpecifiedFormatSuffix(PictureMimeType.ofPNG())// 查询指定后缀格式资源
-                    .selectionMode(PictureConfig.MULTIPLE)// PictureConfig.MULTIPLE : PictureConfig.SINGLE  多选 or 单选
-                    .previewImage(true)// 是否可预览图片
-//                        .previewVideo(cb_preview_video.isChecked())// 是否可预览视频
-//                        .enablePreviewAudio(cb_preview_audio.isChecked()) // 是否可播放音频
-                    .isCamera(true)// 是否显示拍照按钮
-//                        .isChangeStatusBarFontColor(isChangeStatusBarFontColor)// 是否关闭白色状态栏字体颜色
-                    .setStatusBarColorPrimaryDark(statusBarColorPrimaryDark)// 状态栏背景色
-                    .isOpenStyleCheckNumMode(true)// 是否开启数字选择模式 类似QQ相册
-                    .setUpArrowDrawable(upResId)// 设置标题栏右侧箭头图标
-                    .setDownArrowDrawable(downResId)// 设置标题栏右侧箭头图标
-//                        .enableCrop(cb_crop.isChecked())// 是否裁剪
-//                        .compress(cb_compress.isChecked())// 是否压缩
-                    .glideOverride(160, 160)// glide 加载宽高，越小图片列表越流畅，但会影响列表图片浏览的清晰度
-//                        .withAspectRatio(aspect_ratio_x, aspect_ratio_y)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
-//                        .hideBottomControls(cb_hide.isChecked() ? false : true)// 是否显示uCrop工具栏，默认不显示
-//                        .isGif(cb_isGif.isChecked())// 是否显示gif图片
-//                        .freeStyleCropEnabled(cb_styleCrop.isChecked())// 裁剪框是否可拖拽
-//                        .circleDimmedLayer(cb_crop_circular.isChecked())// 是否圆形裁剪
-//                        .showCropFrame(cb_showCropFrame.isChecked())// 是否显示裁剪矩形边框 圆形裁剪时建议设为false
-//                        .showCropGrid(cb_showCropGrid.isChecked())// 是否显示裁剪矩形网格 圆形裁剪时建议设为false
-                    .openClickSound(false)// 是否开启点击声音
-                    .selectionMedia(selectList)// 是否传入已选图片
-                    .previewEggs(false)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
-                    //.previewEggs(false)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
-                    .cutOutQuality(90)// 裁剪输出质量 默认100
-                    .minimumCompressSize(100)// 小于100kb的图片不压缩
-                    //.cropWH()// 裁剪宽高比，设置如果大于图片本身宽高则无效
-                    //.rotateEnabled()// 裁剪是否可旋转图片
-                    //.scaleEnabled()// 裁剪是否可放大缩小图片
-                    //.videoQuality()// 视频录制质量 0 or 1
-                    //.videoSecond()// 显示多少秒以内的视频or音频也可适用
-                    .forResult(PictureConfig.CHOOSE_REQUEST);// 结果回调onActivityResult code
+    public void selectPhotos(String mode) {
+        switch (mode) {
+            case SELECT_FROM_PHOTO_ALBUM:
+                // 进入相册 以下是例子：不需要的api可以不写
+                PictureSelector.create(WritePostActivity.this)
+                        .openGallery(PictureMimeType.ofImage())// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
+                        .theme(themeId)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style
+                        .maxSelectNum(maxSelectNum)// 最大图片选择数量
+                        .minSelectNum(1)// 最小选择数量
+                        .imageSpanCount(4)// 每行显示个数
+                        .cameraFileName("")// 使用相机时保存至本地的文件名称,注意这个只在拍照时可以使用，选图时不要用
+                        .selectionMode(PictureConfig.MULTIPLE)// PictureConfig.MULTIPLE : PictureConfig.SINGLE 多选 or 单选
+                        .isSingleDirectReturn(false)// 单选模式下是否直接返回
+                        .previewImage(true)// 是否可预览图片
+                        .isCamera(true)// 是否显示拍照按钮
+                        // .isChangeStatusBarFontColor(isChangeStatusBarFontColor)// 是否关闭白色状态栏字体颜色
+                        .setStatusBarColorPrimaryDark(statusBarColorPrimaryDark)// 状态栏背景色
+                        .setUpArrowDrawable(upResId)// 设置标题栏右侧箭头图标
+                        .setDownArrowDrawable(downResId)// 设置标题栏右侧箭头图标
+                        .isOpenStyleCheckNumMode(false)// 是否开启数字选择模式 类似QQ相册
+                        .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
+                        // .imageFormat(PictureMimeType.PNG)// 拍照保存图片格式后缀,默认jpeg
+                        // .setOutputCameraPath("/CustomPath")// 自定义拍照保存路径
+                        // .enableCrop(cb_crop.isChecked())// 是否裁剪
+                        // .compress(cb_compress.isChecked())// 是否压缩
+                        .synOrAsy(false)// 同步true或异步false 压缩 默认同步
+                        // .compressSavePath(getPath())// 压缩图片保存地址
+                        // .sizeMultiplier(0.5f)// glide 加载图片大小 0~1之间 如设置 .glideOverride()无效
+                        .glideOverride(160, 160)// glide 加载宽高，越小图片列表越流畅，但会影响列表图片浏览的清晰度
+                        // .withAspectRatio(aspect_ratio_x, aspect_ratio_y)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
+                        // .hideBottomControls(cb_hide.isChecked() ? false : true)// 是否显示uCrop工具栏，默认不显示
+                        // .isGif(cb_isGif.isChecked())// 是否显示gif图片
+                        // .freeStyleCropEnabled(true)// 裁剪框是否可拖拽
+                        // .circleDimmedLayer(cb_crop_circular.isChecked())// 是否圆形裁剪
+                        // .showCropFrame(cb_showCropFrame.isChecked())// 是否显示裁剪矩形边框 圆形裁剪时建议设为false
+                        // .showCropGrid(cb_showCropGrid.isChecked())// 是否显示裁剪矩形网格 圆形裁剪时建议设为false
+                        .openClickSound(false)// 是否开启点击声音
+                        .selectionMedia(selectList)// 是否传入已选图片
+                        // .isDragFrame(false)// 是否可拖动裁剪框(固定)
+                        // .videoMaxSecond(15)
+                        // .videoMinSecond(10)
+                        // .previewEggs(false)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
+                        // .cropCompressQuality(90)// 废弃 改用cutOutQuality()
+                        .cutOutQuality(90)// 裁剪输出质量 默认100
+                        .minimumCompressSize(100)// 小于100kb的图片不压缩
+                        // .cropWH()// 裁剪宽高比，设置如果大于图片本身宽高则无效
+                        // .rotateEnabled(true)// 裁剪是否可旋转图片
+                        // .scaleEnabled(true)// 裁剪是否可放大缩小图片
+                        // .videoQuality()// 视频录制质量 0 or 1
+                        // .videoSecond()// 显示多少秒以内的视频or音频也可适用
+                        // .recordVideoSecond()// 录制视频秒数 默认60s
+                        .forResult(PictureConfig.CHOOSE_REQUEST);// 结果回调onActivityResult code
+                break;
+            case TAKING_PHOTO:
+                // 单独拍照
+                PictureSelector.create(WritePostActivity.this)
+                        .openCamera(PictureMimeType.ofAll())// 单独拍照，也可录像或也可音频 看你传入的类型是图片or视频
+                        .theme(themeId)// 主题样式设置 具体参考 values/styles
+                        .maxSelectNum(maxSelectNum)// 最大图片选择数量
+                        .minSelectNum(1)// 最小选择数量
+                        // .querySpecifiedFormatSuffix(PictureMimeType.ofPNG())// 查询指定后缀格式资源
+                        .selectionMode(PictureConfig.MULTIPLE)// PictureConfig.MULTIPLE : PictureConfig.SINGLE  多选 or 单选
+                        .previewImage(true)// 是否可预览图片
+                        // .previewVideo(cb_preview_video.isChecked())// 是否可预览视频
+                        // .enablePreviewAudio(cb_preview_audio.isChecked()) // 是否可播放音频
+                        .isCamera(true)// 是否显示拍照按钮
+                        // .isChangeStatusBarFontColor(isChangeStatusBarFontColor)// 是否关闭白色状态栏字体颜色
+                        .setStatusBarColorPrimaryDark(statusBarColorPrimaryDark)// 状态栏背景色
+                        .isOpenStyleCheckNumMode(true)// 是否开启数字选择模式 类似QQ相册
+                        .setUpArrowDrawable(upResId)// 设置标题栏右侧箭头图标
+                        .setDownArrowDrawable(downResId)// 设置标题栏右侧箭头图标
+                        // .enableCrop(cb_crop.isChecked())// 是否裁剪
+                        // .compress(cb_compress.isChecked())// 是否压缩
+                        .glideOverride(160, 160)// glide 加载宽高，越小图片列表越流畅，但会影响列表图片浏览的清晰度
+                        // .withAspectRatio(aspect_ratio_x, aspect_ratio_y)// 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
+                        // .hideBottomControls(cb_hide.isChecked() ? false : true)// 是否显示uCrop工具栏，默认不显示
+                        // .isGif(cb_isGif.isChecked())// 是否显示gif图片
+                        // .freeStyleCropEnabled(cb_styleCrop.isChecked())// 裁剪框是否可拖拽
+                        // .circleDimmedLayer(cb_crop_circular.isChecked())// 是否圆形裁剪
+                        // .showCropFrame(cb_showCropFrame.isChecked())// 是否显示裁剪矩形边框 圆形裁剪时建议设为false
+                        // .showCropGrid(cb_showCropGrid.isChecked())// 是否显示裁剪矩形网格 圆形裁剪时建议设为false
+                        .openClickSound(false)// 是否开启点击声音
+                        .selectionMedia(selectList)// 是否传入已选图片
+                        .previewEggs(false)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
+                        // .previewEggs(false)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中)
+                        .cutOutQuality(90)// 裁剪输出质量 默认100
+                        .minimumCompressSize(100)// 小于100kb的图片不压缩
+                        // .cropWH()// 裁剪宽高比，设置如果大于图片本身宽高则无效
+                        // .rotateEnabled()// 裁剪是否可旋转图片
+                        // .scaleEnabled()// 裁剪是否可放大缩小图片
+                        // .videoQuality()// 视频录制质量 0 or 1
+                        // .videoSecond()// 显示多少秒以内的视频or音频也可适用
+                        .forResult(PictureConfig.CHOOSE_REQUEST);// 结果回调onActivityResult code
+                break;
         }
     }
 
     // 给上传图片添加点击事件
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener =
-            new GridImageAdapter.onAddPicClickListener() {
-                @Override
-                public void onAddPicClick() {
-                    //弹出对话框 选择拍照或从相册选择
-                    new AlertView.Builder().setContext(WritePostActivity.this)
-                            .setStyle(AlertView.Style.ActionSheet)
-                            .setTitle("选择图片")
-                            .setCancelText("取消")
-                            .setDestructive("拍照", "相册")
-                            .setOthers(null)
-                            .setOnItemClickListener((object, position) -> {
-                                switch (position) {
-                                    case 0:
-                                        mode = TAKING_PHOTO;
-                                        selectPhotos();
-                                        break;
-                                    case 1:
-                                        mode = SELECT_FROM_PHOTO_ALBUM;
-                                        selectPhotos();
-                                        break;
-                                }
-                            })
-                            .build()
-                            .show();
-                }
+            () -> {
+                //弹出对话框 选择拍照或从相册选择
+                new AlertView.Builder().setContext(WritePostActivity.this)
+                        .setStyle(AlertView.Style.ActionSheet)
+                        .setTitle("选择图片")
+                        .setCancelText("取消")
+                        .setDestructive("拍照", "相册")
+                        .setOthers(null)
+                        .setOnItemClickListener((object, position) -> {
+                            switch (position) {
+                                case 0:
+                                    selectPhotos(TAKING_PHOTO);
+                                    break;
+                                case 1:
+                                    selectPhotos(SELECT_FROM_PHOTO_ALBUM);
+                                    break;
+                            }
+                        })
+                        .build()
+                        .show();
             };
 
-    // 返回结果并显示
+    // 返回图片选择结果并显示
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

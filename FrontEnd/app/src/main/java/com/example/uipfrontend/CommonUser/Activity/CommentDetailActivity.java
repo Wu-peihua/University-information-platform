@@ -444,7 +444,10 @@ public class CommentDetailActivity extends AppCompatActivity {
         // 弹出评论框
         adapter.setReplyClickListener((view, pos) -> {
             toName = list.get(pos).getFromName();
-            reference = list.get(pos).getContent().substring(0, 256);
+            reference = list.get(pos).getContent();
+            if (reference.length() > 256) {
+                reference = reference.substring(0, 256);
+            }
             commentText.setHint("回复给：" + toName);
             commentDialog.show();
         });
@@ -708,6 +711,15 @@ public class CommentDetailActivity extends AppCompatActivity {
                     case NETWORK_ERR:
                         Log.i("删除回复: ", "失败");
                         sDialog.setTitleText("删除失败")
+                                .setContentText("网络出了点问题，请稍候再试")
+                                .showCancelButton(false)
+                                .setConfirmText("确定")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        break;
+                    case SERVER_ERR:
+                        Log.i("删除评论: ", "失败");
+                        sDialog.setTitleText("删除失败")
                                 .setContentText("出了点问题，请稍候再试")
                                 .showCancelButton(false)
                                 .setConfirmText("确定")
@@ -759,8 +771,12 @@ public class CommentDetailActivity extends AppCompatActivity {
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String resStr = Objects.requireNonNull(response.body()).string();
                     Log.i("删除回复：", resStr);
-                    // TODO: 解析返回结果
-                    msg.what = SUCCESS;
+
+                    JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonElement element = jsonObject.get("result");
+
+                    boolean res = new Gson().fromJson(element, boolean.class);
+                    msg.what = res ? SUCCESS : SERVER_ERR;
                     handler.sendMessage(msg);
                 }
             });
