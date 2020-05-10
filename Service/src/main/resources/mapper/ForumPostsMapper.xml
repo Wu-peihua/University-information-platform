@@ -27,7 +27,7 @@
     from forum_posts inner join user_info
     on poster = user_id
     where report_number &lt; 5
-    order by str_to_date(forum_posts.created,'%Y-%m-%d') desc, reply_number desc, like_number desc
+    order by like_number desc, reply_number desc, created desc
   </select>
 
   <select id="selectPostsById" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.ForumPosts">

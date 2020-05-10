@@ -444,7 +444,7 @@ public class CommentDetailActivity extends AppCompatActivity {
         // 弹出评论框
         adapter.setReplyClickListener((view, pos) -> {
             toName = list.get(pos).getFromName();
-            reference = list.get(pos).getContent();
+            reference = list.get(pos).getContent().substring(0, 256);
             commentText.setHint("回复给：" + toName);
             commentDialog.show();
         });

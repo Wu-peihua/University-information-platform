@@ -227,7 +227,6 @@ public class MyReleasePostFragment extends Fragment {
                     Handler handler = new Handler() {
                         @Override
                         public void handleMessage(Message msg) {
-                            xRecyclerView.loadMoreComplete();
                             switch (msg.what) {
                                 case SUCCESS:
                                     Log.i("加载发过的帖子", "成功");
@@ -244,6 +243,7 @@ public class MyReleasePostFragment extends Fragment {
                                     Log.i("加载发过的帖子", "失败 - 网络错误");
                                     break;
                             }
+                            xRecyclerView.loadMoreComplete();
                         }
                     };
                     CUR_PAGE_NUM++;
@@ -303,7 +303,7 @@ public class MyReleasePostFragment extends Fragment {
                 if (pos != -1 && post != null) {
                     list.get(pos).setTitle(post.getTitle());
                     list.get(pos).setContent(post.getContent());
-                    // todo: 更新图片
+                    list.get(pos).setPictures(post.getPictures());
                     adapter.notifyDataSetChanged();
                 }
             }

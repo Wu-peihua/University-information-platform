@@ -642,10 +642,8 @@ public class PostDetailActivity extends AppCompatActivity {
      */
     private void setPostDetail() {
         String isMe = user.getUserId().equals(post.getUserId()) ? "(我)" : "";
-
-        // String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
-        String uri = post.getPortrait();
-        Glide.with(this).load(Uri.parse(uri))
+        
+        Glide.with(this).load(Uri.parse(post.getPortrait()))
                 .placeholder(R.drawable.portrait_default)
                 .error(R.drawable.portrait_default)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -655,28 +653,18 @@ public class PostDetailActivity extends AppCompatActivity {
         detail_title.setText(post.getTitle());
         detail_poster.setText(post.getUserName() + isMe);
         detail_content.setContentText(post.getContent());
-
-        // todo: 显示帖子配图
-        // List<String> picUris = post.getPictures();
+        
+        String pics = post.getPictures();
+        String[] picUrls = pics.split(",");
         List<ImageInfo> imageList = new ArrayList<>();
-        //        for(String picUri : picUris) {
-        //            ImageInfo image = new ImageInfo();
-        //            image.setThumbnailUrl(picUri);
-        //            image.setBigImageUrl(picUri);
-        //            imageList.add(image);
-        //        }
-
-        // 临时图片
-        ImageInfo image = new ImageInfo();
-        String picUrl = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1585825362863&di=de3d04b6fa2086c93ba748613193b7c0&imgtype=0&src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_match%2F0%2F11506358584%2F0.jpg";
-        image.setThumbnailUrl(picUrl);
-        image.setBigImageUrl(picUrl);
-        imageList.add(image); imageList.add(image); imageList.add(image);
-        imageList.add(image); imageList.add(image); imageList.add(image);
-        imageList.add(image); imageList.add(image); imageList.add(image);
-        imageList.add(image); imageList.add(image); imageList.add(image);
-        // 临时图片
-
+        for(String picUrl : picUrls) {
+            picUrl = picUrl.replace("localhost", getResources().getString(R.string.myIP));
+            picUrl = picUrl.replace("\"", "");
+            ImageInfo image = new ImageInfo();
+            image.setThumbnailUrl(picUrl);
+            image.setBigImageUrl(picUrl);
+            imageList.add(image);
+        }
         detail_pictures.setAdapter(new NineGridViewClickAdapter(this, imageList));
 
         detail_time.setText(post.getCreated());

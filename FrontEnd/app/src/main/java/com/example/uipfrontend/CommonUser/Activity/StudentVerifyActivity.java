@@ -1,8 +1,10 @@
 package com.example.uipfrontend.CommonUser.Activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -42,12 +45,12 @@ import com.lzy.ninegrid.ImageInfo;
 import com.lzy.ninegrid.NineGridView;
 import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -119,6 +122,28 @@ public class StudentVerifyActivity extends AppCompatActivity {
         getData();
     }
 
+    /**
+     * Picasso 加载
+     */
+    private static class PicassoImageLoader implements NineGridView.ImageLoader {
+
+        @Override
+        public void onDisplayImage(Context context, ImageView imageView, String url) {
+            Picasso.with(context).load(url)//
+                    .placeholder(R.drawable.ic_default_image)//
+                    .error(R.drawable.ic_default_image)//
+                    .into(imageView);
+        }
+
+        @Override
+        public Bitmap getCacheImage(String url) {
+            return null;
+        }
+    }
+    
+    /**
+     * 描述：从本地获取高校列表和对应的学院列表，再查找用户是否提交过认证申请
+     */
     void getData() {
         user = (UserInfo) getApplication();
 
@@ -180,12 +205,14 @@ public class StudentVerifyActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String resStr = Objects.requireNonNull(response.body()).string();
+                    Log.i("获取未认证: ", resStr);
+
+                    JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonElement element = jsonObject.get("certification");
                     
-                    certification = new Gson().fromJson(resStr, Certification.class);
+                    certification = new Gson().fromJson(element, Certification.class);
                     
                     if (certification == null) {
-                        msg.what = SERVER_ERR;
-                    } else if (certification.getCreated() == null){
                         msg.what = ZERO;
                     } else {
                         msg.what = SUCCESS;
@@ -196,7 +223,11 @@ public class StudentVerifyActivity extends AppCompatActivity {
         }).start();
     }
     
+    /**
+     * 描述：用户已提交认证申请
+     */
     void setData() {
+        
         universityOption = certification.getUniversityId();
         instituteOption = certification.getInstitudeId();
         String str = option1[universityOption - 1] + " - " + option2[instituteOption - 1];
@@ -218,14 +249,17 @@ public class StudentVerifyActivity extends AppCompatActivity {
         url = certification.getStuCard();
         selectString = Arrays.asList(url.split(","));
 
+        NineGridView.setImageLoader(new PicassoImageLoader());
         NineGridView verifyPic = findViewById(R.id.nineGrid_cu_verify_picture);
         verifyPic.setVisibility(View.VISIBLE);
         
         List<ImageInfo> imageList = new ArrayList<>();
-        for(String picUri : selectString) {
+        for(String picUrl : selectString) {
+            picUrl = picUrl.replace("localhost", getResources().getString(R.string.myIP));
+            picUrl = picUrl.replace("\"", "");
             ImageInfo image = new ImageInfo();
-            image.setThumbnailUrl(picUri);
-            image.setBigImageUrl(picUri);
+            image.setThumbnailUrl(picUrl);
+            image.setBigImageUrl(picUrl);
             imageList.add(image); 
         }
         verifyPic.setAdapter(new NineGridViewClickAdapter(this, imageList));
@@ -496,7 +530,7 @@ public class StudentVerifyActivity extends AppCompatActivity {
                         .show();
             };
 
-    // 返回结果并显示
+    // 返回图片选择结果并显示
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -611,8 +645,8 @@ public class StudentVerifyActivity extends AppCompatActivity {
     
     /**
      * 描述：上传认证信息
-     * 参数：
-     * 返回：
+     * 参数：handler消息处理
+     * 返回：void
      */
     private void insertCertification(Handler handler) {
         
@@ -652,9 +686,9 @@ public class StudentVerifyActivity extends AppCompatActivity {
     }
 
     /**
-     * 描述：上传图片
-     * 参数：
-     * 返回：
+     * 描述：先上传图片，返回图片在服务器的url，然后再提交认证申请
+     * 参数：handler消息处理
+     * 返回：void
      */
     private void uploadImage(Handler handler) {
         

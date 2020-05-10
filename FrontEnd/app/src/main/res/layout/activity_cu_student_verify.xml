@@ -32,112 +32,118 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <!-- 高校+学院 -->
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/met_cu_verify_school"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:focusableInTouchMode="false"
-            android:hint="请选择学校与学院"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textSize="16sp"
-            app:met_floatingLabel="highlight"
-            app:met_floatingLabelText="学校"
-            app:met_floatingLabelTextSize="13sp"
-            app:met_iconLeft="@drawable/home_ed" />
-
-        <!-- 学号 -->
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/met_cu_verify_sno"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:inputType="number"
-            android:hint="请输入您的学号"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textSize="16sp"
-            app:met_floatingLabel="highlight"
-            app:met_floatingLabelText="学号"
-            app:met_floatingLabelTextSize="13sp"
-            app:met_iconLeft="@drawable/ic_school" />
-
-        <!-- 姓名 -->
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/met_cu_verify_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:hint="请输入您的姓名"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textSize="16sp"
-            app:met_floatingLabel="highlight"
-            app:met_floatingLabelText="姓名"
-            app:met_floatingLabelTextSize="13sp"
-            app:met_iconLeft="@drawable/comment_ed" />
-
-        <!-- 学生证 -->
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/met_cu_verify_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:focusable="false"
-            android:hint="请在下面添加学生身份信息证明"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textSize="16sp"
-            app:met_floatingLabel="highlight"
-            app:met_floatingLabelText="学号"
-            app:met_floatingLabelTextSize="13sp"
-            app:met_iconLeft="@drawable/ic_photo" />
-        
-        <!-- 状态 -->
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/met_cu_verify_state"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:focusable="false"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:met_floatingLabel="highlight"
-            app:met_floatingLabelText="状态"
-            app:met_floatingLabelTextSize="13sp"
-            app:met_iconLeft="@drawable/ic_vertify" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_cu_verify_picture"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
             android:layout_marginRight="10dp"
-            android:overScrollMode="never" />
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
 
-        <!-- 图片 -->
-        <com.lzy.ninegrid.NineGridView
-            android:id="@+id/nineGrid_cu_verify_picture"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:visibility="gone"/>
+            <!-- 高校+学院 -->
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/met_cu_verify_school"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:focusableInTouchMode="false"
+                android:hint="请选择学校与学院"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textSize="16sp"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelText="学校"
+                app:met_floatingLabelTextSize="13sp"
+                app:met_iconLeft="@drawable/home_ed" />
+
+            <!-- 学号 -->
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/met_cu_verify_sno"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:inputType="number"
+                android:hint="请输入您的学号"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textSize="16sp"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelText="学号"
+                app:met_floatingLabelTextSize="13sp"
+                app:met_iconLeft="@drawable/ic_school" />
+
+            <!-- 姓名 -->
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/met_cu_verify_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:hint="请输入您的姓名"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textSize="16sp"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelText="姓名"
+                app:met_floatingLabelTextSize="13sp"
+                app:met_iconLeft="@drawable/comment_ed" />
+
+            <!-- 学生证 -->
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/met_cu_verify_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:focusable="false"
+                android:hint="请在下面添加学生身份信息证明"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textSize="16sp"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelText="学号"
+                app:met_floatingLabelTextSize="13sp"
+                app:met_iconLeft="@drawable/ic_photo" />
+
+            <!-- 状态 -->
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/met_cu_verify_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:focusable="false"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textSize="16sp"
+                android:visibility="gone"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelText="状态"
+                app:met_floatingLabelTextSize="13sp"
+                app:met_iconLeft="@drawable/ic_vertify" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_cu_verify_picture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:overScrollMode="never" />
+
+            <!-- 图片 -->
+            <com.lzy.ninegrid.NineGridView
+                android:id="@+id/nineGrid_cu_verify_picture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"/>
+
+        </LinearLayout>
         
-    </LinearLayout>
+    </ScrollView>
     
 </LinearLayout>

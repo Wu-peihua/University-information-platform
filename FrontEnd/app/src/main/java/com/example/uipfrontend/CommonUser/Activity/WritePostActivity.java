@@ -31,6 +31,10 @@ import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.GridImageAdapter;
 import com.example.uipfrontend.Student.FullyGridLayoutManager;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -40,6 +44,7 @@ import net.steamcrafted.loadtoast.LoadToast;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +55,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -87,6 +93,8 @@ public class WritePostActivity extends AppCompatActivity {
     private EditText et_title;           // 帖子标题
     private EditText et_content;         // 帖子内容
     private List<LocalMedia> selectList; // 帖子配图
+    private List<String> selectString;   // 帖子配图的本地地址
+    private String url;                  // 帖子配图的网络地址
 
     private GridImageAdapter adapter;
 
@@ -140,16 +148,62 @@ public class WritePostActivity extends AppCompatActivity {
     }
 
     /**
-     * 描述：提交帖子
-     * 参数：帖子对象
+     * 描述：如果有图片先提交图片，成功后再提交帖子
+     * 参数：显示结果的dialog
      * 返回：void
      */
-    private void submit(ForumPosts post, SweetAlertDialog sDialog) {
+    private void submit(SweetAlertDialog sDialog) {
+        
+        if (selectList.size() > 0) {
+            @SuppressLint("HandlerLeak")
+            Handler handler1 = new Handler() {
+                public void handleMessage(Message message) {
+                    switch (message.what) {
+                        case NETWORK_ERR:
+                            Log.i("上传图片: ", "失败 - 网络错误");
+                            sDialog.setTitleText("提交失败")
+                                    .setContentText("网络出了点问题，请稍候再试")
+                                    .showCancelButton(false)
+                                    .setConfirmText("确定")
+                                    .setConfirmClickListener(null)
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            break;
+                        case SERVER_ERR:
+                            Log.i("上传图片: ", "失败 - 服务器错误");
+                            sDialog.setTitleText("提交失败")
+                                    .setContentText("出了点问题，请稍候再试")
+                                    .showCancelButton(false)
+                                    .setConfirmText("确定")
+                                    .setConfirmClickListener(null)
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            break;
+                        case SUCCESS:
+                            Log.i("上传图片: ", "成功");
+                            post.setPictures(url);
+                            submitPost(sDialog);
+                            break;
+                    }
+                }
+            };
+            uploadImage(handler1);
+            
+        } else  {
+            submitPost(sDialog);
+        }
+
+    }
+    
+    /**
+     * 描述：提交帖子
+     * 参数：显示结果的dialog
+     * 返回：void
+     */
+    private void submitPost(SweetAlertDialog sDialog) {
 
         new Handler().postDelayed(()->{
-            
+
             @SuppressLint("HandlerLeak")
-            Handler handler = new Handler() {
+            Handler handler2 = new Handler() {
                 public void handleMessage(Message message) {
                     switch (message.what) {
                         case SUCCESS:
@@ -196,9 +250,9 @@ public class WritePostActivity extends AppCompatActivity {
 
                 RequestBody requestBody = FormBody.create(json, MediaType.parse("application/json;charset=utf-8"));
 
-                String requestUrl = isUpdate ? getResources().getString(R.string.updatePost) : 
-                                                getResources().getString(R.string.insertPost);
-                        
+                String requestUrl = isUpdate ? getResources().getString(R.string.updatePost) :
+                        getResources().getString(R.string.insertPost);
+
                 Request request = new Request.Builder()
                         .url(getResources().getString(R.string.serverBasePath) + requestUrl)
                         .post(requestBody)
@@ -209,7 +263,7 @@ public class WritePostActivity extends AppCompatActivity {
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
                         Log.i("提交失败:", Objects.requireNonNull(e.getMessage()));
                         msg.what = NETWORK_ERR;
-                        handler.sendMessage(msg);
+                        handler2.sendMessage(msg);
                     }
 
                     @Override
@@ -218,14 +272,14 @@ public class WritePostActivity extends AppCompatActivity {
                         Log.i("提交成功:", resStr);
                         // TODO: 解析返回结果
                         msg.what = SUCCESS;
-                        handler.sendMessage(msg);
+                        handler2.sendMessage(msg);
                     }
                 });
 
             }).start();
-            
-        }, 2000);
 
+        }, 1500);
+        
     }
 
     // toolbar按钮监听
@@ -258,19 +312,13 @@ public class WritePostActivity extends AppCompatActivity {
                     pDialog.setTitleText("请稍后");
                     pDialog.setCancelable(false);
                     pDialog.show();
-                    if (isUpdate) {
-                        post.setTitle(title);
-                        post.setContent(content);
-                        // todo: 添加图片
-                        submit(post, pDialog);
-                    } else {
-                        ForumPosts newPost = new ForumPosts();
-                        newPost.setUserId(userId);
-                        newPost.setTitle(title);
-                        newPost.setContent(content);
-                        // todo: 添加图片
-                        submit(newPost, pDialog);
+                    if (!isUpdate) {
+                        post = new ForumPosts();
+                        post.setUserId(userId);
                     }
+                    post.setTitle(title);
+                    post.setContent(content);
+                    submit(pDialog);
                 }
                 break;
         }
@@ -525,7 +573,7 @@ public class WritePostActivity extends AppCompatActivity {
                 case PictureConfig.CHOOSE_REQUEST:
                     // 图片选择结果回调
                     selectList = PictureSelector.obtainMultipleResult(data);
-                    String selectString = "";
+                    selectString = new ArrayList<>();
                     // 例如 LocalMedia 里面返回三种path
                     // 1.media.getPath(); 为原图path
                     // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
@@ -533,7 +581,7 @@ public class WritePostActivity extends AppCompatActivity {
                     // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
                     // 4.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
                     for (LocalMedia media : selectList) {
-                        selectString += media.getPath();
+                        selectString.add(media.getPath());
                         Log.i(TAG, "压缩---->" + media.getCompressPath());
                         Log.i(TAG, "原图---->" + media.getPath());
                         Log.i(TAG, "裁剪---->" + media.getCutPath());
@@ -545,5 +593,72 @@ public class WritePostActivity extends AppCompatActivity {
                     break;
             }
         }
+    }
+
+    /**
+     * 描述：先上传图片，返回图片在服务器的url，然后再提交帖子
+     * 参数：handler消息处理
+     * 返回：void
+     */
+    private void uploadImage(Handler handler) {
+
+        new Thread(() -> {
+            OkHttpClient client = new OkHttpClient();
+            Message msg = new Message();
+
+            // 创建MultipartBody.Builder，用于添加请求的数据
+            MultipartBody.Builder builder = new MultipartBody.Builder();
+            for (String tempName : selectString) { // 对文件进行遍历
+                File file = new File(tempName); // 生成文件
+                // 根据文件的后缀名，获得文件类型
+                builder.addFormDataPart( // 给Builder添加上传的文件
+                        "image",  // 请求的名字
+                        file.getName(), // 文件名，服务器端用来解析的
+                        RequestBody.create(file, MediaType.parse("multipart/form-data")) // 创建RequestBody，把上传的文件放入
+                );
+            }
+
+            Request.Builder requestBuilder = new Request.Builder();
+            requestBuilder.url(getResources().getString(R.string.serverBasePath)
+                    + getResources().getString(R.string.uploadImage))
+                    .post(builder.build());
+
+            Call call= client.newCall(requestBuilder.build());
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("上传图片: ","失败" + e.getMessage());
+                    msg.what = NETWORK_ERR;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String resStr = Objects.requireNonNull(response.body()).string();
+                    Log.i("上传图片: ", resStr);
+                    // 图片上传成功后再上传表单信息
+                    // 解析大学json字符串数组
+                    JsonObject jsonObjectUrl = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonArray jsonArrayUrl = jsonObjectUrl.getAsJsonArray("urlList");
+
+                    url = "";
+                    // 循环遍历数组
+                    for (JsonElement jsonElement : jsonArrayUrl) {
+                        url += jsonElement.toString() + ",";
+                    }
+
+                    if (url.equals("")) {
+                        msg.what = SERVER_ERR;
+                    }
+                    else {
+                        msg.what = SUCCESS;
+                    }
+
+                    handler.sendMessage(msg);
+                }
+
+            });
+        }).start();
+
     }
 }

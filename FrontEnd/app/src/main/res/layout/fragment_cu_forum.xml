@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/ll_cu_forum_search_line"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
+        android:layout_alignParentTop="true"
         android:orientation="horizontal">
         
         <LinearLayout
@@ -20,7 +22,7 @@
             android:focusableInTouchMode="true"
             android:orientation="horizontal">
 
-<!--            搜索图标 -->
+            <!-- 搜索图标 -->
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
@@ -29,7 +31,7 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/search" />
 
-<!--            搜索栏 -->
+            <!-- 搜索栏 -->
             <EditText
                 android:id="@+id/edt_cu_forum_search"
                 android:layout_width="0dp"
@@ -45,7 +47,7 @@
                 android:hint="搜搜看"
                 android:textSize="14sp"/>
 
-<!--            清除所有文字 -->
+            <!-- 清除所有文字 -->
             <ImageView
                 android:id="@+id/imgv_cu_forum_delete"
                 android:layout_width="16dp"
@@ -59,7 +61,7 @@
                 android:visibility="gone"/>
         </LinearLayout>
         
-<!--        加号按钮 -->
+        <!-- 加号按钮 -->
         <ImageView
             android:id="@+id/imgv_cu_forum_new"
             android:layout_width="20dp"
@@ -74,9 +76,10 @@
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/rv_cu_forum"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
+        android:layout_below="@id/ll_cu_forum_search_line"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:scrollbars="none">
@@ -92,4 +95,4 @@
         android:textColor="@color/blue"
         android:visibility="gone"/>
 
-</LinearLayout>
+</RelativeLayout>
