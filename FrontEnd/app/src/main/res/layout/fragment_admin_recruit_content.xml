@@ -6,13 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- 空白提示 -->
+    <TextView
+        android:id="@+id/admin_tv_blank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="还没有组队记录，快去发布吧"
+        android:textColor="@color/blue"
+        android:visibility="gone"/>
+
     <com.jcodecraeer.xrecyclerview.XRecyclerView
-    android:id="@+id/rv_student_group"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipChildren="false"
-    android:clipToPadding="false"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+        android:id="@+id/rv_student_group"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        xmlns:android="http://schemas.android.com/apk/res/android">
     </com.jcodecraeer.xrecyclerview.XRecyclerView>
 
 

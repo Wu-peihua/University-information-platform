@@ -27,4 +27,10 @@ public interface RecruitMapper {
     Page<Recruit> queryRecruitByInfoId(Long infoId);
 
     Page<Recruit> queryRecruitByUserId(Long userId);
+
+    Page<Recruit> queryRecruitReport();
+
+
+    Page<Recruit> queryRecruitByUniAndInsReport(@Param("universityId")Integer universityId, @Param("instituteId")Integer instituteId);
+
 }

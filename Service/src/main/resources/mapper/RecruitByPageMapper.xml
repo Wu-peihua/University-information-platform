@@ -35,7 +35,19 @@
     *
     from recruit
     </select>
+    <select id="queryRecruitByUniAndInsReport" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from recruit
+    where university_id = #{universityId} and institute_id = #{instituteId} and report_number > 50
+    </select>
 
+    <select id="queryRecruitReport" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from recruit
+    where report_number > 50
+    </select>
 
 
 </mapper>

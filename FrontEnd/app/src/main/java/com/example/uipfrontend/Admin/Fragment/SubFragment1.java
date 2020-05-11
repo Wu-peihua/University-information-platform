@@ -51,7 +51,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class SubFragment1 extends Fragment {
 
-    private String[] headers;//菜单头部选项
     private List<View> popupViews = new ArrayList<>();//菜单列表视图
     private DropDownMenu dropDownMenu;
     private MultiMenusView multiMenusView;//多级菜单
@@ -59,8 +58,10 @@ public class SubFragment1 extends Fragment {
     private AdminReportRecruitRecyclerViewAdapter studentRecruitRecyclerViewAdapter;     //每条组队信息内容适配器
 
     private List<RecruitInfo> list;   //组队信息实体类数组
+    private List<String> userNameList;   //存放组队信息发布人用户名
     private View rootView;  //根视图（下拉筛选框）
     private View rootContentView;    //根视图内容
+    private TextView tv_blank;
 
     //private FloatingActionButton fabtn;  //浮动按钮，发布新的组队信息
 
@@ -75,6 +76,10 @@ public class SubFragment1 extends Fragment {
     private static final int PAGE_SIZE = 6;   //默认一次请求6条数据
     private static int CUR_PAGE_NUM = 1;
 
+    //记录下拉筛选菜单选择的学校ID和学院ID
+    private int selectedUniversity = 0; //默认为0
+    private int selectedInstitute = -1;  //默认为-1
+
 
     @Nullable
     @Override
@@ -88,8 +93,9 @@ public class SubFragment1 extends Fragment {
         } else {
             rootView = inflater.inflate(R.layout.fragment_student_recruit, null);
 //            recyclerView = rootView.findViewById(R.id.rv_student_group);
-           rootContentView = inflater.inflate(R.layout.fragment_admin_recruit_content,null);
-       //     rootContentView=rootView;
+            rootContentView = inflater.inflate(R.layout.fragment_admin_recruit_content,null);
+            tv_blank = rootContentView.findViewById(R.id.admin_tv_blank);
+            //     rootContentView=rootView;
             init();
         }
         return rootView;
@@ -100,95 +106,27 @@ public class SubFragment1 extends Fragment {
         getMenusData();
         initMenus();
         initListener();
-
+        getData(getResources().getString(R.string.serverBasePath) +
+                getResources().getString(R.string.queryRecruitReport)
+                + "/?pageNum=1&pageSize=" + PAGE_SIZE );
         //获取列表数据
-        getData();
+//        getData();
 
 
     }
     private void getMenusData(){
-//        @SuppressLint("HandlerLeak")
-//        Handler handler = new Handler() {
-//            public void handleMessage(Message msg) {
-//                if (msg.what == MenuDataOk) {//初始化下拉筛选
-//
-//                }
-//                super.handleMessage(msg);
-//            }
-//        };
-
-
-//        //发送http请求
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                OkHttpClient client = new OkHttpClient();
-//                Request requestUniversity = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryuniversity)).build();
-//                Request requestInstitute = new Request.Builder().url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryinstitute)).build();
-//
-//                try {
-//                   //请求大学目录
-//                    Response responseUniversity = client.newCall(requestUniversity).execute();//发送请求
-//                    Response responseInstitute = client.newCall(requestInstitute).execute();
-//                    String resultUniversity = Objects.requireNonNull(responseUniversity.body()).string();
-//                    String resultInstitute = Objects.requireNonNull(responseInstitute.body()).string();
-//
-//                    //解析大学json字符串数组
-//                    JsonObject jsonObjectUniversity = new JsonParser().parse(resultUniversity).getAsJsonObject();
-//                    JsonArray jsonArrayUniversity = jsonObjectUniversity.getAsJsonArray("universityList");
-//                    //解析专业json字符串数组
-//                    JsonObject jsonObjectInstitute = new JsonParser().parse(resultInstitute).getAsJsonObject();
-//                    JsonArray jsonArrayInstitute = jsonObjectInstitute.getAsJsonArray("instituteList");
-//
-//                    //初始化菜单栏
-//                    levelOneMenu = new String[jsonArrayUniversity.size()];
-//                    levelTwoMenu = new String[jsonArrayUniversity.size()][jsonArrayInstitute.size()];
-//
-//                    //循环遍历数组
-//                    int index = 0;
-//                    for (JsonElement jsonElement : jsonArrayUniversity) {
-//                        University university = new Gson().fromJson(jsonElement, new TypeToken<University>() {
-//                        }.getType());
-//                        levelOneMenu[index] = university.getUniversityName();
-//                        ++index;
-//                    }
-//
-//                    index = 0;
-//                    for(int i=0;i<jsonArrayUniversity.size();++i){
-//                        for (JsonElement jsonElement : jsonArrayInstitute) {
-//                            Institute institute = new Gson().fromJson(jsonElement, new TypeToken<Institute>() {
-//                            }.getType());
-//
-//                            levelTwoMenu[i][index] = institute.getInstituteName();
-//                            ++index;
-//                        }
-//                    }
-//
-//
-//                    Log.d(TAG, "resultUniversity: " + resultUniversity);
-//                    Log.d(TAG, "resultInstitute: " + resultInstitute);
-//
-//
-//                    Message msg = new Message();
-//                    msg.what = MenuDataOk;
-//                    handler.sendMessage(msg);
-//
-//                } catch(IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-
-        //通过sharepreference获取顶部筛选菜单数据
         SharedPreferences sp = Objects.requireNonNull(getActivity()).getSharedPreferences("data",MODE_PRIVATE);
         //第二个参数为缺省值，如果不存在该key，返回缺省值
-        Set<String> setUniversity = sp.getStringSet("university",null);
-        Set<String> setInstitute = sp.getStringSet("institute",null);
+        String strUniversity = sp.getString("university",null);
+        String strInstitute = sp.getString("institute",null);
 
-        assert setUniversity != null;
-        List<String> universityList = new ArrayList<>(setUniversity);
-        assert setInstitute != null;
-        List<String> instituteList = new ArrayList<>(setInstitute);
+        List<String> universityList = new ArrayList<>();
+        List<String> instituteList = new ArrayList<>();
+        //将String转为List
+        String str1[] = strUniversity.split(",");
+        universityList = Arrays.asList(str1);
+        String str[] = strInstitute.split(",");
+        instituteList = Arrays.asList(str);
 
         levelOneMenu = universityList.toArray(new String[0]);
         String[] temp = instituteList.toArray(new String[0]);
@@ -205,7 +143,8 @@ public class SubFragment1 extends Fragment {
 
         dropDownMenu = rootView.findViewById(R.id.dropDownMenu_student_group);
 
-        headers = new String[]{"所属院校"};
+        //菜单头部选项
+        String[] headers = new String[]{"所属院校"};
 
         multiMenusView = new MultiMenusView(this.getContext(),levelOneMenu,levelTwoMenu);
         popupViews.add(multiMenusView);
@@ -218,16 +157,26 @@ public class SubFragment1 extends Fragment {
 
     private void initListener() {
 
-        //下拉菜单
+//下拉菜单
         multiMenusView.setOnSelectListener(new MultiMenusView.OnSelectListener() {
             @Override
             public void getMenuOne(String var1, int position) {
                 Toast.makeText(rootContentView.getContext(),var1,Toast.LENGTH_SHORT).show();
+                selectedUniversity = position + 1;
+
             }
 
             @Override
             public void getMenuTwo(String var1, int position) {
-                Toast.makeText(rootContentView.getContext(),var1,Toast.LENGTH_SHORT).show();
+                selectedInstitute = position + 1;
+
+                if(selectedUniversity <= 0 )
+                    selectedUniversity = 1;
+                System.out.println("university:"+selectedUniversity+"  institute:"+selectedInstitute);
+
+                getData(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitByUniAndInsReport)
+                        + "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE  + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
+
 
                 dropDownMenu.setTabText(var1);
                 dropDownMenu.closeMenu();
@@ -236,25 +185,32 @@ public class SubFragment1 extends Fragment {
 
     }
 
-    private void getData(){
+    private void getData(String requestUrl){
+
+
         list = new ArrayList<>();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message message){
                 switch (message.what){
                     case SUCCESS:
-                        Log.i("获取: ", "成功");
+                        Log.i("获取 ", "成功");
                         //初始化列表
                         initRecyclerView();
+                        tv_blank.setVisibility(View.GONE);
                         break;
 
                     case FAIL:
-                        Log.i("获取: ", "失败");
+                        Log.i("获取 ", "失败");
+                        tv_blank.setText("获取信息失败");
+                        tv_blank.setVisibility(View.VISIBLE);
                         break;
 
                     case ZERO:
-                        Log.i("获取: ", "0");
+                        Log.i("获取", "0");
                         Toast.makeText(rootContentView.getContext(),"暂时没有新的信息！",Toast.LENGTH_SHORT).show();
+                        tv_blank.setText("无相关组队举报信息");
+                        tv_blank.setVisibility(View.VISIBLE);
                         initRecyclerView();
                         break;
                 }
@@ -263,9 +219,7 @@ public class SubFragment1 extends Fragment {
 
         new Thread(()->{
             Request request = new Request.Builder()
-                    .url(getResources().getString(R.string.serverBasePath) +
-                            getResources().getString(R.string.queryRecruit)
-                            + "/?pageNum=1&pageSize=" + PAGE_SIZE )
+                    .url(requestUrl)
                     .get()
                     .build();
             Message msg = new Message();
@@ -281,19 +235,22 @@ public class SubFragment1 extends Fragment {
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                    // System.out.println("recruit 请求返回数据:"+response.body().string());
+
+
                     ResponseRecruit responseRecruit = new Gson().fromJson(response.body().string(),
                             ResponseRecruit.class);
 
-
                     list = responseRecruit.getRecruitInfoList();
+                    userNameList = responseRecruit.getUserNameList();
+
+
                     if(list.size() == 0) { //获取的数量为0
                         msg.what = ZERO;
                     } else {
                         msg.what = SUCCESS;
                     }
                     handler.sendMessage(msg);
-                    Log.i("获取: ", String.valueOf(list.size()));
+                    Log.i("获取", String.valueOf(list.size()));
                 }
             });
         }).start();
@@ -308,7 +265,7 @@ public class SubFragment1 extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        studentRecruitRecyclerViewAdapter = new AdminReportRecruitRecyclerViewAdapter(this.getContext(), list);
+        studentRecruitRecyclerViewAdapter = new AdminReportRecruitRecyclerViewAdapter(this.getContext(), list, userNameList);
         recyclerView.setAdapter(studentRecruitRecyclerViewAdapter);
 
         recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
@@ -319,132 +276,114 @@ public class SubFragment1 extends Fragment {
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                new Handler().postDelayed(() -> {
-                    @SuppressLint("HandlerLeak")
-                    Handler handler = new Handler(){
-                        @Override
-                        public void handleMessage(Message msg){
-                            switch (msg.what){
-                                case SUCCESS:
-                                    Log.i("刷新", "成功");
-                                    studentRecruitRecyclerViewAdapter.setList(list);
-                                    studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
-                                    break;
-                                case FAIL:
-                                    Log.i("刷新", "失败");
-                                    break;
-                                case ZERO:
-                                    Log.i("刷新", "0");
-                                    break;
-                            }
-                            recyclerView.refreshComplete();
-                        }
-                    };
+                if(selectedUniversity <= 0 && selectedInstitute <=0 ){
+                    fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitReport) +
+                            "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE );
+                }else{
+                    fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitByUniAndInsReport) +
+                            "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
+                }
 
-                    new Thread(()->{
-                        CUR_PAGE_NUM = 1;
-                        Request request = new Request.Builder()
-                                .url(getResources().getString(R.string.serverBasePath) +
-                                        getResources().getString(R.string.queryRecruit)
-                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE +"&state=0")
-                                .get()
-                                .build();
-                        Message msg = new Message();
-                        OkHttpClient okHttpClient = new OkHttpClient();
-                        Call call = okHttpClient.newCall(request);
-                        call.enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                Log.i("获取: ", e.getMessage());
-                                msg.what = FAIL;
-                                handler.sendMessage(msg);
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-
-                                ResponseRecruit responseRecruit = new Gson().fromJson(response.body().string(),
-                                        ResponseRecruit.class);
-                                list = responseRecruit.getRecruitInfoList();
-                                if(list.size() == 0) {
-                                    msg.what = ZERO;
-                                } else {
-                                    msg.what = SUCCESS;
-                                }
-                                handler.sendMessage(msg);
-                                Log.i("获取: ", String.valueOf(list.size()));
-                            }
-                        });
-                    }).start();
-                }, 1500);
                 recyclerView.refreshComplete();
 
             }
 
             @Override
             public void onLoadMore() {
-                new Handler().postDelayed(() -> {
-                    @SuppressLint("HandlerLeak")
-                    Handler handler = new Handler(){
-                        @Override
-                        public void handleMessage(Message msg){
-                            switch (msg.what){
-                                case SUCCESS:
-                                    Log.i("加载", "成功");
-                                    recyclerView.refreshComplete();
-                                    studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
-                                    break;
-                                case FAIL:
-                                    Log.i("加载", "失败");
-                                    break;
-                                case ZERO:
-                                    Log.i("加载", "0");
-                                    recyclerView.setNoMore(true);
-                                    break;
-                            }
-                        }
-                    };
+                fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitReport) +
+                        "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE );
 
-                    new Thread(()->{
-                        CUR_PAGE_NUM++;
-                        Request request = new Request.Builder()
-                                .url(getResources().getString(R.string.serverBasePath) +
-                                        getResources().getString(R.string.queryRecruit)
-                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize=" + PAGE_SIZE + "&state=0")
-                                .get()
-                                .build();
-                        Message msg = new Message();
-                        OkHttpClient okHttpClient = new OkHttpClient();
-                        Call call = okHttpClient.newCall(request);
-                        call.enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                Log.i("获取: ", e.getMessage());
-                                msg.what = FAIL;
-                                handler.sendMessage(msg);
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-
-                                ResponseRecruit responseRecruit = new Gson().fromJson(response.body().string(),
-                                        ResponseRecruit.class);
-                                list.addAll(responseRecruit.getRecruitInfoList());
-                                if((CUR_PAGE_NUM - 2) * PAGE_SIZE + responseRecruit.getPageSize() <
-                                        responseRecruit.getTotal() ){
-                                    msg.what = ZERO;
-                                } else {
-                                    msg.what = SUCCESS;
-                                }
-                                handler.sendMessage(msg);
-                                Log.i("获取: ", String.valueOf(list.size()));
-                            }
-                        });
-                    }).start();
-                }, 1500);
+                if(selectedUniversity <= 0 && selectedInstitute <=0 ){
+                    fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitReport) +
+                            "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE );
+                }else{
+                    fetchRecruitInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitByUniAndInsReport) +
+                            "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
+                }
                 recyclerView.setNoMore(true);
             }
         });
+
+        studentRecruitRecyclerViewAdapter.setOnItemPassClickListener(new AdminReportRecruitRecyclerViewAdapter.OnItemPassClickListener() {
+            @Override
+            public void onPassClick(int position) {
+                Toast.makeText(rootView.getContext(), "已通过审核，举报数清0", Toast.LENGTH_SHORT).show();
+            }
+        });
+        studentRecruitRecyclerViewAdapter.setOnItemPassClickListener(new AdminReportRecruitRecyclerViewAdapter.OnItemPassClickListener() {
+            @Override
+            public void onPassClick(int position) {
+                Toast.makeText(rootView.getContext(), "审核不通过，已删除", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+    private void fetchRecruitInfo(String requestUrl){
+
+
+        new Handler().postDelayed(() -> {
+            @SuppressLint("HandlerLeak")
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg){
+                    switch (msg.what){
+                        case SUCCESS:
+                            Log.i("获取", "成功");
+                            tv_blank.setVisibility(View.GONE);
+                            studentRecruitRecyclerViewAdapter.setList(list, userNameList);
+                            studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
+                            break;
+                        case FAIL:
+                            Log.i("获取", "失败");
+                            tv_blank.setText("获取信息失败");
+                            tv_blank.setVisibility(View.VISIBLE);
+                            break;
+                        case ZERO:
+                            Log.i("获取", "0");
+                            tv_blank.setText("无相关组队举报信息");
+                            tv_blank.setVisibility(View.VISIBLE);
+                            break;
+                    }
+                    recyclerView.refreshComplete();
+                }
+            };
+
+            new Thread(()->{
+                CUR_PAGE_NUM = 1;
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .get()
+                        .build();
+                Message msg = new Message();
+                OkHttpClient okHttpClient = new OkHttpClient();
+                Call call = okHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("获取: ", e.getMessage());
+                        msg.what = FAIL;
+                        handler.sendMessage(msg);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+
+                        ResponseRecruit responseRecruit = new Gson().fromJson(response.body().string(),
+                                ResponseRecruit.class);
+                        list = responseRecruit.getRecruitInfoList();
+                        userNameList = responseRecruit.getUserNameList();
+                        if( list.size() == 0 ) {
+                            msg.what = ZERO;
+                        } else {
+                            msg.what = SUCCESS;
+                        }
+                        handler.sendMessage(msg);
+                        Log.i("获取 ", String.valueOf(list.size()));
+
+                    }
+                });
+            }).start();
+        }, 1500);
 
     }
 }
