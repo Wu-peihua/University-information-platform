@@ -89,6 +89,24 @@ public class RecruitController {
         return recruitService.queryRecruit(pageNum, pageSize);
     }
 
+    /**
+     * 根据学校ID和学院ID分页获取所有组队信息,超过举报数50显示
+     * @return modelMap
+     */
+    @RequestMapping(value = "/queryrecruitbyuniandinsreport", method = RequestMethod.GET)
+    private Map queryRecruitByUniAndInsReport(Integer pageNum, Integer pageSize, Integer universityId, Integer instituteId){
+        return recruitService.queryRecruitByUniAndInsReport(pageNum, pageSize, universityId,instituteId);
+    }
+
+    /**
+     * 分页获取所有组队信息,超过举报数50显示
+     * @return modelMap
+     */
+    @RequestMapping(value = "/queryrecruitreport", method = RequestMethod.GET)
+    private Map queryRecruitReport(Integer pageNum, Integer pageSize){
+        return recruitService.queryRecruitReport(pageNum, pageSize);
+    }
+
 
 
 }

@@ -26,5 +26,9 @@ public interface RecruitService {
     Map queryRecruitByUniAndIns(Integer pageNum, Integer pageSize, Integer universityId,Integer instituteId);
     /*分页获取所有的组队信息*/
     Map queryRecruit(Integer pageNum, Integer pageSize);
+    /*举报反馈，根据学校ID和学院ID分页获取举报数大于50的组队信息*/
+    Map queryRecruitByUniAndInsReport(Integer pageNum, Integer pageSize, Integer universityId,Integer instituteId);
+    /*举报反馈分页获取举报数大于50的的组队信息*/
+    Map queryRecruitReport(Integer pageNum, Integer pageSize);
 
 }
