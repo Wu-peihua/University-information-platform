@@ -152,6 +152,8 @@ dependencies {
 
     // 加载动画
     implementation 'net.steamcrafted:load-toast:1.0.12'
+    implementation 'com.zyao89:zloading:1.2.0'
+
 
 
 

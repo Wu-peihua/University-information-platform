@@ -6,6 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+<!--    <com.zyao89.view.zloading.ZLoadingView-->
+<!--        android:id="@+id/lv_student_recruit"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:z_type="CircleBuilder"-->
+<!--        app:z_color="@color/colorAccent"/>-->
+
     <com.jcodecraeer.xrecyclerview.XRecyclerView
     android:id="@+id/rv_student_group"
     android:layout_width="match_parent"

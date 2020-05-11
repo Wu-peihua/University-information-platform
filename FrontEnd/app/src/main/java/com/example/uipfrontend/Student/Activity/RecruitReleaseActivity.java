@@ -42,6 +42,8 @@ import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,8 +109,6 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     List<String> selectString = new ArrayList<>();
     //服务器返回的图片url
     String url = "";  //url字符串，逗号分隔，存入数据库中
-
-
 
 
 
@@ -256,8 +256,11 @@ public class RecruitReleaseActivity extends AppCompatActivity {
                                     recruitInfo.setTitle(title.getText().toString());
                                     recruitInfo.setPortrait("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587898699610&di=c7b2fc839b41a4eb285279b781112427&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F09%2F20190109072726_aNNZd.thumb.700_0.jpeg");
 
-                                    uploadImage();
-//                                    insertRecruitInfo();
+                                    if(selectString.size() != 0){
+                                        uploadImage();
+                                    }else{
+                                        insertRecruitInfo();
+                                    }
 
                                     Toast.makeText(RecruitReleaseActivity.this, "组队信息发布成功", Toast.LENGTH_SHORT).show();
 
@@ -522,6 +525,12 @@ public class RecruitReleaseActivity extends AppCompatActivity {
 
     public void insertRecruitInfo(){
 
+        ZLoadingDialog dialog = new ZLoadingDialog(RecruitReleaseActivity.this);
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -545,10 +554,12 @@ public class RecruitReleaseActivity extends AppCompatActivity {
                     public void onFailure(Call call, IOException e) {
                         //请求失败的处理
                         Log.i("RESPONSE:","fail"+e.getMessage());
+                        dialog.dismiss();
                     }
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         Log.i("RESPONSE:",response.body().string());
+                        dialog.dismiss();
                     }
 
                 });
@@ -558,7 +569,15 @@ public class RecruitReleaseActivity extends AppCompatActivity {
 
     }
 
+    //先上传图片，成功后返回url再上传表单信息
     public void uploadImage(){
+
+        ZLoadingDialog dialog = new ZLoadingDialog(RecruitReleaseActivity.this);
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -603,6 +622,8 @@ public class RecruitReleaseActivity extends AppCompatActivity {
                         for (JsonElement jsonElement : jsonArrayUrl) {
                             url += jsonElement.toString() + ",";
                         }
+
+                        System.out.println("url:"+url);
 
                         recruitInfo.setPictures(url);
 
