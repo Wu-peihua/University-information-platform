@@ -73,5 +73,9 @@
     <!--查看待审核的认证-->
     <string name="selectCertificationByUserId">/certification/selectcertificationbyuserid</string>
 
+    <!--组队审核，分页获取举报数大于50的组队信息-->
+    <string name="queryRecruitReport">/recruit/queryrecruitreport</string>
+    <!--组队审核，根据学校ID和学院ID分页获取举报数大于50的组队信息-->
+    <string name="queryRecruitByUniAndInsReport">/recruit/queryrecruitbyuniandinsreport</string>
 
 </resources>
