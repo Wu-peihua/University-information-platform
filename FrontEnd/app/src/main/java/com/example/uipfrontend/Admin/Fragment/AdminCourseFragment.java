@@ -91,7 +91,7 @@ public class AdminCourseFragment extends Fragment {
         } else {
             rootView = inflater.inflate(R.layout.fragment_admin_course, null);
             rootContentView=inflater.inflate(R.layout.fragment_admin_course_content,null);
-           //recyclerView = rootContentView.findViewById(R.id.adminrv_student_course);
+            //recyclerView = rootContentView.findViewById(R.id.adminrv_student_course);
 
             init();
         }
@@ -195,13 +195,16 @@ public class AdminCourseFragment extends Fragment {
         //通过sharepreference获取顶部筛选菜单数据
         SharedPreferences sp = Objects.requireNonNull(getActivity()).getSharedPreferences("data",MODE_PRIVATE);
         //第二个参数为缺省值，如果不存在该key，返回缺省值
-        Set<String> setUniversity = sp.getStringSet("university",null);
-        Set<String> setInstitute = sp.getStringSet("institute",null);
+        String strUniversity = sp.getString("university",null);
+        String strInstitute = sp.getString("institute",null);
 
-        assert setUniversity != null;
-        List<String> universityList = new ArrayList<>(setUniversity);
-        assert setInstitute != null;
-        List<String> instituteList = new ArrayList<>(setInstitute);
+        List<String> universityList = new ArrayList<>();
+        List<String> instituteList = new ArrayList<>();
+        //将String转为List
+        String str1[] = strUniversity.split(",");
+        universityList = Arrays.asList(str1);
+        String str[] = strInstitute.split(",");
+        instituteList = Arrays.asList(str);
 
         levelOneMenu = universityList.toArray(new String[0]);
         String[] temp = instituteList.toArray(new String[0]);
@@ -286,42 +289,42 @@ public class AdminCourseFragment extends Fragment {
 
     }
 
-/*
-    public void initData() {
+    /*
+        public void initData() {
 
 
-        courses.add(new Course((long) 1001,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
+            courses.add(new Course((long) 1001,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
 
-        courses.add(new Course((long) 1002,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
+            courses.add(new Course((long) 1002,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
 
-        courses.add(new Course((long) 1010,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
-
-
-        courses.add(new Course((long) 1028,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
+            courses.add(new Course((long) 1010,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
 
 
-        courses.add(new Course((long) 2019,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
-
-        courses.add(new Course((long) 1003,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
-
-        courses.add(new Course((long) 1004,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
-
-        courses.add(new Course((long) 1015,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
+            courses.add(new Course((long) 1028,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
 
 
-        courses.add(new Course((long) 1022,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
+            courses.add(new Course((long) 2019,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
+
+            courses.add(new Course((long) 1003,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
+
+            courses.add(new Course((long) 1004,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
+
+            courses.add(new Course((long) 1015,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
 
 
-        courses.add(new Course((long) 2023,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
+            courses.add(new Course((long) 1022,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
 
 
-        //AllCourses.addAll(courses);
-
-        //count = mTags.size();
-    }
+            courses.add(new Course((long) 2023,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
 
 
- */
+            //AllCourses.addAll(courses);
+
+            //count = mTags.size();
+        }
+
+
+     */
     private void initRecyclerView() {
         recyclerView = rootContentView.findViewById(R.id.rv_admin_group);
 
