@@ -83,6 +83,11 @@ public class RecruitServiceImpl implements RecruitService {
         Map recruitMap = new HashMap();
         PageHelper.startPage(pageNum,pageSize);
         Page<Recruit> data = recruitMapper.queryRecruitByUserId(userId);
+        List<String> userNameList = new ArrayList<>();
+        for(Recruit recruit: data){
+            userNameList.add(userInfoMapper.selectByPrimaryKey(recruit.getUserId()).getUserName());
+        }
+        recruitMap.put("userNameList",userNameList);
         recruitMap.put("recruitInfoList",data);  //分页获取的数据
         recruitMap.put("total",data.getTotal());       //总页数
         recruitMap.put("pageSize",data.getPageSize());     //每页大小

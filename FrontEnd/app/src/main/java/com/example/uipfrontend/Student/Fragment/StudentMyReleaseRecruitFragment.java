@@ -30,6 +30,8 @@ import com.example.uipfrontend.Student.Adapter.StudentMyReleaseRecruitRecyclerVi
 import com.google.gson.Gson;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,10 +40,14 @@ import java.util.List;
 import java.util.Objects;
 
 import butterknife.ButterKnife;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -61,6 +67,8 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
     private XRecyclerView recyclerView;
 
     private List<RecruitInfo> list;   //组队信息实体类数组
+    private List<String> userNameList;   //存放组队信息发布人用户名
+
     private StudentMyReleaseRecruitRecyclerViewAdapter studentMyReleaseRecruitRecyclerViewAdapter;
 
     private Long userId; //当前登陆用户id
@@ -93,6 +101,13 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
     }
 
     private void getData(String requestUrl){
+
+        ZLoadingDialog dialog = new ZLoadingDialog(getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
+
         list = new ArrayList<>();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -103,12 +118,14 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
                         tv_blank.setVisibility(View.GONE);
                         //初始化列表
                         initRecyclerView();
+                        dialog.dismiss();
                         break;
 
                     case FAIL:
                         Log.i("获取 ", "失败");
                         tv_blank.setText("获取信息失败");
                         tv_blank.setVisibility(View.VISIBLE);
+                        dialog.dismiss();
                         break;
 
                     case ZERO:
@@ -117,6 +134,7 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
                         tv_blank.setText("还没有发布组队信息，去发一条吧");
                         tv_blank.setVisibility(View.VISIBLE);
                         initRecyclerView();
+                        dialog.dismiss();
                         break;
                 }
             }
@@ -146,6 +164,7 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
                             ResponseRecruit.class);
 
                     list = responseRecruit.getRecruitInfoList();
+                    userNameList = responseRecruit.getUserNameList();
 
 
                     if(list.size() == 0) { //获取的数量为0
@@ -171,7 +190,7 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        studentMyReleaseRecruitRecyclerViewAdapter = new StudentMyReleaseRecruitRecyclerViewAdapter(this.getContext(), list);
+        studentMyReleaseRecruitRecyclerViewAdapter = new StudentMyReleaseRecruitRecyclerViewAdapter(this.getContext(), list,userNameList);
         recyclerView.setAdapter(studentMyReleaseRecruitRecyclerViewAdapter);
 
         recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
@@ -207,9 +226,9 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                list.remove(position);
-                                studentMyReleaseRecruitRecyclerViewAdapter.notifyDataSetChanged();
-                                Toast.makeText(rootView.getContext(), "记录删除成功", Toast.LENGTH_SHORT).show();
+
+                                System.out.println("position:"+position);
+                                deleteRecruit(position,list.get(position).getInfoId());
                             }
                         })
                         .setNegativeButton("取消", null)
@@ -246,6 +265,11 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
     }
 
     private void fetchRecruitRecord(String requestUrl){
+        ZLoadingDialog dialog = new ZLoadingDialog(getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
 
         new Handler().postDelayed(() -> {
         @SuppressLint("HandlerLeak")
@@ -258,16 +282,21 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
                         studentMyReleaseRecruitRecyclerViewAdapter.setList(list);
                         studentMyReleaseRecruitRecyclerViewAdapter.notifyDataSetChanged();
                         tv_blank.setVisibility(View.GONE);
+                        dialog.dismiss();
                         break;
                     case FAIL:
                         Log.i("刷新", "失败");
                         tv_blank.setText("获取信息失败");
                         tv_blank.setVisibility(View.VISIBLE);
+                        dialog.dismiss();
                         break;
                     case ZERO:
                         Log.i("刷新", "0");
+                        studentMyReleaseRecruitRecyclerViewAdapter.setList(list);
+                        studentMyReleaseRecruitRecyclerViewAdapter.notifyDataSetChanged();
                         tv_blank.setText("还没有发布组队信息，去发一条吧");
                         tv_blank.setVisibility(View.VISIBLE);
+                        dialog.dismiss();
                         break;
                 }
                 recyclerView.refreshComplete();
@@ -307,8 +336,79 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
                 }
             });
         }).start();
-    }, 1500);
+
+        }, 1500);
+
     }
+
+    //删除组队发布记录
+    private void deleteRecruit(int pos,Long infoId){
+        ZLoadingDialog dialog = new ZLoadingDialog(getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
+
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAIL:
+                        Toast.makeText(rootView.getContext(), "记录删除失败", Toast.LENGTH_SHORT).show();
+                        break;
+                    case SUCCESS:
+                        Toast.makeText(rootView.getContext(), "记录删除成功", Toast.LENGTH_SHORT).show();
+                        getData(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitByUserId) +
+                                "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE + "&userId=" + userId );
+                        studentMyReleaseRecruitRecyclerViewAdapter.notifyDataSetChanged();
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+        new Thread(new Runnable() {
+            Message msg = new Message();
+            @Override
+            public void run() {
+                //建立client
+                final OkHttpClient[] client = {new OkHttpClient()};
+
+                FormBody.Builder builder = new FormBody.Builder();
+                RequestBody requestBody = builder.build();
+
+                //请求
+                Request request=new Request.Builder()
+                        .url(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.deleteRecruit) + "/?infoId="+ infoId)
+                        .post(requestBody)
+                        .build();
+                //新建call联结client和request
+                Call call= client[0].newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        //请求失败的处理
+                        Log.i("RESPONSE:","fail"+e.getMessage());
+                        msg.what = FAIL;
+                        dialog.dismiss();
+                        handler.sendMessage(msg);
+                    }
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        Log.i("RESPONSE:",response.body().string());
+                        msg.what = SUCCESS;
+                        dialog.dismiss();
+                        handler.sendMessage(msg);
+
+                    }
+
+                });
+            }
+        }).start();
+
+    }
+
+
 
 
 

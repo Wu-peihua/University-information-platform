@@ -25,11 +25,14 @@ public class StudentMyReleaseRecruitRecyclerViewAdapter extends RecyclerView.Ada
 
     private Context context;
     private List<RecruitInfo> list;
+    private List<String> userNameList;
 
 
-    public StudentMyReleaseRecruitRecyclerViewAdapter(Context context, List<RecruitInfo> list) {
+
+    public StudentMyReleaseRecruitRecyclerViewAdapter(Context context, List<RecruitInfo> list,List userNameList) {
         this.context = context;
         this.list = list;
+        this.userNameList = userNameList;
     }
 
 
@@ -78,7 +81,7 @@ public class StudentMyReleaseRecruitRecyclerViewAdapter extends RecyclerView.Ada
         StudentMyReleaseRecruitRecyclerViewAdapter.ViewHolder viewHolder = new StudentMyReleaseRecruitRecyclerViewAdapter.ViewHolder(holder.itemView);
 
         viewHolder.contact.setText("联系方式："+list.get(pos).getContact());
-        viewHolder.userName.setText("联系人："+list.get(pos).getUserId());
+        viewHolder.userName.setText("联系人："+userNameList.get(pos));
         viewHolder.infoDate.setText(list.get(pos).getInfoDate().toString());
         viewHolder.title.setText(list.get(pos).getTitle());
         viewHolder.content.setText(list.get(pos).getContent());
@@ -86,15 +89,18 @@ public class StudentMyReleaseRecruitRecyclerViewAdapter extends RecyclerView.Ada
         viewHolder.portrait.setBorderWidth(0);
 
 
-        //临时显示组队信息图片
+        //显示组队信息图片
         ArrayList<ImageInfo> imageInfo = new ArrayList<>();
         ImageInfo info = new ImageInfo();
-        info.setThumbnailUrl("http://image.biaobaiju.com/uploads/20180111/00/1515601824-VFslzoEJkU.jpg");
-        info.setBigImageUrl("http://image.biaobaiju.com/uploads/20180111/00/1515601824-VFslzoEJkU.jpg");
-        imageInfo.add(info);
-        imageInfo.add(info);
-        imageInfo.add(info);
-
+        if(list.get(pos).getPictures() != null){
+            String tempUrl[] = list.get(pos).getPictures().split(",");
+            for(String url : tempUrl){
+                //localhost需改为服务器的ip才能正常显示图片
+                info.setThumbnailUrl(url); //略缩图
+                info.setBigImageUrl(url);  //点击放大图
+                imageInfo.add(info);
+            }
+        }
         viewHolder.nineGridView.setAdapter(new NineGridViewClickAdapter(context, imageInfo));
 
 

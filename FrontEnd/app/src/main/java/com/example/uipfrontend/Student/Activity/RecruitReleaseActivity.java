@@ -28,6 +28,7 @@ import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.example.uipfrontend.Entity.RecruitInfo;
 import com.example.uipfrontend.Entity.University;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.GridImageAdapter;
 import com.example.uipfrontend.Student.FullyGridLayoutManager;
@@ -52,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import fj.edittextcount.lib.FJEditTextCount;
@@ -65,7 +67,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static androidx.constraintlayout.widget.Constraints.TAG;
 import static com.example.uipfrontend.CommonUser.Activity.AddResActivity.hideSystemKeyboard;
 
 public class RecruitReleaseActivity extends AppCompatActivity {
@@ -110,6 +111,9 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     //服务器返回的图片url
     String url = "";  //url字符串，逗号分隔，存入数据库中
 
+    private UserInfo userInfo; //记录当前登陆用户的信息
+
+
 
 
     @Override
@@ -118,6 +122,8 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student_recruit_release);
 
         recruitInfo = new RecruitInfo();
+
+        userInfo = (UserInfo)getApplication();  //获取登录用户信息
 
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -246,15 +252,15 @@ public class RecruitReleaseActivity extends AppCompatActivity {
 
 //                                    setResult(1, intent);
 
-                                    recruitInfo.setUserId(Long.valueOf(1)); //默认设置为1
+                                    recruitInfo.setUserId(userInfo.getUserId()); //默认设置为1
                                     recruitInfo.setContact(contact.getText().toString());
                                     recruitInfo.setContent(description.getText());
-                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                                    @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                                     recruitInfo.setInfoDate(simpleDateFormat.format(new Date()));
                                     recruitInfo.setUniversityId(schoolOption+1);
                                     recruitInfo.setInstituteId(instituteOption+1);
                                     recruitInfo.setTitle(title.getText().toString());
-                                    recruitInfo.setPortrait("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1587898699610&di=c7b2fc839b41a4eb285279b781112427&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F09%2F20190109072726_aNNZd.thumb.700_0.jpeg");
+                                    recruitInfo.setPortrait(userInfo.getPortrait());
 
                                     if(selectString.size() != 0){
                                         uploadImage();

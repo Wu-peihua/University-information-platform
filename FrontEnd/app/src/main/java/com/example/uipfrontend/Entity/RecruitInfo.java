@@ -114,6 +114,10 @@ public class RecruitInfo implements Serializable {
         this.instituteId = instituteId;
     }
 
+    public Long getInfoId() {
+        return infoId;
+    }
+
     //组队信息Id
     private Long infoId;
     //组队信息标题
