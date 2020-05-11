@@ -1,11 +1,16 @@
 package com.example.uipfrontend.CommonUser.Fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.service.notification.ZenPolicy;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +18,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,16 +28,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.uipfrontend.CommonUser.Activity.AddResActivity;
 import com.example.uipfrontend.CommonUser.Adapter.ResInfoAdapter;
 import com.example.uipfrontend.Entity.ResInfo;
+import com.example.uipfrontend.Entity.ResponseRecruit;
+import com.example.uipfrontend.Entity.ResponseResource;
 import com.example.uipfrontend.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.qlh.dropdownmenu.DropDownMenu;
 import com.qlh.dropdownmenu.view.MultiMenusView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ResourceFragment extends Fragment {
 
@@ -51,6 +67,17 @@ public class ResourceFragment extends Fragment {
 
     FloatingActionButton fab;
 
+    private int subjectId = 0;
+    private int typeId = 0;
+
+    private static final int NETWORK_ERR = -2;
+    private static final int SERVER_ERR = -1;
+    private static final int ZERO = 0;
+    private static final int SUCCESS = 1;
+    private static final int FINISH = 2;
+    private static final int PAGE_SIZE = 10;
+    private static int CUR_PAGE_NUM;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,10 +92,10 @@ public class ResourceFragment extends Fragment {
             rootContentView = inflater.inflate(R.layout.fragment_cu_resource_content, null);
 
             initDropDownMenu();
-            initData();
-            initXRecyclerView();
             setSearch();
             initFab();
+            initXRecyclerView();
+            getData();
         }
         return rootView;
     }
@@ -110,28 +137,155 @@ public class ResourceFragment extends Fragment {
         });
     }
 
-    private void initData() {
-        posts = new ArrayList<>();
-        whole = new ArrayList<>();
+    /**
+     * 描述：根据资源类型获取资源信息
+     */
+    private void getData() {
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message message) {
+                switch (message.what) {
+                    case NETWORK_ERR:
+                        Log.i("获取资源-结果", "网络错误");
+                        break;
+                    case SERVER_ERR:
+                        Log.i("获取资源-结果", "服务器错误");
+                        break;
+                    case ZERO:
+                        Log.i("获取资源-结果", "空");
+                        resInfoAdapter.notifyDataSetChanged();
+                        break;
+                    case SUCCESS:
+                        Log.i("获取资源-结果", "成功");
+                        Log.i("获取资源-数量", String.valueOf(posts.size()));
+                        resInfoAdapter.notifyDataSetChanged();
+                        break;
+                }
+            }
+        };
 
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg",
-                "张咩阿", "支付宝破解版", "清明前后，种瓜种豆。当然，那都是为漫长夏日的怎样过活做准备的，儿时生在乡下的人，" +
-                "这些话多半还是有些耳熟的。一般的话，清明过后是一日热胜一日，偶尔会有个不应时的桃花暮春雪，也是个稀少的意外，大多这个时候，" +
-                "植物随着气候变化也即将转换着面目，即便是在城里，也能掐算着哪个时候能见上什么。踏春的时尚，之外哪能少的了吃货们的小算计呢。",
-                "www.baidu.com", "2020-02-02 00:00", 100, true));
-        posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg",
-                "张咩阿", "支付宝破解版", "清明前后，种瓜种豆。当然，那都是为漫长夏日的怎样过活做准备的，儿时生在乡下的人，" +
-                "这些话多半还是有些耳熟的。一般的话，清明过后是一日热胜一日，偶尔会有个不应时的桃花暮春雪，也是个稀少的意外，大多这个时候，" +
-                "植物随着气候变化也即将转换着面目，即便是在城里，也能掐算着哪个时候能见上什么。踏春的时尚，之外哪能少的了吃货们的小算计呢。",
-                "www.baidu.com", "2020-02-02 00:00", 100, false));
-        for (int i = 0; i < 10; i++)
-            posts.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg",
-                    "张咩阿", "支付宝破解版", null, "www.baidu.com", "2020-02-02 00:00", 0, false));
+        new Thread(() -> {
+            CUR_PAGE_NUM = 1;
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath) +
+                            getResources().getString(R.string.queryResourceByType)
+                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE + "&subjectId=" + subjectId + "&typeId=" + typeId)
+                    .get()
+                    .build();
+            Message msg = new Message();
+            OkHttpClient okHttpClient = new OkHttpClient();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.i("获取资源-结果", e.getMessage());
+                    msg.what = NETWORK_ERR;
+                    handler.sendMessage(msg);
+                }
 
-        whole.addAll(posts);
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    ResponseResource responseResource = new Gson().fromJson(response.body().string(),
+                            ResponseResource.class);
+
+                    if (responseResource.getResInfoList() == null)
+                        msg.what = SERVER_ERR;
+                    else if (responseResource.getResInfoList().size() == 0)
+                        msg.what = ZERO;
+                    else {
+                        if (posts.size() != 0) {
+                            posts.clear();
+                            whole.clear();
+                        }
+                        posts.addAll(responseResource.getResInfoList());
+                        whole.addAll(responseResource.getResInfoList());
+                        msg.what = SUCCESS;
+                    }
+                    handler.sendMessage(msg);
+                }
+            });
+        }).start();
+    }
+
+    /**
+     * 描述：根据资源类型加载更多资源
+     */
+    private void loadMoreData() {
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message message) {
+                xRecyclerView.loadMoreComplete();
+                switch (message.what) {
+                    case NETWORK_ERR:
+                        Log.i("加载资源-结果", "网络错误");
+                        break;
+                    case SERVER_ERR:
+                        Log.i("加载资源-结果", "服务器错误");
+                        break;
+                    case ZERO:
+                        Log.i("加载资源-结果", "空");
+                        Log.i("加载资源-总数", String.valueOf(posts.size()));
+                        xRecyclerView.setNoMore(true);
+                        break;
+                    case SUCCESS:
+                        Log.i("加载资源-结果", "成功");
+                        Log.i("加载资源-总数", String.valueOf(posts.size()));
+                        resInfoAdapter.notifyDataSetChanged();
+                        break;
+                    case FINISH:
+                        Log.i("加载资源-结果", "加载完毕");
+                        Log.i("加载资源-总数", String.valueOf(posts.size()));
+                        xRecyclerView.setNoMore(true);
+                        break;
+                }
+            }
+        };
+
+        new Thread(() -> {
+            CUR_PAGE_NUM++;
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath) +
+                            getResources().getString(R.string.queryResourceByType)
+                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE + "&subjectId=" + subjectId + "&typeId=" + typeId)
+                    .get()
+                    .build();
+            Message msg = new Message();
+            OkHttpClient okHttpClient = new OkHttpClient();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.i("加载资源-结果", e.getMessage());
+                    msg.what = NETWORK_ERR;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    ResponseResource responseResource = new Gson().fromJson(response.body().string(),
+                            ResponseResource.class);
+
+                    if (responseResource.getResInfoList() == null)
+                        msg.what = SERVER_ERR;
+                    else if (responseResource.getResInfoList().size() == 0)
+                        msg.what = ZERO;
+                    else {
+                        posts.addAll(responseResource.getResInfoList());
+                        whole.addAll(responseResource.getResInfoList());
+                        if (CUR_PAGE_NUM * PAGE_SIZE < responseResource.getTotal())
+                            msg.what = SUCCESS;
+                        else
+                            msg.what = FINISH;
+                    }
+                    handler.sendMessage(msg);
+                }
+            });
+        }).start();
     }
 
     private void initXRecyclerView() {
+        posts = new ArrayList<>();
+        whole = new ArrayList<>();
         xRecyclerView = rootContentView.findViewById(R.id.rv_cu_res);
 
         resInfoAdapter = new ResInfoAdapter(posts, rootContentView.getContext());
@@ -165,12 +319,17 @@ public class ResourceFragment extends Fragment {
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                xRecyclerView.refreshComplete();
+                new Handler().postDelayed(() -> {
+                    getData();
+                    xRecyclerView.refreshComplete();
+                }, 1000);
             }
 
             @Override
             public void onLoadMore() {
-                xRecyclerView.setNoMore(true);
+                new Handler().postDelayed(() -> {
+                    loadMoreData();
+                }, 1000);
             }
         });
     }
@@ -236,9 +395,7 @@ public class ResourceFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1)
             if (resultCode == 1) {
-                ResInfo receiveData = (ResInfo) data.getSerializableExtra("resInfo");
-                posts.add(0, receiveData);
-                whole.add(0, receiveData);
+                getData();
                 resInfoAdapter.notifyDataSetChanged();
             }
     }

@@ -2,8 +2,8 @@
     <string name="app_name">UIPFrontEnd</string>
 
     <!--url配置-->
-    <string name="serverBasePath">http://192.168.1.106:8080/uip</string>
-    <string name="myIP">192.168.0.103</string>
+    <string name="serverBasePath">http://192.168.1.5:8080/uip</string>
+    <string name="myIP">192.168.1.5</string>
 
     <!--获取顶部筛选菜单-->
     <string name="queryUniversity">/university/queryuniversity</string>
@@ -75,9 +75,17 @@
     <!--查看待审核的认证-->
     <string name="selectCertificationByUserId">/certification/selectcertificationbyuserid</string>
 
+    <!--根据资源类型获取资源信息-->
+    <string name="queryResourceByType">/resource/queryresourcebytype</string>
+    <!--插入资源信息-->
+    <string name="insertResource">/resource/insertresource</string>
+    <!--根据用户id获取资源信息-->
+    <string name="queryResourceByUserId">/resource/queryresourcebyuserid</string>
+    <!--删除资源信息-->
+    <string name="deleteResourceByInfoId">/resource/deleteresourcebyinfoid</string>
+
     <!--组队审核，分页获取举报数大于50的组队信息-->
     <string name="queryRecruitReport">/recruit/queryrecruitreport</string>
     <!--组队审核，根据学校ID和学院ID分页获取举报数大于50的组队信息-->
     <string name="queryRecruitByUniAndInsReport">/recruit/queryrecruitbyuniandinsreport</string>
-
 </resources>

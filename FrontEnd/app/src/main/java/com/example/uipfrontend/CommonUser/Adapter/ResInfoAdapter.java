@@ -133,27 +133,27 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         .into(resInfoViewHolder.iv_portrait);
                 resInfoViewHolder.tv_username.setText("匿名者");
             } else {
-                Glide.with(context).load(resInfo.getPortraitUri())
+                Glide.with(context).load(resInfo.getPortrait())
                         .placeholder(R.drawable.portrait_default)
                         .error(R.drawable.portrait_default)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(resInfoViewHolder.iv_portrait);
-                resInfoViewHolder.tv_username.setText(resInfo.getUsername());
+                resInfoViewHolder.tv_username.setText(resInfo.getUserName());
             }
             if (resInfo.getDescription() == null || resInfo.getDescription().trim().length() == 0)
-                resInfoViewHolder.etv_description.setContentText("(暂无相关描述信息)");
+                resInfoViewHolder.etv_description.setContentText("描述：(暂无相关描述信息)");
             else
-                resInfoViewHolder.etv_description.setContentText(resInfo.getDescription());
-            resInfoViewHolder.tv_link.setText(resInfo.getLink());
-            resInfoViewHolder.tv_time.setText(resInfo.getTime());
-            resInfoViewHolder.icv_like.setCount(resInfo.getLikeNum());
+                resInfoViewHolder.etv_description.setContentText("描述：" + resInfo.getDescription());
+            resInfoViewHolder.tv_link.setText(resInfo.getAddress());
+            resInfoViewHolder.tv_time.setText(resInfo.getCreated());
+            resInfoViewHolder.icv_like.setCount(resInfo.getLikeNumber());
             resInfoViewHolder.icv_like.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
                 @Override
                 public void select(boolean isSelected) {
                     if (isSelected)
-                        resInfo.setLikeNum(resInfo.getLikeNum() + 1);
+                        resInfo.setLikeNumber(resInfo.getLikeNumber() + 1);
                     else
-                        resInfo.setLikeNum(resInfo.getLikeNum() - 1);
+                        resInfo.setLikeNumber(resInfo.getLikeNumber() - 1);
                     notifyDataSetChanged();
                 }
             });
@@ -183,7 +183,7 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
 
-            //            resInfoViewHolder.ll_item.setOnClickListener(view -> onItemClickListenerlistener.onClick(position));
+            //resInfoViewHolder.ll_item.setOnClickListener(view -> onItemClickListenerlistener.onClick(position));
         }
     }
 

@@ -21,7 +21,7 @@ import java.util.List;
 
 public class MyReleaseResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ResInfo> resInfoList;
-    private Context       context;
+    private Context context;
 
     public MyReleaseResInfoAdapter(List<ResInfo> resInfoList, Context context) {
         super();
@@ -30,16 +30,16 @@ public class MyReleaseResInfoAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     static class MyReleaseResInfoViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout       ll_item;
-        ImageView          iv_portrait;
-        TextView           tv_username;
-        TextView           tv_title;
+        LinearLayout ll_item;
+        ImageView iv_portrait;
+        TextView tv_username;
+        TextView tv_title;
         ExpandableTextView etv_description;
-        TextView           tv_link;
-        TextView           tv_time;
-        IconCountView      icv_like;
-        TextView           tv_delete;
-        TextView           tv_modify;
+        TextView tv_link;
+        TextView tv_time;
+        IconCountView icv_like;
+        TextView tv_delete;
+        TextView tv_modify;
 
         public MyReleaseResInfoViewHolder(View view) {
             super(view);
@@ -118,28 +118,28 @@ public class MyReleaseResInfoAdapter extends RecyclerView.Adapter<RecyclerView.V
                         .into(infoViewHolder.iv_portrait);
                 infoViewHolder.tv_username.setText("匿名者");
             } else {
-                Glide.with(context).load(resInfo.getPortraitUri())
+                Glide.with(context).load(resInfo.getPortrait())
                         .placeholder(R.drawable.portrait_default)
                         .error(R.drawable.portrait_default)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(infoViewHolder.iv_portrait);
-                infoViewHolder.tv_username.setText(resInfo.getUsername());
+                infoViewHolder.tv_username.setText(resInfo.getUserName());
             }
             infoViewHolder.tv_title.setText(resInfo.getTitle());
             if (resInfo.getDescription() == null || resInfo.getDescription().trim().length() == 0)
-                infoViewHolder.etv_description.setContentText("(暂无相关描述信息)");
+                infoViewHolder.etv_description.setContentText("描述：(暂无相关描述信息)");
             else
-                infoViewHolder.etv_description.setContentText(resInfo.getDescription());
-            infoViewHolder.tv_link.setText(resInfo.getLink());
-            infoViewHolder.tv_time.setText(resInfo.getTime());
-            infoViewHolder.icv_like.setCount(resInfo.getLikeNum());
+                infoViewHolder.etv_description.setContentText("描述：" + resInfo.getDescription());
+            infoViewHolder.tv_link.setText(resInfo.getAddress());
+            infoViewHolder.tv_time.setText(resInfo.getCreated());
+            infoViewHolder.icv_like.setCount(resInfo.getLikeNumber());
             infoViewHolder.icv_like.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
                 @Override
                 public void select(boolean isSelected) {
                     if (isSelected)
-                        resInfo.setLikeNum(resInfo.getLikeNum() + 1);
+                        resInfo.setLikeNumber(resInfo.getLikeNumber() + 1);
                     else
-                        resInfo.setLikeNum(resInfo.getLikeNum() - 1);
+                        resInfo.setLikeNumber(resInfo.getLikeNumber() - 1);
                     notifyDataSetChanged();
                 }
             });

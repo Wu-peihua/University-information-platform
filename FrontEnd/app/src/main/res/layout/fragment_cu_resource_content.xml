@@ -4,8 +4,6 @@
     android:id="@+id/rl_cu_resource"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -17,6 +15,7 @@
         android:layout_marginRight="5dp"
         android:layout_toLeftOf="@+id/fab_cu_res"
         android:background="@drawable/shape_search"
+        android:focusable="true"
         android:focusableInTouchMode="true"
         android:orientation="horizontal">
 

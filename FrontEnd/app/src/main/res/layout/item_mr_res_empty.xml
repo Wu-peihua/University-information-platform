@@ -9,6 +9,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="180dp"
-        android:text="没有资源记录，先去发布资源吧！"
+        android:text="暂无资源发布记录，先去发布资源吧！"
         android:textColor="@color/blue" />
 </LinearLayout>

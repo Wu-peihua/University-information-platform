@@ -6,9 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -29,38 +32,56 @@ import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.example.uipfrontend.Entity.ResInfo;
 import com.example.uipfrontend.R;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class AddResActivity extends AppCompatActivity implements View.OnTouchListener {
-
     private OptionsPickerView pvNoLinkOptions;
-    private MaterialEditText  met_type;
-    private MaterialEditText  met_title;
-    private MaterialEditText  met_desc;
-    private MaterialEditText  met_link;
-    private CheckBox          checkBox;
+    private MaterialEditText met_type;
+    private MaterialEditText met_title;
+    private MaterialEditText met_desc;
+    private MaterialEditText met_link;
+    private CheckBox checkBox;
 
-    private int     type1;
-    private int     type2;
-    private String  portraitUri;
-    private String  username;
-    private String  title;
-    private String  desc;
-    private String  link;
-    private String  time;
-    private int     likeNum;
+    private ResInfo resInfo;
+    private Long infoId;
+    private String title;
+    private String description;
+    private String address;
+    private Long userId;
+    private int subjectId;
+    private int typeId;
     private boolean isAnonymous;
+    private String created;
 
-    String[] option1 = {"全部", "哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学", "艺术学"};
-    String[] option2 = {"全部", "论文、报告", "试题", "电子书", "视频课程", "其他"};
+    String[] option1 = {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学", "艺术学"};
+    String[] option2 = {"论文、报告", "试题", "电子书", "视频课程", "其他"};
     //url的正则表达式
     private String regex = "^(?=^.{3,255}$)(http(s)?:\\/\\/)?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}" +
             "(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\\d+)*(\\/\\w+\\.\\w+)*([\\?&]\\w+=\\w*)*$";
+
+    private static final int NETWORK_ERR = -2;
+    private static final int SERVER_ERR = -1;
+    private static final int SUCCESS = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,28 +120,22 @@ public class AddResActivity extends AppCompatActivity implements View.OnTouchLis
     }
 
     public void initData() {
-        type1 = type2 = 0;
-        portraitUri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
-        username = "张咩阿";
-        likeNum = 0;
+        userId = (long) 4;
         Intent intent = getIntent();
         ResInfo acceptData = (ResInfo) intent.getSerializableExtra("resInfo");
         if (acceptData != null) {
-            type1 = acceptData.getType1();
-            type2 = acceptData.getType2();
-            portraitUri = acceptData.getPortraitUri();
-            username = acceptData.getUsername();
             title = acceptData.getTitle();
-            desc = acceptData.getDescription();
-            link = acceptData.getLink();
-            time = acceptData.getTime();
-            likeNum = acceptData.getLikeNum();
+            description = acceptData.getDescription();
+            address = acceptData.getAddress();
+            userId = acceptData.getUserId();
+            subjectId = acceptData.getSubjectId();
+            typeId = acceptData.getTypeId();
             isAnonymous = acceptData.isAnonymous();
 
-            met_type.setText(option1[type1] + "-" + option2[type2]);
+            met_type.setText(option1[subjectId - 1] + "-" + option2[typeId - 1]);
             met_title.setText(title);
-            met_desc.setText(desc);
-            met_link.setText(link);
+            met_desc.setText(description);
+            met_link.setText(address);
             checkBox.setChecked(isAnonymous);
         }
     }
@@ -132,8 +147,8 @@ public class AddResActivity extends AppCompatActivity implements View.OnTouchLis
 
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
-                type1 = options1;
-                type2 = options2;
+                subjectId = options1 + 1;
+                typeId = options2 + 1;
                 String str = option1[options1] + "-" + option2[options2];
                 met_type.setText(str);
             }
@@ -143,7 +158,7 @@ public class AddResActivity extends AppCompatActivity implements View.OnTouchLis
                     public void onOptionsSelectChanged(int options1, int options2, int options3) {
                     }
                 })
-                .setSelectOptions(type1, type2)
+                .setSelectOptions(subjectId - 1, typeId - 1)
                 .isRestoreItem(false)
                 .setSubmitColor(getResources().getColor(R.color.blue))
                 .setCancelColor(getResources().getColor(R.color.blue))
@@ -189,6 +204,84 @@ public class AddResActivity extends AppCompatActivity implements View.OnTouchLis
         });
     }
 
+    /**
+     * 描述：插入资源信息
+     */
+    public void insertData() {
+        title = met_title.getText().toString().trim();
+        description = met_desc.getText().toString().trim();
+        address = met_link.getText().toString();
+        isAnonymous = checkBox.isChecked();
+
+        resInfo = new ResInfo();
+        resInfo.setTitle(title);
+        resInfo.setDescription(description);
+        resInfo.setAddress(address);
+        resInfo.setUserId(userId);
+        resInfo.setSubjectId(subjectId);
+        resInfo.setTypeId(typeId);
+        resInfo.setAnonymous(isAnonymous);
+
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message message) {
+                switch (message.what) {
+                    case NETWORK_ERR:
+                        Log.i("插入资源-结果", "网络错误");
+                        break;
+                    case SERVER_ERR:
+                        Log.i("插入资源-结果", "服务器错误");
+                        break;
+                    case SUCCESS:
+                        Log.i("插入资源-结果", "成功");
+                        Intent intent = new Intent();
+                        setResult(1, intent);
+                        hideSystemKeyboard(AddResActivity.this, met_type);
+                        AddResActivity.this.finish();
+                        break;
+                }
+            }
+        };
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message msg = new Message();
+                OkHttpClient client = new OkHttpClient();
+
+                Gson gson = new Gson();
+                String json = gson.toJson(resInfo);
+                RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"), json);
+                Request request = new Request.Builder()
+                        .url(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.insertResource))
+                        .post(requestBody)
+                        .build();
+
+                Call call = client.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("插入资源-结果", e.getMessage());
+                        msg.what = NETWORK_ERR;
+                        handler.sendMessage(msg);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String resStr = response.body().string();
+                        Log.i("插入资源-服务器返回信息", resStr);
+
+                        JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
+                        JsonElement element = jsonObject.get("success");
+
+                        boolean res = new Gson().fromJson(element, boolean.class);
+                        msg.what = res ? SUCCESS : SERVER_ERR;
+                        handler.sendMessage(msg);
+                    }
+                });
+            }
+        }).start();
+    }
+
     //隐藏输入法
     public static void hideSystemKeyboard(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -225,26 +318,7 @@ public class AddResActivity extends AppCompatActivity implements View.OnTouchLis
                             switch (which) {
                                 //确定
                                 case -1:
-                                    Intent intent = new Intent();
-
-                                    title = met_title.getText().toString().trim();
-                                    desc = met_desc.getText().toString().trim();
-                                    link = met_link.getText().toString();
-
-                                    long longTime = System.currentTimeMillis();
-                                    Date date = new Date(longTime);
-                                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
-                                    time = format.format(date);
-
-                                    isAnonymous = checkBox.isChecked();
-
-                                    intent.putExtra("resInfo", new ResInfo(type1, type2, portraitUri, username,
-                                            title, desc, link, time, likeNum, isAnonymous));
-
-                                    setResult(1, intent);
-                                    Toast.makeText(AddResActivity.this, "资源发布成功", Toast.LENGTH_SHORT).show();
-                                    hideSystemKeyboard(AddResActivity.this, met_type);
-                                    AddResActivity.this.finish();
+                                    insertData();
                                     break;
                                 //取消
                                 case -2:

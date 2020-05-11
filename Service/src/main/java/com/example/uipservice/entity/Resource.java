@@ -1,8 +1,11 @@
 package com.example.uipservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
-public class Resources {
+public class Resource {
     private Long infoId;
 
     private String title;
@@ -11,18 +14,24 @@ public class Resources {
 
     private String address;
 
-    private Date infoDate;
-
     private Long userId;
+
+    private String portrait;
+
+    private String userName;
 
     private Integer subjectId;
 
     private Integer typeId;
 
+    private Integer likeNumber;
+
     private Integer reportNumber;
 
-    private Boolean isAnonymous;
+    private Integer isAnonymous;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date created;
 
     public Long getInfoId() {
@@ -38,7 +47,7 @@ public class Resources {
     }
 
     public void setTitle(String title) {
-        this.title = title == null ? null : title.trim();
+        this.title = title;
     }
 
     public String getDescription() {
@@ -46,7 +55,7 @@ public class Resources {
     }
 
     public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
+        this.description = description;
     }
 
     public String getAddress() {
@@ -54,15 +63,7 @@ public class Resources {
     }
 
     public void setAddress(String address) {
-        this.address = address == null ? null : address.trim();
-    }
-
-    public Date getInfoDate() {
-        return infoDate;
-    }
-
-    public void setInfoDate(Date infoDate) {
-        this.infoDate = infoDate;
+        this.address = address;
     }
 
     public Long getUserId() {
@@ -71,6 +72,22 @@ public class Resources {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Integer getSubjectId() {
@@ -89,6 +106,14 @@ public class Resources {
         this.typeId = typeId;
     }
 
+    public Integer getLikeNumber() {
+        return likeNumber;
+    }
+
+    public void setLikeNumber(Integer likeNumber) {
+        this.likeNumber = likeNumber;
+    }
+
     public Integer getReportNumber() {
         return reportNumber;
     }
@@ -97,12 +122,25 @@ public class Resources {
         this.reportNumber = reportNumber;
     }
 
-    public Boolean getIsAnonymous() {
+    public int getIsAnonymous() {
         return isAnonymous;
     }
 
-    public void setIsAnonymous(Boolean isAnonymous) {
+    public void setIsAnonymous(int isAnonymous) {
         this.isAnonymous = isAnonymous;
+    }
+
+    public boolean isAnonymous() {
+        if (isAnonymous == 1)
+            return true;
+        return false;
+    }
+
+    public void setAnonymous(boolean isAnonymous) {
+        if (isAnonymous)
+            this.isAnonymous = 1;
+        else
+            this.isAnonymous = 0;
     }
 
     public Date getCreated() {

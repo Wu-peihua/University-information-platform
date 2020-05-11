@@ -3,112 +3,154 @@ package com.example.uipfrontend.Entity;
 import java.io.Serializable;
 
 public class ResInfo implements Serializable {
-    //用整数代表类型
-    private int     type1;
-    private int     type2;
-    private String  portraitUri;
-    private String  username;
-    private String  title;
-    private String  description;
-    private String  link;
-    private String  time;
-    private int     likeNum;
-    private boolean isAnonymous;
+    private Long infoId;
+    private String title;
+    private String description;
+    private String address;
+    private Long userId;
+    private String portrait;
+    private String userName;
+    private int subjectId;
+    private int typeId;
+    private int likeNumber = 0;
+    private int reportNumber = 0;
+    private int isAnonymous;
+    private String created;
 
     public ResInfo() {
     }
 
-    public ResInfo(int type1, int type2, String portraitUri, String username, String title,
-                   String description, String link, String time, int likeNum, boolean isAnonymous) {
-        this.type1 = type1;
-        this.type2 = type2;
-        this.portraitUri = portraitUri;
-        this.username = username;
+    public ResInfo(Long infoId, String title, String description, String address, Long userId, String portrait, String userName,
+                   int subjectId, int typeId, int likeNumber, int reportNumber, int isAnonymous, String created) {
+        this.infoId = infoId;
         this.title = title;
         this.description = description;
-        this.link = link;
-        this.time = time;
-        this.likeNum = likeNum;
+        this.address = address;
+        this.userId = userId;
+        this.portrait = portrait;
+        this.userName = userName;
+        this.subjectId = subjectId;
+        this.typeId = typeId;
+        this.likeNumber = likeNumber;
+        this.reportNumber = reportNumber;
         this.isAnonymous = isAnonymous;
+        this.created = created;
     }
 
-    public int getType1() {
-        return type1;
+    public Long getInfoId() {
+        return infoId;
     }
 
-    public int getType2() {
-        return type2;
-    }
-
-    public String getPortraitUri() {
-        return portraitUri;
-    }
-
-    public String getUsername() {
-        return username;
+    public void setInfoId(Long infoId) {
+        this.infoId = infoId;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public int getLikeNum() {
-        return likeNum;
-    }
-
-    public boolean isAnonymous() {
-        return isAnonymous;
-    }
-
-    public void setType1(int type1) {
-        this.type1 = type1;
-    }
-
-    public void setType2(int type2) {
-        this.type2 = type2;
-    }
-
-    public void setPortraitUri(String portraitUri) {
-        this.portraitUri = portraitUri;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public String getAddress() {
+        return address;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public void setLikeNum(int likeNum) {
-        this.likeNum = likeNum;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setAnonymous(boolean anonymous) {
-        isAnonymous = anonymous;
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getPortrait() {
+        return portrait;
+    }
+
+    public void setPortrait(String portrait) {
+        this.portrait = portrait;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public int getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(int subjectId) {
+        this.subjectId = subjectId;
+    }
+
+    public int getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
+    }
+
+    public int getLikeNumber() {
+        return likeNumber;
+    }
+
+    public void setLikeNumber(int likeNumber) {
+        this.likeNumber = likeNumber;
+    }
+
+    public int getReportNumber() {
+        return reportNumber;
+    }
+
+    public void setReportNumber(int reportNumber) {
+        this.reportNumber = reportNumber;
+    }
+
+    public int getIsAnonymous() {
+        return isAnonymous;
+    }
+
+    public void setIsAnonymous(int isAnonymous) {
+        this.isAnonymous = isAnonymous;
+    }
+
+    public boolean isAnonymous() {
+        if (isAnonymous == 1)
+            return true;
+        return false;
+    }
+
+    public void setAnonymous(boolean isAnonymous) {
+        if (isAnonymous)
+            this.isAnonymous = 1;
+        else
+            this.isAnonymous = 0;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
     }
 }

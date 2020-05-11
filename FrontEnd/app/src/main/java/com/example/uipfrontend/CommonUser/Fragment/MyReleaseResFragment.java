@@ -1,5 +1,6 @@
 package com.example.uipfrontend.CommonUser.Fragment;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,23 +24,47 @@ import com.example.uipfrontend.CommonUser.Activity.AddResActivity;
 import com.example.uipfrontend.CommonUser.Adapter.MyReleaseResInfoAdapter;
 import com.example.uipfrontend.CommonUser.Adapter.ResInfoAdapter;
 import com.example.uipfrontend.Entity.ResInfo;
+import com.example.uipfrontend.Entity.ResponseResource;
 import com.example.uipfrontend.R;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MyReleaseResFragment extends Fragment {
     private View rootView;
     private XRecyclerView xRecyclerView;
     private MyReleaseResInfoAdapter adapter;
     private List<ResInfo> list;
-    private int republishPos;
+    private int deletePos;
+    private int userId = 4;
+
+    private static final int NETWORK_ERR = -2;
+    private static final int SERVER_ERR = -1;
+    private static final int ZERO = 0;
+    private static final int SUCCESS = 1;
+    private static final int FINISH = 2;
+    private static final int PAGE_SIZE = 10;
+    private static int CUR_PAGE_NUM;
 
     @Nullable
     @Override
@@ -48,27 +76,222 @@ public class MyReleaseResFragment extends Fragment {
             }
         } else {
             rootView = inflater.inflate(R.layout.fragment_my_release_res, null);
-            initData();
             initXRecyclerView();
+            getData();
         }
         return rootView;
     }
 
-    public void initData() {
-        list = new ArrayList<>();
-        list.add(new ResInfo(0, 0, "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg",
-                "张咩阿", "支付宝破解版", "清明前后，种瓜种豆。当然，那都是为漫长夏日的怎样过活做准备的，儿时生在乡下的人，" +
-                "这些话多半还是有些耳熟的。一般的话，清明过后是一日热胜一日，偶尔会有个不应时的桃花暮春雪，也是个稀少的意外，大多这个时候，" +
-                "植物随着气候变化也即将转换着面目，即便是在城里，也能掐算着哪个时候能见上什么。踏春的时尚，之外哪能少的了吃货们的小算计呢。",
-                "www.baidu.com", "2020-02-02 00:00", 0, false));
+    /**
+     * 描述：根据用户id获取资源发布记录
+     */
+    private void getData() {
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message message) {
+                switch (message.what) {
+                    case NETWORK_ERR:
+                        Log.i("获取资源发布记录-结果", "网络错误");
+                        break;
+                    case SERVER_ERR:
+                        Log.i("获取资源发布记录-结果", "服务器错误");
+                        break;
+                    case ZERO:
+                        Log.i("获取资源发布记录-结果", "空");
+                        adapter.notifyDataSetChanged();
+                        break;
+                    case SUCCESS:
+                        Log.i("获取资源发布记录-结果", "成功");
+                        Log.i("获取资源发布记录-数量", String.valueOf(list.size()));
+                        adapter.notifyDataSetChanged();
+                        break;
+                }
+            }
+        };
+
+        new Thread(() -> {
+            CUR_PAGE_NUM = 1;
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath) +
+                            getResources().getString(R.string.queryResourceByUserId)
+                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE + "&userId=" + userId)
+                    .get()
+                    .build();
+            Message msg = new Message();
+            OkHttpClient okHttpClient = new OkHttpClient();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.i("获取资源发布记录-结果 ", e.getMessage());
+                    msg.what = NETWORK_ERR;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    ResponseResource responseResource = new Gson().fromJson(response.body().string(),
+                            ResponseResource.class);
+
+                    if (responseResource.getResInfoList() == null)
+                        msg.what = SERVER_ERR;
+                    else if (responseResource.getResInfoList().size() == 0)
+                        msg.what = ZERO;
+                    else {
+                        if (list.size() != 0)
+                            list.clear();
+                        list.addAll(responseResource.getResInfoList());
+                        msg.what = SUCCESS;
+                    }
+                    handler.sendMessage(msg);
+                }
+            });
+        }).start();
+    }
+
+    /**
+     * 描述：根据用户id加载资源发布记录
+     */
+    private void loadMoreData() {
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message message) {
+                xRecyclerView.loadMoreComplete();
+                switch (message.what) {
+                    case NETWORK_ERR:
+                        Log.i("加载资源发布记录-结果", "网络错误");
+                        break;
+                    case SERVER_ERR:
+                        Log.i("加载资源发布记录-结果", "服务器错误");
+                        break;
+                    case ZERO:
+                        Log.i("加载资源发布记录-结果", "空");
+                        Log.i("加载资源发布记录-总数", String.valueOf(list.size()));
+                        xRecyclerView.setNoMore(true);
+                        break;
+                    case SUCCESS:
+                        Log.i("加载资源发布记录-结果", "成功");
+                        Log.i("加载资源发布记录-总数", String.valueOf(list.size()));
+                        adapter.notifyDataSetChanged();
+                        break;
+                    case FINISH:
+                        Log.i("加载资源发布记录-结果", "加载完毕");
+                        Log.i("加载资源发布记录-总数", String.valueOf(list.size()));
+                        xRecyclerView.setNoMore(true);
+                        break;
+                }
+            }
+        };
+
+        new Thread(() -> {
+            CUR_PAGE_NUM++;
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath) +
+                            getResources().getString(R.string.queryResourceByUserId)
+                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE + "&userId=" + userId)
+                    .get()
+                    .build();
+            Message msg = new Message();
+            OkHttpClient okHttpClient = new OkHttpClient();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.i("加载资源发布记录-结果", e.getMessage());
+                    msg.what = NETWORK_ERR;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    ResponseResource responseResource = new Gson().fromJson(response.body().string(),
+                            ResponseResource.class);
+
+                    if (responseResource.getResInfoList() == null)
+                        msg.what = SERVER_ERR;
+                    else if (responseResource.getResInfoList().size() == 0)
+                        msg.what = ZERO;
+                    else {
+                        list.addAll(responseResource.getResInfoList());
+                        if (CUR_PAGE_NUM * PAGE_SIZE < responseResource.getTotal())
+                            msg.what = SUCCESS;
+                        else
+                            msg.what = FINISH;
+                    }
+                    handler.sendMessage(msg);
+                }
+            });
+        }).start();
+    }
+
+    /**
+     * 描述：根据主键id删除资源发布记录
+     */
+    private void deleteData() {
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message message) {
+                switch (message.what) {
+                    case NETWORK_ERR:
+                        Log.i("删除资源发布记录-结果", "网络错误");
+                        break;
+                    case SERVER_ERR:
+                        Log.i("删除资源发布记录-结果", "服务器错误");
+                        break;
+                    case SUCCESS:
+                        Log.i("删除资源发布记录-结果", "成功");
+                        list.remove(deletePos);
+                        adapter.notifyDataSetChanged();
+                        break;
+                }
+            }
+        };
+        new Thread(() -> {
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+
+            FormBody.Builder builder = new FormBody.Builder();
+            builder.add("infoId", String.valueOf(list.get(deletePos).getInfoId()));
+            RequestBody requestBody = builder.build();
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.deleteResourceByInfoId))
+                    .post(requestBody)
+                    .build();
+
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("删除资源发布记录-结果", e.getMessage());
+                    msg.what = NETWORK_ERR;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String resStr = response.body().string();
+                    Log.i("删除资源发布记录-服务器返回信息", resStr);
+
+                    JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonElement element = jsonObject.get("success");
+
+                    boolean res = new Gson().fromJson(element, boolean.class);
+                    msg.what = res ? SUCCESS : SERVER_ERR;
+                    handler.sendMessage(msg);
+                }
+            });
+        }).start();
     }
 
     public void initXRecyclerView() {
+        list = new ArrayList<>();
         xRecyclerView = rootView.findViewById(R.id.xrv_mr_res);
         adapter = new MyReleaseResInfoAdapter(list, rootView.getContext());
         adapter.setHasStableIds(true);
         xRecyclerView.setAdapter(adapter);
 
+        xRecyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
         LinearLayoutManager layoutManager = new LinearLayoutManager(rootView.getContext()) {
             @Override
             public boolean canScrollVertically() {
@@ -78,7 +301,6 @@ public class MyReleaseResFragment extends Fragment {
             }
         };
         xRecyclerView.setLayoutManager(layoutManager);
-        xRecyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
         xRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         xRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
@@ -86,12 +308,17 @@ public class MyReleaseResFragment extends Fragment {
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                xRecyclerView.refreshComplete();
+                new Handler().postDelayed(() -> {
+                    getData();
+                    xRecyclerView.refreshComplete();
+                }, 1000);
             }
 
             @Override
             public void onLoadMore() {
-                xRecyclerView.setNoMore(true);
+                new Handler().postDelayed(() -> {
+                    loadMoreData();
+                }, 1000);
             }
         });
 
@@ -104,9 +331,8 @@ public class MyReleaseResFragment extends Fragment {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                list.remove(position);
-                                adapter.notifyDataSetChanged();
-                                Toast.makeText(rootView.getContext(), "记录删除成功", Toast.LENGTH_SHORT).show();
+                                deletePos = position;
+                                deleteData();
                             }
                         })
                         .setNegativeButton("取消", null)
@@ -126,7 +352,7 @@ public class MyReleaseResFragment extends Fragment {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                republishPos = position;
+                                deletePos = position;
                                 Intent intent = new Intent(rootView.getContext(), AddResActivity.class);
                                 intent.putExtra("resInfo", list.get(position));
                                 startActivityForResult(intent, 1);
@@ -146,10 +372,10 @@ public class MyReleaseResFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1)
             if (resultCode == 1) {
-                list.remove(republishPos);
-                ResInfo receiveData = (ResInfo) data.getSerializableExtra("resInfo");
-                list.add(0, receiveData);
-                adapter.notifyDataSetChanged();
+                deleteData();
+                new Handler().postDelayed(() -> {
+                    getData();
+                }, 100);
             }
     }
 }

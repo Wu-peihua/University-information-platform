@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.uipservice.dao.ResourceMapper">
+    <resultMap id="BaseResultMap" type="com.example.uipservice.entity.Resource">
+        <id column="info_id" property="infoId" jdbcType="BIGINT"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <!--    <result column="info_date" property="infoDate" jdbcType="TIMESTAMP" />-->
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="subject_id" property="subjectId" jdbcType="INTEGER"/>
+        <result column="type_id" property="typeId" jdbcType="INTEGER"/>
+        <result column="like_number" property="likeNumber" jdbcType="INTEGER"/>
+        <result column="report_number" property="reportNumber" jdbcType="INTEGER"/>
+        <result column="is_anonymous" property="isAnonymous" jdbcType="BIT"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    info_id, title, description, address, user_id, subject_id, type_id, like_number, report_number,
+    is_anonymous, created
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from resource
+        where info_id = #{infoId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from resource
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.example.uipservice.entity.Resource">
+        <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into resource (title, description, address,
+        user_id, subject_id, type_id,
+        like_number, report_number, is_anonymous)
+        values (#{title,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+        #{userId,jdbcType=BIGINT}, #{subjectId,jdbcType=INTEGER}, #{typeId,jdbcType=INTEGER},
+        #{likeNumber,jdbcType=INTEGER}, #{reportNumber,jdbcType=INTEGER}, #{isAnonymous,jdbcType=BIT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.example.uipservice.entity.Resource">
+        <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into resource
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null">
+                title,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="subjectId != null">
+                subject_id,
+            </if>
+            <if test="typeId != null">
+                type_id,
+            </if>
+            <if test="likeNumber != null">
+                like_number,
+            </if>
+            <if test="reportNumber != null">
+                report_number,
+            </if>
+            <if test="isAnonymous != null">
+                is_anonymous,
+            </if>
+            <if test="created != null">
+                created,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="subjectId != null">
+                #{subjectId,jdbcType=INTEGER},
+            </if>
+            <if test="typeId != null">
+                #{typeId,jdbcType=INTEGER},
+            </if>
+            <if test="likeNumber != null">
+                #{likeNumber,jdbcType=INTEGER},
+            </if>
+            <if test="reportNumber != null">
+                #{reportNumber,jdbcType=INTEGER},
+            </if>
+            <if test="isAnonymous != null">
+                #{isAnonymous,jdbcType=BIT},
+            </if>
+            <if test="created != null">
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.uipservice.entity.Resource">
+        update resource
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="subjectId != null">
+                subject_id = #{subjectId,jdbcType=INTEGER},
+            </if>
+            <if test="typeId != null">
+                type_id = #{typeId,jdbcType=INTEGER},
+            </if>
+            <if test="likeNumber != null">
+                like_number = #{likeNumber,jdbcType=INTEGER},
+            </if>
+            <if test="reportNumber != null">
+                report_number = #{reportNumber,jdbcType=INTEGER},
+            </if>
+            <if test="isAnonymous != null">
+                is_anonymous = #{isAnonymous,jdbcType=BIT},
+            </if>
+            <if test="created != null">
+                created = #{created,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where info_id = #{infoId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.example.uipservice.entity.Resource">
+    update resource
+    set title = #{title,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      subject_id = #{subjectId,jdbcType=INTEGER},
+      type_id = #{typeId,jdbcType=INTEGER},
+      like_number = #{likeNumber,jdbcType=INTEGER},
+      report_number = #{reportNumber,jdbcType=INTEGER},
+      is_anonymous = #{isAnonymous,jdbcType=BIT},
+      created = #{created,jdbcType=TIMESTAMP}
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+
+    <!--分页查找-->
+    <select id="queryResourceByUserId" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from resource
+    where user_id = #{userId}
+    order by info_id desc
+    </select>
+
+    <select id="queryResourceByType" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from resource
+    where subjectId = #{subjectId} and typeId = #{typeId}
+    order by info_id desc
+    </select>
+
+    <select id="queryResource" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from resource
+    order by info_id desc
+    </select>
+</mapper>
