@@ -71,32 +71,6 @@ public class AdminReportCourseCommentAdapter extends RecyclerView.Adapter {
     }
 
 
-//        @OnClick(R.id.tv_student_group_item_delete)
-//        public void delete(View view) {
-//            final GlobalDialog delDialog = new GlobalDialog(context);
-//            delDialog.setCanceledOnTouchOutside(true);
-//            delDialog.getTitle().setText("提示");
-//            delDialog.getContent().setText("确定删除吗?");
-//            delDialog.setLeftBtnText("取消");
-//            delDialog.setRightBtnText("确定");
-//            delDialog.setLeftOnclick(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(context, "取消", Toast.LENGTH_SHORT).show();
-//                    delDialog.dismiss();
-//                }
-//            });
-//            delDialog.setRightOnclick(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(context, "确定", Toast.LENGTH_SHORT).show();
-//                    delDialog.dismiss();
-//                }
-//            });
-//            delDialog.show();
-//        }
-
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -125,50 +99,9 @@ public class AdminReportCourseCommentAdapter extends RecyclerView.Adapter {
                 .into(viewHolder.userimg);
 
 
-        //viewHolder.userName.setText(comment.getUserName());
-        //viewHolder.commentDate.setText(DateFormat.getInstance().format(comment.getCommentDate()));
         viewHolder.commentDate.setText(comment.getInfoDate().toString());
-        //courseImage.setImageResource(course.getImageurl());
         viewHolder.commentContent.setText(comment.getContent());
         viewHolder.score.setRating((float)comment.getScore());
-
-        //viewHolder.LikeCounts.setText(String.valueOf(mTags.get(pos).getLikeCount()));
-
-
-        //点赞按钮与举报按钮
-        /*
-        viewHolder.BtnLike.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int cur = mTags.get(pos).getLikeCount();
-                mTags.get(pos).setLikeCount(cur+1);
-                viewHolder.LikeCounts.setText(String.valueOf(cur+1));
-                Log.i("当前点赞数:",String.valueOf(mTags.get(pos).getLikeCount()));
-
-            }
-        });
-
-         */
-
-
-        /*
-        * holder.tvName.setText(mTags.get(position).getName());
-        holder.tvTeacher.setText(mTags.get(position).getTeacher());
-        holder.tvScore.setText(String.valueOf(mTags.get(position).getScore()));
-        holder.tvContent.setText(mTags.get(position).getDescription());
-
-
-        //holder.bindData(mTags.get(position));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null) {
-                    Log.e("click", "!");
-                    itemClickListener.onItemClick(position);
-                }
-            }
-        });
-        * */
 
     }
 

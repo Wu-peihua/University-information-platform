@@ -96,23 +96,23 @@
                     android:textColor="@color/item_time"
                     android:textSize="@dimen/fontSize_xs" />
 
-                <!-- 点赞按钮 -->
-                <com.sunbinqiang.iconcountview.IconCountView
-                    android:id="@+id/adminbtnlike_student_comment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="8dp"
-                    android:layout_toLeftOf="@id/adminll_cu_forum_comment_write"
-                    app:count="100"
-                    app:normalRes="@drawable/icon_praise_normal"
-                    app:selectedRes="@drawable/icon_praise_selected"
-                    app:checked="false"
-                    app:textNormalColor="@color/darkGray"
-                    app:textSelectedColor="#FF0000"
-                    app:textSize="12sp"
-                    app:zeroText="赞" />
+<!--                &lt;!&ndash; 点赞按钮 &ndash;&gt;-->
+<!--                <com.sunbinqiang.iconcountview.IconCountView-->
+<!--                    android:id="@+id/adminbtnlike_student_comment"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginRight="8dp"-->
+<!--                    android:layout_toLeftOf="@id/adminll_cu_forum_comment_write"-->
+<!--                    app:count="100"-->
+<!--                    app:normalRes="@drawable/icon_praise_normal"-->
+<!--                    app:selectedRes="@drawable/icon_praise_selected"-->
+<!--                    app:checked="false"-->
+<!--                    app:textNormalColor="@color/darkGray"-->
+<!--                    app:textSelectedColor="#FF0000"-->
+<!--                    app:textSize="12sp"-->
+<!--                    app:zeroText="赞" />-->
 
-                <!-- 回复按钮 -->
+                <!-- 删除按钮 -->
                 <LinearLayout
                     android:id="@+id/adminll_cu_forum_comment_write"
                     android:layout_width="wrap_content"

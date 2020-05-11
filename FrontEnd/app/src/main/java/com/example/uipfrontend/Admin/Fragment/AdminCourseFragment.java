@@ -26,6 +26,7 @@ import com.example.uipfrontend.R;
 import com.example.uipfrontend.Entity.Course;
 //import com.example.uipfrontend.Student.Activity.CourseDetailActivity;
 //import com.example.uipfrontend.Student.Adapter.StudentCourseRecyclerViewAdapter;
+import com.example.uipfrontend.Student.Fragment.StudentCommentFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
@@ -77,7 +78,12 @@ public class AdminCourseFragment extends Fragment {
     private static final int PAGE_SIZE = 6;   //默认一次请求6条数据
     private static int CUR_PAGE_NUM = 1;
 
+    //记录下拉筛选菜单选择的学校ID和学院ID
+    private int selectedUniversity = 0; //默认为0
+    private int selectedInstitute = -1;  //默认为-1
 
+
+    private static final int myRequestCode = 166;
 
     @Nullable
     @Override
@@ -101,18 +107,19 @@ public class AdminCourseFragment extends Fragment {
     private void init() {
 
         getMenusData();
-        //initData();
 
         initMenus();
 
-        getData();
-        //initRecyclerView();
+        getData(getResources().getString(R.string.serverBasePath) +
+                getResources().getString(R.string.queryCourse)
+                + "/?pageNum=1&pageSize=" + PAGE_SIZE );
+
         initListener();
         initFAB();
 
     }
     //请求后端课程数据
-    private void getData(){
+    private void getData(String requestUrl){
         //courses = new ArrayList<>();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -139,9 +146,7 @@ public class AdminCourseFragment extends Fragment {
 
         new Thread(()->{
             Request request = new Request.Builder()
-                    .url(getResources().getString(R.string.serverBasePath) +
-                            getResources().getString(R.string.queryCourse)
-                            + "/?pageNum=1&pageSize=" + PAGE_SIZE )
+                    .url(requestUrl)
                     .get()
                     .build();
             Message msg = new Message();
@@ -163,11 +168,6 @@ public class AdminCourseFragment extends Fragment {
                     ResponseCourse responseCourse = new Gson().fromJson(data,
                             ResponseCourse.class);
 
-                    /*if(responseCourse==null) {
-                        System.out.println("response获取失败");
-                    }
-
-                     */
                     courses = responseCourse.getCourseInfoList();
                     if (courses == null){
                         System.out.println("没有课程数据");
@@ -178,8 +178,7 @@ public class AdminCourseFragment extends Fragment {
                             System.out.println("课程列表为空\n");
                         } else {
                             msg.what = SUCCESS;
-
-                            System.out.println("课程列表为:"+courses.toString());
+//                            System.out.println("课程列表为:"+courses.toString());
                         }
                         handler.sendMessage(msg);
                         Log.i("获取: ", String.valueOf(courses.size()));
@@ -189,6 +188,68 @@ public class AdminCourseFragment extends Fragment {
         }).start();
     }
 
+    //请求所有课程数据
+    private void fetchCourseInfo(String requestUrl){
+        new Handler().postDelayed(() -> {
+            @SuppressLint("HandlerLeak")
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg){
+                    switch (msg.what){
+                        case SUCCESS:
+                            Log.i("获取", "成功");
+                            studentCourseRecyclerViewAdapter.setList(courses);
+                            studentCourseRecyclerViewAdapter.notifyDataSetChanged();
+                            break;
+                        case FAIL:
+                            Log.i("获取", "失败");
+                            break;
+                        case ZERO:
+                            Log.i("获取", "0");
+                            break;
+                    }
+                    recyclerView.refreshComplete();
+                }
+            };
+
+            new Thread(()->{
+                CUR_PAGE_NUM = 1;
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .get()
+                        .build();
+                Message msg = new Message();
+                OkHttpClient okHttpClient = new OkHttpClient();
+                Call call = okHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("获取: ", e.getMessage());
+                        msg.what = FAIL;
+                        handler.sendMessage(msg);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+
+                        ResponseCourse responseCourse = new Gson().fromJson(response.body().string(),
+                                ResponseCourse.class);
+                        courses = responseCourse.getCourseInfoList();
+
+                        if( courses.size() == 0 ) {
+                            msg.what = ZERO;
+                        } else {
+                            msg.what = SUCCESS;
+                        }
+                        handler.sendMessage(msg);
+                        Log.i("获取 ", String.valueOf(courses.size()));
+
+                    }
+                });
+            }).start();
+        }, 1500);
+
+    }
 
     private void getMenusData(){
 
@@ -259,72 +320,28 @@ public class AdminCourseFragment extends Fragment {
         multiMenusView.setOnSelectListener(new com.example.uipfrontend.Utils.MultiMenusView.OnSelectListener() {
             @Override
             public void getMenuOne(String var1, int position) {
-                Toast.makeText(rootView.getContext(),var1,Toast.LENGTH_SHORT).show();
+                Toast.makeText(rootView.getContext(), var1, Toast.LENGTH_SHORT).show();
+                selectedUniversity = position + 1;
             }
 
             @Override
             public void getMenuTwo(String var1, int position) {
-                Toast.makeText(rootView.getContext(),var1,Toast.LENGTH_SHORT).show();
+                Toast.makeText(rootView.getContext(), var1, Toast.LENGTH_SHORT).show();
+                selectedInstitute = position + 1;
+
+                if (selectedUniversity <= 0)
+                    selectedUniversity = 1;
+                System.out.println("university:" + selectedUniversity + "  institute:" + selectedInstitute);
+
+                getData(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryCourseByUniAndIns)
+                        + "/?pageNum=" + 1 + "&pageSize=" + PAGE_SIZE + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
+
 
                 dropDownMenu.setTabText(var1);
                 dropDownMenu.closeMenu();
             }
         });
-
-
-
-//        recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
-//            @Override
-//            public void onRefresh() {
-//                recyclerView.refreshComplete();
-//
-//            }
-//            @Override
-//            public void onLoadMore() {
-//                recyclerView.setNoMore(true);
-//            }
-//        });
-
-
-
     }
-
-    /*
-        public void initData() {
-
-
-            courses.add(new Course((long) 1001,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
-
-            courses.add(new Course((long) 1002,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
-
-            courses.add(new Course((long) 1010,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
-
-
-            courses.add(new Course((long) 1028,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
-
-
-            courses.add(new Course((long) 2019,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
-
-            courses.add(new Course((long) 1003,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
-
-            courses.add(new Course((long) 1004,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
-
-            courses.add(new Course((long) 1015,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
-
-
-            courses.add(new Course((long) 1022,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
-
-
-            courses.add(new Course((long) 2023,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
-
-
-            //AllCourses.addAll(courses);
-
-            //count = mTags.size();
-        }
-
-
-     */
     private void initRecyclerView() {
         recyclerView = rootContentView.findViewById(R.id.rv_admin_group);
 
@@ -367,131 +384,33 @@ public class AdminCourseFragment extends Fragment {
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                new Handler().postDelayed(() -> {
-                    @SuppressLint("HandlerLeak")
-                    Handler handler = new Handler(){
-                        @Override
-                        public void handleMessage(Message msg){
-                            switch (msg.what){
-                                case SUCCESS:
-                                    Log.i("刷新", "成功");
-                                    studentCourseRecyclerViewAdapter.setList(courses);
-                                    studentCourseRecyclerViewAdapter.notifyDataSetChanged();
-                                    break;
-                                case FAIL:
-                                    Log.i("刷新", "失败");
-                                    break;
-                                case ZERO:
-                                    Log.i("刷新", "0");
-                                    break;
-                            }
-                            recyclerView.refreshComplete();
-                        }
-                    };
+                if(selectedUniversity <= 0 && selectedInstitute <=0 ){
+                    fetchCourseInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryCourse) +
+                            "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE );
+                }else{
+                    fetchCourseInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryCourseByUniAndIns) +
+                            "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
+                }
 
-                    new Thread(()->{
-                        CUR_PAGE_NUM = 1;
-                        Request request = new Request.Builder()
-                                .url(getResources().getString(R.string.serverBasePath) +
-                                        getResources().getString(R.string.queryCourse)
-                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE +"&state=0")
-                                .get()
-                                .build();
-                        Message msg = new Message();
-                        OkHttpClient okHttpClient = new OkHttpClient();
-                        Call call = okHttpClient.newCall(request);
-                        call.enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                Log.i("获取: ", e.getMessage());
-                                msg.what = FAIL;
-                                handler.sendMessage(msg);
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-
-                                ResponseCourse responseCourse = new Gson().fromJson(response.body().string(),
-                                        ResponseCourse.class);
-                                courses = responseCourse.getCourseInfoList();
-                                if(courses.size() == 0) {
-                                    msg.what = ZERO;
-                                } else {
-                                    msg.what = SUCCESS;
-                                }
-                                handler.sendMessage(msg);
-                                Log.i("获取: ", String.valueOf(courses.size()));
-                            }
-                        });
-                    }).start();
-                }, 1500);
                 recyclerView.refreshComplete();
 
             }
 
             @Override
             public void onLoadMore() {
-                new Handler().postDelayed(() -> {
-                    @SuppressLint("HandlerLeak")
-                    Handler handler = new Handler(){
-                        @Override
-                        public void handleMessage(Message msg){
-                            switch (msg.what){
-                                case SUCCESS:
-                                    Log.i("加载", "成功");
-                                    recyclerView.refreshComplete();
-                                    studentCourseRecyclerViewAdapter.notifyDataSetChanged();
-                                    break;
-                                case FAIL:
-                                    Log.i("加载", "失败");
-                                    break;
-                                case ZERO:
-                                    Log.i("加载", "0");
-                                    recyclerView.setNoMore(true);
-                                    break;
-                            }
-                        }
-                    };
+                fetchCourseInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryCourse) +
+                        "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE );
 
-                    new Thread(()->{
-                        CUR_PAGE_NUM++;
-                        Request request = new Request.Builder()
-                                .url(getResources().getString(R.string.serverBasePath) +
-                                        getResources().getString(R.string.queryCourse)
-                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize=" + PAGE_SIZE + "&state=0")
-                                .get()
-                                .build();
-                        Message msg = new Message();
-                        OkHttpClient okHttpClient = new OkHttpClient();
-                        Call call = okHttpClient.newCall(request);
-                        call.enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                Log.i("获取: ", e.getMessage());
-                                msg.what = FAIL;
-                                handler.sendMessage(msg);
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-
-                                ResponseCourse responseCourse= new Gson().fromJson(response.body().string(),
-                                        ResponseCourse.class);
-                                courses.addAll(responseCourse.getCourseInfoList());
-                                if((CUR_PAGE_NUM - 2) * PAGE_SIZE + responseCourse.getPageSize() <
-                                        responseCourse.getTotal() ){
-                                    msg.what = ZERO;
-                                } else {
-                                    msg.what = SUCCESS;
-                                }
-                                handler.sendMessage(msg);
-                                Log.i("获取: ", String.valueOf(courses.size()));
-                            }
-                        });
-                    }).start();
-                }, 1500);
+                if(selectedUniversity <= 0 && selectedInstitute <=0 ){
+                    fetchCourseInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryCourse) +
+                            "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE );
+                }else{
+                    fetchCourseInfo(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryCourseByUniAndIns) +
+                            "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
+                }
                 recyclerView.setNoMore(true);
             }
+
         });
 
 

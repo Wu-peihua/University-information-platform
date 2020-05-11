@@ -45,11 +45,14 @@ import okhttp3.Response;
 public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     private Context context;
     private List<CourseComment> courseComments = new ArrayList<>();
-    ;
-    //用户数据测试
-    private Map<Long, UserInfo> userInfos = new HashMap<>() ;//<userid,Userinfo>
+
+    private UserInfo user;//全局用户id
+
+//    //用户数据测试
+//    private Map<Long, UserInfo> userInfos = new HashMap<>() ;//<userid,Userinfo>
 
     private onItemClickListener itemClickListener;//设置点击监听器
+
 
     //分页请求课程评论数据
     private static final int SUCCESS = 1;
@@ -57,88 +60,29 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     private static final int ZERO = 0; //记录请求回来的数据条数是否为零
     //评论用户
 
-    public void getAllCommentUser(){
 
-        for(CourseComment c:courseComments){
-            requestUserInfo(c.getCommentatorId());//请求评论列表下所有的用户
-        }
-    }
-    public void requestUserInfo(Long userId){
-
-        //final UserInfo[] temp = {new UserInfo()};
-        //查询评论者的信息
-        @SuppressLint("HandlerLeak")
-        Handler handler = new Handler() {
-            public void handleMessage(Message message){
-                switch (message.what){
-                    case SUCCESS:
-                        Log.i("获取: ", "成功");
-                        break;
-
-                    case FAIL:
-                        Log.i("获取: ", "失败");
-                        break;
-
-                    case ZERO:
-                        //setUserInfo();
-                        Log.i("获取: ", "0");
-                        break;
-                }
-            }
-        };
-
-
-        new Thread(()->{
-            Request request = new Request.Builder()
-                    .url(context.getResources().getString(R.string.serverBasePath) +
-                            context.getResources().getString(R.string.queryUserInfoByUserid)
-                            + "/?userId="+userId)
-                    .get()
-                    .build();
-            Message msg = new Message();
-            OkHttpClient okHttpClient = new OkHttpClient();
-            Call call = okHttpClient.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    Log.i("获取: ", e.getMessage());
-                    msg.what = FAIL;
-                    handler.sendMessage(msg);
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-
-                    String data = response.body().string();
-                    System.out.println("返回用户数据:"+data);
-
-                    ResponseUserInfo responseUserInfo = new Gson().fromJson(data,
-                            ResponseUserInfo.class);
-                    //设置此处的user info
-                    userInfos.put(userId,responseUserInfo.getUserInfo());
-                    //System.out.println("此处userinfo and name:"+userInfo.getUserName());
-                }
-            });
-        }).start();
-
+    public void setList(List<CourseComment> list) {
+        this.courseComments= list;
 
     }
+
+//    public void getAllCommentUser(){
+//
+//        for(CourseComment c:courseComments){
+//            requestUserInfo(c.getCommentatorId());//请求评论列表下所有的用户
+//        }
+//    }
+
     public void setOnItemClickListener(onItemClickListener clickListener) {
         this.itemClickListener = clickListener;
     }
 
-    public void setList(List<CourseComment> list) {
-        this.courseComments= list;
-        if(!userInfos.isEmpty()){
-            userInfos.clear();
-        }
-        getAllCommentUser();//刷新列表数据
-    }
 
     public AdminCourseCommentRecyclerViewAdapter(Context context, List<CourseComment> list) {
         this.context = context;
         this.courseComments = list;
-        getAllCommentUser();//根据评论列表获取
+        user = (UserInfo) context.getApplicationContext();
+//        getAllCommentUser();//根据评论列表获取
     }
 
 
@@ -152,7 +96,7 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
         Button BtnBadReport;
         //TextView LikeCounts;
         ImageView userimg;
-        private IconCountView BtnLike;//重写点赞按钮
+//        private IconCountView BtnLike;//重写点赞按钮
 
 
 
@@ -167,7 +111,7 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
             //LikeCounts = (TextView) itemView.findViewById(R.id.adminLikeCounts);
             userimg = (ImageView) itemView.findViewById(R.id.adminUserImg);
 
-            BtnLike = itemView.findViewById(R.id.adminbtnlike_student_comment);
+//            BtnLike = itemView.findViewById(R.id.adminbtnlike_student_comment);
 
         }
     }
@@ -193,18 +137,14 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
         CourseComment comment = courseComments.get(pos);
 
-        //查询User map
-        UserInfo currentUser = userInfos.get(comment.getCommentatorId());
+        //设置 commentator id
+        //设置评论用户名字与头像
+        //System.out.println("user id:"+user.getUserId());
+        //System.out.println("commentator id:"+comment.getCommentatorId());
+        String isMe = user.getUserId().equals(comment.getCommentatorId()) ? "(我)" : "";
 
-        if(currentUser!=null) {
-            //System.out.println("此处userinfo:"+currentUser.toString());
-            viewHolder.userName.setText(currentUser.getUserName());
-            //System.out.println("当前用户名："+currentUser.getUserName());
-            setImage(context,viewHolder.userimg,currentUser.getPortrait());
-        }else{
-            viewHolder.userName.setText("未知用户");
-            setImage(context,viewHolder.userimg,"http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg");
-        }
+        viewHolder.userName.setText(comment.getFromName()+isMe);
+        setImage(context,viewHolder.userimg,comment.getPortrait());;
 
         DateFormat datefomat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
         String commentDate = datefomat.format(comment.getInfoDate());
@@ -213,21 +153,8 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
         //courseImage.setImageResource(course.getImageurl());
         viewHolder.commentContent.setText(comment.getContent());
-        viewHolder.score.setRating((float)comment.getScore());
-
-        //viewHolder.LikeCounts.setText(String.valueOf(mTags.get(pos).getLikeCount()));
-
-        viewHolder.BtnLike.setCount(comment.getLikeCount());
-        // 点赞监听
-        viewHolder.BtnLike.setOnStateChangedListener(isSelected -> {
-            if (isSelected) {
-                comment.setLikeCount(comment.getLikeCount() + 1);
-            }
-            else {
-                comment.setLikeCount(comment.getLikeCount() - 1);
-            }
-            notifyDataSetChanged();
-        });
+        viewHolder.score.setStepSize((float) 0.5);
+        viewHolder.score.setRating(comment.getScore());
 
         //举报提示框
         viewHolder.BtnBadReport.setOnClickListener(new View.OnClickListener() {

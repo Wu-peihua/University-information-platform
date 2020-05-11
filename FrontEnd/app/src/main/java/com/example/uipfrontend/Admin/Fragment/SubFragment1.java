@@ -310,9 +310,9 @@ public class SubFragment1 extends Fragment {
                 Toast.makeText(rootView.getContext(), "已通过审核，举报数清0", Toast.LENGTH_SHORT).show();
             }
         });
-        studentRecruitRecyclerViewAdapter.setOnItemPassClickListener(new AdminReportRecruitRecyclerViewAdapter.OnItemPassClickListener() {
+        studentRecruitRecyclerViewAdapter.setOnItemUnPassClickListener(new AdminReportRecruitRecyclerViewAdapter.OnItemUnPassClickListener() {
             @Override
-            public void onPassClick(int position) {
+            public void onUnPassClick(int position) {
                 Toast.makeText(rootView.getContext(), "审核不通过，已删除", Toast.LENGTH_SHORT).show();
             }
         });
