@@ -194,11 +194,11 @@ CREATE DEFINER=`root`@`localhost` TRIGGER `decrease_like` BEFORE DELETE ON `oper
     FOR EACH ROW 
 begin
     update forum_posts 
-    set like_number = like_number - 1 where info_id = old.object__id;
+    set like_number = like_number - 1 where info_id = old.object_id;
     update forum_comments
-    set like_number = like_number - 1 where info_id = old.object__id;
+    set like_number = like_number - 1 where info_id = old.object_id;
     update comment_reply
-    set like_number = like_number - 1 where info_id = old.object__id;
+    set like_number = like_number - 1 where info_id = old.object_id;
 end;
 
 
