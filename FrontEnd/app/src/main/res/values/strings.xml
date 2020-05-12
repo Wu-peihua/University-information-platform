@@ -2,14 +2,21 @@
     <string name="app_name">UIPFrontEnd</string>
 
     <!--url配置-->
-    <string name="serverBasePath">http://192.168.1.5:8080/uip</string>
-    <string name="myIP">192.168.1.5</string>
+    <string name="serverBasePath">http://192.168.0.103:8080/uip</string>
+    <string name="myIP">192.168.0.103</string>
 
     <!--获取顶部筛选菜单-->
     <string name="queryUniversity">/university/queryuniversity</string>
     <string name="queryInstitute">/institute/queryinstitute</string>
     <!--图片上传-->
     <string name="uploadImage">/image/upload</string>
+
+    <!--获取用户记录-->
+    <string name="getUserRecord">/userrecord/queryrecord</string>
+    <!--添加用户记录-->
+    <string name="insertUserRecord">/userrecord/insertrecord</string>
+    <!--删除用户记录-->
+    <string name="deleteUserRecord">/userrecord/deleterecord</string>
 
     <!--分页获取所有组队信息-->
     <string name="queryRecruit">/recruit/queryrecruit</string>

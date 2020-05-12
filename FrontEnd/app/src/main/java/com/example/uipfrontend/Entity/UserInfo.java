@@ -3,6 +3,7 @@ package com.example.uipfrontend.Entity;
 import android.app.Application;
 
 import java.util.Date;
+import java.util.Map;
 
 public class UserInfo extends Application {
     public Long getUserId() {
@@ -84,6 +85,14 @@ public class UserInfo extends Application {
     public void setCreated(Date created) {
         this.created = created;
     }
+    
+    public Map<Long, Long> getLikeRecord() { return likeRecord; }
+    
+    public Map<Long, Long> getReportRecord() { return reportRecord; }
+    
+    public void setLikeRecord(Map<Long, Long> record) { this.likeRecord = record; }
+    
+    public void setReportRecord(Map<Long, Long> record) { this.reportRecord = record; }
 
     private Long userId;
 
@@ -105,5 +114,7 @@ public class UserInfo extends Application {
 
     private Date created;
 
-
+    private Map<Long, Long> likeRecord;
+    
+    private Map<Long, Long> reportRecord;
 }

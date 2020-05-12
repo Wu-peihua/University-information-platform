@@ -20,6 +20,7 @@ import com.example.uipfrontend.CommonUser.CommonUserActivity;
 import com.example.uipfrontend.Entity.Institute;
 import com.example.uipfrontend.Entity.University;
 import com.example.uipfrontend.Entity.UserInfo;
+import com.example.uipfrontend.Entity.UserRecord;
 import com.example.uipfrontend.Student.StudentActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -28,16 +29,24 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
@@ -64,12 +73,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        UserInfo user = (UserInfo) getApplication();
-        user.setUserId(4L);
-        user.setUserName("悟空");
-        user.setPortrait("http://pic4.zhimg.com/50/v2-6ecab2cd6c1bbf9835030682db83543d_hd.jpg");
-
-
         commonUser = findViewById(R.id.btn_commonUser);
         student = findViewById(R.id.btn_student);
         admin = findViewById(R.id.btn_admin);
@@ -81,7 +84,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initUser(){
-
+        UserInfo user = (UserInfo) getApplication();
+        user.setUserId(4L);
+        user.setUserName("悟空");
+        user.setPortrait("http://pic4.zhimg.com/50/v2-6ecab2cd6c1bbf9835030682db83543d_hd.jpg");
+        getUserRecord(user);
     }
 
     private void getMenusData(){
@@ -193,7 +200,50 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void getUserRecord(UserInfo user) {
+        new Thread(()->{
+            
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                        + getResources().getString(R.string.getUserRecord)
+                        + "/?userId=" + user.getUserId())
+                    .get()
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("获取用户记录: ", Objects.requireNonNull(e.getMessage()));
+                }
 
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String resStr = Objects.requireNonNull(response.body()).string();
+                    Log.i("获取用户记录: ", resStr);
+
+                    JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonArray jsonArray1 = jsonObject.getAsJsonArray("likeRecord");
+                    JsonArray jsonArray2 = jsonObject.getAsJsonArray("reportRecord");
+                    
+                    Map<Long, Long> map1 = new HashMap<>();
+                    Map<Long, Long> map2 = new HashMap<>();
+                    Gson gson = new Gson();
+                    for (JsonElement element : jsonArray1) {
+                        UserRecord record = gson.fromJson(element, new TypeToken<UserRecord>() {}.getType());
+                        map1.put(record.getToId(), record.getInfoId());
+                    }
+                    for (JsonElement element : jsonArray2) {
+                        UserRecord record = gson.fromJson(element, new TypeToken<UserRecord>() {}.getType());
+                        map2.put(record.getToId(), record.getInfoId());
+                    }
+                    
+                    user.setLikeRecord(map1);
+                    user.setReportRecord(map2);
+                }
+            });
+        }).start();
+    }
 
     private void initListener(){
         commonUser.setOnClickListener(new View.OnClickListener() {

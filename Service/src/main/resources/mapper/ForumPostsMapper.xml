@@ -26,7 +26,7 @@
     like_number, report_number, forum_posts.created, user_name, portrait
     from forum_posts inner join user_info
     on poster = user_id
-    where report_number &lt; 5
+    where report_number &lt; 10
     order by like_number desc, reply_number desc, created desc
   </select>
 

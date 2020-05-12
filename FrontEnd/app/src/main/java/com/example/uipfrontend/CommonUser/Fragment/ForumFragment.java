@@ -127,21 +127,18 @@ public class ForumFragment extends Fragment {
                 switch (msg.what) {
                     case NETWORK_ERR:
                         Log.i("获取帖子: ", "失败 - 网络错误");
-                        tv_blank_text.setText("网络好像出了点问题，请检查网络设置");
-                        tv_blank_text.setVisibility(View.VISIBLE);
+                        setTip("网络好像出了点问题，请检查网络设置", View.VISIBLE);
                         break;
                     case SERVER_ERR:
                         Log.i("获取帖子: ", "失败 - 服务器错误");
-                        tv_blank_text.setText("好像出了点问题，请稍候再试");
-                        tv_blank_text.setVisibility(View.VISIBLE);
+                        setTip("好像出了点问题，请稍候再试", View.VISIBLE);
                     case ZERO:
                         Log.i("获取帖子: ", "空");
-                        tv_blank_text.setText("还没有帖子，去发一条");
-                        tv_blank_text.setVisibility(View.VISIBLE);
+                        setTip("还没有帖子，去发一条", View.VISIBLE);
                         break;
                     case SUCCESS:
                         Log.i("获取帖子: ", "成功");
-                        tv_blank_text.setVisibility(View.GONE);
+                        setTip("", View.GONE);
                         posts.clear();
                         posts.addAll(whole);
                         adapter.setList(posts);
@@ -275,15 +272,19 @@ public class ForumFragment extends Fragment {
                                     posts.clear();
                                     posts.addAll(whole);
                                     adapter.notifyDataSetChanged();
+                                    setTip("", View.GONE);
                                     break;
                                 case ZERO:
                                     Log.i("刷新帖子", "0");
+                                    setTip("还没有帖子，去发一条", View.VISIBLE);
                                     break;
                                 case SERVER_ERR:
                                     Log.i("刷新帖子", "失败 - 服务器错误");
+                                    setTip("好像出了点问题，请稍候再试", View.VISIBLE);
                                     break;
                                 case NETWORK_ERR:
                                     Log.i("刷新帖子", "失败 - 网络错误");
+                                    setTip("网络好像出了点问题，请检查网络设置", View.VISIBLE);
                                     break;
                             }
                             xRecyclerView.refreshComplete();
@@ -379,6 +380,16 @@ public class ForumFragment extends Fragment {
         xRecyclerView.setLayoutAnimation(animationController);
     }
     
+    /**
+     * 描述：对初始化和刷新结果显示/隐藏提示语
+     * 参数：tip- 提示语
+     *      visibility- 可见性
+     * 返回：void
+     */
+    private void setTip(String tip, int visibility) {
+        tv_blank_text.setText(tip);
+        tv_blank_text.setVisibility(visibility);
+    }
     
     /**
      * 描述：result1: 用户发表了帖子
@@ -423,7 +434,11 @@ public class ForumFragment extends Fragment {
                         whole.get(pos).setReplyNumber(n);
                         posts.get(pos).setReplyNumber(n);
                         break;
-                    case 2: // todo: 点赞处理，在PostDetail操作后
+                    case 2: 
+                        n = whole.get(pos).getLikeNumber();
+                        n = isIncrease ? n+1 : n-1;
+                        whole.get(pos).setLikeNumber(n);
+                        posts.get(pos).setLikeNumber(n);
                         break;
                 }
                 adapter.notifyDataSetChanged();
