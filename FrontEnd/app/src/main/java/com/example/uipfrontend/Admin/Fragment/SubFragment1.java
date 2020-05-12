@@ -33,6 +33,8 @@ import com.qlh.dropdownmenu.DropDownMenu;
 import com.example.uipfrontend.Utils.MultiMenusView;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,8 +44,10 @@ import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -308,12 +312,14 @@ public class SubFragment1 extends Fragment {
             @Override
             public void onPassClick(int position) {
                 Toast.makeText(rootView.getContext(), "已通过审核，举报数清0", Toast.LENGTH_SHORT).show();
+                reportNumberToZero(list.get(position).getInfoId(),position);
             }
         });
         studentRecruitRecyclerViewAdapter.setOnItemUnPassClickListener(new AdminReportRecruitRecyclerViewAdapter.OnItemUnPassClickListener() {
             @Override
             public void onUnPassClick(int position) {
                 Toast.makeText(rootView.getContext(), "审核不通过，已删除", Toast.LENGTH_SHORT).show();
+                deleteRecruit(list.get(position).getInfoId(),position);
             }
         });
 
@@ -385,5 +391,107 @@ public class SubFragment1 extends Fragment {
             }).start();
         }, 1500);
 
+    }
+
+    private void reportNumberToZero(Long id,int pos){
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAIL:
+                        Log.i("组队举报数清0: ", "失败");
+                        break;
+                    case SUCCESS:
+                        Log.i("组队举报数清0: ", "成功");
+                        list.remove(pos);
+                        studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+        new Thread(()->{
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+
+            FormBody.Builder builder = new FormBody.Builder();
+            builder.add("infoId", String.valueOf(id));
+            RequestBody requestBody = builder.build();
+
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.modifyReportNumber))
+                    .post(requestBody)
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("修改举报数: ", e.getMessage());
+                    msg.what = FAIL;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.i("修改举报数：", response.body().string());
+                    msg.what = SUCCESS;
+                    handler.sendMessage(msg);
+                }
+            });
+
+        }).start();
+    }
+
+    private void deleteRecruit(Long id,int pos){
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAIL:
+                        Log.i("删除组队信息: ", "失败");
+                        break;
+                    case SUCCESS:
+                        Log.i("删除组队信息: ", "成功");
+                        list.remove(pos);
+                        studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+        new Thread(()->{
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+
+            FormBody.Builder builder = new FormBody.Builder();
+            builder.add("infoId", String.valueOf(id));
+            RequestBody requestBody = builder.build();
+
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.AdmindeleteRecruit))
+                    .post(requestBody)
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("删除组队: ", e.getMessage());
+                    msg.what = FAIL;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.i("删除组队：", response.body().string());
+                    msg.what = SUCCESS;
+                    handler.sendMessage(msg);
+                }
+            });
+
+        }).start();
     }
 }
