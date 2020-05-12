@@ -12,6 +12,18 @@ public class ResponseRecruit {
     private Integer total;
     private List<RecruitInfo> recruitInfoList;
     private List<String> userNameList;
+    private List<String> userPortraitList;
+
+
+    public List<String> getUserPortraitList() {
+        return userPortraitList;
+    }
+
+    public void setUserPortraitList(List<String> userPortraitList) {
+        this.userPortraitList = userPortraitList;
+    }
+
+
 
 
     public List<String> getUserNameList() {

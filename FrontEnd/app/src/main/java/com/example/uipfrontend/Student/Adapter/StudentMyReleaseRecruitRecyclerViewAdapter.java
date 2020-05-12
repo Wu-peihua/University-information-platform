@@ -4,11 +4,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.CommonUser.Adapter.MyReleaseResInfoAdapter;
 import com.example.uipfrontend.Entity.RecruitInfo;
 import com.example.uipfrontend.Entity.ResInfo;
@@ -26,13 +29,14 @@ public class StudentMyReleaseRecruitRecyclerViewAdapter extends RecyclerView.Ada
     private Context context;
     private List<RecruitInfo> list;
     private List<String> userNameList;
+    private List<String> userPortraitList;
 
 
-
-    public StudentMyReleaseRecruitRecyclerViewAdapter(Context context, List<RecruitInfo> list,List userNameList) {
+    public StudentMyReleaseRecruitRecyclerViewAdapter(Context context, List<RecruitInfo> list,List userNameList,List userPortraitList) {
         this.context = context;
         this.list = list;
         this.userNameList = userNameList;
+        this.userPortraitList = userPortraitList;
     }
 
 
@@ -84,8 +88,8 @@ public class StudentMyReleaseRecruitRecyclerViewAdapter extends RecyclerView.Ada
         viewHolder.userName.setText("联系人："+userNameList.get(pos));
         viewHolder.infoDate.setText(list.get(pos).getInfoDate().toString());
         viewHolder.title.setText(list.get(pos).getTitle());
-        viewHolder.content.setText(list.get(pos).getContent());
-        //临时图片地址
+        viewHolder.content.setText(userPortraitList.get(pos));
+        setImage(context,viewHolder.portrait,userPortraitList.get(pos));
         viewHolder.portrait.setBorderWidth(0);
 
 
@@ -148,10 +152,18 @@ public class StudentMyReleaseRecruitRecyclerViewAdapter extends RecyclerView.Ada
         this.onItemModifyClickListener = onItemModifyClickListener;
     }
 
-    public void setList(List<RecruitInfo> list){
+    public void setList(List<RecruitInfo> list,List userNameList,List userPortraitList){
         this.list = list;
+        this.userNameList = userNameList;
+        this.userPortraitList = userPortraitList;
     }
 
-
+    private void setImage(Context context, ImageView imageView, String url) {
+        Glide.with(context).load(url)
+                .placeholder(R.drawable.portrait_default)
+                .error(R.drawable.portrait_default)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageView);
+    }
 
 }

@@ -16,6 +16,7 @@ import com.bigkoo.alertview.AlertView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.RecruitInfo;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.lzy.ninegrid.ImageInfo;
 import com.lzy.ninegrid.NineGridView;
@@ -32,11 +33,13 @@ public class AdminReportRecruitRecyclerViewAdapter extends RecyclerView.Adapter 
     private Context context;
     private List<RecruitInfo> list;
     private List<String> userNameList;
+    private List<String> userPortraitList;
 
-    public AdminReportRecruitRecyclerViewAdapter(Context context, List list,List userNameList) {
+    public AdminReportRecruitRecyclerViewAdapter(Context context, List list,List userNameList,List userPortraitList) {
         this.context = context;
         this.list = list;
         this.userNameList = userNameList;
+        this.userPortraitList = userPortraitList;
     }
 
 
@@ -91,7 +94,7 @@ public class AdminReportRecruitRecyclerViewAdapter extends RecyclerView.Adapter 
     }
 
 
-    public void setList(List<RecruitInfo> list , List<String> userNameList) { this.list = list; this.userNameList = userNameList; }
+    public void setList(List<RecruitInfo> list , List<String> userPortraitList) { this.list = list; this.userNameList = userPortraitList; }
 
 
 

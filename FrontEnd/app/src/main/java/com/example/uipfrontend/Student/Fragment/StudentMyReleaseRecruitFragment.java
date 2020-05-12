@@ -68,6 +68,7 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
 
     private List<RecruitInfo> list;   //组队信息实体类数组
     private List<String> userNameList;   //存放组队信息发布人用户名
+    private List<String> userPortraitList;
 
     private StudentMyReleaseRecruitRecyclerViewAdapter studentMyReleaseRecruitRecyclerViewAdapter;
 
@@ -165,6 +166,7 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
 
                     list = responseRecruit.getRecruitInfoList();
                     userNameList = responseRecruit.getUserNameList();
+                    userPortraitList = responseRecruit.getUserPortraitList();
 
 
                     if(list.size() == 0) { //获取的数量为0
@@ -190,7 +192,7 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        studentMyReleaseRecruitRecyclerViewAdapter = new StudentMyReleaseRecruitRecyclerViewAdapter(this.getContext(), list,userNameList);
+        studentMyReleaseRecruitRecyclerViewAdapter = new StudentMyReleaseRecruitRecyclerViewAdapter(this.getContext(), list,userNameList,userPortraitList);
         recyclerView.setAdapter(studentMyReleaseRecruitRecyclerViewAdapter);
 
         recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
@@ -279,7 +281,7 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
                 switch (msg.what){
                     case SUCCESS:
                         Log.i("刷新", "成功");
-                        studentMyReleaseRecruitRecyclerViewAdapter.setList(list);
+                        studentMyReleaseRecruitRecyclerViewAdapter.setList(list,userNameList,userPortraitList);
                         studentMyReleaseRecruitRecyclerViewAdapter.notifyDataSetChanged();
                         tv_blank.setVisibility(View.GONE);
                         dialog.dismiss();
@@ -292,7 +294,7 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
                         break;
                     case ZERO:
                         Log.i("刷新", "0");
-                        studentMyReleaseRecruitRecyclerViewAdapter.setList(list);
+                        studentMyReleaseRecruitRecyclerViewAdapter.setList(list,userNameList,userPortraitList);
                         studentMyReleaseRecruitRecyclerViewAdapter.notifyDataSetChanged();
                         tv_blank.setText("还没有发布组队信息，去发一条吧");
                         tv_blank.setVisibility(View.VISIBLE);

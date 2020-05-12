@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.uipfrontend.Admin.Adapter.AdminReportRecruitRecyclerViewAdapter;
 import com.example.uipfrontend.Entity.RecruitInfo;
 import com.example.uipfrontend.Entity.ResponseRecruit;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -63,6 +64,8 @@ public class SubFragment1 extends Fragment {
 
     private List<RecruitInfo> list;   //组队信息实体类数组
     private List<String> userNameList;   //存放组队信息发布人用户名
+    private List<String> userPortraitList;
+
     private View rootView;  //根视图（下拉筛选框）
     private View rootContentView;    //根视图内容
     private TextView tv_blank;
@@ -246,6 +249,7 @@ public class SubFragment1 extends Fragment {
 
                     list = responseRecruit.getRecruitInfoList();
                     userNameList = responseRecruit.getUserNameList();
+                    userPortraitList = responseRecruit.getUserPortraitList();
 
 
                     if(list.size() == 0) { //获取的数量为0
@@ -269,7 +273,7 @@ public class SubFragment1 extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        studentRecruitRecyclerViewAdapter = new AdminReportRecruitRecyclerViewAdapter(this.getContext(), list, userNameList);
+        studentRecruitRecyclerViewAdapter = new AdminReportRecruitRecyclerViewAdapter(this.getContext(), list,userNameList, userPortraitList);
         recyclerView.setAdapter(studentRecruitRecyclerViewAdapter);
 
         recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
@@ -336,7 +340,7 @@ public class SubFragment1 extends Fragment {
                         case SUCCESS:
                             Log.i("获取", "成功");
                             tv_blank.setVisibility(View.GONE);
-                            studentRecruitRecyclerViewAdapter.setList(list, userNameList);
+                            studentRecruitRecyclerViewAdapter.setList(list, userPortraitList);
                             studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
                             break;
                         case FAIL:
@@ -378,6 +382,7 @@ public class SubFragment1 extends Fragment {
                                 ResponseRecruit.class);
                         list = responseRecruit.getRecruitInfoList();
                         userNameList = responseRecruit.getUserNameList();
+                        userPortraitList = responseRecruit.getUserPortraitList();
                         if( list.size() == 0 ) {
                             msg.what = ZERO;
                         } else {

@@ -36,11 +36,14 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
     private Context context;
     private List<RecruitInfo> list;
     private List<String> userNameList;
+    private List<String> userPortraitList;
 
-    public StudentRecruitRecyclerViewAdapter(Context context, List list, List userNameList) {
+
+    public StudentRecruitRecyclerViewAdapter(Context context, List list, List userNameList,List userPortraitList) {
         this.context = context;
         this.list = list;
         this.userNameList = userNameList;
+        this.userPortraitList = userPortraitList;
     }
 
 
@@ -73,8 +76,11 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
     }
 
 
-    public void setList(List<RecruitInfo> list , List<String> userNameList) { this.list = list; this.userNameList = userNameList; }
-
+    public void setList(List<RecruitInfo> list,List userNameList,List userPortraitList){
+        this.list = list;
+        this.userNameList = userNameList;
+        this.userPortraitList = userPortraitList;
+    }
 
     @NonNull
     @Override
@@ -94,7 +100,7 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
         viewHolder.title.setText(list.get(pos).getTitle());
         viewHolder.content.setText(list.get(pos).getContent());
         //发布人头像
-        setImage(context,viewHolder.portrait,list.get(pos).getPortrait());
+        setImage(context,viewHolder.portrait,userPortraitList.get(pos));
         viewHolder.portrait.setBorderWidth(0);
 
         viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
