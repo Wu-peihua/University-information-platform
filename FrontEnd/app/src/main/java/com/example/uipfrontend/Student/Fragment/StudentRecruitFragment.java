@@ -231,7 +231,7 @@ public class StudentRecruitFragment extends Fragment {
 
                     case FAIL:
                         Log.i("获取 ", "失败");
-                        tv_blank.setText("获取信息失败");
+                        tv_blank.setText("网络好像出了点问题，请检查网络设置");
                         tv_blank.setVisibility(View.VISIBLE);
                         dialog.dismiss();
                         break;

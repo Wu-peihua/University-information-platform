@@ -2,7 +2,7 @@
     <string name="app_name">UIPFrontEnd</string>
 
     <!--url配置-->
-    <string name="serverBasePath">http://192.168.1.5:8080/uip</string>
+    <string name="serverBasePath">http://192.168.1.106:8080/uip</string>
     <string name="myIP">192.168.1.5</string>
 
     <!--获取顶部筛选菜单-->
@@ -25,6 +25,8 @@
     <string name="queryrecruitbyUniandIns">/recruit/queryrecruitbyuniandins</string>
     <!--删除组队发布记录-->
     <string name="deleteRecruit">/recruit/deleterecruit</string>
+    <!--修改更新组队信息-->
+    <string name="updateRecruit">/recruit/updaterecruit</string>
 
 
     <!--分页获取所有课程信息-->
