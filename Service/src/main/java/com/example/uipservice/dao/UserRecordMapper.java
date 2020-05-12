@@ -1,6 +1,7 @@
 package com.example.uipservice.dao;
 
 import com.example.uipservice.entity.UserRecord;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,5 +13,5 @@ public interface UserRecordMapper {
 
     int delete(Long infoId);
 
-    List<UserRecord> queryByUserId(Long userId, int tag);
+    List<UserRecord> queryByUserId(@Param("userId")Long userId, @Param("tag")int tag);
 }
