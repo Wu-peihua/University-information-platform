@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.uipservice.dao.UserRecordMapper">
+    <resultMap id="BaseResultMap" type="com.example.uipservice.entity.UserRecord">
+        <id column="info_id" jdbcType="BIGINT" property="infoId" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="object_id" jdbcType="BIGINT" property="toId" />
+        <result column="tag" jdbcType="INTEGER" property="tag" />
+        <result column="created" jdbcType="TIMESTAMP" property="created" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        info_id, user_id, object_id, tag, created
+    </sql>
+
+    <insert id="insert" parameterType="com.example.uipservice.entity.UserRecord">
+        <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into operation_record (user_id, object_id, tag, created)
+        values (#{userId,jdbcType=BIGINT}, #{toId,jdbcType=BIGINT},
+                #{tag,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP})
+    </insert>
+
+    <delete id="delete" parameterType="Long">
+        delete from operation_record
+        where info_id = #{infoId,jdbcType=BIGINT}
+    </delete>
+
+    <select id="queryByUserId" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.UserRecord">
+        select info_id, object_id
+        from operation_record
+        where user_id = #{userId,jdbcType=BIGINT} and tag = #{tag,jdbcType=INTEGER}
+    </select>
+</mapper>

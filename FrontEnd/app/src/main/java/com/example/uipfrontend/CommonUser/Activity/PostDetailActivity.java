@@ -35,7 +35,9 @@ import com.example.uipfrontend.Entity.ForumPosts;
 import com.example.uipfrontend.Entity.PostComment;
 import com.example.uipfrontend.Entity.ResponsePostComment;
 import com.example.uipfrontend.Entity.UserInfo;
+import com.example.uipfrontend.Entity.UserRecord;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Utils.UserOperationRecord;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
@@ -56,6 +58,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,6 +106,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private MyBroadcastReceiver receiver1, receiver2, // 评论增减
                                 receiver3, receiver4; // 点赞数增减
 
+    @SuppressLint("SimpleDateFormat")
     private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private static boolean flag = true;
@@ -467,13 +471,23 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
-        // todo: 点赞按钮监听
+        // 点赞按钮监听
         praise.setOnStateChangedListener(isSelected -> {
             if (isSelected) {
                 post.setLikeNumber(post.getLikeNumber() + 1);
+                UserRecord record = new UserRecord();
+                record.setUserId(user.getUserId());
+                record.setToId(post.getInfoId());
+                record.setTag(1);
+                UserOperationRecord.insertRecord(this, record, user);
+                mySendBroadCast(s3);
             }
             else {
                 post.setLikeNumber(post.getLikeNumber() - 1);
+                Long infoId = user.getLikeRecord().get(post.getInfoId());
+                UserOperationRecord.deleteRecord(this, infoId);
+                user.getLikeRecord().remove(post.getInfoId());
+                mySendBroadCast(s4);
             }
         });
 
@@ -499,24 +513,34 @@ public class PostDetailActivity extends AppCompatActivity {
                         .setCancelClickListener(SweetAlertDialog::cancel)
                         .show();
             } else {
-                // todo: 帖子举报
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle("提示")
-                        .setMessage("如果该条帖子含有不恰当的内容，请点击确定")
-                        .setPositiveButton("确定", (dialog1, which) -> {
-                            post.setReportNumber(post.getReportNumber() + 1);
-                            Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
-                        })
-                        .setNegativeButton("取消", null)
-                        .setCancelable(false)
-                        .create();
-                dialog.show();
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                if (user.getReportRecord().containsKey(post.getInfoId())) {
+                    Toast.makeText(this, "您已举报过，请等待处理", Toast.LENGTH_SHORT).show();
+                } else {
+                    AlertDialog dialog = new AlertDialog.Builder(this)
+                            .setTitle("提示")
+                            .setMessage("如果该条帖子含有不恰当的内容，请点击确定")
+                            .setPositiveButton("确定", (dialog1, which) -> {
+                                post.setReportNumber(post.getReportNumber() + 1);
+                                
+                                UserRecord record = new UserRecord();
+                                record.setUserId(user.getUserId());
+                                record.setToId(post.getInfoId());
+                                record.setTag(2);
+                                UserOperationRecord.insertRecord(this, record, user);
+                                
+                                Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
+                            })
+                            .setNegativeButton("取消", null)
+                            .setCancelable(false)
+                            .create();
+                    dialog.show();
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                }
             }
         });
 
-        // 按热度从高到低排序
+        // todo 按热度从高到低排序
         order_by_like.setOnClickListener(view -> {
             if(!order_by_time.getText().toString().equals("时间")) {
                 order_by_like.setTextColor(getResources().getColor(R.color.blue));
@@ -529,7 +553,7 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
-        // 按时间排序
+        // todo 按时间排序
         order_by_time.setOnClickListener(view -> {
             order_by_time.setTextColor(getResources().getColor(R.color.blue));
             order_by_like.setTextColor(getResources().getColor(R.color.gray));
@@ -598,7 +622,24 @@ public class PostDetailActivity extends AppCompatActivity {
      * 描述：评论的点赞、举报、删除监听
      */
     private void setListListener() {
-        // todo: 评论点赞
+        
+        adapter.setOnLikeSelectListener((isSelected, pos) -> {
+            if (isSelected) {
+                list.get(pos).setLikeNumber(list.get(pos).getLikeNumber() + 1);
+                UserRecord record = new UserRecord();
+                record.setUserId(user.getUserId());
+                record.setToId(list.get(pos).getInfoId());
+                record.setTag(1);
+                UserOperationRecord.insertRecord(this, record, user);
+            }
+            else {
+                list.get(pos).setLikeNumber(list.get(pos).getLikeNumber() - 1);
+                Long infoId = user.getLikeRecord().get(list.get(pos).getInfoId());
+                UserOperationRecord.deleteRecord(this, infoId);
+                user.getLikeRecord().remove(list.get(pos).getInfoId());
+            }
+            adapter.notifyDataSetChanged();
+        });
         
         adapter.setOnMoreClickListener((view, pos) -> {
             if (user.getUserId().equals(list.get(pos).getFromId())) {
@@ -621,19 +662,30 @@ public class PostDetailActivity extends AppCompatActivity {
                         .setCancelClickListener(SweetAlertDialog::cancel)
                         .show();
             } else {
-                // todo: 评论举报
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle("提示")
-                        .setMessage("如果该条评论含有不恰当的内容，请点击确定")
-                        .setPositiveButton("确定", (dialog1, which) -> {
-                            Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
-                        })
-                        .setNegativeButton("取消", null)
-                        .setCancelable(false)
-                        .create();
-                dialog.show();
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                if (user.getReportRecord().containsKey(list.get(pos).getInfoId())) {
+                    Toast.makeText(this, "您已举报过，请等待处理", Toast.LENGTH_SHORT).show();
+                } else {
+                    AlertDialog dialog = new AlertDialog.Builder(this)
+                            .setTitle("提示")
+                            .setMessage("如果该条评论含有不恰当的内容，请点击确定")
+                            .setPositiveButton("确定", (dialog1, which) -> {
+                                list.get(pos).setReportNumber(list.get(pos).getReportNumber() + 1);
+
+                                UserRecord record = new UserRecord();
+                                record.setUserId(user.getUserId());
+                                record.setToId(list.get(pos).getInfoId());
+                                record.setTag(2);
+                                UserOperationRecord.insertRecord(this, record, user);
+                                
+                                Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
+                            })
+                            .setNegativeButton("取消", null)
+                            .setCancelable(false)
+                            .create();
+                    dialog.show();
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                }
             }
         });
     }
@@ -648,7 +700,7 @@ public class PostDetailActivity extends AppCompatActivity {
             if (list.size() == 0) {
                 commentSum.setText("还没有人评论，快来抢沙发吧。");
             } else {
-                commentSum.setText(list.size() + "条评论");
+                commentSum.setText(MessageFormat.format("{0}条评论", list.size()));
             }
         }
     }
@@ -667,7 +719,7 @@ public class PostDetailActivity extends AppCompatActivity {
         detail_portrait.setBorderWidth(0);
 
         detail_title.setText(post.getTitle());
-        detail_poster.setText(post.getUserName() + isMe);
+        detail_poster.setText(String.format("%s%s", post.getUserName(), isMe));
         detail_content.setContentText(post.getContent());
         
         String pics = post.getPictures();
@@ -688,7 +740,9 @@ public class PostDetailActivity extends AppCompatActivity {
         detail_time.setText(post.getCreated());
 
         praise.setCount(post.getLikeNumber());
-        // todo: 如果是本人查看自己发的帖子，则需查找否点过赞
+        if (user.getLikeRecord().containsKey(post.getInfoId())) {
+            praise.setState(true);
+        }
         
         setCommentSum();
     }
@@ -967,7 +1021,10 @@ public class PostDetailActivity extends AppCompatActivity {
                         n = isIncrease ? n+1 : n-1;
                         list.get(pos).setReplyNumber(n);
                         break;
-                    case 2: // todo: 更新评论的点赞，在CommentDetail操作后
+                    case 2: 
+                        n = list.get(pos).getLikeNumber();
+                        n = isIncrease ? n+1 : n-1;
+                        list.get(pos).setLikeNumber(n);
                         break;
                 }
                 adapter.notifyDataSetChanged();

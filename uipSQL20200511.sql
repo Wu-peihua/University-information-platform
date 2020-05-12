@@ -72,18 +72,7 @@ UPDATE `uip`.`user_info` SET `stu_number`='' WHERE `user_id`='1';
 
 
 
-#用户点赞举报记录
-CREATE TABLE operetion_record(
-    info_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,# 主键
-    user_id BIGINT(20) UNSIGNED NOT NULL,# 操作者
-    object_id BIGINT(20) UNSIGNED NOT NULL,# 帖子、评论的id
-    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY(info_id),
-    FOREIGN KEY (user_id) REFERENCES user_info(user_id)
-)ENGINE=INNODB DEFAULT CHARSET=utf8;
-
-
-
+#论坛帖子
 CREATE TABLE `forum_posts` (
   `info_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `title` tinytext NOT NULL,
@@ -102,6 +91,7 @@ CREATE TABLE `forum_posts` (
 
 
 
+#帖子评论
 CREATE TABLE `forum_comments` (
   `info_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `post_id` bigint(20) unsigned NOT NULL,
@@ -137,6 +127,7 @@ end;
 
 
 
+#评论回复
 CREATE TABLE `comment_reply` (
   `info_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `comment_id` bigint(20) unsigned NOT NULL,
@@ -167,6 +158,47 @@ CREATE DEFINER=`root`@`localhost` TRIGGER `decrease_reply` BEFORE DELETE ON `com
     update forum_comments
     set reply_number = reply_number - 1
     where info_id = old.comment_id;
+end;
+
+
+
+#用户点赞举报记录
+CREATE TABLE operation_record(
+    info_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,# 主键
+    user_id BIGINT(20) UNSIGNED NOT NULL,# 操作者
+    object_id BIGINT(20) UNSIGNED NOT NULL,# 帖子、评论的id
+    tag int(2) UNSIGNED NOT NULL,# 1: 点赞，2: 举报
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(info_id),
+    FOREIGN KEY (user_id) REFERENCES user_info(user_id)
+)ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `increase_like` AFTER INSERT ON `operation_record` 
+    FOR EACH ROW 
+begin
+    update forum_posts 
+    set like_number = like_number + 1 where info_id = new.object_id;
+    update forum_comments
+    set like_number = like_number + 1 where info_id = new.object_id;
+    update comment_reply
+    set like_number = like_number + 1 where info_id = new.object_id;
+    update forum_posts 
+    set report_number = report_number + 1 where info_id = new.object_id;
+    update forum_comments
+    set report_number = report_number + 1 where info_id = new.object_id;
+    update comment_reply
+    set report_number = report_number + 1 where info_id = new.object_id;
+end;
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `decrease_like` BEFORE DELETE ON `operation_record` 
+    FOR EACH ROW 
+begin
+    update forum_posts 
+    set like_number = like_number - 1 where info_id = old.object__id;
+    update forum_comments
+    set like_number = like_number - 1 where info_id = old.object__id;
+    update comment_reply
+    set like_number = like_number - 1 where info_id = old.object__id;
 end;
 
 

@@ -79,6 +79,24 @@ public class RecruitServiceImpl implements RecruitService {
     }
 
     @Override
+    public boolean modifyRecruitReportNumber(Long infoId) {
+        if(infoId !=null  ){
+            try{
+                int effectNum = recruitMapper.modifyReportNumberById(infoId);
+                if(effectNum > 0){
+                    return true;
+                }else{
+                    throw new RuntimeException("服务器错误，修改组队信息失败！");
+                }
+            }catch (Exception e){
+                throw new RuntimeException(e.getMessage());
+            }
+        }else{
+            throw new RuntimeException("修改组队信息用户的id为空！");
+        }
+    }
+
+    @Override
     public Map queryRecruitByUserId(Integer pageNum, Integer pageSize, Long userId) {
         Map recruitMap = new HashMap();
         PageHelper.startPage(pageNum,pageSize);

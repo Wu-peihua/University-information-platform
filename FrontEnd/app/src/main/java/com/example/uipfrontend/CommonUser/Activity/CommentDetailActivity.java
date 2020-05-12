@@ -31,15 +31,15 @@ import com.example.uipfrontend.CommonUser.Adapter.ReplyRecyclerViewAdapter;
 import com.example.uipfrontend.Entity.PostComment;
 import com.example.uipfrontend.Entity.ResponseCommentReply;
 import com.example.uipfrontend.Entity.UserInfo;
+import com.example.uipfrontend.Entity.UserRecord;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Utils.UserOperationRecord;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.lzy.widget.CircleImageView;
@@ -50,11 +50,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -89,6 +89,7 @@ public class CommentDetailActivity extends AppCompatActivity {
     private static final String s7 = "increaseLikeInCommentDetail";
     private static final String s8 = "decreaseLikeInCommentDetail";
 
+    @SuppressLint("SimpleDateFormat")
     private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private static boolean flag = true;
@@ -321,36 +322,58 @@ public class CommentDetailActivity extends AppCompatActivity {
             }
         });
 
-        // todo: 点赞按钮监听
+        // 点赞按钮监听
         praise.setOnStateChangedListener(isSelected -> {
             if (isSelected) {
                 comment.setLikeNumber(comment.getLikeNumber() + 1);
+                UserRecord record = new UserRecord();
+                record.setUserId(user.getUserId());
+                record.setToId(comment.getInfoId());
+                record.setTag(1);
+                UserOperationRecord.insertRecord(this, record, user);
+                mySendBroadCast(s7);
             } else {
                 comment.setLikeNumber(comment.getLikeNumber() - 1);
+                Long infoId = user.getLikeRecord().get(comment.getInfoId());
+                UserOperationRecord.deleteRecord(this, infoId);
+                user.getLikeRecord().remove(comment.getInfoId());
+                mySendBroadCast(s8);
             }
         });
 
-        // todo: 举报监听
+        // 举报监听
         report.setOnClickListener(view -> {
             if (user.getUserId().equals(comment.getFromId())) {
                 report.setVisibility(View.GONE);
             } else {
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle("提示")
-                        .setMessage("如果该条评论含有不恰当的内容，请点击确定")
-                        .setPositiveButton("确定", (dialog1, which) -> {
-                            Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
-                        })
-                        .setNegativeButton("取消", null)
-                        .setCancelable(false)
-                        .create();
-                dialog.show();
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                if (user.getReportRecord().containsKey(comment.getInfoId())) {
+                    Toast.makeText(this, "您已举报过，请等待处理", Toast.LENGTH_SHORT).show();
+                } else {
+                    AlertDialog dialog = new AlertDialog.Builder(this)
+                            .setTitle("提示")
+                            .setMessage("如果该条评论含有不恰当的内容，请点击确定")
+                            .setPositiveButton("确定", (dialog1, which) -> {
+                                comment.setReportNumber(comment.getReportNumber() + 1);
+
+                                UserRecord record = new UserRecord();
+                                record.setUserId(user.getUserId());
+                                record.setToId(comment.getInfoId());
+                                record.setTag(2);
+                                UserOperationRecord.insertRecord(this, record, user);
+                                
+                                Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
+                            })
+                            .setNegativeButton("取消", null)
+                            .setCancelable(false)
+                            .create();
+                    dialog.show();
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                }
             }
         });
 
-        // 按热度从高到低排序
+        // todo 按热度从高到低排序
         order_by_like.setOnClickListener(view -> {
             if(!order_by_time.getText().toString().equals("时间")) {
                 order_by_like.setTextColor(getResources().getColor(R.color.blue));
@@ -363,7 +386,7 @@ public class CommentDetailActivity extends AppCompatActivity {
             }
         });
 
-        // 按时间排序
+        // todo 按时间排序
         order_by_time.setOnClickListener(view -> {
             order_by_time.setTextColor(getResources().getColor(R.color.blue));
             order_by_like.setTextColor(getResources().getColor(R.color.gray));
@@ -473,21 +496,50 @@ public class CommentDetailActivity extends AppCompatActivity {
                         .setCancelClickListener(SweetAlertDialog::cancel)
                         .show();
             } else {
-                // todo: 回复的举报
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle("提示")
-                        .setMessage("如果该条评论含有不恰当的内容，请点击确定")
-                        .setPositiveButton("确定", (dialog1, which) -> {
-                            Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
-                        })
-                        .setNegativeButton("取消", null)
-                        .setCancelable(false)
-                        .create();
-                dialog.show();
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                if (user.getReportRecord().containsKey(list.get(pos).getInfoId())) {
+                    Toast.makeText(this, "您已举报过，请等待处理", Toast.LENGTH_SHORT).show();
+                } else {
+                    AlertDialog dialog = new AlertDialog.Builder(this)
+                            .setTitle("提示")
+                            .setMessage("如果该条评论含有不恰当的内容，请点击确定")
+                            .setPositiveButton("确定", (dialog1, which) -> {
+                                list.get(pos).setReportNumber(list.get(pos).getReportNumber() + 1);
+
+                                UserRecord record = new UserRecord();
+                                record.setUserId(user.getUserId());
+                                record.setToId(list.get(pos).getInfoId());
+                                record.setTag(2);
+                                UserOperationRecord.insertRecord(this, record, user);
+                                
+                                Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
+                            })
+                            .setNegativeButton("取消", null)
+                            .setCancelable(false)
+                            .create();
+                    dialog.show();
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                }
             }
         }));
+
+        adapter.setOnLikeSelectListener((isSelected, pos) -> {
+            if (isSelected) {
+                list.get(pos).setLikeNumber(list.get(pos).getLikeNumber() + 1);
+                UserRecord record = new UserRecord();
+                record.setUserId(user.getUserId());
+                record.setToId(list.get(pos).getInfoId());
+                record.setTag(1);
+                UserOperationRecord.insertRecord(this, record, user);
+            }
+            else {
+                list.get(pos).setLikeNumber(list.get(pos).getLikeNumber() - 1);
+                Long infoId = user.getLikeRecord().get(list.get(pos).getInfoId());
+                UserOperationRecord.deleteRecord(this, infoId);
+                user.getLikeRecord().remove(list.get(pos).getInfoId());
+            }
+            adapter.notifyDataSetChanged();
+        });
     }
 
     /**
@@ -500,7 +552,7 @@ public class CommentDetailActivity extends AppCompatActivity {
             if (list.size() == 0) {
                 replySum.setText("还没有人回复，快来抢沙发吧。");
             } else {
-                replySum.setText(list.size() + "条对话");
+                replySum.setText(MessageFormat.format("{0}条对话", list.size()));
             }
         }
     }
@@ -554,12 +606,14 @@ public class CommentDetailActivity extends AppCompatActivity {
                 .into(portrait);
         portrait.setBorderWidth(0);
 
-        commentator.setText(comment.getFromName() + isMe);
+        commentator.setText(String.format("%s%s", comment.getFromName(), isMe));
         content.setContentText(comment.getContent());
         time.setText(comment.getCreated());
         
         praise.setCount(comment.getLikeNumber());
-        // todo: 如果是本人查看自己发的帖子，则需查找否点过赞
+        if (user.getLikeRecord().containsKey(comment.getInfoId())) {
+            praise.setState(true);
+        }
         
         rv_division.setVisibility(View.VISIBLE);
         setReplySum();

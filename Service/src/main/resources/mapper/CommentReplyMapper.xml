@@ -28,7 +28,7 @@
         user_name, portrait
         from comment_reply inner join user_info
         on commentator_id = user_id
-        where comment_id = #{toId, jdbcType=BIGINT}
+        where comment_id = #{toId, jdbcType=BIGINT} and report_number &lt; 10
         order by like_number desc
     </select>
 

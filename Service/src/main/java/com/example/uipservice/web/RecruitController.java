@@ -52,6 +52,17 @@ public class RecruitController {
         modelMap.put("success", recruitService.deleteRecruit(infoId));
         return modelMap;
     }
+    /**
+     * 修改一条组队信息
+     * @return modelMap
+     */
+    @RequestMapping(value = "/modifyreportnumber", method = RequestMethod.POST)
+    private Map<String,Object> modifyReportNumber(Long infoId){
+        Map<String,Object> modelMap = new HashMap<String, Object>();
+        modelMap.put("success", recruitService.modifyRecruitReportNumber(infoId));
+        return modelMap;
+    }
+
 
     /**
      * 根据用户id分页获取组队信息
@@ -106,6 +117,7 @@ public class RecruitController {
     private Map queryRecruitReport(Integer pageNum, Integer pageSize){
         return recruitService.queryRecruitReport(pageNum, pageSize);
     }
+
 
 
 
