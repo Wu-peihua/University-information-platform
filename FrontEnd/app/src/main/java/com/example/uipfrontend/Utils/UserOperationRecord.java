@@ -59,12 +59,20 @@ public class UserOperationRecord {
 
                     String resId = resStr.substring(1, resStr.length()-1).split(":")[1];
                     if (isNumber(resId)) {
+                        String key = "";
+                        switch (record.getType()) {
+                            case 1: key = "post"; break;
+                            case 2: key = "comment"; break;
+                            case 3: key = "reply"; break;
+                        }
+                        key += record.getToId();
+                        
                         switch (record.getTag()) {
                             case 1:
-                                user.getLikeRecord().put(record.getToId(), Long.valueOf(resId));
+                                user.getLikeRecord().put(key, Long.valueOf(resId));
                                 break;
                             case 2: 
-                                user.getReportRecord().put(record.getToId(), Long.valueOf(resId));
+                                user.getReportRecord().put(key, Long.valueOf(resId));
                                 break;
                         }
                     }

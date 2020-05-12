@@ -124,7 +124,7 @@ public class ReplyRecyclerViewAdapter extends RecyclerView.Adapter {
         viewHolder.tv_time.setText(list.get(position).getCreated());
         
         viewHolder.praise.setCount(list.get(position).getLikeNumber());
-        if (user.getLikeRecord().containsKey(list.get(position).getInfoId())) {
+        if (user.getLikeRecord().containsKey("reply" + list.get(position).getInfoId())) {
             viewHolder.praise.setState(true);
         } else {
             viewHolder.praise.setState(false);

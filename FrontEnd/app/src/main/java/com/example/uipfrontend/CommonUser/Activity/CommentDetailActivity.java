@@ -322,7 +322,7 @@ public class CommentDetailActivity extends AppCompatActivity {
             }
         });
 
-        // 点赞按钮监听
+        // 评论点赞按钮监听
         praise.setOnStateChangedListener(isSelected -> {
             if (isSelected) {
                 comment.setLikeNumber(comment.getLikeNumber() + 1);
@@ -330,23 +330,27 @@ public class CommentDetailActivity extends AppCompatActivity {
                 record.setUserId(user.getUserId());
                 record.setToId(comment.getInfoId());
                 record.setTag(1);
+                record.setType(2);
                 UserOperationRecord.insertRecord(this, record, user);
                 mySendBroadCast(s7);
             } else {
                 comment.setLikeNumber(comment.getLikeNumber() - 1);
-                Long infoId = user.getLikeRecord().get(comment.getInfoId());
+                String key = "comment" + comment.getInfoId();
+                Long infoId = user.getLikeRecord().get(key);
                 UserOperationRecord.deleteRecord(this, infoId);
-                user.getLikeRecord().remove(comment.getInfoId());
+                user.getLikeRecord().remove(key);
                 mySendBroadCast(s8);
             }
         });
 
-        // 举报监听
+        // 评论举报监听
         report.setOnClickListener(view -> {
             if (user.getUserId().equals(comment.getFromId())) {
-                report.setVisibility(View.GONE);
+                Toast.makeText(this, "注意这是您发的哦", Toast.LENGTH_SHORT).show();
             } else {
-                if (user.getReportRecord().containsKey(comment.getInfoId())) {
+                
+                String key = "comment" + comment.getInfoId();
+                if (user.getReportRecord().containsKey(key)) {
                     Toast.makeText(this, "您已举报过，请等待处理", Toast.LENGTH_SHORT).show();
                 } else {
                     AlertDialog dialog = new AlertDialog.Builder(this)
@@ -359,6 +363,7 @@ public class CommentDetailActivity extends AppCompatActivity {
                                 record.setUserId(user.getUserId());
                                 record.setToId(comment.getInfoId());
                                 record.setTag(2);
+                                record.setType(2);
                                 UserOperationRecord.insertRecord(this, record, user);
                                 
                                 Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
@@ -496,7 +501,9 @@ public class CommentDetailActivity extends AppCompatActivity {
                         .setCancelClickListener(SweetAlertDialog::cancel)
                         .show();
             } else {
-                if (user.getReportRecord().containsKey(list.get(pos).getInfoId())) {
+                
+                String key = "reply" + list.get(pos).getInfoId();
+                if (user.getReportRecord().containsKey(key)) {
                     Toast.makeText(this, "您已举报过，请等待处理", Toast.LENGTH_SHORT).show();
                 } else {
                     AlertDialog dialog = new AlertDialog.Builder(this)
@@ -509,6 +516,7 @@ public class CommentDetailActivity extends AppCompatActivity {
                                 record.setUserId(user.getUserId());
                                 record.setToId(list.get(pos).getInfoId());
                                 record.setTag(2);
+                                record.setType(3);
                                 UserOperationRecord.insertRecord(this, record, user);
                                 
                                 Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
@@ -530,13 +538,15 @@ public class CommentDetailActivity extends AppCompatActivity {
                 record.setUserId(user.getUserId());
                 record.setToId(list.get(pos).getInfoId());
                 record.setTag(1);
+                record.setType(3);
                 UserOperationRecord.insertRecord(this, record, user);
             }
             else {
                 list.get(pos).setLikeNumber(list.get(pos).getLikeNumber() - 1);
-                Long infoId = user.getLikeRecord().get(list.get(pos).getInfoId());
+                String key = "reply" + list.get(pos).getInfoId();
+                Long infoId = user.getLikeRecord().get(key);
                 UserOperationRecord.deleteRecord(this, infoId);
-                user.getLikeRecord().remove(list.get(pos).getInfoId());
+                user.getLikeRecord().remove(key);
             }
             adapter.notifyDataSetChanged();
         });
@@ -597,7 +607,6 @@ public class CommentDetailActivity extends AppCompatActivity {
     private void setHeadView() {
         String isMe = user.getUserId().equals(comment.getFromId()) ? "(我)" : "";
 
-        // String uri = "http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg";
         String uri = comment.getPortrait();
         Glide.with(this).load(Uri.parse(uri))
                 .placeholder(R.drawable.portrait_default)
@@ -611,7 +620,7 @@ public class CommentDetailActivity extends AppCompatActivity {
         time.setText(comment.getCreated());
         
         praise.setCount(comment.getLikeNumber());
-        if (user.getLikeRecord().containsKey(comment.getInfoId())) {
+        if (user.getLikeRecord().containsKey("comment" + comment.getInfoId())) {
             praise.setState(true);
         }
         

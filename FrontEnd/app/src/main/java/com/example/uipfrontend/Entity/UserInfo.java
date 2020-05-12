@@ -86,13 +86,13 @@ public class UserInfo extends Application {
         this.created = created;
     }
     
-    public Map<Long, Long> getLikeRecord() { return likeRecord; }
+    public Map<String, Long> getLikeRecord() { return likeRecord; }
     
-    public Map<Long, Long> getReportRecord() { return reportRecord; }
+    public Map<String, Long> getReportRecord() { return reportRecord; }
     
-    public void setLikeRecord(Map<Long, Long> record) { this.likeRecord = record; }
+    public void setLikeRecord(Map<String, Long> record) { this.likeRecord = record; }
     
-    public void setReportRecord(Map<Long, Long> record) { this.reportRecord = record; }
+    public void setReportRecord(Map<String, Long> record) { this.reportRecord = record; }
 
     private Long userId;
 
@@ -114,7 +114,7 @@ public class UserInfo extends Application {
 
     private Date created;
 
-    private Map<Long, Long> likeRecord;
+    private Map<String, Long> likeRecord;
     
-    private Map<Long, Long> reportRecord;
+    private Map<String, Long> reportRecord;
 }

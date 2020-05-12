@@ -471,7 +471,7 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
-        // 点赞按钮监听
+        // 帖子点赞按钮监听
         praise.setOnStateChangedListener(isSelected -> {
             if (isSelected) {
                 post.setLikeNumber(post.getLikeNumber() + 1);
@@ -479,19 +479,21 @@ public class PostDetailActivity extends AppCompatActivity {
                 record.setUserId(user.getUserId());
                 record.setToId(post.getInfoId());
                 record.setTag(1);
+                record.setType(1);
                 UserOperationRecord.insertRecord(this, record, user);
                 mySendBroadCast(s3);
             }
             else {
                 post.setLikeNumber(post.getLikeNumber() - 1);
-                Long infoId = user.getLikeRecord().get(post.getInfoId());
+                String key = "post" + post.getInfoId();
+                Long infoId = user.getLikeRecord().get(key);
                 UserOperationRecord.deleteRecord(this, infoId);
-                user.getLikeRecord().remove(post.getInfoId());
+                user.getLikeRecord().remove(key);
                 mySendBroadCast(s4);
             }
         });
 
-        // 举报or删除监听
+        // 帖子举报or删除监听
         detail_report.setOnClickListener(view -> {
             if (user.getUserId().equals(post.getUserId())) {
                 new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
@@ -513,7 +515,9 @@ public class PostDetailActivity extends AppCompatActivity {
                         .setCancelClickListener(SweetAlertDialog::cancel)
                         .show();
             } else {
-                if (user.getReportRecord().containsKey(post.getInfoId())) {
+                
+                String key = "post" + post.getInfoId();
+                if (user.getReportRecord().containsKey(key)) {
                     Toast.makeText(this, "您已举报过，请等待处理", Toast.LENGTH_SHORT).show();
                 } else {
                     AlertDialog dialog = new AlertDialog.Builder(this)
@@ -526,6 +530,7 @@ public class PostDetailActivity extends AppCompatActivity {
                                 record.setUserId(user.getUserId());
                                 record.setToId(post.getInfoId());
                                 record.setTag(2);
+                                record.setType(1);
                                 UserOperationRecord.insertRecord(this, record, user);
                                 
                                 Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
@@ -630,13 +635,15 @@ public class PostDetailActivity extends AppCompatActivity {
                 record.setUserId(user.getUserId());
                 record.setToId(list.get(pos).getInfoId());
                 record.setTag(1);
+                record.setType(2);
                 UserOperationRecord.insertRecord(this, record, user);
             }
             else {
                 list.get(pos).setLikeNumber(list.get(pos).getLikeNumber() - 1);
-                Long infoId = user.getLikeRecord().get(list.get(pos).getInfoId());
+                String key = "comment" + list.get(pos).getInfoId();
+                Long infoId = user.getLikeRecord().get(key);
                 UserOperationRecord.deleteRecord(this, infoId);
-                user.getLikeRecord().remove(list.get(pos).getInfoId());
+                user.getLikeRecord().remove(key);
             }
             adapter.notifyDataSetChanged();
         });
@@ -662,7 +669,9 @@ public class PostDetailActivity extends AppCompatActivity {
                         .setCancelClickListener(SweetAlertDialog::cancel)
                         .show();
             } else {
-                if (user.getReportRecord().containsKey(list.get(pos).getInfoId())) {
+                
+                String key = "comment" + list.get(pos).getInfoId();
+                if (user.getReportRecord().containsKey(key)) {
                     Toast.makeText(this, "您已举报过，请等待处理", Toast.LENGTH_SHORT).show();
                 } else {
                     AlertDialog dialog = new AlertDialog.Builder(this)
@@ -675,6 +684,7 @@ public class PostDetailActivity extends AppCompatActivity {
                                 record.setUserId(user.getUserId());
                                 record.setToId(list.get(pos).getInfoId());
                                 record.setTag(2);
+                                record.setType(2);
                                 UserOperationRecord.insertRecord(this, record, user);
                                 
                                 Toast.makeText(this, "感谢您的反馈", Toast.LENGTH_SHORT).show();
@@ -740,7 +750,7 @@ public class PostDetailActivity extends AppCompatActivity {
         detail_time.setText(post.getCreated());
 
         praise.setCount(post.getLikeNumber());
-        if (user.getLikeRecord().containsKey(post.getInfoId())) {
+        if (user.getLikeRecord().containsKey("post" + post.getInfoId())) {
             praise.setState(true);
         }
         

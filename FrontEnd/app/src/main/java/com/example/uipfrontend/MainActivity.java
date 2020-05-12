@@ -226,16 +226,30 @@ public class MainActivity extends AppCompatActivity {
                     JsonArray jsonArray1 = jsonObject.getAsJsonArray("likeRecord");
                     JsonArray jsonArray2 = jsonObject.getAsJsonArray("reportRecord");
                     
-                    Map<Long, Long> map1 = new HashMap<>();
-                    Map<Long, Long> map2 = new HashMap<>();
+                    Map<String, Long> map1 = new HashMap<>();
+                    Map<String, Long> map2 = new HashMap<>();
                     Gson gson = new Gson();
                     for (JsonElement element : jsonArray1) {
                         UserRecord record = gson.fromJson(element, new TypeToken<UserRecord>() {}.getType());
-                        map1.put(record.getToId(), record.getInfoId());
+                        String key = "";
+                        switch (record.getType()) {
+                            case 1: key = "post"; break;
+                            case 2: key = "comment"; break;
+                            case 3: key = "reply"; break;
+                        }
+                        key += record.getToId();
+                        map1.put(key, record.getInfoId());
                     }
                     for (JsonElement element : jsonArray2) {
                         UserRecord record = gson.fromJson(element, new TypeToken<UserRecord>() {}.getType());
-                        map2.put(record.getToId(), record.getInfoId());
+                        String key = "";
+                        switch (record.getType()) {
+                            case 1: key = "post"; break;
+                            case 2: key = "comment"; break;
+                            case 3: key = "reply"; break;
+                        }
+                        key += record.getToId();
+                        map2.put(key, record.getInfoId());
                     }
                     
                     user.setLikeRecord(map1);

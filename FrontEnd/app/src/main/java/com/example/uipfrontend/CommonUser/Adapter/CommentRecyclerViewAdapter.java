@@ -104,7 +104,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
         viewHolder.tv_time.setText(list.get(position).getCreated());
         
         viewHolder.praise.setCount(list.get(position).getLikeNumber());
-        if (user.getLikeRecord().containsKey(list.get(position).getInfoId())) {
+        if (user.getLikeRecord().containsKey("comment" + list.get(position).getInfoId())) {
             viewHolder.praise.setState(true);
         } else {
             viewHolder.praise.setState(false);

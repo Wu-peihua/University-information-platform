@@ -7,6 +7,7 @@ public class UserRecord {
     private Long userId;
     private Long toId;
     private int tag;
+    private int type;
     private Date created;
 
     public Long getInfoId() {
@@ -39,6 +40,14 @@ public class UserRecord {
 
     public void setTag(int tag) {
         this.tag = tag;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public Date getCreated() {

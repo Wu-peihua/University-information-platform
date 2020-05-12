@@ -6,20 +6,22 @@
         <result column="user_id" jdbcType="BIGINT" property="userId" />
         <result column="object_id" jdbcType="BIGINT" property="toId" />
         <result column="tag" jdbcType="INTEGER" property="tag" />
+        <result column="type" javaType="INTEGER" property="type" />
         <result column="created" jdbcType="TIMESTAMP" property="created" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        info_id, user_id, object_id, tag, created
+        info_id, user_id, object_id, tag, type, created
     </sql>
 
     <insert id="insert" parameterType="com.example.uipservice.entity.UserRecord">
         <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into operation_record (user_id, object_id, tag, created)
+        insert into operation_record (user_id, object_id, tag, type, created)
         values (#{userId,jdbcType=BIGINT}, #{toId,jdbcType=BIGINT},
-                #{tag,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP})
+                #{tag,jdbcType=INTEGER}, #{type,jdbcType=INTEGER},
+                #{created,jdbcType=TIMESTAMP})
     </insert>
 
     <delete id="delete" parameterType="Long">
@@ -28,7 +30,7 @@
     </delete>
 
     <select id="queryByUserId" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.UserRecord">
-        select info_id, object_id
+        select <include refid="Base_Column_List"/>
         from operation_record
         where user_id = #{userId,jdbcType=BIGINT} and tag = #{tag,jdbcType=INTEGER}
     </select>
