@@ -17,6 +17,9 @@ public interface RecruitService {
     //根据id删除一条组队信息
     boolean deleteRecruit(Long infoId);
 
+    //根据id修改组队举报数量
+    boolean modifyRecruitReportNumber(Long infoId);
+
     //分页获取所有组队信息
     /*根据发布人的用户id分页获取组队信息*/
     Map queryRecruitByUserId(Integer pageNum, Integer pageSize, Long userId);

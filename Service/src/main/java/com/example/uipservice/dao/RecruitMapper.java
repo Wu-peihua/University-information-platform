@@ -19,6 +19,8 @@ public interface RecruitMapper {
 
     int updateByPrimaryKey(Recruit record);
 
+    int modifyReportNumberById(Long infoId);
+
 
     Page<Recruit> queryRecruit();
 

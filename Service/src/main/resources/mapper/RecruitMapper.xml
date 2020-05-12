@@ -161,4 +161,9 @@
       created = #{created,jdbcType=TIMESTAMP}
     where info_id = #{infoId,jdbcType=BIGINT}
   </update>
+  <update id="modifyReportNumberById" parameterType="com.example.uipservice.entity.Recruit" >
+    update recruit
+    set report_number = 0
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
 </mapper>
