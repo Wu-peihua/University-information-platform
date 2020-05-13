@@ -26,12 +26,18 @@
 
             <ImageView
                 android:id="@+id/courseImage"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_margin="5dp"
-                android:padding="@dimen/padding_s"
-                android:scaleType="centerCrop"
-                android:src="@drawable/mysql_logo"/>
+                android:layout_width="153dp"
+                android:layout_height="126dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/mysql_logo" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -129,11 +135,11 @@
                     android:text="添加点评"
                     android:layout_centerHorizontal="true"
                     android:textColor="@color/white"
-                fbutton:fButtonColor="@color/colorPrimary"
-                fbutton:shadowEnabled="false"
-                fbutton:cornerRadius="10dp"
+                    fbutton:fButtonColor="@color/colorPrimary"
+                    fbutton:shadowEnabled="false"
+                    fbutton:cornerRadius="10dp"
 
-                />
+                    />
 
             </LinearLayout>
 
@@ -191,22 +197,22 @@
                 android:orientation="horizontal"
                 android:paddingRight="10dp"
                 >
-            <!-- 时间顺序 -->
-            <TextView
-                android:id="@+id/tv_course_comment_order_by_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="时间"
-                android:textColor="@color/black"/>
+                <!-- 时间顺序 -->
+                <TextView
+                    android:id="@+id/tv_course_comment_order_by_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="时间"
+                    android:textColor="@color/black"/>
 
-            <!-- 热度顺序 -->
-            <TextView
-                android:id="@+id/tv_course_comment_order_by_like"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_xs"
-                android:text="热度"
-                android:textColor="@color/blue"/>
+                <!-- 热度顺序 -->
+                <TextView
+                    android:id="@+id/tv_course_comment_order_by_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_xs"
+                    android:text="热度"
+                    android:textColor="@color/blue"/>
             </LinearLayout>
 
         </LinearLayout>

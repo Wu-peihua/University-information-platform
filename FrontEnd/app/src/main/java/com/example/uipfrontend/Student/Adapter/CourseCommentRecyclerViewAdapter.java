@@ -49,8 +49,9 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     private UserInfo user;//全局用户id
 
 
-    private onItemClickListener itemClickListener;//设置点击监听器
+    //private onItemClickListener itemClickListener;//设置点击监听器
     private OnMoreClickListener onMoreClickListener;//设置list删除监听器
+    private OnLikeSelectListener onLikeSelectListener;
 
 
     //分页请求课程评论数据
@@ -59,13 +60,17 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     private static final int ZERO = 0; //记录请求回来的数据条数是否为零
     //评论用户
 
+    public void setOnLikeSelectListener(OnLikeSelectListener selectListener) {
+        this.onLikeSelectListener = selectListener;
+    }
+
     public void setOnMoreClickListener(OnMoreClickListener clickListener) {
         this.onMoreClickListener = clickListener;
     }
 
-    public void setOnItemClickListener(onItemClickListener clickListener) {
-        this.itemClickListener = clickListener;
-    }
+   // public void setOnItemClickListener(onItemClickListener clickListener) {
+   //     this.itemClickListener = clickListener;
+   // }
 
     public interface OnMoreClickListener {
         void onClick(View view, int pos);
@@ -132,81 +137,41 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
         CourseCommentRecyclerViewAdapter.ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
-        CourseComment comment = courseComments.get(pos);
+        //CourseComment comment = courseComments.get(pos);
 
-        //设置 commentator id
-        //设置评论用户名字与头像
-        //System.out.println("user id:"+user.getUserId());
-        //System.out.println("commentator id:"+comment.getCommentatorId());
-        String isMe = user.getUserId().equals(comment.getCommentatorId()) ? "(我)" : "";
 
-        viewHolder.userName.setText(comment.getFromName()+isMe);
-        setImage(context,viewHolder.userimg,comment.getPortrait());;
+        String isMe = user.getUserId().equals(courseComments.get(pos).getCommentatorId()) ? "(我)" : "";
+
+        viewHolder.userName.setText(courseComments.get(pos).getFromName()+isMe);
+        setImage(context,viewHolder.userimg,courseComments.get(pos).getPortrait());;
 
         DateFormat datefomat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        String commentDate = datefomat.format(comment.getInfoDate());
-       /// System.out.println("日期格式："+commentDate);
+        String commentDate = datefomat.format(courseComments.get(pos).getInfoDate());
+        /// System.out.println("日期格式："+commentDate);
         viewHolder.commentDate.setText(commentDate);
 
         //courseImage.setImageResource(course.getImageurl());
-        viewHolder.commentContent.setText(comment.getContent());
+        viewHolder.commentContent.setText(courseComments.get(pos).getContent());
         viewHolder.score.setStepSize((float) 0.5);
-        viewHolder.score.setRating(comment.getScore());
+        viewHolder.score.setRating(courseComments.get(pos).getScore());
 
-        //System.out.println("adapter 评分为："+comment.getScore());
-
-        //viewHolder.LikeCounts.setText(String.valueOf(mTags.get(pos).getLikeCount()));
-
-        viewHolder.BtnLike.setCount(comment.getLikeCount());
         // 点赞监听
-        viewHolder.BtnLike.setOnStateChangedListener(isSelected -> {
-            if (isSelected) {
-                comment.setLikeCount(comment.getLikeCount() + 1);
-            }
-            else {
-                comment.setLikeCount(comment.getLikeCount() - 1);
-            }
-            notifyDataSetChanged();
-        });
-        //Log.i("当前点赞pos",String.valueOf(courseComments.get(pos)));
 
+        viewHolder.BtnLike.setCount(courseComments.get(pos).getLikeCount());
+        //System.out.println("点赞记录："+user.getLikeRecord());
+        //System.out.println("举报记录："+user.getReportRecord());
+        Long curId = courseComments.get(pos).getInfoId();
 
+        if (user.getLikeRecord().containsKey("course_comment"+curId)) {
+            viewHolder.BtnLike.setState(true);
+        }else{
+            viewHolder.BtnLike.setState(false);
+        }
+        viewHolder.BtnLike.setOnStateChangedListener(isSelected -> onLikeSelectListener.select(isSelected, pos));
+
+        // 点赞监听
         // 举报or删除监听
         viewHolder.BtnBadReport.setOnClickListener(view -> onMoreClickListener.onClick(view, pos));
-
-        /*viewHolder.BtnBadReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText("您确定举报这条评论吗？")
-                        .setContentText("举报后不能取消！")
-                        .setConfirmText("确认")
-                        .setCancelText("取消")
-                        .showCancelButton(true)
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-                                sDialog.cancel();
-                            }
-                        })
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-                                sDialog.setTitleText("举报成功！")
-                                        .showCancelButton(false)
-                                        .setContentText("OK")
-                                        .setConfirmClickListener(null)
-                                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                            }
-                        })
-                        .show();
-
-                Log.i("click","举报一次！");
-            }
-        });
-
-         */
 
 
     }
@@ -219,10 +184,7 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageView);
     }
-    //点击
-    public interface onItemClickListener {
-        void onClick(int pos);
-    }
+
 
     @Override
     public int getItemCount() {
@@ -240,6 +202,10 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     @Override
     public int getItemViewType(int position) {
         return position;
+    }
+
+    public interface OnLikeSelectListener {
+        void select(boolean isSelected, int pos);
     }
 
 

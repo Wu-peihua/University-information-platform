@@ -44,6 +44,8 @@ import java.util.Set;
 
 
 import com.qlh.dropdownmenu.DropDownMenu;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -75,7 +77,7 @@ public class StudentCommentFragment extends Fragment {
     private static final int SUCCESS = 1;
     private static final int FAIL = -1;
     private static final int ZERO = 0; //记录请求回来的数据条数是否为零
-    private static final int PAGE_SIZE = 6;   //默认一次请求6条数据
+    private static final int PAGE_SIZE = 20;   //默认一次请求20条数据
     private static int CUR_PAGE_NUM = 1;
 
     //记录下拉筛选菜单选择的学校ID和学院ID
@@ -157,6 +159,11 @@ public class StudentCommentFragment extends Fragment {
     //按照类型请求后端课程数据
     private void getData(String requestUrl){
         //courses = new ArrayList<>();
+        ZLoadingDialog dialog = new ZLoadingDialog(getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message message){
@@ -173,7 +180,7 @@ public class StudentCommentFragment extends Fragment {
 
                     case ZERO:
                         Log.i("获取: ", "0");
-                        Toast.makeText(recyclerView.getContext(),"暂时没有新的信息！",Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(recyclerView.getContext(),"暂时没有新的信息！",Toast.LENGTH_SHORT).show();
                         initRecyclerView();
                         break;
                 }
@@ -219,7 +226,7 @@ public class StudentCommentFragment extends Fragment {
                         handler.sendMessage(msg);
                         Log.i("获取: ", String.valueOf(courses.size()));
                     }
-               }
+                }
             });
         }).start();
     }
@@ -286,42 +293,42 @@ public class StudentCommentFragment extends Fragment {
         }, 1500);
 
     }
-/*
-    public void initData() {
+    /*
+        public void initData() {
 
-        courses = new ArrayList<>();
-        courses.add(new Course((long)1001,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
+            courses = new ArrayList<>();
+            courses.add(new Course((long)1001,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
 
-        courses.add(new Course((long)1002,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
+            courses.add(new Course((long)1002,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
 
-        courses.add(new Course((long)1010,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
-
-
-        courses.add(new Course((long)1028,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
+            courses.add(new Course((long)1010,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
 
 
-        courses.add(new Course((long)2019,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
-
-        courses.add(new Course((long)1003,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
-
-        courses.add(new Course((long)1004,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
-
-        courses.add(new Course((long)1015,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
+            courses.add(new Course((long)1028,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
 
 
-        courses.add(new Course((long)1022,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
+            courses.add(new Course((long)2019,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
+
+            courses.add(new Course((long)1003,"大数据与云计算", "Mr.ZHANG", "大数据与云计算平台使用", 4));
+
+            courses.add(new Course((long)1004,"计算机网络", "Mr.ZHU", "了解互联网基础", 3));
+
+            courses.add(new Course((long)1015,"数据库原理", "Mr.ZHENG", "数据库基本原理，常用数据库操作", 4));
 
 
-        courses.add(new Course((long)2023,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
+            courses.add(new Course((long)1022,"操作系统", "Mr.CHEN", "操作系统构建及运行原理", 3));
 
 
-        //AllCourses.addAll(courses);
-
-        //count = mTags.size();
-    }
+            courses.add(new Course((long)2023,"算法设计", "Mr.LIN", "基础算法与数据结构", 2));
 
 
- */
+            //AllCourses.addAll(courses);
+
+            //count = mTags.size();
+        }
+
+
+     */
     private void initMenus() {
 
         dropDownMenu = rootView.findViewById(R.id.dropDownMenu_student_course);

@@ -83,7 +83,16 @@ public class StudentCourseRecyclerViewAdapter extends RecyclerView.Adapter {
         Course course = mTags.get(pos);
         viewHolder.name.setText(course.getName());
         viewHolder.teacher.setText(course.getTeacher());
-        //BarScore.setStepSize((float) 0.1);
+        //加载课程图片
+        //Glide.with(context).load("https://cdnp0.stackassets.com/a11acbee21b698eacc6c9e4eedc0cda167ad2212/store/opt/596/298/b58d430921e8f3f5bbada7638202b59404de5443a5f8fea0ccddd38afa9a/product_13994_product_shot_wide_image.jpg"
+        //).into(viewHolder.img);
+
+        Glide.with(context).load(course.getCoursePicture())
+                .placeholder(R.drawable.coding_class)
+                .error(R.drawable.coding_class)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(viewHolder.img);
+
         BigDecimal b   =   new   BigDecimal(course.getScore());
         float trimScore =   b.setScale(1,   BigDecimal.ROUND_HALF_UP).floatValue();
         viewHolder.score.setText(String.valueOf(trimScore));

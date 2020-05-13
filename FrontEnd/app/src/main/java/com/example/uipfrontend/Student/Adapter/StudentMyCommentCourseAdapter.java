@@ -26,6 +26,7 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
     private List<CourseComment> commentList;
     private Context context;
     private UserInfo user;
+    private OnLikeSelectListener onLikeSelectListener;
 
     public StudentMyCommentCourseAdapter(List<CourseComment> commentList, Context context) {
         super();
@@ -65,6 +66,14 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
         public MyCourseCommentEmptyViewHolder(View view) {
             super(view);
         }
+    }
+
+    public void setOnLikeSelectListener(OnLikeSelectListener selectListener) {
+        this.onLikeSelectListener = selectListener;
+    }
+
+    public interface OnLikeSelectListener {
+        void select(boolean isSelected, int pos);
     }
 
     public interface OnItemDeleteClickListener {
@@ -122,9 +131,20 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
             commentViewHolder.rb_score.setRating(courseComment.getScore());
             //格式化
             commentViewHolder.tv_comment_date.setText(DateFormat.getInstance().format(courseComment.getInfoDate()));
-            //commentViewHolder.tv_comment_date.setText(courseComment.getCommentDate());
 
-            commentViewHolder.icv_like.setCount(0);
+            // 点赞监听
+            commentViewHolder.icv_like.setCount(courseComment.getLikeCount());
+            if (user.getLikeRecord().containsKey(courseComment.getInfoId())) {
+                ((MyCommentCourseViewHolder) viewHolder).icv_like.setState(true);
+                System.out.println("mine 已经点赞");
+            } else {
+                ((MyCommentCourseViewHolder) viewHolder).icv_like.setState(false);
+                System.out.println("mine 未点赞");
+            }
+            ((MyCommentCourseViewHolder) viewHolder).icv_like.setOnStateChangedListener(isSelected -> onLikeSelectListener.select(isSelected, position));
+
+
+            /*commentViewHolder.icv_like.setCount(0);
             commentViewHolder.icv_like.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
                 @Override
                 public void select(boolean isSelected) {
@@ -135,6 +155,8 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
                 }
             });
 
+
+             */
             commentViewHolder.tv_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
