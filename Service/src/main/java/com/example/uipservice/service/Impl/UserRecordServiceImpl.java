@@ -79,12 +79,10 @@ public class UserRecordServiceImpl implements UserRecordService {
                     userRecord.setCreated(new Date());
                     int effectNum = userRecordMapper.insert(userRecord);
                     if (effectNum > 0){
-                        System.out.println("举报成功");
                         return true;
                     }else
                         throw new RuntimeException("服务器错误！举报记录插入失败！");
                 }else{   //找到插入记录，则返回已举报信息
-                    System.out.println("举报失败");
                     return false;
                 }
             }catch (Exception e){
