@@ -24,7 +24,7 @@ public class ForumPostsServiceImpl implements ForumPostsService {
     public boolean insertPost(ForumPosts post) {
         if (post.getTitle() != null && post.getContent() != null) {
             try {
-                int effectNum = forumPostsMapper.insert(post);
+                int effectNum = forumPostsMapper.insertSelective(post);
                 if (effectNum > 0) return true;
                 else throw new RuntimeException("服务器错误！插入帖子失败！");
             } catch (Exception e) {
@@ -70,7 +70,7 @@ public class ForumPostsServiceImpl implements ForumPostsService {
     public boolean updatePost(ForumPosts post) {
         if (post.getTitle() != null && post.getContent() != null) {
             try {
-                int effectNum = forumPostsMapper.updateByPrimaryKey(post);
+                int effectNum = forumPostsMapper.updateByPrimaryKeySelective(post);
                 if (effectNum > 0) return true;
                 else throw new RuntimeException("服务器错误！更新帖子失败！");
             } catch (Exception e) {
@@ -87,6 +87,26 @@ public class ForumPostsServiceImpl implements ForumPostsService {
         PageHelper.startPage(pageNum, pageSize);
         try {
             Page<ForumPosts> res = forumPostsMapper.queryPosts();
+            resMap.put("postsList", res);
+            resMap.put("total", res.getTotal());
+            resMap.put("pageSize", res.getPageSize());
+            resMap.put("pageNum", pageNum);
+            return resMap;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Map queryPostsByKeyword(Integer pageNum, Integer pageSize, String keyword) {
+        Map resMap = new HashMap();
+        keyword = "%" + keyword + "%";
+        // todo 全文索引
+        // match(title) against(#{keyword,jdbcType=VARCHAR} in boolean mode)
+        // keyword = "*" + keyword + "*";
+        PageHelper.startPage(pageNum, pageSize);
+        try {
+            Page<ForumPosts> res = forumPostsMapper.queryPostsByKeyword(keyword);
             resMap.put("postsList", res);
             resMap.put("total", res.getTotal());
             resMap.put("pageSize", res.getPageSize());

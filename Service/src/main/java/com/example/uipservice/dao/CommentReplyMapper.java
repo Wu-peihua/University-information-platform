@@ -10,7 +10,13 @@ import java.util.List;
 public interface CommentReplyMapper {
     int insert(CommentReply reply);
 
+    int insertSelective(CommentReply reply);
+
     int deleteByPrimaryKey(Long infoId);
 
     Page<CommentReply> queryReply(Long commentId);
+
+    Page<CommentReply> queryReplyByCreated(Long commentId);
+
+    Page<CommentReply> queryReplyByCreatedDesc(Long commentId);
 }

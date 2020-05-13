@@ -45,6 +45,8 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.lzy.widget.CircleImageView;
 import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.sunbinqiang.iconcountview.IconCountView;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -92,7 +94,8 @@ public class CommentDetailActivity extends AppCompatActivity {
     @SuppressLint("SimpleDateFormat")
     private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-    private static boolean flag = true;
+    private static boolean isDefaultOrder = true;
+    private static boolean isTimeDesc = false;
     
     private static UserInfo user;
 
@@ -155,6 +158,14 @@ public class CommentDetailActivity extends AppCompatActivity {
      * 描述：分页获取回复
      */
     private void getReply() {
+        CUR_PAGE_NUM = 1;
+
+        ZLoadingDialog dialog = new ZLoadingDialog(this);
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE) //设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue)) //颜色
+                .setHintText("加载中...")
+                .setCancelable(false)
+                .show();
 
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -176,6 +187,7 @@ public class CommentDetailActivity extends AppCompatActivity {
                         break;
                 }
                 setReplySum();
+                dialog.dismiss();
                 super.handleMessage(msg);
             }
         };
@@ -190,6 +202,8 @@ public class CommentDetailActivity extends AppCompatActivity {
      * 返回：void
      */
     private void queryReply(Handler handler, boolean isLoadMore) {
+
+        int orderMode = isDefaultOrder ? 0 : isTimeDesc ? 2 : 1;
         
         new Thread(()->{
             
@@ -199,7 +213,7 @@ public class CommentDetailActivity extends AppCompatActivity {
                     .url(getResources().getString(R.string.serverBasePath)
                             + getResources().getString(R.string.queryReplyById)
                             + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE
-                            + "&infoId=" + comment.getInfoId())
+                            + "&infoId=" + comment.getInfoId() + "&orderMode=" + orderMode)
                     .get()
                     .build();
             Call call = client.newCall(request);
@@ -378,36 +392,35 @@ public class CommentDetailActivity extends AppCompatActivity {
             }
         });
 
-        // todo 按热度从高到低排序
+        // 按点赞数从高到低排序
         order_by_like.setOnClickListener(view -> {
             if(!order_by_time.getText().toString().equals("时间")) {
                 order_by_like.setTextColor(getResources().getColor(R.color.blue));
                 order_by_time.setTextColor(getResources().getColor(R.color.gray));
                 order_by_time.setText("时间");
-                flag = true;
-                sortByLikeNum();
-                adapter.setList(list);
-                adapter.notifyDataSetChanged();
+                isDefaultOrder = true;
+                getReply();
             }
         });
 
-        // todo 按时间排序
+        // 按时间排序
         order_by_time.setOnClickListener(view -> {
             order_by_time.setTextColor(getResources().getColor(R.color.blue));
             order_by_like.setTextColor(getResources().getColor(R.color.gray));
             String text = order_by_time.getText().toString();
-            if (flag) { sortByTimeAsc(); flag = false; }
-            else { Collections.reverse(list); }
+            
+            if (isDefaultOrder) {
+                isDefaultOrder = false;
+            } else {
+                isTimeDesc = !isTimeDesc;
+            }
+            getReply();
 
-            if (text.contains("↑")) {
-                order_by_time.setText("时间↓");
-            } else if (text.contains("↓")) {
+            if (isTimeDesc) {
                 order_by_time.setText("时间↑");
             } else {
                 order_by_time.setText("时间↓");
             }
-            adapter.setList(list);
-            adapter.notifyDataSetChanged();
         });
 
         click_write.setOnClickListener(view -> {
@@ -552,6 +565,16 @@ public class CommentDetailActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 描述：刷新时恢复默认排序和排序按钮
+     */
+    private void reset() {
+        order_by_like.setTextColor(getResources().getColor(R.color.blue));
+        order_by_time.setTextColor(getResources().getColor(R.color.gray));
+        order_by_time.setText("时间");
+        isDefaultOrder = true;
+    }
+    
     /**
      * 设置回复数目
      */

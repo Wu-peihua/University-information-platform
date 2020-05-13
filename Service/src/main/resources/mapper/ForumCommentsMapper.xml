@@ -30,6 +30,24 @@
     order by like_number desc, reply_number desc
     </select>
 
+    <select id="queryCommentsByCreated" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.ForumComments">
+    select info_id, post_id, commentator_id, content, report_number, like_number, reply_number,
+    info_date, forum_comments.created, user_name, portrait
+    from forum_comments inner join user_info
+    on commentator_id = user_id
+    where post_id = #{toId, jdbcType=BIGINT} and report_number &lt; 10
+    order by created
+    </select>
+
+    <select id="queryCommentsByCreatedDesc" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.ForumComments">
+    select info_id, post_id, commentator_id, content, report_number, like_number, reply_number,
+    info_date, forum_comments.created, user_name, portrait
+    from forum_comments inner join user_info
+    on commentator_id = user_id
+    where post_id = #{toId, jdbcType=BIGINT} and report_number &lt; 10
+    order by created desc
+    </select>
+
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
         select
         <include refid="Base_Column_List" />
@@ -74,6 +92,9 @@
             <if test="likeNumber != null" >
                 like_number,
             </if>
+            <if test="replyNumber != null">
+                reply_number,
+            </if>
             <if test="infoDate != null" >
                 info_date,
             </if>
@@ -96,6 +117,9 @@
             </if>
             <if test="likeNumber != null" >
                 #{likeNumber,jdbcType=INTEGER},
+            </if>
+            <if test="replyNumber != null">
+                #{replyNumber,jdbcType=INTEGER},
             </if>
             <if test="infoDate != null" >
                 #{infoDate,jdbcType=TIMESTAMP},

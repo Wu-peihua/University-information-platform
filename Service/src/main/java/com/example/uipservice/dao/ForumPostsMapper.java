@@ -2,9 +2,8 @@ package com.example.uipservice.dao;
 
 import com.example.uipservice.entity.ForumPosts;
 import com.github.pagehelper.Page;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public interface ForumPostsMapper {
@@ -23,4 +22,6 @@ public interface ForumPostsMapper {
     Page<ForumPosts> selectPostsById(Long userId);
 
     Page<ForumPosts> queryPosts();
+
+    Page<ForumPosts> queryPostsByKeyword(@Param("keyword") String keyword);
 }

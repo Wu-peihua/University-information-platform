@@ -21,4 +21,8 @@ public interface ForumCommentsMapper {
     int updateByPrimaryKey(ForumComments record);
 
     Page<ForumComments> queryComments(Long toId);
+
+    Page<ForumComments> queryCommentsByCreated(Long toId);
+
+    Page<ForumComments> queryCommentsByCreatedDesc(Long toId);
 }

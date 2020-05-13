@@ -30,6 +30,15 @@
     order by like_number desc, reply_number desc, created desc
   </select>
 
+  <select id="queryPostsByKeyword" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.ForumPosts">
+    select info_id, title, content, pictures, info_date, poster, reply_number,
+    like_number, report_number, forum_posts.created, user_name, portrait
+    from forum_posts inner join user_info
+    on poster = user_id
+    where title like #{keyword,jdbcType=VARCHAR} and report_number &lt; 10
+    order by like_number desc, reply_number desc, created desc
+  </select>
+
   <select id="selectPostsById" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.ForumPosts">
     select info_id, title, content, pictures, info_date, poster, reply_number,
     like_number, report_number, forum_posts.created, user_name, portrait
@@ -57,7 +66,7 @@
     </selectKey>
     insert into forum_posts (title, content, pictures, info_date,
     poster, report_number, like_number, reply_number, created)
-    values (#{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{pictures,jdbcType=VARCHAR}, 
+    values (#{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{pictures,jdbcType=VARCHAR},
       #{infoDate,jdbcType=TIMESTAMP}, #{userId,jdbcType=BIGINT}, #{reportNumber,jdbcType=INTEGER},
       #{likeNumber,jdbcType=INTEGER}, #{replyNumber, jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP})
   </insert>

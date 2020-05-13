@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,9 +36,12 @@ import com.example.uipfrontend.Entity.ForumPosts;
 import com.example.uipfrontend.Entity.ResponsePosts;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Utils.KeyboardStateObserver;
 import com.google.gson.Gson;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -58,6 +63,7 @@ public class ForumFragment extends Fragment {
     private static final int SERVER_ERR = -1;
     private static final int ZERO = 0;
     private static final int SUCCESS = 1;
+    private static final int NOTHING = 2;
     
     private static final int PAGE_SIZE = 10; // 默认一次请求10条数据
     private int CUR_PAGE_NUM = 1;
@@ -72,6 +78,8 @@ public class ForumFragment extends Fragment {
     private static final String s4 = "decreaseLikeInPostDetail";
     private static final String s5 = "refresh";
     
+    private static boolean clickSearch = false; // 软键盘搜索按钮 收起软键盘
+    
     private MyBroadcastReceiver receiver1, receiver2, // 评论增减
                                 receiver3, receiver4, // 点赞数增减
                                 receiver5; // 刷新
@@ -79,25 +87,23 @@ public class ForumFragment extends Fragment {
     private View rootView;
     
     // 搜索高亮字体颜色
-    private ForegroundColorSpan redSpan = new ForegroundColorSpan(Color.rgb(255, 0, 0));
+    private ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.rgb(0, 0, 255));
     
     private EditText et_search;   // 搜索栏
     private ImageView iv_delete;  // 清除输入按钮
     private ImageView iv_new;     // 新建帖子按钮
 
-    private TextView tv_blank_text; // 搜索结果为空提示
+    private TextView tv_blank_text; // 空提示
 
     private XRecyclerView xRecyclerView;
     private ForumListRecyclerViewAdapter adapter;
-    
-    private List<ForumPosts> posts;
-    private List<ForumPosts> whole;
+
+    private List<ForumPosts> list;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) 
     {
-
         if (rootView != null) {
             ViewGroup parent = (ViewGroup) rootView.getParent();
             if (parent != null) {
@@ -106,8 +112,8 @@ public class ForumFragment extends Fragment {
         } else {
             rootView = inflater.inflate(R.layout.fragment_cu_forum, null);
             tv_blank_text = rootView.findViewById(R.id.tv_blank);
-            posts = new ArrayList<>();
-            getPosts();
+            list = new ArrayList<>();
+            getPosts("", true);
             initView();
             registerBroadCast();
             setListener();
@@ -117,10 +123,19 @@ public class ForumFragment extends Fragment {
 
     /**
      * 描述：分页获取论坛帖子
+     * 参数：keyword- 为""表示获取所有，否则按关键词查找
+     *      showDialog- 是否显示加载中
      */
-    private void getPosts() {
+    private void getPosts(String keyword, boolean showDialog) {
         CUR_PAGE_NUM = 1;
 
+        ZLoadingDialog dialog = new ZLoadingDialog(rootView.getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE) //设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue)) //颜色
+                .setHintText("加载中...")
+                .setCancelable(false);
+        if (showDialog) dialog.show();
+        
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
@@ -136,20 +151,83 @@ public class ForumFragment extends Fragment {
                         Log.i("获取帖子: ", "空");
                         setTip("还没有帖子，去发一条", View.VISIBLE);
                         break;
+                    case NOTHING:
+                        Log.i("搜索帖子: ", "未找到相关结果");
+                        new SweetAlertDialog(rootView.getContext(), SweetAlertDialog.NORMAL_TYPE)
+                                .setTitleText("未找到相关结果")
+                                .setContentText("换个关键词试试")
+                                .setConfirmText("关闭")
+                                .setConfirmClickListener(SweetAlertDialog::cancel)
+                                .show();
+                        break;
                     case SUCCESS:
                         Log.i("获取帖子: ", "成功");
                         setTip("", View.GONE);
-                        posts.clear();
-                        posts.addAll(whole);
-                        adapter.setList(posts);
+                        
+                        adapter.setKeyWordColor(keyword, colorSpan);
+                        adapter.setList(list);
                         adapter.notifyDataSetChanged();
                         break;
                 }
+                if (showDialog) dialog.dismiss();
                 super.handleMessage(msg);
             }
         };
 
-        queryPosts(handler, false);
+        if (keyword.equals(""))
+            queryPosts(handler, false);
+        else 
+            searchPosts(handler, keyword);
+    }
+
+    /**
+     * 描述：启动线程搜索论坛帖子
+     * 参数：keyword- 关键词
+     */
+    private void searchPosts(Handler handler, String keyword) {
+
+        new Thread(()->{
+
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.searchPosts)
+                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE 
+                            + "&keyword=" + keyword)
+                    .get()
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("获取帖子: ", Objects.requireNonNull(e.getMessage()));
+                    msg.what = NETWORK_ERR;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String resStr = Objects.requireNonNull(response.body()).string();
+
+                    ResponsePosts responsePosts = new Gson().fromJson(resStr, ResponsePosts.class);
+
+                    list = responsePosts.getPostsList();
+                    if (list == null) {
+                        list = new ArrayList<>();
+                        msg.what = SERVER_ERR;
+                    } else if (list.size() == 0) {
+                        msg.what = NOTHING;
+                    } else {
+                        Log.i("搜索帖子: ", list.toString());
+                        msg.what = SUCCESS;
+                    }
+                    handler.sendMessage(msg);
+                }
+            });
+
+        }).start();
+        
     }
 
     /**
@@ -186,22 +264,21 @@ public class ForumFragment extends Fragment {
                     ResponsePosts responsePosts = new Gson().fromJson(resStr, ResponsePosts.class);
 
                     if (isLoadMore) {
-                        whole.addAll(responsePosts.getPostsList());
-                        posts.addAll(responsePosts.getPostsList());
+                        list.addAll(responsePosts.getPostsList());
                         if (CUR_PAGE_NUM * PAGE_SIZE >= responsePosts.getTotal()) {
                             msg.what = ZERO;
                         } else {
                             msg.what = SUCCESS;
                         }
                     } else {
-                        whole = responsePosts.getPostsList();
-                        if (whole == null) {
-                            whole = new ArrayList<>();
+                        list = responsePosts.getPostsList();
+                        if (list == null) {
+                            list = new ArrayList<>();
                             msg.what = SERVER_ERR;
-                        } else if (whole.size() == 0) {
+                        } else if (list.size() == 0) {
                             msg.what = ZERO;
                         } else {
-                            Log.i("获取帖子: ", whole.toString());
+                            Log.i("获取帖子: ", list.toString());
                             msg.what = SUCCESS;
                         }
                     }
@@ -213,6 +290,38 @@ public class ForumFragment extends Fragment {
     }
     
     private void setListener() {
+        
+        // 当软键盘收起时调用getPosts方法
+        KeyboardStateObserver.getKeyboardStateObserver(getActivity()).
+                setKeyboardVisibilityListener(new KeyboardStateObserver.OnKeyboardVisibilityListener() {
+                    @Override
+                    public void onKeyboardShow() {
+                        clickSearch = false;
+                    }
+
+                    @Override
+                    public void onKeyboardHide() {
+                        if (!clickSearch) {
+                            String keyword = et_search.getText().toString().trim();
+                            if (keyword.length() > 0)
+                                getPosts(keyword, true);
+                        }
+                    }
+                });
+        
+        // 软键盘搜索按钮监听
+        et_search.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_UNSPECIFIED) {
+                String keyword = et_search.getText().toString().trim();
+                clickSearch = true;
+                if (keyword.length() > 0) 
+                    getPosts(keyword, true);
+                return true;
+            }
+            return false;
+        });
+        
+        // 当搜索框内有文字时显示清除全部按钮
         et_search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {  }
@@ -227,19 +336,21 @@ public class ForumFragment extends Fragment {
                 } else {
                     iv_delete.setVisibility(View.VISIBLE);
                 }
-                changeKeyWordColor(editable.toString().trim());
             }
         });
 
         // 清空搜索框
-        iv_delete.setOnClickListener(view -> et_search.setText(""));
+        iv_delete.setOnClickListener(view -> {
+            et_search.setText("");
+            getPosts("", false);
+        });
         
         // 进入帖子详情页面
         adapter.setOnItemClickListener((view, pos) -> {
             Intent intent = new Intent(rootView.getContext(), PostDetailActivity.class);
             intent.putExtra("pos", pos);
             intent.putExtra("beginFrom", "forumList");
-            intent.putExtra("detail", posts.get(pos));
+            intent.putExtra("detail", list.get(pos));
             startActivityForResult(intent, myRequestCode);
         });
         
@@ -269,8 +380,7 @@ public class ForumFragment extends Fragment {
                             switch (msg.what) {
                                 case SUCCESS:
                                     Log.i("刷新帖子", "成功");
-                                    posts.clear();
-                                    posts.addAll(whole);
+                                    adapter.setList(list);
                                     adapter.notifyDataSetChanged();
                                     setTip("", View.GONE);
                                     break;
@@ -331,41 +441,12 @@ public class ForumFragment extends Fragment {
         });
     }
 
-    // todo: 当前在list中搜索，后期改为在数据库搜索
-    private void changeKeyWordColor(String keyWord){
-        // 搜索帖子标题，关键词：keyWord
-        if (!keyWord.equals("")) {
-            posts.clear();
-            for (int i = 0; i < whole.size(); i++) {
-                if (whole.get(i).getTitle().contains(keyWord)) {
-                    posts.add(whole.get(i));
-                }
-            }
-            adapter.setKeyWordColor(keyWord, redSpan);
-            refreshUI();
-        }
-    }
-    
-    private void refreshUI(){
-        if(adapter == null) {
-            adapter = new ForumListRecyclerViewAdapter(rootView.getContext(), posts);
-            xRecyclerView.setAdapter(adapter);
-        } else {
-            adapter.notifyDataSetChanged();
-            xRecyclerView.scheduleLayoutAnimation();
-        }
-        if(posts.size() == 0) {
-            tv_blank_text.setText("未找到相关结果");
-            tv_blank_text.setVisibility(View.VISIBLE);
-        }
-    }
-
     private void initView() {
         et_search = rootView.findViewById(R.id.edt_cu_forum_search);
         iv_delete = rootView.findViewById(R.id.imgv_cu_forum_delete);
         iv_new = rootView.findViewById(R.id.imgv_cu_forum_new);
         
-        adapter = new ForumListRecyclerViewAdapter(rootView.getContext(), posts);
+        adapter = new ForumListRecyclerViewAdapter(rootView.getContext(), list);
 
         xRecyclerView = rootView.findViewById(R.id.rv_cu_forum);
         xRecyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
@@ -400,12 +481,11 @@ public class ForumFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == myRequestCode) {
             if (resultCode == myResultCode1) {
-                getPosts();
+                getPosts("", false);
             } else if (resultCode == myResultCode2) {
                 int pos = data.getIntExtra("pos", -1);
                 if (pos != -1) {
-                    whole.remove(pos);
-                    posts.remove(pos);
+                    list.remove(pos);
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -429,16 +509,14 @@ public class ForumFragment extends Fragment {
             if (pos != -1) {
                 switch (where) {
                     case 1:
-                        int n = whole.get(pos).getReplyNumber();
+                        int n = list.get(pos).getReplyNumber();
                         n = isIncrease ? n+1 : n-1;
-                        whole.get(pos).setReplyNumber(n);
-                        posts.get(pos).setReplyNumber(n);
+                        list.get(pos).setReplyNumber(n);
                         break;
                     case 2: 
-                        n = whole.get(pos).getLikeNumber();
+                        n = list.get(pos).getLikeNumber();
                         n = isIncrease ? n+1 : n-1;
-                        whole.get(pos).setLikeNumber(n);
-                        posts.get(pos).setLikeNumber(n);
+                        list.get(pos).setLikeNumber(n);
                         break;
                 }
                 adapter.notifyDataSetChanged();
@@ -452,7 +530,7 @@ public class ForumFragment extends Fragment {
                 case s2: solve(intent, false, 1); break;
                 case s3: solve(intent, true, 2); break;
                 case s4: solve(intent, false, 2); break;
-                case s5: getPosts(); break;
+                case s5: getPosts("", false); break;
             }
         }
     }

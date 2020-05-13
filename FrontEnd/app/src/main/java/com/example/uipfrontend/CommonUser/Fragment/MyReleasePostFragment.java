@@ -27,6 +27,8 @@ import com.example.uipfrontend.R;
 import com.google.gson.Gson;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -87,6 +89,13 @@ public class MyReleasePostFragment extends Fragment {
      * 描述：分页获取用户发过的帖子
      */
     private void getPosts() {
+
+        ZLoadingDialog dialog = new ZLoadingDialog(rootView.getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE) //设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue)) //颜色
+                .setHintText("加载中...")
+                .setCancelable(false)
+                .show();
         
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -114,6 +123,7 @@ public class MyReleasePostFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                         break;
                 }
+                dialog.dismiss();
                 super.handleMessage(msg);
             }
         };

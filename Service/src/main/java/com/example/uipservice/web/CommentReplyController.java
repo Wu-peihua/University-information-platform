@@ -45,7 +45,7 @@ public class CommentReplyController {
      * @return modelMap
      */
     @RequestMapping(value = "/queryreply", method = RequestMethod.GET)
-    private Map queryReply(Integer pageNum, Integer pageSize, Long infoId) {
-        return commentReplyService.queryReply(pageNum, pageSize, infoId);
+    private Map queryReply(Integer pageNum, Integer pageSize, Long infoId, int orderMode) {
+        return commentReplyService.queryReply(pageNum, pageSize, infoId, orderMode);
     }
 }

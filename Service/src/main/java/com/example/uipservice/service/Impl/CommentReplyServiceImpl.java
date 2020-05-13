@@ -24,7 +24,7 @@ public class CommentReplyServiceImpl implements CommentReplyService {
     public Long insertReply(CommentReply reply) {
         if (reply.getContent() != null) {
             try {
-                int effectNum = commentReplyMapper.insert(reply);
+                int effectNum = commentReplyMapper.insertSelective(reply);
                 if (effectNum > 0) return reply.getInfoId();
                 else throw new RuntimeException("服务器错误！插入回复失败！");
             } catch (Exception e) {
@@ -51,11 +51,16 @@ public class CommentReplyServiceImpl implements CommentReplyService {
     }
 
     @Override
-    public Map queryReply(Integer pageNum, Integer pageSize, Long infoId) {
+    public Map queryReply(Integer pageNum, Integer pageSize, Long infoId, int orderMode) {
         Map resMap = new HashMap();
         PageHelper.startPage(pageNum, pageSize);
         try {
-            Page<CommentReply> res = commentReplyMapper.queryReply(infoId);
+            Page<CommentReply> res;
+            switch (orderMode) {
+                case 1: res = commentReplyMapper.queryReplyByCreated(infoId); break;
+                case 2: res = commentReplyMapper.queryReplyByCreatedDesc(infoId); break;
+                default: res = commentReplyMapper.queryReply(infoId); break;
+            }
             resMap.put("replyList", res);
             resMap.put("total", res.getTotal());
             resMap.put("pageSize", res.getPageSize());

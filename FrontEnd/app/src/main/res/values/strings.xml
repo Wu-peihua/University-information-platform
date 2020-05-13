@@ -2,8 +2,7 @@
     <string name="app_name">UIPFrontEnd</string>
 
     <!--url配置-->
-    <!--string name="serverBasePath">http://192.168.1.106:8080/uip</string-->
-    <string name="serverBasePath">http://192.168.1.104:8080/uip</string>
+    <string name="serverBasePath">http://192.168.0.103:8080/uip</string>
     <string name="myIP">192.168.0.103</string>
 
     <!--获取顶部筛选菜单-->
@@ -64,12 +63,14 @@
 
     <!--获取帖子-->
     <string name="queryPosts">/forumposts/queryposts</string>
+    <!--搜索帖子-->
+    <string name="searchPosts">/forumposts/querypostsbykeyword</string>
     <!--获取用户发表过的帖子-->
     <string name="selectPosts">/forumposts/selectposts</string>
     <!--获取评论-->
     <string name="queryCommentById">/postcomment/querycomments</string>
     <!--获取评论的回复-->
-    <string name="queryReplyById">//commentreply/queryreply</string>
+    <string name="queryReplyById">/commentreply/queryreply</string>
     <!--新建帖子-->
     <string name="insertPost">/forumposts/insertpost</string>
     <!--修改帖子-->

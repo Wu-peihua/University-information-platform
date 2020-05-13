@@ -24,7 +24,7 @@ public class ForumCommentServiceImpl implements ForumCommentService {
     public Long insertComment(ForumComments comment) {
         if (comment.getContent() != null) {
             try {
-                int effectNum = forumCommentsMapper.insert(comment);
+                int effectNum = forumCommentsMapper.insertSelective(comment);
                 if (effectNum > 0) return comment.getInfoId();
                 else throw new RuntimeException("服务器错误！插入评论失败！");
             } catch (Exception e) {
@@ -51,11 +51,22 @@ public class ForumCommentServiceImpl implements ForumCommentService {
     }
 
     @Override
-    public Map queryComments(Integer pageNum, Integer pageSize, Long infoId) {
+    public Map queryComments(Integer pageNum, Integer pageSize, Long infoId, int orderMode) {
         Map resMap = new HashMap();
         PageHelper.startPage(pageNum, pageSize);
         try {
-            Page<ForumComments> res = forumCommentsMapper.queryComments(infoId);
+            Page<ForumComments> res;
+            switch (orderMode) {
+                case 1:
+                    res = forumCommentsMapper.queryCommentsByCreated(infoId);
+                    break;
+                case 2:
+                    res = forumCommentsMapper.queryCommentsByCreatedDesc(infoId);
+                    break;
+                default:
+                    res = forumCommentsMapper.queryComments(infoId);
+                    break;
+            }
             resMap.put("commentList", res);
             resMap.put("total", res.getTotal());
             resMap.put("pageSize", res.getPageSize());
