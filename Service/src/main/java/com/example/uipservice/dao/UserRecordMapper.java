@@ -14,4 +14,7 @@ public interface UserRecordMapper {
     int delete(Long infoId);
 
     List<UserRecord> queryByUserId(@Param("userId")Long userId, @Param("tag")int tag);
+
+    UserRecord queryByUserIdAndObjectIdAndTagAndType(@Param("userId")Long userId,@Param("objectId")Long objectId, @Param("tag")int tag,@Param("type")Integer type);
+
 }

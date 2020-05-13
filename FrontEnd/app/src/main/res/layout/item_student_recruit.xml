@@ -114,25 +114,12 @@
                     android:layout_marginTop="@dimen/margin_l"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/report"
+                    android:src="@drawable/report"
                     android:layout_alignParentEnd="true" />
+
             </RelativeLayout>
 
-            <!--评论UI控件-->
-<!--            <com.lzy.widget.ExpandListView-->
-<!--                android:id="@+id/lv_comments"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginRight="5dp"-->
-<!--                android:layout_marginTop="9.5dp"-->
-<!--                android:background="@drawable/event_di"-->
-<!--                android:divider="@null"-->
-<!--                android:dividerHeight="0dp"-->
-<!--                android:orientation="vertical"-->
-<!--                android:paddingBottom="5dp"-->
-<!--                android:paddingLeft="8dp"-->
-<!--                android:paddingRight="8dp"-->
-<!--                android:paddingTop="16dp"/>-->
+
         </LinearLayout>
     </LinearLayout>
 
