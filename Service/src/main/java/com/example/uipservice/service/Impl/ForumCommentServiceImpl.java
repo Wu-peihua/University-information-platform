@@ -57,15 +57,9 @@ public class ForumCommentServiceImpl implements ForumCommentService {
         try {
             Page<ForumComments> res;
             switch (orderMode) {
-                case 1:
-                    res = forumCommentsMapper.queryCommentsByCreated(infoId);
-                    break;
-                case 2:
-                    res = forumCommentsMapper.queryCommentsByCreatedDesc(infoId);
-                    break;
-                default:
-                    res = forumCommentsMapper.queryComments(infoId);
-                    break;
+                case 1: res = forumCommentsMapper.queryCommentsByCreated(infoId); break;
+                case 2: res = forumCommentsMapper.queryCommentsByCreatedDesc(infoId); break;
+                default: res = forumCommentsMapper.queryComments(infoId); break;
             }
             resMap.put("commentList", res);
             resMap.put("total", res.getTotal());

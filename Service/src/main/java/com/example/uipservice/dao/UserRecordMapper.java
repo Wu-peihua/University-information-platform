@@ -11,6 +11,8 @@ public interface UserRecordMapper {
 
     int insert(UserRecord record);
 
+    int insertSelective(UserRecord record);
+
     int delete(Long infoId);
 
     List<UserRecord> queryByUserId(@Param("userId")Long userId, @Param("tag")int tag);

@@ -20,7 +20,7 @@ public class CertificationImpl implements CertificationService {
     @Override
     public boolean insertCertification(StuCertification certification) {
         try {
-            int effectNum = certificationMapper.insert(certification);
+            int effectNum = certificationMapper.insertSelective(certification);
             if (effectNum > 0) return true;
             else throw new RuntimeException("服务器错误！插入认证信息失败！");
         } catch (Exception e) {
