@@ -167,8 +167,8 @@ CREATE TABLE `operation_record` (
   `info_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) unsigned NOT NULL,
   `object_id` bigint(20) NOT NULL,
-  `tag` int(2) unsigned NOT NULL,
-  `type` int(2) NOT NULL,
+  `tag` int(2) unsigned NOT NULL,  #点赞或举报类型，1：点赞，2：举报
+  `type` int(2) NOT NULL,          #1-帖子，2-评论，3-回复，4-组队信息
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`info_id`),
   KEY `user_id` (`user_id`),
