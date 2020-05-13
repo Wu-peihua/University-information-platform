@@ -34,4 +34,11 @@
         from operation_record
         where user_id = #{userId,jdbcType=BIGINT} and tag = #{tag,jdbcType=INTEGER}
     </select>
+
+
+    <select id="queryByUserIdAndObjectIdAndTagAndType" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.UserRecord">
+        select <include refid="Base_Column_List"/>
+        from operation_record
+        where user_id = #{userId,jdbcType=BIGINT} and tag = #{tag,jdbcType=INTEGER} and object_id = #{objectId,jdbcType=BIGINT} and type = #{type,jdbcType=INTEGER}
+    </select>
 </mapper>

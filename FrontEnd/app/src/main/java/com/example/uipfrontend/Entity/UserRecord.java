@@ -1,8 +1,11 @@
 package com.example.uipfrontend.Entity;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class UserRecord {
+public class UserRecord implements Serializable {
     private Long infoId;
     private Long userId;
     private Long toId;
@@ -56,5 +59,11 @@ public class UserRecord {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    @NotNull
+    @Override
+    public String toString(){
+        return "UserRecord:[infoId:" + infoId + ",userId:" + userId + ",toId:" + toId + ",tag:"+tag + ",type:"+type +",created:" + created +"]";
     }
 }

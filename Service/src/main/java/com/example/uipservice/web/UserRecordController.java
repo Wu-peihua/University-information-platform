@@ -2,6 +2,7 @@ package com.example.uipservice.web;
 
 import com.example.uipservice.entity.UserRecord;
 import com.example.uipservice.service.UserRecordService;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,5 +48,21 @@ public class UserRecordController {
     @RequestMapping(value = "/queryrecord", method = RequestMethod.GET)
     private Map queryRecord(Long userId) {
         return userRecordService.queryRecord(userId);
+    }
+
+    /**
+     *  查询记录
+     *  @return map
+     */
+    @RequestMapping(value = "/querybyuseridandobjectidandtagandtype", method = RequestMethod.GET)
+    private UserRecord queryByUserIdAndObjectIdAndTagAndType(Long userId, Long objectId, Integer tag, Integer type) {
+        return userRecordService.queryByUserIdAndObjectIdAndTagAndType(userId,objectId,tag,type);
+    }
+
+    @RequestMapping(value = "insertreportrecord",method = RequestMethod.POST)
+    private Map insertReportRecord(@RequestBody UserRecord userRecord){
+        Map<String ,Object> modelMap = new HashMap<>();
+        modelMap.put("result",userRecordService.insertReportRecord(userRecord));
+        return  modelMap;
     }
 }

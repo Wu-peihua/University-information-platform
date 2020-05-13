@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.uipfrontend.Entity.RecruitInfo;
 import com.example.uipfrontend.Entity.ResponseRecruit;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.MainActivity;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Activity.RecruitReleaseActivity;
@@ -84,6 +85,8 @@ public class StudentRecruitFragment extends Fragment {
 
     //是否第一次加载
     private boolean isFirstLoading = true;
+    //当前登陆用户
+    private UserInfo userInfo;
 
 
     @Nullable
@@ -99,6 +102,7 @@ public class StudentRecruitFragment extends Fragment {
             rootView = inflater.inflate(R.layout.fragment_student_recruit, null);
             rootContentView = inflater.inflate(R.layout.fragment_student_recruit_content,null);
             tv_blank = rootContentView.findViewById(R.id.tv_blank);
+            userInfo = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();
             init();
         }
         return rootView;
@@ -197,7 +201,6 @@ public class StudentRecruitFragment extends Fragment {
 
                 if(selectedUniversity <= 0 )
                     selectedUniversity = 1;
-                System.out.println("university:"+selectedUniversity+"  institute:"+selectedInstitute);
 
                 getData(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitByUniAndIns)
                         + "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE  + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
@@ -241,7 +244,7 @@ public class StudentRecruitFragment extends Fragment {
                     case ZERO:
                         Log.i("获取", "0");
                         Toast.makeText(rootContentView.getContext(),"暂时没有新的信息！",Toast.LENGTH_SHORT).show();
-                        tv_blank.setText("还没有发布组队信息，去发一条吧");
+                        tv_blank.setText("还没有发布组队信息，去发一条吧!");
                         tv_blank.setVisibility(View.VISIBLE);
                         initRecyclerView();
                         dialog.dismiss();
@@ -299,7 +302,7 @@ public class StudentRecruitFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        studentRecruitRecyclerViewAdapter = new StudentRecruitRecyclerViewAdapter(this.getContext(), list,userNameList,userPortraitList);
+        studentRecruitRecyclerViewAdapter = new StudentRecruitRecyclerViewAdapter(this.getContext(), list,userNameList,userPortraitList,userInfo);
         recyclerView.setAdapter(studentRecruitRecyclerViewAdapter);
 
         recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);

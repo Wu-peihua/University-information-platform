@@ -18,6 +18,10 @@
     <string name="insertUserRecord">/userrecord/insertrecord</string>
     <!--删除用户记录-->
     <string name="deleteUserRecord">/userrecord/deleterecord</string>
+    <!--查找用户记录是否存在-->
+    <string name="queryByUserIdAndObjectIdAndTagAndType">/userrecord/querybyuseridandobjectidandtagandtype</string>
+    <!--插入举报记录-->
+    <string name="insertReport">/userrecord/insertreportrecord</string>
 
     <!--分页获取所有组队信息-->
     <string name="queryRecruit">/recruit/queryrecruit</string>
