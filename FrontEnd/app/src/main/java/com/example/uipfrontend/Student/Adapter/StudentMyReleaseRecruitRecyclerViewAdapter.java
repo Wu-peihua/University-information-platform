@@ -88,7 +88,7 @@ public class StudentMyReleaseRecruitRecyclerViewAdapter extends RecyclerView.Ada
         viewHolder.userName.setText("联系人："+userNameList.get(pos));
         viewHolder.infoDate.setText(list.get(pos).getInfoDate().toString());
         viewHolder.title.setText(list.get(pos).getTitle());
-        viewHolder.content.setText(userPortraitList.get(pos));
+        viewHolder.content.setText(list.get(pos).getContent());
         setImage(context,viewHolder.portrait,userPortraitList.get(pos));
         viewHolder.portrait.setBorderWidth(0);
 

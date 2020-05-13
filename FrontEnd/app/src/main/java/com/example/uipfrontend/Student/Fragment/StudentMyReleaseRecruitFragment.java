@@ -74,6 +74,9 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
 
     private Long userId; //当前登陆用户id
 
+    //是否第一次加载
+    private boolean isFirstLoading = true;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState ){
@@ -88,6 +91,22 @@ public class StudentMyReleaseRecruitFragment extends Fragment {
                 "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE + "&userId=" + userId );
         initRecyclerView();
         return rootView;
+    }
+
+    /**
+     * 在fragment可见的时候，刷新数据
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (!isFirstLoading) {
+            //如果不是第一次加载，刷新数据
+            getData(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitByUserId) +
+                    "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE + "&userId=" + userId );
+        }
+
+        isFirstLoading = false;
     }
 
     public void init(){

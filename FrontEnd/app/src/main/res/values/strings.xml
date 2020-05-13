@@ -32,6 +32,8 @@
     <string name="queryrecruitbyUniandIns">/recruit/queryrecruitbyuniandins</string>
     <!--删除组队发布记录-->
     <string name="deleteRecruit">/recruit/deleterecruit</string>
+    <!--修改组队信息-->
+    <string name="updateRecruit">/recruit/updaterecruit</string>
 
 
     <!--分页获取所有课程信息-->

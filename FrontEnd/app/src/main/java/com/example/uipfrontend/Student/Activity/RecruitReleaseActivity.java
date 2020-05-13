@@ -113,6 +113,8 @@ public class RecruitReleaseActivity extends AppCompatActivity {
 
     private UserInfo userInfo; //记录当前登陆用户的信息
 
+    private boolean isModify = false;
+
 
 
 
@@ -129,11 +131,11 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().setStatusBarColor(getResources().getColor(R.color.blue));
 
-        initData();
-
         initToolBar();
         initRecyclerView();
         initView();
+        initData();
+
 
         initNoLinkOptionsPicker();
 
@@ -141,6 +143,8 @@ public class RecruitReleaseActivity extends AppCompatActivity {
 
 
     }
+
+
 
     public void initToolBar() {
 
@@ -252,7 +256,7 @@ public class RecruitReleaseActivity extends AppCompatActivity {
 
 //                                    setResult(1, intent);
 
-                                    recruitInfo.setUserId(userInfo.getUserId()); //默认设置为1
+                                    recruitInfo.setUserId(userInfo.getUserId());
                                     recruitInfo.setContact(contact.getText().toString());
                                     recruitInfo.setContent(description.getText());
                                     @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -265,7 +269,11 @@ public class RecruitReleaseActivity extends AppCompatActivity {
                                     if(selectString.size() != 0){
                                         uploadImage();
                                     }else{
-                                        insertRecruitInfo();
+                                        if(!isModify){
+                                            insertOrModifyRecruitInfo(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.insertRecruit));
+                                        }else{
+                                            insertOrModifyRecruitInfo(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.updateRecruit));
+                                        }
                                     }
 
                                     Toast.makeText(RecruitReleaseActivity.this, "组队信息发布成功", Toast.LENGTH_SHORT).show();
@@ -498,17 +506,6 @@ public class RecruitReleaseActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     public void initData() {
 
-        Intent intent = getIntent();
-        RecruitInfo recruitInfo = (RecruitInfo) intent.getSerializableExtra("recruitInfo");
-        if (recruitInfo != null) {
-
-            school.setText(option1[recruitInfo.getUniversityId()] + "-" + option2[recruitInfo.getInstituteId()]);
-            title.setText(recruitInfo.getTitle());
-            contact.setText(recruitInfo.getContact());
-            description.setText(recruitInfo.getContent());
-
-        }
-
         //通过sharepreference获取大学选项和学院选项
         SharedPreferences sp = getSharedPreferences("data",MODE_PRIVATE);
         //第二个参数为缺省值，如果不存在该key，返回缺省值
@@ -526,10 +523,24 @@ public class RecruitReleaseActivity extends AppCompatActivity {
         option1 = universityList.toArray(new String[0]);
         option2 = instituteList.toArray(new String[0]);
 
+
+
+        Intent intent = getIntent();
+        RecruitInfo newRecruitInfo = (RecruitInfo) intent.getSerializableExtra("recruitInfo");
+        if (newRecruitInfo != null) {
+
+            school.setText(option1[newRecruitInfo.getUniversityId()-1] + "-" + option2[newRecruitInfo.getInstituteId()-1]);
+            title.setText(newRecruitInfo.getTitle());
+            contact.setText(newRecruitInfo.getContact());
+            description.setText(newRecruitInfo.getContent());
+            recruitInfo.setInfoId(newRecruitInfo.getInfoId());
+            isModify = true;
+        }
+
     }
 
 
-    public void insertRecruitInfo(){
+    public void insertOrModifyRecruitInfo(String requestUrl){
 
         ZLoadingDialog dialog = new ZLoadingDialog(RecruitReleaseActivity.this);
         dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
@@ -550,7 +561,7 @@ public class RecruitReleaseActivity extends AppCompatActivity {
                 RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"),json);
                 //请求
                 Request request=new Request.Builder()
-                        .url(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.insertRecruit))
+                        .url(requestUrl)
                         .post(requestBody)
                         .build();
                 //新建call联结client和request
@@ -633,7 +644,11 @@ public class RecruitReleaseActivity extends AppCompatActivity {
 
                         recruitInfo.setPictures(url);
 
-                        insertRecruitInfo();
+                        if(!isModify){
+                            insertOrModifyRecruitInfo(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.insertRecruit));
+                        }else{
+                            insertOrModifyRecruitInfo(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.updateRecruit));
+                        }
                     }
 
                 });

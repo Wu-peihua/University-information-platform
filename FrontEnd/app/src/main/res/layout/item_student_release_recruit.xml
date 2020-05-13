@@ -96,6 +96,9 @@
                     android:textColor="@color/item_time"
                     android:textSize="@dimen/fontSize_xs"/>
 
+
+
+
                  <TextView
                 android:id="@+id/tv_studentReleaseRecruitDelete"
                 android:layout_width="wrap_content"
@@ -105,7 +108,7 @@
                 android:layout_toRightOf="@id/tv_studentReleaseRecruitDate"
                 android:text="删除"
                 android:textColor="@color/item_delete"
-                android:textSize="@dimen/fontSize_xs"/>
+                android:textSize="13sp"/>
 
                 <TextView
                     android:id="@+id/tv_studentReleaseRecruitModify"
@@ -116,7 +119,7 @@
                     android:layout_toRightOf="@id/tv_studentReleaseRecruitDelete"
                     android:text="修改"
                     android:textColor="@color/item_delete"
-                    android:textSize="@dimen/fontSize_xs"/>
+                    android:textSize="13sp"/>
 
             </RelativeLayout>
 

@@ -36,7 +36,7 @@ public class RecruitController {
      * @return modelMap
      */
     @RequestMapping(value = "/updaterecruit", method = RequestMethod.POST)
-    private Map<String,Object> updateRecruit(Recruit recruit){
+    private Map<String,Object> updateRecruit(@RequestBody Recruit recruit){
         Map<String,Object> modelMap = new HashMap<String, Object>();
         modelMap.put("success", recruitService.updateRecruit(recruit));
         return modelMap;

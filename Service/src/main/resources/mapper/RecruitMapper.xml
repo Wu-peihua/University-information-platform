@@ -139,7 +139,7 @@
         report_number = #{reportNumber,jdbcType=INTEGER},
       </if>
       <if test="contact != null" >
-        contact = #{contact,jdbcType=VARCHAAR},
+        contact = #{contact,jdbcType=VARCHAR},
       </if>
       <if test="created != null" >
         created = #{created,jdbcType=TIMESTAMP},

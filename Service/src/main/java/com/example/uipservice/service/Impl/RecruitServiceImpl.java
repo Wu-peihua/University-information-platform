@@ -46,7 +46,7 @@ public class RecruitServiceImpl implements RecruitService {
     public boolean updateRecruit(Recruit recruit) {
         if(recruit.getUserId()!=null  ){
             try{
-                int effectNum = recruitMapper.updateByPrimaryKey(recruit);
+                int effectNum = recruitMapper.updateByPrimaryKeySelective(recruit);
                 if(effectNum > 0){
                     return true;
                 }else{
