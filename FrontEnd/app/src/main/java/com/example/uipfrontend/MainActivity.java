@@ -21,6 +21,7 @@ import com.example.uipfrontend.Entity.Institute;
 import com.example.uipfrontend.Entity.University;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.Entity.UserRecord;
+import com.example.uipfrontend.LoginAndRegist.LoginActivity;
 import com.example.uipfrontend.Student.StudentActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -62,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
 //    @BindView( R.id.btn_admin)
     Button admin;
+
+    Button login;
     //顶部筛选菜单选项
     private String[] levelOneUniversityMenu;
     private String[][] levelTwoInstituteMenu;
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         commonUser = findViewById(R.id.btn_commonUser);
         student = findViewById(R.id.btn_student);
         admin = findViewById(R.id.btn_admin);
+        login = findViewById(R.id.btn_login);
 
         initUser();
         getMenusData();
@@ -283,6 +287,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(MainActivity.this, AdminHomeActivity.class);
                 startActivity(i);
+            }
+        });
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
             }
         });
     }
