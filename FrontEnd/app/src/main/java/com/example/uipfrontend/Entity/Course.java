@@ -41,15 +41,6 @@ public class Course implements Serializable {
 
     private Date created;
 
-    /*public Course(Long courseID,String _name, String _teacher,String _description,Integer _score){
-        this.infoId = courseID;
-        this.courseName = _name;
-        this.teacherName = _teacher;
-        this.description = _description;
-        this.averageScore = _score;
-    }
-
-     */
 
     public Course(Long courseID,String _name, String _teacher,String _description,Float _score){
         this.infoId = courseID;
@@ -57,6 +48,7 @@ public class Course implements Serializable {
         this.teacherName = _teacher;
         this.description = _description;
         this.averageScore = _score;
+
     }
 
     public Long getCourseID(){
@@ -69,10 +61,6 @@ public class Course implements Serializable {
 
     public  Integer getAcademyId() {
         return this.instituteId;
-    }
-
-    public String getImageurl(){
-        return this.coursePicture;
     }
 
     public String getName(){
@@ -98,10 +86,6 @@ public class Course implements Serializable {
         this.courseName = name;
     }
 
-    public void setImageUrl(String Url) {
-        this.coursePicture = Url;
-    }
-
     public void setSchoolId(Integer schoolId){
         this.universityId =schoolId;
     }
@@ -109,6 +93,13 @@ public class Course implements Serializable {
     public void setAcademyId(Integer academyId){
         this.instituteId = academyId;
 
+    }
+    public void setCoursePicture(String coursePicture){
+        this.coursePicture = coursePicture;
+    }
+
+    public String getCoursePicture(){
+        return coursePicture;
     }
 
     public void setDescription(String description) {

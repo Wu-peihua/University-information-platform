@@ -64,6 +64,7 @@ public class UserOperationRecord {
                             case 1: key = "post"; break;
                             case 2: key = "comment"; break;
                             case 3: key = "reply"; break;
+                            case 5: key = "course_comment";break;
                         }
                         key += record.getToId();
                         

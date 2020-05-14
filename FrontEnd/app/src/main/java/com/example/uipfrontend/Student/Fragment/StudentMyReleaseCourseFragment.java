@@ -30,13 +30,17 @@ import com.example.uipfrontend.Entity.CourseComment;
 import com.example.uipfrontend.Entity.ResponseCourseComment;
 import com.example.uipfrontend.Entity.ResponsePosts;
 import com.example.uipfrontend.Entity.UserInfo;
+import com.example.uipfrontend.Entity.UserRecord;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.StudentMyCommentCourseAdapter;
+import com.example.uipfrontend.Utils.UserOperationRecord;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -71,7 +75,6 @@ public class StudentMyReleaseCourseFragment extends Fragment {
     private List<CourseComment> list;
     private int commentPos;
     private double commentScore;
-    private  String commentContent;
 
     private FButton SubmitBtn;//提交评论按钮
     private EditText CommentEidt ;//编辑评论框
@@ -113,9 +116,14 @@ public class StudentMyReleaseCourseFragment extends Fragment {
 
     /**
      * 描述：分页获取用户评论的记录
-*/
+     */
     private void getCoursesComment() {
 
+        ZLoadingDialog dialog = new ZLoadingDialog(getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
@@ -150,7 +158,7 @@ public class StudentMyReleaseCourseFragment extends Fragment {
      * 参数: handler: 消息处理
      * 参数: isLoadMore: 加载处理
      * 返回：void
-*/
+     */
     private void queryCoursesComment(Handler handler, boolean isLoadMore) {
 
         user = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();
@@ -231,68 +239,68 @@ public class StudentMyReleaseCourseFragment extends Fragment {
         xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
 
 
-            // 刷新和加载更多
+        // 刷新和加载更多
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
-                @Override
-                public void onRefresh() {
-                    new Handler().postDelayed(()->{
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(()->{
 
-                        @SuppressLint("HandlerLeak")
-                        Handler handler = new Handler() {
-                            @Override
-                            public void handleMessage(Message msg) {
-                                switch (msg.what) {
-                                    case SUCCESS:
-                                        Log.i("刷新我的课程评论", "成功");
-                                        adapter.setList(list);
-                                        adapter.notifyDataSetChanged();
-                                        break;
-                                    case FAIL:
-                                        Log.i("刷新我的课程评论", "失败");
-                                        break;
-                                    case ZERO:
-                                        Log.i("刷新我的课程评论", "0");
-                                        break;
-                                }
-                                xRecyclerView.refreshComplete();
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("刷新我的课程评论", "成功");
+                                    adapter.setList(list);
+                                    adapter.notifyDataSetChanged();
+                                    break;
+                                case FAIL:
+                                    Log.i("刷新我的课程评论", "失败");
+                                    break;
+                                case ZERO:
+                                    Log.i("刷新我的课程评论", "0");
+                                    break;
                             }
-                        };
-                        CUR_PAGE_NUM = 1;
-                        queryCoursesComment(handler, false);
+                            xRecyclerView.refreshComplete();
+                        }
+                    };
+                    CUR_PAGE_NUM = 1;
+                    queryCoursesComment(handler, false);
 
-                    }, 1500);
-                }
+                }, 1500);
+            }
 
-                @Override
-                public void onLoadMore() {
-                    new Handler().postDelayed(()->{
+            @Override
+            public void onLoadMore() {
+                new Handler().postDelayed(()->{
 
-                        @SuppressLint("HandlerLeak")
-                        Handler handler = new Handler() {
-                            @Override
-                            public void handleMessage(Message msg) {
-                                xRecyclerView.loadMoreComplete();
-                                switch (msg.what) {
-                                    case SUCCESS:
-                                        Log.i("加载我的课程评论", "成功");
-                                        adapter.notifyDataSetChanged();
-                                        break;
-                                    case FAIL:
-                                        Log.i("加载我的课程评论", "失败");
-                                        break;
-                                    case ZERO:
-                                        Log.i("加载我的课程评论", "0");
-                                        xRecyclerView.setNoMore(true);
-                                        break;
-                                }
+                    @SuppressLint("HandlerLeak")
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            xRecyclerView.loadMoreComplete();
+                            switch (msg.what) {
+                                case SUCCESS:
+                                    Log.i("加载我的课程评论", "成功");
+                                    adapter.notifyDataSetChanged();
+                                    break;
+                                case FAIL:
+                                    Log.i("加载我的课程评论", "失败");
+                                    break;
+                                case ZERO:
+                                    Log.i("加载我的课程评论", "0");
+                                    xRecyclerView.setNoMore(true);
+                                    break;
                             }
-                        };
-                        CUR_PAGE_NUM++;
-                        queryCoursesComment(handler, true);
+                        }
+                    };
+                    CUR_PAGE_NUM++;
+                    queryCoursesComment(handler, true);
 
-                    }, 1500);
-                }
-            });
+                }, 1500);
+            }
+        });
 
 
 
@@ -351,6 +359,30 @@ public class StudentMyReleaseCourseFragment extends Fragment {
                 Log.i("click","点击修改评论按钮");
             }
 
+        });
+
+        adapter.setOnLikeSelectListener((isSelected, pos) -> {
+            if (!user.getLikeRecord().containsKey("course_comment"+list.get(pos).getInfoId())) {
+                list.get(pos).setLikeCount(list.get(pos).getLikeCount() + 1);
+                UserRecord record = new UserRecord();
+                record.setUserId(user.getUserId());
+                record.setToId(list.get(pos).getInfoId());
+                record.setTag(1);
+                record.setType(5);
+                UserOperationRecord.insertRecord(getContext(), record, user);
+                //System.out.println("当前举报："+comments.get(pos).getBadReportCount());
+                //System.out.println("当前点赞："+comments.get(pos).getLikeCount());
+            }
+            else {
+                list.get(pos).setLikeCount(list.get(pos).getLikeCount() - 1);
+                //System.out.println("当前user like record:"+user.getLikeRecord());
+                Long infoId = user.getLikeRecord().get("course_comment"+list.get(pos).getInfoId());
+                //System.out.println("当前删除info:"+infoId);
+                UserOperationRecord.deleteRecord(getContext(), infoId);
+                user.getLikeRecord().remove("course_comment"+list.get(pos).getInfoId());
+
+            }
+            adapter.notifyDataSetChanged();
         });
 
         UserRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener()
@@ -494,7 +526,7 @@ public class StudentMyReleaseCourseFragment extends Fragment {
                                     .setConfirmClickListener(null)
                                     .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                             mySendBroadCast(s4);
-                           // editFlag = false;
+                            // editFlag = false;
                             break;
                         case FAIL:
                             sDialog.setTitleText("提交失败")

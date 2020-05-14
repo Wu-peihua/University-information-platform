@@ -68,4 +68,13 @@ public class ForumPostsController {
     private Map queryPosts(Integer pageNum, Integer pageSize) {
         return forumPostsService.queryPosts(pageNum, pageSize);
     }
+
+    /**
+     * 搜索帖子
+     * @return modelMap
+     */
+    @RequestMapping(value = "/querypostsbykeyword", method = RequestMethod.GET)
+    private Map queryPostsByKeyword(Integer pageNum, Integer pageSize, String keyword) {
+        return forumPostsService.queryPostsByKeyword(pageNum, pageSize, keyword);
+    }
 }

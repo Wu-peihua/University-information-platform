@@ -14,5 +14,5 @@ public interface CommentReplyService {
     boolean deleteReply(Long infoId);
 
     // 获取评论
-    Map queryReply(Integer pageNum, Integer pageSize, Long infoId);
+    Map queryReply(Integer pageNum, Integer pageSize, Long infoId, int orderMode);
 }

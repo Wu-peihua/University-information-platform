@@ -32,6 +32,91 @@
         order by like_number desc
     </select>
 
+    <select id="queryReplyByCreated" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.CommentReply">
+        select info_id, comment_id, commentator_id, refer_user, refer_content,
+        content, report_number, like_number, info_date, comment_reply.created,
+        user_name, portrait
+        from comment_reply inner join user_info
+        on commentator_id = user_id
+        where comment_id = #{toId, jdbcType=BIGINT} and report_number &lt; 10
+        order by created
+    </select>
+
+    <select id="queryReplyByCreatedDesc" resultMap="BaseResultMap" parameterType="com.example.uipservice.entity.CommentReply">
+        select info_id, comment_id, commentator_id, refer_user, refer_content,
+        content, report_number, like_number, info_date, comment_reply.created,
+        user_name, portrait
+        from comment_reply inner join user_info
+        on commentator_id = user_id
+        where comment_id = #{toId, jdbcType=BIGINT} and report_number &lt; 10
+        order by created desc
+    </select>
+
+    <insert id="insertSelective" parameterType="com.example.uipservice.entity.CommentReply" >
+        <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into comment_reply
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="toId != null" >
+                comment_id,
+            </if>
+            <if test="fromId != null" >
+                commentator_id,
+            </if>
+            <if test="toName != null">
+                refer_user,
+            </if>
+            <if test="reference != null">
+                refer_content,
+            </if>
+            <if test="content != null" >
+                content,
+            </if>
+            <if test="reportNumber != null" >
+                report_number,
+            </if>
+            <if test="likeNumber != null" >
+                like_number,
+            </if>
+            <if test="infoDate != null" >
+                info_date,
+            </if>
+            <if test="created != null" >
+                created,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="toId != null" >
+                #{toId,jdbcType=BIGINT},
+            </if>
+            <if test="fromId != null" >
+                #{fromId,jdbcType=BIGINT},
+            </if>
+            <if test="toName != null">
+                #{toName, jdbcType=VARCHAR},
+            </if>
+            <if test="reference != null">
+                #{reference, jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="reportNumber != null" >
+                #{reportNumber,jdbcType=INTEGER},
+            </if>
+            <if test="likeNumber != null" >
+                #{likeNumber,jdbcType=INTEGER},
+            </if>
+            <if test="infoDate != null" >
+                #{infoDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
     <insert id="insert" parameterType="com.example.uipservice.entity.CommentReply">
         <selectKey resultType="java.lang.Long" keyProperty="infoId" order="AFTER" >
             select LAST_INSERT_ID()

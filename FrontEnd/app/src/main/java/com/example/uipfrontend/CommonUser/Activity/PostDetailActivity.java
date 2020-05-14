@@ -53,6 +53,8 @@ import com.lzy.widget.CircleImageView;
 import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.squareup.picasso.Picasso;
 import com.sunbinqiang.iconcountview.IconCountView;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -109,7 +111,8 @@ public class PostDetailActivity extends AppCompatActivity {
     @SuppressLint("SimpleDateFormat")
     private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-    private static boolean flag = true;
+    private static boolean isDefaultOrder = true;
+    private static boolean isTimeDesc = false;
     
     private static UserInfo user;
     
@@ -180,6 +183,14 @@ public class PostDetailActivity extends AppCompatActivity {
      * 描述：分页获取评论
      */
     private void getComment() {
+        CUR_PAGE_NUM = 1;
+
+        ZLoadingDialog dialog = new ZLoadingDialog(this);
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE) //设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue)) //颜色
+                .setHintText("加载中...")
+                .setCancelable(false)
+                .show();
         
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -201,6 +212,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         break;
                 }
                 setCommentSum();
+                dialog.dismiss();
                 super.handleMessage(msg);
             }
         };
@@ -216,6 +228,8 @@ public class PostDetailActivity extends AppCompatActivity {
      */
     private void queryComment(Handler handler, boolean isLoadMore) {
         
+        int orderMode = isDefaultOrder ? 0 : isTimeDesc ? 2 : 1;
+        
         new Thread(()-> {
             
             Message msg = new Message();
@@ -224,7 +238,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     .url(getResources().getString(R.string.serverBasePath)
                             + getResources().getString(R.string.queryCommentById)
                             + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE
-                            + "&infoId=" + post.getInfoId())
+                            + "&infoId=" + post.getInfoId() + "&orderMode=" + orderMode)
                     .get()
                     .build();
             Call call = client.newCall(request);
@@ -424,7 +438,6 @@ public class PostDetailActivity extends AppCompatActivity {
                                 case NETWORK_ERR:
                                     Log.i("刷新评论", "失败 - 网络错误");
                                     break;
-                                    
                             }
                             setCommentSum();
                             xRecyclerView.refreshComplete();
@@ -545,36 +558,34 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
-        // todo 按热度从高到低排序
+        // 按热度从高到低排序: 先点赞数后回复数
         order_by_like.setOnClickListener(view -> {
             if(!order_by_time.getText().toString().equals("时间")) {
                 order_by_like.setTextColor(getResources().getColor(R.color.blue));
                 order_by_time.setTextColor(getResources().getColor(R.color.gray));
                 order_by_time.setText("时间");
-                flag = true;
-                sortByLikeNum();
-                adapter.setList(list);
-                adapter.notifyDataSetChanged();
+                isDefaultOrder = true;
+                getComment();
             }
         });
 
-        // todo 按时间排序
+        // 按时间排序: ↓ - 远到近，↑ - 最新
         order_by_time.setOnClickListener(view -> {
             order_by_time.setTextColor(getResources().getColor(R.color.blue));
             order_by_like.setTextColor(getResources().getColor(R.color.gray));
-            String text = order_by_time.getText().toString();
-            if (flag) { sortByTimeAsc(); flag = false; }
-            else { Collections.reverse(list); }
-
-            if (text.contains("↑")) {
-                order_by_time.setText("时间↓");
-            } else if (text.contains("↓")) {
+            
+            if (isDefaultOrder) { 
+                isDefaultOrder = false;
+            } else { 
+                isTimeDesc = !isTimeDesc;
+            }
+            getComment();
+            
+            if (isTimeDesc) {
                 order_by_time.setText("时间↑");
             } else {
                 order_by_time.setText("时间↓");
             }
-            adapter.setList(list);
-            adapter.notifyDataSetChanged();
         });
 
         // 弹出评论框
@@ -698,6 +709,16 @@ public class PostDetailActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * 描述：刷新时恢复默认排序和排序按钮
+     */
+    private void reset() {
+        order_by_like.setTextColor(getResources().getColor(R.color.blue));
+        order_by_time.setTextColor(getResources().getColor(R.color.gray));
+        order_by_time.setText("时间");
+        isDefaultOrder = true;
     }
 
     /**

@@ -22,4 +22,7 @@ public interface ForumPostsService {
 
     // 分页获取帖子
     Map queryPosts(Integer pageNum, Integer pageSize);
+
+    // 分页搜索帖子
+    Map queryPostsByKeyword(Integer pageNum, Integer pageSize, String keyword);
 }

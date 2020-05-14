@@ -24,7 +24,7 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
     private List<ForumPosts> list;
     private onItemClickListener itemClickListener;
 
-    private String keyWord;           // 搜索框关键字
+    private String keyword;           // 搜索框关键字
     private ForegroundColorSpan span; // 关键字颜色
 
     public ForumListRecyclerViewAdapter(Context context, List<ForumPosts> list) {
@@ -38,8 +38,8 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
         this.itemClickListener = clickListener;
     }
 
-    public void setKeyWordColor(String keyWord, ForegroundColorSpan span) {
-        this.keyWord = keyWord;
+    public void setKeyWordColor(String keyword, ForegroundColorSpan span) {
+        this.keyword = keyword;
         this.span = span;
     }
 
@@ -73,14 +73,14 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = new ViewHolder(holder.itemView);
-        if(keyWord == null){
+        if(keyword == null || keyword.equals("")) {
             viewHolder.tv_title.setText(list.get(position).getTitle());
         } else {
             // 关键字开始位置
-            int beginPos = list.get(position).getTitle().indexOf(keyWord);
+            int beginPos = list.get(position).getTitle().indexOf(keyword);
             if(beginPos != -1){
                 SpannableStringBuilder builder = new SpannableStringBuilder(list.get(position).getTitle());
-                builder.setSpan(span, beginPos, beginPos + keyWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                builder.setSpan(span, beginPos, beginPos + keyword.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 viewHolder.tv_title.setText(builder);
             }
         }

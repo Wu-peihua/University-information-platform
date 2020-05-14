@@ -45,7 +45,7 @@ public class ForumCommentController {
      * @return modelMap
      */
     @RequestMapping(value = "/querycomments", method = RequestMethod.GET)
-    private Map queryComments(Integer pageNum, Integer pageSize, Long infoId) {
-        return forumCommentService.queryComments(pageNum, pageSize, infoId);
+    private Map queryComments(Integer pageNum, Integer pageSize, Long infoId, int orderMode) {
+        return forumCommentService.queryComments(pageNum, pageSize, infoId, orderMode);
     }
 }

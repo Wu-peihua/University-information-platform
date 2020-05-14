@@ -23,7 +23,7 @@ public class UserRecordServiceImpl implements UserRecordService {
     @Override
     public Long insertRecord(UserRecord record) {
         try {
-            int effectNum = userRecordMapper.insert(record);
+            int effectNum = userRecordMapper.insertSelective(record);
             if (effectNum > 0) return record.getInfoId();
             else throw new RuntimeException("服务器错误！插入记录失败！");
         } catch (Exception e) {
