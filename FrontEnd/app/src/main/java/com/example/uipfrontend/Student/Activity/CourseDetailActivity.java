@@ -95,6 +95,8 @@ public class CourseDetailActivity extends AppCompatActivity {
     private CourseCommentRecyclerViewAdapter commentAdapter;//用户评论适配器
 
     private Long globalcourseid ;//课程id
+    private Integer globalcourseschoolId;//课程所属学校id
+
     private List<CourseComment> comments =new ArrayList<>();//用户评论列表
 
 
@@ -137,6 +139,7 @@ public class CourseDetailActivity extends AppCompatActivity {
 
         coursedetail = (Course) Objects.requireNonNull(getIntent().getExtras()).get("coursedetail");
         globalcourseid = coursedetail.getCourseID();
+        globalcourseschoolId = coursedetail.getSchoolId();//非本校用户禁止评分
 
         init(coursedetail);
     }
@@ -197,11 +200,17 @@ public class CourseDetailActivity extends AppCompatActivity {
         AddComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(DialogView.getParent()!=null){
-                    ((ViewGroup)DialogView.getParent()).removeView(DialogView);
+                //评分判断
+                if(user.getUniversityId()==null||user.getUniversityId()!=globalcourseschoolId){
+                     Toast.makeText(getApplicationContext(), "非本校学生不能参与课程评分噢！", Toast.LENGTH_SHORT).show();
+               }
+                else {
+                    if (DialogView.getParent() != null) {
+                        ((ViewGroup) DialogView.getParent()).removeView(DialogView);
+                    }
+                    Commentdialog.setContentView(DialogView);
+                    Commentdialog.show();
                 }
-                Commentdialog.setContentView(DialogView);
-                Commentdialog.show();
                 //Log.i("click","点击了我要评论按钮");
             }
         });

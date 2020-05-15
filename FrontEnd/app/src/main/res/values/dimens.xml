@@ -33,6 +33,8 @@
     <dimen name="tabLayoutHeight">45dp</dimen>
 
     <!--宽度和高度-->
+    <dimen name="layoutWidth_l">200dp</dimen>
+    <dimen name="layoutHeight_l">180dp</dimen>
     <dimen name="layoutWidth">54dp</dimen>
     <dimen name="layoutHeight">54dp</dimen>
     <dimen name="layoutHeight_s">18dp</dimen>

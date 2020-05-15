@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.uipfrontend.CommonUser.Fragment.ForumFragment;
 import com.example.uipfrontend.Entity.ResponseCourse;
 
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Entity.Course;
 import com.example.uipfrontend.Student.Activity.CourseDetailActivity;
@@ -95,6 +96,7 @@ public class StudentCommentFragment extends Fragment {
 
     private static final String s3 = "deleteFromMyRelease";
     private static final String s4 = "updateFromMyRelease";
+    private UserInfo user;//登录用户数据
     //private static final String s5  = "refresh";
 
 
@@ -117,18 +119,21 @@ public class StudentCommentFragment extends Fragment {
     }
 
     private void init() {
-
+        //user = (UserInfo) getActivity().getApplication();
+        //if(user.getUserType()==null||user.getUserType()!=2){
+        //    Toast.makeText(getContext(),"非学生用户无法使用该模块噢！",Toast.LENGTH_LONG).show();
+        //}else {
         getMenusData();
 
         initMenus();
 
         getData(getResources().getString(R.string.serverBasePath) +
                 getResources().getString(R.string.queryCourse)
-                + "/?pageNum=1&pageSize=" + PAGE_SIZE );
+                + "/?pageNum=1&pageSize=" + PAGE_SIZE);
 
         initListener();
         registerBroadCast();
-
+    //}
 
     }
 

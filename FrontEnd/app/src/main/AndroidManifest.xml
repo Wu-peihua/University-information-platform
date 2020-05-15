@@ -44,6 +44,9 @@
             android:name=".Student.Activity.StudentPersonalInfoActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".Student.Activity.StudentVerifyInfoActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".Admin.Activity.AdminCourseDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

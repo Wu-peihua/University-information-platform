@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/student_toolbar_VerifyInfo"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:textAlignment="center"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:maxLines="1"
+                android:text="学生认证信息"
+                android:textColor="@color/white"
+                android:textSize="@dimen/fontSize_l" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+    <!--scrollview relativelayout 滑动失效-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+            <!--学生认证状态-->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/margin_s"
+                android:paddingLeft="10dp"
+                android:background="@color/transparent_white"
+                android:focusableInTouchMode="false"
+                >
+
+                <ImageView
+
+                    android:id="@+id/imgv_student_verify_state"
+                    android:layout_width="@dimen/layoutWeight_s"
+                    android:layout_height="@dimen/layoutHeight_s"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginTop="@dimen/margin_l"
+                    android:layout_marginLeft="@dimen/margin_xs"
+                    android:focusableInTouchMode="false"
+                    android:src="@drawable/ic_title" />
+
+                <TextView
+                    android:id="@+id/tv_verify_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/margin_l"
+                    android:layout_marginLeft="@dimen/margin_xs"
+                    android:text="认证状态："
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fontSize_s"
+                    android:focusableInTouchMode="false"
+                    android:typeface="serif" />
+
+                <TextView
+                    android:id="@+id/tv_info_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/margin_l"
+                    android:layout_marginLeft="@dimen/margin_xs"
+                    android:text="未完成"
+                    android:focusableInTouchMode="false"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/fontSize_s"
+                    android:typeface="serif" />
+            </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="@dimen/margin_s"
+            android:paddingLeft="10dp"
+            android:background="@color/transparent_white"
+            android:focusableInTouchMode="false"
+            >
+
+            <!--学生真实姓名-->
+            <ImageView
+                android:id="@+id/imgv_student_verify_name"
+                android:layout_width="@dimen/layoutWeight_s"
+                android:layout_height="@dimen/layoutHeight_s"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:focusableInTouchMode="false"
+                android:src="@drawable/ic_title" />
+
+            <TextView
+                android:id="@+id/tv_verify_name"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/layoutHeight_s"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:text="姓名："
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"
+                android:focusableInTouchMode="false"
+                android:typeface="serif" />
+
+            <TextView
+                android:id="@+id/tv_info_name"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/layoutHeight_s"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:text="无"
+                android:focusableInTouchMode="false"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"
+                android:typeface="serif" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="@dimen/margin_s"
+            android:paddingLeft="10dp"
+            android:background="@color/transparent_white"
+            android:focusableInTouchMode="false"
+            >
+            <!-- 高校+学院 -->
+            <ImageView
+                android:id="@+id/imgv_student_verify_school"
+                android:layout_width="@dimen/layoutWeight_s"
+                android:layout_height="@dimen/layoutHeight_s"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:focusableInTouchMode="false"
+                android:src="@drawable/home_ed" />
+
+            <TextView
+                android:id="@+id/tv_verify_school"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/layoutHeight"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:text="学校："
+                android:focusableInTouchMode="false"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"
+                android:typeface="serif" />
+
+            <TextView
+                android:id="@+id/tv_info_school"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:text="无"
+                android:focusableInTouchMode="false"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"
+                android:typeface="serif" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="@dimen/margin_s"
+            android:paddingLeft="10dp"
+            android:background="@color/transparent_white"
+            android:focusableInTouchMode="false"
+           >
+            <!--学号-->
+            <ImageView
+                android:id="@+id/imgv_student_verify_academy"
+                android:layout_width="@dimen/layoutWeight_s"
+                android:layout_height="@dimen/layoutHeight_s"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:focusableInTouchMode="false"
+                android:src="@drawable/home_ed" />
+
+            <TextView
+                android:id="@+id/tv_verify_academy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:text="学院："
+                android:focusableInTouchMode="false"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"
+                android:typeface="serif" />
+
+            <TextView
+                android:id="@+id/tv_info_academy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:text="无"
+                android:focusableInTouchMode="false"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"
+                android:typeface="serif" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="@dimen/margin_s"
+            android:paddingLeft="10dp"
+            android:background="@color/transparent_white"
+            android:focusableInTouchMode="false"
+            >
+
+            <ImageView
+                android:id="@+id/imgv_student_verify_cardid"
+                android:layout_width="@dimen/layoutWeight_s"
+                android:layout_height="@dimen/layoutHeight_s"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:focusableInTouchMode="false"
+                android:src="@drawable/ic_school" />
+
+            <TextView
+                android:id="@+id/tv_verify_cardid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:text="学号："
+                android:focusableInTouchMode="false"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"
+                android:typeface="serif" />
+
+            <TextView
+                android:id="@+id/tv_info_cardid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_l"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:text="无"
+                android:focusableInTouchMode="false"
+                android:textColor="@color/black"
+                android:textSize="@dimen/fontSize_s"
+                android:typeface="serif" />
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/margin_s"
+                android:background="@color/transparent_white">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/margin_s"
+                android:paddingLeft="10dp"
+                android:background="@color/transparent_white"
+                android:focusableInTouchMode="false"
+                >
+
+                <!--RelativeLayout
+                    android:id="@+id/relayout_student_verify_pic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginTop="@dimen/padding_l"
+                    android:background="@color/transparent_white"
+                    android:focusableInTouchMode="false"
+                    -->
+
+                    <ImageView
+                        android:id="@+id/imgv_student_verify_cardpicture"
+                        android:layout_width="@dimen/layoutWeight_s"
+                        android:layout_height="@dimen/layoutHeight_s"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginTop="@dimen/margin_l"
+                        android:layout_marginLeft="@dimen/margin_xs"
+                        android:src="@drawable/ic_photo"
+                        android:focusableInTouchMode="false"/>
+
+                    <TextView
+                        android:id="@+id/tv_verify_cardpicture"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_l"
+                        android:layout_marginLeft="@dimen/margin_xs"
+                        android:text="学生证照片："
+                        android:focusableInTouchMode="false"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/fontSize_s"
+                        android:typeface="serif" />
+
+                </LinearLayout>
+            <com.lzy.ninegrid.NineGridView
+                android:id="@+id/nineGrid_student_verify_picture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_xs"
+                android:layout_marginTop="@dimen/margin_xs"
+                />
+            </LinearLayout>
+            <!--/RelativeLayout-->
+            <!-- 认证图片 -->
+
+            <!--ImageView
+                android:layout_width="@dimen/layoutWidth_l"
+                android:layout_height="@dimen/layoutHeight_l"
+                android:layout_toRightOf="@+id/tv_verify_cardpicture"
+                android:id="@+id/imgv_student_cardpicture"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:src="@drawable/portrait_default">
+
+            </ImageView-->
+
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

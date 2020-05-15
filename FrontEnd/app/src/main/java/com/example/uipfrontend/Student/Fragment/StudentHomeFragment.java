@@ -23,6 +23,7 @@ import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Activity.StudentModifyPasswordActivity;
 import com.example.uipfrontend.Student.Activity.StudentMyReleaseActivity;
 import com.example.uipfrontend.Student.Activity.StudentPersonalInfoActivity;
+import com.example.uipfrontend.Student.Activity.StudentVerifyInfoActivity;
 import com.example.uipfrontend.Utils.ImageDialog;
 
 import java.util.Objects;
@@ -63,6 +64,7 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
         rootView.findViewById(R.id.rl_student_home_release).setOnClickListener(this);
         rootView.findViewById(R.id.rl_studentModifyPassword).setOnClickListener(this);
         rootView.findViewById(R.id.rl_studentInfo).setOnClickListener(this);
+        rootView.findViewById(R.id.rl_student_home_vertify).setOnClickListener(this);
 
         userInfo = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();  //获取登录用户信息
 
@@ -86,7 +88,8 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
                 startActivity(intent0);
                 break;
             case R.id.rl_student_home_vertify:
-
+                Intent intent1 = new Intent(activity,StudentVerifyInfoActivity.class);
+                startActivity(intent1);
                 break;
 
             case R.id.rl_student_home_release:

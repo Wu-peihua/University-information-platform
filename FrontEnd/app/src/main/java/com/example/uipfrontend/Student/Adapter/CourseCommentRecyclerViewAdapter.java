@@ -137,9 +137,6 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
         CourseCommentRecyclerViewAdapter.ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
-        //CourseComment comment = courseComments.get(pos);
-
-
         String isMe = user.getUserId().equals(courseComments.get(pos).getCommentatorId()) ? "(我)" : "";
 
         viewHolder.userName.setText(courseComments.get(pos).getFromName()+isMe);
