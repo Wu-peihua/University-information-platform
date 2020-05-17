@@ -3,6 +3,7 @@ package com.example.uipservice.dao;
 import com.example.uipservice.entity.CourseEvaluation;
 import com.example.uipservice.entity.ForumComments;
 import com.github.pagehelper.Page;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,6 +20,8 @@ public interface CourseEvaluationMapper {
 
     int updateByPrimaryKey(CourseEvaluation record);
 
+    int modifyCommentReportNumberById(Long infoId);
+
     //Page<CourseEvaluation> queryCourseEvaluation();
     Page<CourseEvaluation> queryCourseEvaluation();
 
@@ -27,4 +30,11 @@ public interface CourseEvaluationMapper {
     Page<CourseEvaluation> queryCourseEvaluationByUserId(Long userId);
 
     Page<CourseEvaluation> queryCourseEvaluationByCourseId(Long courseId);
+
+    Page<CourseEvaluation> queryCourseEvaluationByReport();
+
+    Page<CourseEvaluation> queryCourseEvaluationByUniAndInsByReport(@Param("universityId")Integer universityId, @Param("instituteId")Integer instituteId);
+
+
+
 }

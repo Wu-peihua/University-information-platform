@@ -43,6 +43,17 @@ public class CourseEvaluationController {
     }
 
     /**
+     * 更新课程评论信息，将举报数清0
+     * @return modelMap
+     */
+    @RequestMapping(value = "/modifycommentreportnumber", method = RequestMethod.POST)
+    private Map<String,Object> modifyCommentReportNumber(Long infoId){
+        Map<String,Object> modelMap = new HashMap<String, Object>();
+        modelMap.put("success", courseEvaluationService.modifyCommentReportNumber(infoId));
+        return modelMap;
+    }
+
+    /**
      * 删除一条评论信息
      * @return modelMap
      */
@@ -91,7 +102,23 @@ public class CourseEvaluationController {
         return courseEvaluationService.queryCourseEvaluationByCourseId(pageNum,pageSize,courseId);
     }
 
+    /**
+     * 获取所有评论信息，显示举报数大于10的评论
+     * @return modelMap
+     */
+    @RequestMapping(value = "/querycourseevalbyreport", method = RequestMethod.GET)
+    private Map queryCourseEvaluationByReport(Integer pageNum, Integer pageSize){
+        return courseEvaluationService.queryCourseEvaluationByReport(pageNum,pageSize);
+    }
 
+    /**
+     * 根据学校ID和学院ID分页获取所有评论信息，显示举报数大于10的评论
+     * @return modelMap
+     */
+    @RequestMapping(value = "/querycourseevalbyuniandinsbyreport", method = RequestMethod.GET)
+    private Map queryEvaluationByUniAndInsByReport(Integer pageNum, Integer pageSize, Integer universityId, Integer instituteId){
+        return courseEvaluationService.queryEvaluationByUniAndInsByReport(pageNum,pageSize,universityId,instituteId);
+    }
 
 
 

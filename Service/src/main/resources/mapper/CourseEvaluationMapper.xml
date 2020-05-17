@@ -176,4 +176,25 @@
     order by like_number desc
   </select>
 
+  <select id="queryEvaluationByUniAndInsByReport" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from course_evaluation
+    where university_id = #{universityId} and institute_id = #{instituteId} and report_number >= 10
+  </select>
+
+  <select id="queryCourseEvaluationByReport" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from course_evaluation
+    where report_number >= 10
+  </select>
+
+  <update id="modifyCommentReportNumberById" parameterType="com.example.uipservice.entity.CourseEvaluation" >
+    update course_evaluation
+    set report_number = 0
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+
+
 </mapper>
