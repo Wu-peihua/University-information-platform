@@ -79,6 +79,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.example.uipfrontend.Utils.UserOperationRecord.isFastClick;
+import static com.example.uipfrontend.Utils.UserOperationRecord.isNumber;
+
 /**
  * 当某条帖子被点击时跳转到这个Activity
  * 跳转时携带该条帖子对象
@@ -189,7 +192,7 @@ public class PostDetailActivity extends AppCompatActivity {
         dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE) //设置类型
                 .setLoadingColor(getResources().getColor(R.color.blue)) //颜色
                 .setHintText("加载中...")
-                .setCancelable(false)
+                .setCanceledOnTouchOutside(false)
                 .show();
         
         @SuppressLint("HandlerLeak")
@@ -294,22 +297,14 @@ public class PostDetailActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case NETWORK_ERR:
-                        Log.i("删除帖子: ", "失败");
-                        sDialog.setTitleText("删除失败")
-                                .setContentText("网络出了点问题，请稍候再试")
-                                .showCancelButton(false)
-                                .setConfirmText("确定")
-                                .setConfirmClickListener(null)
-                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        Log.i("删除帖子: ", "失败 - 网络错误");
+                        ErrorShow(sDialog, "删除失败", "请检查网络", "确定",
+                                SweetAlertDialog.ERROR_TYPE);
                         break;
                     case SERVER_ERR:
-                        Log.i("删除帖子: ", "失败");
-                        sDialog.setTitleText("删除失败")
-                                .setContentText("出了点问题，请稍候再试")
-                                .showCancelButton(false)
-                                .setConfirmText("确定")
-                                .setConfirmClickListener(null)
-                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        Log.i("删除帖子: ", "失败 - 服务器错误");
+                        ErrorShow(sDialog, "删除失败", "请稍后再试", "确定",
+                                SweetAlertDialog.ERROR_TYPE);
                         break;
                     case SUCCESS:
                         Log.i("删除帖子: ", "成功");
@@ -527,14 +522,14 @@ public class PostDetailActivity extends AppCompatActivity {
                         })
                         .setCancelClickListener(SweetAlertDialog::cancel)
                         .show();
-            } else {
-                
+            } 
+            else {
                 String key = "post" + post.getInfoId();
                 if (user.getReportRecord().containsKey(key)) {
                     Toast.makeText(this, "您已举报过，请等待处理", Toast.LENGTH_SHORT).show();
                 } else {
                     AlertDialog dialog = new AlertDialog.Builder(this)
-                            .setTitle("提示")
+                            .setTitle("举报")
                             .setMessage("如果该条帖子含有不恰当的内容，请点击确定")
                             .setPositiveButton("确定", (dialog1, which) -> {
                                 post.setReportNumber(post.getReportNumber() + 1);
@@ -560,31 +555,34 @@ public class PostDetailActivity extends AppCompatActivity {
 
         // 按热度从高到低排序: 先点赞数后回复数
         order_by_like.setOnClickListener(view -> {
-            if(!order_by_time.getText().toString().equals("时间")) {
+            if(!isFastClick() && !order_by_time.getText().toString().equals("时间")) {
                 order_by_like.setTextColor(getResources().getColor(R.color.blue));
                 order_by_time.setTextColor(getResources().getColor(R.color.gray));
                 order_by_time.setText("时间");
                 isDefaultOrder = true;
+                isTimeDesc = false;
                 getComment();
             }
         });
 
         // 按时间排序: ↓ - 远到近，↑ - 最新
         order_by_time.setOnClickListener(view -> {
-            order_by_time.setTextColor(getResources().getColor(R.color.blue));
-            order_by_like.setTextColor(getResources().getColor(R.color.gray));
-            
-            if (isDefaultOrder) { 
-                isDefaultOrder = false;
-            } else { 
-                isTimeDesc = !isTimeDesc;
-            }
-            getComment();
-            
-            if (isTimeDesc) {
-                order_by_time.setText("时间↑");
-            } else {
-                order_by_time.setText("时间↓");
+            if (!isFastClick()) {
+                order_by_time.setTextColor(getResources().getColor(R.color.blue));
+                order_by_like.setTextColor(getResources().getColor(R.color.gray));
+
+                if (isDefaultOrder) {
+                    isDefaultOrder = false;
+                } else {
+                    isTimeDesc = !isTimeDesc;
+                }
+                getComment();
+
+                if (isTimeDesc) {
+                    order_by_time.setText("时间↑");
+                } else {
+                    order_by_time.setText("时间↓");
+                }
             }
         });
 
@@ -656,7 +654,6 @@ public class PostDetailActivity extends AppCompatActivity {
                 UserOperationRecord.deleteRecord(this, infoId);
                 user.getLikeRecord().remove(key);
             }
-            adapter.notifyDataSetChanged();
         });
         
         adapter.setOnMoreClickListener((view, pos) -> {
@@ -679,14 +676,14 @@ public class PostDetailActivity extends AppCompatActivity {
                         })
                         .setCancelClickListener(SweetAlertDialog::cancel)
                         .show();
-            } else {
-                
+            } 
+            else {
                 String key = "comment" + list.get(pos).getInfoId();
                 if (user.getReportRecord().containsKey(key)) {
                     Toast.makeText(this, "您已举报过，请等待处理", Toast.LENGTH_SHORT).show();
                 } else {
                     AlertDialog dialog = new AlertDialog.Builder(this)
-                            .setTitle("提示")
+                            .setTitle("举报")
                             .setMessage("如果该条评论含有不恰当的内容，请点击确定")
                             .setPositiveButton("确定", (dialog1, which) -> {
                                 list.get(pos).setReportNumber(list.get(pos).getReportNumber() + 1);
@@ -712,13 +709,15 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * 描述：刷新时恢复默认排序和排序按钮
+     * 描述：显示的提示信息-无取消按钮、确定按钮无事件响应
      */
-    private void reset() {
-        order_by_like.setTextColor(getResources().getColor(R.color.blue));
-        order_by_time.setTextColor(getResources().getColor(R.color.gray));
-        order_by_time.setText("时间");
-        isDefaultOrder = true;
+    private void ErrorShow(SweetAlertDialog sDialog, String title, String content, String confirm, int type) {
+        sDialog.setTitleText(title)
+                .setContentText(content)
+                .showCancelButton(false)
+                .setConfirmText(confirm)
+                .setConfirmClickListener(null)
+                .changeAlertType(type);
     }
 
     /**
@@ -771,7 +770,7 @@ public class PostDetailActivity extends AppCompatActivity {
         detail_time.setText(post.getCreated());
 
         praise.setCount(post.getLikeNumber());
-        if (user.getLikeRecord().containsKey("post" + post.getInfoId())) {
+        if (user.getLikeRecord() != null && user.getLikeRecord().containsKey("post" + post.getInfoId())) {
             praise.setState(true);
         }
         
@@ -843,21 +842,6 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
     }
-    
-    /**
-     * 描述：判断字符串是否全部为数字，用于插入评论的返回值判断
-     * 参数：插入评论的返回值字符串
-     * 返回：true：全部为数字，插入成功，返回的是评论的infoId
-     *      false：包含非数字，插入失败，返回的是错误信息
-     */
-    private boolean isNumber(String s) {
-        for (int i = 0; i < s.length(); i++) {
-            if (!Character.isDigit(s.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     /**
      * 描述：用户发表评论
@@ -872,12 +856,12 @@ public class PostDetailActivity extends AppCompatActivity {
                 switch (msg.what) {
                     case NETWORK_ERR:
                         Log.i("插入评论: ", "失败 - 网络错误");
-                        Toast.makeText(PostDetailActivity.this, "网络出了点问题，请稍候再试",
+                        Toast.makeText(PostDetailActivity.this, "请检查网络",
                                 Toast.LENGTH_LONG).show();
                         break;
                     case SERVER_ERR:
                         Log.i("插入评论: ", "失败 - 服务器错误");
-                        Toast.makeText(PostDetailActivity.this, "出了点问题，请稍候再试",
+                        Toast.makeText(PostDetailActivity.this, "请稍后再试",
                                 Toast.LENGTH_LONG).show();
                         break;
                     case SUCCESS:
@@ -956,31 +940,18 @@ public class PostDetailActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case NETWORK_ERR:
-                        Log.i("删除评论: ", "失败");
-                        sDialog.setTitleText("删除失败")
-                                .setContentText("网络出了点问题，请稍候再试")
-                                .showCancelButton(false)
-                                .setConfirmText("确定")
-                                .setConfirmClickListener(null)
-                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        Log.i("删除评论: ", "失败 - 网络错误");
+                        ErrorShow(sDialog, "删除失败", "请检查网络", "确定",
+                                SweetAlertDialog.ERROR_TYPE);
                         break;
                     case SERVER_ERR:
-                        Log.i("删除评论: ", "失败");
-                        sDialog.setTitleText("删除失败")
-                                .setContentText("出了点问题，请稍候再试")
-                                .showCancelButton(false)
-                                .setConfirmText("确定")
-                                .setConfirmClickListener(null)
-                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        Log.i("删除评论: ", "失败 - 服务器错误");
+                        ErrorShow(sDialog, "删除失败", "请稍后再试", "确定",
+                                SweetAlertDialog.ERROR_TYPE);
                         break;
                     case SUCCESS:
                         Log.i("删除评论: ", "成功");
-                        sDialog.setTitleText("删除成功")
-                                .setContentText("")
-                                .showCancelButton(false)
-                                .setConfirmText("关闭")
-                                .setConfirmClickListener(null)
-                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                        ErrorShow(sDialog, "删除成功", "", "关闭", SweetAlertDialog.SUCCESS_TYPE);
                         list.remove(pos);
                         adapter.notifyDataSetChanged();
                         setCommentSum();

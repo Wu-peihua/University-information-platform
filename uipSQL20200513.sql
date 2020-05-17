@@ -177,17 +177,17 @@ CREATE TABLE `operation_record` (
 
 CREATE DEFINER=`root`@`localhost` TRIGGER `increase_like` AFTER INSERT ON `operation_record` FOR EACH ROW begin
     update forum_posts 
-    set like_number = like_number + 1 where info_id = new.object_id and new.tag = 1;
+    set like_number = like_number + 1 where info_id = new.object_id and new.tag = 1 and new.type = 1;
     update forum_comments
-    set like_number = like_number + 1 where info_id = new.object_id and new.tag = 1;
+    set like_number = like_number + 1 where info_id = new.object_id and new.tag = 1 and new.type = 2;
     update comment_reply
-    set like_number = like_number + 1 where info_id = new.object_id and new.tag = 1;
+    set like_number = like_number + 1 where info_id = new.object_id and new.tag = 1 and new.type = 3;
 		update forum_posts 
-    set report_number = report_number + 1 where info_id = new.object_id and new.tag = 2;
+    set report_number = report_number + 1 where info_id = new.object_id and new.tag = 2 and new.type = 1;
     update forum_comments
-    set report_number = report_number + 1 where info_id = new.object_id and new.tag = 2;
+    set report_number = report_number + 1 where info_id = new.object_id and new.tag = 2 and new.type = 2;
     update comment_reply
-    set report_number = report_number + 1 where info_id = new.object_id and new.tag = 2;
+    set report_number = report_number + 1 where info_id = new.object_id and new.tag = 2 and new.type = 3;
 
 #课程评论
     update course_evaluation 
@@ -198,11 +198,12 @@ end;
 
 CREATE DEFINER=`root`@`localhost` TRIGGER `decrease_like` BEFORE DELETE ON `operation_record` FOR EACH ROW begin
     update forum_posts 
-    set like_number = like_number - 1 where info_id = old.object_id and old.tag = 1;
+    set like_number = like_number - 1 where info_id = old.object_id and old.tag = 1 and old.type = 1;
     update forum_comments
-    set like_number = like_number - 1 where info_id = old.object_id and old.tag = 1;
+    set like_number = like_number - 1 where info_id = old.object_id and old.tag = 1 and old.type = 2;
     update comment_reply
-    set like_number = like_number - 1 where info_id = old.object_id and old.tag = 1;
+    set like_number = like_number - 1 where info_id = old.object_id and old.tag = 1 and old.type = 3;
+    
 #课程评论
     update course_evaluation 
     set like_number = like_number - 1 where info_id = old.object_id and old.type = 5 and old.tag=1 ;

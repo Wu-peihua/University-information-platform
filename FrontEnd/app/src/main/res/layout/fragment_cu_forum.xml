@@ -64,12 +64,12 @@
         <!-- 加号按钮 -->
         <ImageView
             android:id="@+id/imgv_cu_forum_new"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_weight="1"
             android:layout_gravity="center"
             android:scaleType="centerInside"
-            android:src="@drawable/new_post"/>
+            android:src="@drawable/new_post_blue"/>
         
     </LinearLayout>
 
