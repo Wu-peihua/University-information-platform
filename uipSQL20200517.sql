@@ -194,6 +194,12 @@ CREATE DEFINER=`root`@`localhost` TRIGGER `increase_like` AFTER INSERT ON `opera
     set like_number = like_number + 1 where info_id = new.object_id and new.type =5 and new.tag=1;
     update course_evaluation 
     set report_number = report_number + 1 where info_id = new.object_id and new.type =5 and new.tag=2;
+
+#资源信息
+    update resource 
+    set like_number = like_number + 1 where info_id = new.object_id and new.tag = 1 and new.type = 6;
+    update course_evaluation 
+    set report_number = report_number + 1 where info_id = new.object_id and new.tag = 2 and new.type = 6;
 end;
 
 CREATE DEFINER=`root`@`localhost` TRIGGER `decrease_like` BEFORE DELETE ON `operation_record` FOR EACH ROW begin
@@ -207,6 +213,10 @@ CREATE DEFINER=`root`@`localhost` TRIGGER `decrease_like` BEFORE DELETE ON `oper
 #课程评论
     update course_evaluation 
     set like_number = like_number - 1 where info_id = old.object_id and old.type = 5 and old.tag=1 ;
+
+#资源信息
+    update resource 
+    set like_number = like_number - 1 where info_id = old.object_id and old.tag = 1 and old.type = 6 ;
 end;
 
 

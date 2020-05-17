@@ -19,6 +19,7 @@ public class ResourceController {
 
     /**
      * 描述：插入资源信息
+     *
      * @param resource
      * @return
      */
@@ -31,6 +32,7 @@ public class ResourceController {
 
     /**
      * 描述：根据主键id删除资源发布记录
+     *
      * @param infoId
      * @return
      */
@@ -43,6 +45,7 @@ public class ResourceController {
 
     /**
      * 描述：根据用户id获取资源信息
+     *
      * @param pageNum
      * @param pageSize
      * @param userId
@@ -54,18 +57,16 @@ public class ResourceController {
     }
 
     /**
-     * 描述：根据资源类型获取资源信息
+     * 描述：根据资源类型和关键字获取资源信息
+     *
      * @param pageNum
      * @param pageSize
      * @param subjectId
      * @param typeId
      * @return
      */
-    @RequestMapping(value = "/queryresourcebytype", method = RequestMethod.GET)
-    private Map queryResourceByType(Integer pageNum, Integer pageSize, Integer subjectId, Integer typeId) {
-        if (subjectId == 0 && typeId == 0)
-            return resourceService.queryResource(pageNum, pageSize);
-        else
-            return resourceService.queryResourceByType(pageNum, pageSize, subjectId, typeId);
+    @RequestMapping(value = "/queryresourcebytypeandkeyword", method = RequestMethod.GET)
+    private Map queryResourceByTypeAndKeyword(Integer pageNum, Integer pageSize, Integer subjectId, Integer typeId, String keyword) {
+        return resourceService.queryResourceByTypeAndKeyword(pageNum, pageSize, subjectId, typeId, keyword);
     }
 }

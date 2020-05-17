@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.ResInfo;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.sunbinqiang.iconcountview.IconCountView;
@@ -22,11 +23,13 @@ import java.util.List;
 public class MyReleaseResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ResInfo> resInfoList;
     private Context context;
+    private UserInfo user;
 
     public MyReleaseResInfoAdapter(List<ResInfo> resInfoList, Context context) {
         super();
         this.resInfoList = resInfoList;
         this.context = context;
+        user = (UserInfo) context.getApplicationContext();
     }
 
     static class MyReleaseResInfoViewHolder extends RecyclerView.ViewHolder {
@@ -82,6 +85,16 @@ public class MyReleaseResInfoAdapter extends RecyclerView.Adapter<RecyclerView.V
         this.onItemModifyClickListener = onItemModifyClickListener;
     }
 
+    public interface OnItemLikeClickListener {
+        void onClick(boolean isSelected, int position);
+    }
+
+    private OnItemLikeClickListener onItemLikeClickListener;
+
+    public void setOnItemLikeClickListener(OnItemLikeClickListener onItemLikeClickListener) {
+        this.onItemLikeClickListener = onItemLikeClickListener;
+    }
+
     @Override
     public long getItemId(int position) {
         return position;
@@ -133,29 +146,19 @@ public class MyReleaseResInfoAdapter extends RecyclerView.Adapter<RecyclerView.V
             infoViewHolder.tv_link.setText(resInfo.getAddress());
             infoViewHolder.tv_time.setText(resInfo.getCreated());
             infoViewHolder.icv_like.setCount(resInfo.getLikeNumber());
-            infoViewHolder.icv_like.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
-                @Override
-                public void select(boolean isSelected) {
-                    if (isSelected)
-                        resInfo.setLikeNumber(resInfo.getLikeNumber() + 1);
-                    else
-                        resInfo.setLikeNumber(resInfo.getLikeNumber() - 1);
-                    notifyDataSetChanged();
-                }
+            if (user.getLikeRecord().containsKey("resource" + resInfo.getInfoId()))
+                infoViewHolder.icv_like.setState(true);
+
+            infoViewHolder.tv_delete.setOnClickListener(v -> {
+                if (onItemDeleteClickListener != null)
+                    onItemDeleteClickListener.onDeleteClick(position);
             });
-            infoViewHolder.tv_delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (onItemDeleteClickListener != null)
-                        onItemDeleteClickListener.onDeleteClick(position);
-                }
+            infoViewHolder.tv_modify.setOnClickListener(v -> {
+                if (onItemModifyClickListener != null)
+                    onItemModifyClickListener.onModifyClick(position);
             });
-            infoViewHolder.tv_modify.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (onItemModifyClickListener != null)
-                        onItemModifyClickListener.onModifyClick(position);
-                }
+            infoViewHolder.icv_like.setOnStateChangedListener(isSelected -> {
+                onItemLikeClickListener.onClick(isSelected, position);
             });
         }
     }

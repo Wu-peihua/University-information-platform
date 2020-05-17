@@ -170,11 +170,27 @@
     order by info_id desc
     </select>
 
+    <select id="queryResourceBySubjectId" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from resource
+    where subject_id = #{subjectId}
+    order by info_id desc
+    </select>
+
+    <select id="queryResourceByTypeId" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from resource
+    where type_id = #{typeId}
+    order by info_id desc
+    </select>
+
     <select id="queryResourceByType" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
     select
     *
     from resource
-    where subjectId = #{subjectId} and typeId = #{typeId}
+    where subject_id = #{subjectId} and type_id = #{typeId}
     order by info_id desc
     </select>
 
@@ -182,6 +198,38 @@
     select
     *
     from resource
+    order by info_id desc
+    </select>
+
+    <select id="queryResourceBySubjectIdAndKeyword" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from resource
+    where subject_id = #{subjectId} and title like #{keyword,jdbcType=VARCHAR}
+    order by info_id desc
+    </select>
+
+    <select id="queryResourceByTypeIdAndKeyword" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from resource
+    where type_id = #{typeId} and title like #{keyword,jdbcType=VARCHAR}
+    order by info_id desc
+    </select>
+
+    <select id="queryResourceByTypeAndKeyword" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from resource
+    where subject_id = #{subjectId} and type_id = #{typeId} and title like #{keyword,jdbcType=VARCHAR}
+    order by info_id desc
+    </select>
+
+    <select id="queryResourceByKeyword" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from resource
+    where title like #{keyword,jdbcType=VARCHAR}
     order by info_id desc
     </select>
 </mapper>

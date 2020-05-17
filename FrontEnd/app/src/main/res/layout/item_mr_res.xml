@@ -35,7 +35,6 @@
                 android:layout_marginBottom="5dp"
                 android:text="资源标题"
                 android:textColor="@color/black"
-                android:textIsSelectable="true"
                 android:textSize="@dimen/fontSize_s" />
 
             <TextView
@@ -70,7 +69,6 @@
                     android:text="www.baidu.com"
                     android:textColor="@color/item_text"
                     android:textColorLink="@color/blue"
-                    android:textIsSelectable="true"
                     android:textSize="@dimen/fontSize_s" />
 
             </LinearLayout>

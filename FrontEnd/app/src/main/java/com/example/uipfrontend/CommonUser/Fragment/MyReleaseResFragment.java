@@ -4,12 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -20,12 +14,19 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.uipfrontend.CommonUser.Activity.AddResActivity;
 import com.example.uipfrontend.CommonUser.Adapter.MyReleaseResInfoAdapter;
-import com.example.uipfrontend.CommonUser.Adapter.ResInfoAdapter;
 import com.example.uipfrontend.Entity.ResInfo;
 import com.example.uipfrontend.Entity.ResponseResource;
+import com.example.uipfrontend.Entity.UserInfo;
+import com.example.uipfrontend.Entity.UserRecord;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Utils.UserOperationRecord;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -36,12 +37,9 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -54,9 +52,10 @@ public class MyReleaseResFragment extends Fragment {
     private View rootView;
     private XRecyclerView xRecyclerView;
     private MyReleaseResInfoAdapter adapter;
-    private List<ResInfo> list;
+    private List<ResInfo> resInfoList;
     private int deletePos;
-    private int userId = 4;
+    private UserInfo user;
+    private Long userId;
 
     private static final int NETWORK_ERR = -2;
     private static final int SERVER_ERR = -1;
@@ -76,6 +75,8 @@ public class MyReleaseResFragment extends Fragment {
             }
         } else {
             rootView = inflater.inflate(R.layout.fragment_my_release_res, null);
+            user = (UserInfo) getActivity().getApplication();
+            userId = user.getUserId();
             initXRecyclerView();
             getData();
         }
@@ -92,17 +93,22 @@ public class MyReleaseResFragment extends Fragment {
                 switch (message.what) {
                     case NETWORK_ERR:
                         Log.i("获取资源发布记录-结果", "网络错误");
+                        Toast.makeText(getActivity(), "网络错误，请检查网络后再试", Toast.LENGTH_SHORT).show();
                         break;
                     case SERVER_ERR:
                         Log.i("获取资源发布记录-结果", "服务器错误");
+                        Toast.makeText(getActivity(), "服务器错误，请稍后再试", Toast.LENGTH_SHORT).show();
+
                         break;
                     case ZERO:
                         Log.i("获取资源发布记录-结果", "空");
+                        xRecyclerView.scheduleLayoutAnimation();
                         adapter.notifyDataSetChanged();
                         break;
                     case SUCCESS:
                         Log.i("获取资源发布记录-结果", "成功");
-                        Log.i("获取资源发布记录-数量", String.valueOf(list.size()));
+                        Log.i("获取资源发布记录-数量", String.valueOf(resInfoList.size()));
+                        xRecyclerView.scheduleLayoutAnimation();
                         adapter.notifyDataSetChanged();
                         break;
                 }
@@ -135,13 +141,15 @@ public class MyReleaseResFragment extends Fragment {
 
                     if (responseResource.getResInfoList() == null)
                         msg.what = SERVER_ERR;
-                    else if (responseResource.getResInfoList().size() == 0)
-                        msg.what = ZERO;
                     else {
-                        if (list.size() != 0)
-                            list.clear();
-                        list.addAll(responseResource.getResInfoList());
-                        msg.what = SUCCESS;
+                        if (resInfoList.size() != 0)
+                            resInfoList.clear();
+                        if (responseResource.getResInfoList().size() == 0)
+                            msg.what = ZERO;
+                        else {
+                            resInfoList.addAll(responseResource.getResInfoList());
+                            msg.what = SUCCESS;
+                        }
                     }
                     handler.sendMessage(msg);
                 }
@@ -160,23 +168,25 @@ public class MyReleaseResFragment extends Fragment {
                 switch (message.what) {
                     case NETWORK_ERR:
                         Log.i("加载资源发布记录-结果", "网络错误");
+                        Toast.makeText(getActivity(), "网络错误，请检查网络后再试", Toast.LENGTH_SHORT).show();
                         break;
                     case SERVER_ERR:
                         Log.i("加载资源发布记录-结果", "服务器错误");
+                        Toast.makeText(getActivity(), "服务器错误，请稍后再试", Toast.LENGTH_SHORT).show();
                         break;
                     case ZERO:
                         Log.i("加载资源发布记录-结果", "空");
-                        Log.i("加载资源发布记录-总数", String.valueOf(list.size()));
+                        Log.i("加载资源发布记录-总数", String.valueOf(resInfoList.size()));
                         xRecyclerView.setNoMore(true);
                         break;
                     case SUCCESS:
                         Log.i("加载资源发布记录-结果", "成功");
-                        Log.i("加载资源发布记录-总数", String.valueOf(list.size()));
+                        Log.i("加载资源发布记录-总数", String.valueOf(resInfoList.size()));
                         adapter.notifyDataSetChanged();
                         break;
                     case FINISH:
                         Log.i("加载资源发布记录-结果", "加载完毕");
-                        Log.i("加载资源发布记录-总数", String.valueOf(list.size()));
+                        Log.i("加载资源发布记录-总数", String.valueOf(resInfoList.size()));
                         xRecyclerView.setNoMore(true);
                         break;
                 }
@@ -212,7 +222,7 @@ public class MyReleaseResFragment extends Fragment {
                     else if (responseResource.getResInfoList().size() == 0)
                         msg.what = ZERO;
                     else {
-                        list.addAll(responseResource.getResInfoList());
+                        resInfoList.addAll(responseResource.getResInfoList());
                         if (CUR_PAGE_NUM * PAGE_SIZE < responseResource.getTotal())
                             msg.what = SUCCESS;
                         else
@@ -234,13 +244,16 @@ public class MyReleaseResFragment extends Fragment {
                 switch (message.what) {
                     case NETWORK_ERR:
                         Log.i("删除资源发布记录-结果", "网络错误");
+                        Toast.makeText(getActivity(), "网络错误，请检查网络后再试", Toast.LENGTH_SHORT).show();
                         break;
                     case SERVER_ERR:
                         Log.i("删除资源发布记录-结果", "服务器错误");
+                        Toast.makeText(getActivity(), "服务器错误，请稍后再试", Toast.LENGTH_SHORT).show();
                         break;
                     case SUCCESS:
                         Log.i("删除资源发布记录-结果", "成功");
-                        list.remove(deletePos);
+                        resInfoList.remove(deletePos);
+                        xRecyclerView.scheduleLayoutAnimation();
                         adapter.notifyDataSetChanged();
                         break;
                 }
@@ -251,7 +264,7 @@ public class MyReleaseResFragment extends Fragment {
             OkHttpClient client = new OkHttpClient();
 
             FormBody.Builder builder = new FormBody.Builder();
-            builder.add("infoId", String.valueOf(list.get(deletePos).getInfoId()));
+            builder.add("infoId", String.valueOf(resInfoList.get(deletePos).getInfoId()));
             RequestBody requestBody = builder.build();
             Request request = new Request.Builder()
                     .url(getResources().getString(R.string.serverBasePath)
@@ -285,9 +298,9 @@ public class MyReleaseResFragment extends Fragment {
     }
 
     public void initXRecyclerView() {
-        list = new ArrayList<>();
+        resInfoList = new ArrayList<>();
         xRecyclerView = rootView.findViewById(R.id.xrv_mr_res);
-        adapter = new MyReleaseResInfoAdapter(list, rootView.getContext());
+        adapter = new MyReleaseResInfoAdapter(resInfoList, rootView.getContext());
         adapter.setHasStableIds(true);
         xRecyclerView.setAdapter(adapter);
 
@@ -295,7 +308,7 @@ public class MyReleaseResFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(rootView.getContext()) {
             @Override
             public boolean canScrollVertically() {
-                if (list == null || list.size() == 0)
+                if (resInfoList == null || resInfoList.size() == 0)
                     return false;
                 return super.canScrollVertically();
             }
@@ -304,6 +317,9 @@ public class MyReleaseResFragment extends Fragment {
         xRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         xRecyclerView.getDefaultRefreshHeaderView().setRefreshTimeVisible(true);
         xRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
+
+        LayoutAnimationController animationController = AnimationUtils.loadLayoutAnimation(rootView.getContext(), R.anim.layout_animation);
+        xRecyclerView.setLayoutAnimation(animationController);
 
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
@@ -354,7 +370,7 @@ public class MyReleaseResFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 deletePos = position;
                                 Intent intent = new Intent(rootView.getContext(), AddResActivity.class);
-                                intent.putExtra("resInfo", list.get(position));
+                                intent.putExtra("resInfo", resInfoList.get(position));
                                 startActivityForResult(intent, 1);
                             }
                         })
@@ -364,6 +380,23 @@ public class MyReleaseResFragment extends Fragment {
                 dialog.show();
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
                 dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+            }
+        });
+        adapter.setOnItemLikeClickListener((isSelected, position) -> {
+            if (isSelected) {
+                resInfoList.get(position).setLikeNumber(resInfoList.get(position).getLikeNumber() + 1);
+                UserRecord record = new UserRecord();
+                record.setUserId(user.getUserId());
+                record.setToId(resInfoList.get(position).getInfoId());
+                record.setTag(1);
+                record.setType(6);
+                UserOperationRecord.insertRecord(getContext(), record, user);
+            } else {
+                resInfoList.get(position).setLikeNumber(resInfoList.get(position).getLikeNumber() - 1);
+                String key = "resource" + resInfoList.get(position).getInfoId();
+                Long infoId = user.getLikeRecord().get(key);
+                UserOperationRecord.deleteRecord(getContext(), infoId);
+                user.getLikeRecord().remove(key);
             }
         });
     }
