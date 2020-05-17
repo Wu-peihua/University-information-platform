@@ -16,10 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.CourseComment;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.sunbinqiang.iconcountview.IconCountView;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +30,25 @@ import info.hoang8f.widget.FButton;
 
 public class AdminReportCourseCommentAdapter extends RecyclerView.Adapter {
     private Context context;
-    private List<CourseComment> mTags = new ArrayList<>();
-    ;
+    private List<CourseComment> courseComments = new ArrayList<>();
+
+    private UserInfo user;//全局用户id
+
+    //分页请求课程评论数据
+    private static final int SUCCESS = 1;
+    private static final int FAIL = -1;
+    private static final int ZERO = 0; //记录请求回来的数据条数是否为零
+    //评论用户
 
     public void setList(List<CourseComment> list) {
-        this.mTags = list;
+        this.courseComments= list;
+
     }
 
     public AdminReportCourseCommentAdapter(Context context, List<CourseComment> list) {
         this.context = context;
-        this.mTags = list;
+        this.courseComments=list;
+        user = (UserInfo) context.getApplicationContext();
     }
 
 
@@ -69,6 +80,24 @@ public class AdminReportCourseCommentAdapter extends RecyclerView.Adapter {
 
         }
     }
+    public interface commentPassClickListener {
+        void onPassClick(int position);
+    }
+
+    private commentPassClickListener commentPassClickListener;
+
+    public void setCommentPassClickListener(commentPassClickListener commentPassClickListener) {
+        this.commentPassClickListener = commentPassClickListener;
+    }
+    public interface commentUnPassClickListener {
+        void onUnPassClick(int position);
+    }
+
+    private commentUnPassClickListener commentUnPassClickListener;
+
+    public void setCommentUnPassClickListener(commentUnPassClickListener commentUnPassClickListener) {
+        this.commentUnPassClickListener = commentUnPassClickListener;
+    }
 
 
     @NonNull
@@ -89,27 +118,53 @@ public class AdminReportCourseCommentAdapter extends RecyclerView.Adapter {
 
         AdminReportCourseCommentAdapter.ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
-        CourseComment comment = mTags.get(pos);
+        String isMe = user.getUserId().equals(courseComments.get(pos).getCommentatorId()) ? "(我)" : "";
 
-        //预设用户头像
-        Glide.with(context).load("")
+        viewHolder.userName.setText(courseComments.get(pos).getFromName()+isMe);
+        setImage(context,viewHolder.userimg,courseComments.get(pos).getPortrait());;
+
+        DateFormat datefomat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        String commentDate = datefomat.format(courseComments.get(pos).getInfoDate());
+        /// System.out.println("日期格式："+commentDate);
+        viewHolder.commentDate.setText(commentDate);
+
+        //courseImage.setImageResource(course.getImageurl());
+        viewHolder.commentContent.setText(courseComments.get(pos).getContent());
+        viewHolder.score.setStepSize((float) 0.5);
+        viewHolder.score.setRating(courseComments.get(pos).getScore());
+
+        Long curId = courseComments.get(pos).getInfoId();
+
+        viewHolder.Pass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (commentPassClickListener != null)
+                    commentPassClickListener.onPassClick(pos);
+            }
+        });
+        viewHolder.UnPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (commentUnPassClickListener != null)
+                    commentUnPassClickListener.onUnPassClick(pos);
+            }
+        });
+
+    }
+    //设置用户头像
+    private void setImage(Context context, ImageView imageView, String url) {
+        Glide.with(context).load(url)
                 .placeholder(R.drawable.portrait_default)
                 .error(R.drawable.portrait_default)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(viewHolder.userimg);
-
-
-        viewHolder.commentDate.setText(comment.getInfoDate().toString());
-        viewHolder.commentContent.setText(comment.getContent());
-        viewHolder.score.setRating((float)comment.getScore());
-
+                .into(imageView);
     }
 
     @Override
     public int getItemCount() {
 
 //        return list.size();
-        if (mTags != null) return mTags.size();
+        if (courseComments != null) return courseComments.size();
         return 0;
     }
 

@@ -109,6 +109,14 @@
     <string name="modifyReportNumber">/recruit/modifyreportnumber</string>
     <!--组队审核不通过，删除组队信息-->
     <string name="AdmindeleteRecruit">/recruit/deleterecruit</string>
+    <!--评论审核，分页获取举报数大于50的评论-->
+    <string name="queryCommentReport">/courseeval/querycourseevalbyreport</string>
+    <!--评论审核，根据学校ID和学院ID分页获取举报数大于10的评论-->
+    <string name="queryCommentByUniAndInsReport">/courseeval/querycourseevalbyuniandinsbyreport</string>
+    <!--评论审核通过，将评论举报数清0-->
+    <string name="modifyCommentReportNumber">/courseeval/modifycommentreportnumber</string>
+    <!--评论审核不通过，删除评论-->
+    <string name="AdmindeleteComment">/courseeval/deletecourseeval</string>
 
 
     <!--新版登录专用-->

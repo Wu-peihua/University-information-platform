@@ -118,8 +118,6 @@ public class SubFragment1 extends Fragment {
                 + "/?pageNum=1&pageSize=" + PAGE_SIZE );
         //获取列表数据
 //        getData();
-
-
     }
     private void getMenusData(){
         SharedPreferences sp = Objects.requireNonNull(getActivity()).getSharedPreferences("data",MODE_PRIVATE);

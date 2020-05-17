@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
+    <!-- 空白提示 -->
+    <TextView
+        android:id="@+id/admin_comment_blank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="还没有举报评论记录"
+        android:textColor="@color/blue"
+        android:visibility="gone"/>
+
     <com.qlh.dropdownmenu.DropDownMenu
         android:id="@+id/admin_dropDownMenu_student_course"
         android:layout_width="match_parent"
