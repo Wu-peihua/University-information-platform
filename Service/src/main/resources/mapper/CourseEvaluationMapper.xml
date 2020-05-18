@@ -178,15 +178,19 @@
 
   <select id="queryEvaluationByUniAndInsByReport" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
     select
-    *
-    from course_evaluation
-    where university_id = #{universityId} and institute_id = #{instituteId} and report_number >= 10
+    info_id, commentator_id, course_id, content, score, report_number,like_number, info_date,
+    course_evaluation.created, user_name, portrait
+    from course_evaluation left join user_info
+        on commentator_id = user_id and university_id = #{universityId} and institute_id = #{instituteId}
+    where  report_number >= 10
   </select>
 
   <select id="queryCourseEvaluationByReport" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
     select
-    *
-    from course_evaluation
+    info_id, commentator_id, course_id, content, score, report_number,like_number, info_date,
+    course_evaluation.created, user_name, portrait
+    from course_evaluation inner join user_info
+        on commentator_id = user_id
     where report_number >= 10
   </select>
 

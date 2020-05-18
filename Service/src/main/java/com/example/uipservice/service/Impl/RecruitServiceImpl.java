@@ -187,6 +187,11 @@ public class RecruitServiceImpl implements RecruitService {
         for(Recruit recruit: data){
             userNameList.add(userInfoMapper.selectByPrimaryKey(recruit.getUserId()).getUserName());
         }
+        List<String> userPortraitList = new ArrayList<>();
+        for(Recruit recruit: data){
+            userPortraitList.add(userInfoMapper.selectByPrimaryKey(recruit.getUserId()).getPortrait());
+        }
+        recruitMap.put("userPortraitList",userPortraitList);
         recruitMap.put("userNameList",userNameList);
         recruitMap.put("recruitInfoList",data);  //分页获取的数据
         recruitMap.put("total",data.getTotal());       //总页数
@@ -205,6 +210,11 @@ public class RecruitServiceImpl implements RecruitService {
         for(Recruit recruit: data){
             userNameList.add(userInfoMapper.selectByPrimaryKey(recruit.getUserId()).getUserName());
         }
+        List<String> userPortraitList = new ArrayList<>();
+        for(Recruit recruit: data){
+            userPortraitList.add(userInfoMapper.selectByPrimaryKey(recruit.getUserId()).getPortrait());
+        }
+        recruitMap.put("userPortraitList",userPortraitList);
         recruitMap.put("userNameList",userNameList);
         recruitMap.put("recruitInfoList",data);  //分页获取的数据
         recruitMap.put("total",data.getTotal());       //总页数
