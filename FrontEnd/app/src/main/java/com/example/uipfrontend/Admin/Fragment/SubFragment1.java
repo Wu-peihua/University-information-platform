@@ -32,6 +32,8 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import com.qlh.dropdownmenu.DropDownMenu;
 import com.example.uipfrontend.Utils.MultiMenusView;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +72,6 @@ public class SubFragment1 extends Fragment {
     private View rootContentView;    //根视图内容
     private TextView tv_blank;
 
-    //private FloatingActionButton fabtn;  //浮动按钮，发布新的组队信息
 
     private String[] levelOneMenu;
     private String[][] levelTwoMenu;
@@ -87,6 +88,10 @@ public class SubFragment1 extends Fragment {
     private int selectedUniversity = 0; //默认为0
     private int selectedInstitute = -1;  //默认为-1
 
+    //是否第一次加载
+    private boolean isFirstLoading = true;
+    //当前登陆用户
+    private UserInfo userInfo;
 
     @Nullable
     @Override
@@ -102,10 +107,27 @@ public class SubFragment1 extends Fragment {
 //            recyclerView = rootView.findViewById(R.id.rv_student_group);
             rootContentView = inflater.inflate(R.layout.fragment_admin_recruit_content,null);
             tv_blank = rootContentView.findViewById(R.id.admin_tv_blank);
+            userInfo = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();
             //     rootContentView=rootView;
             init();
         }
         return rootView;
+    }
+    /**
+     * 在fragment可见的时候，刷新数据
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (!isFirstLoading) {
+            //如果不是第一次加载，刷新数据
+            getData(getResources().getString(R.string.serverBasePath) +
+                    getResources().getString(R.string.queryRecruitReport)
+                    + "/?pageNum=1&pageSize=" + PAGE_SIZE );
+        }
+
+        isFirstLoading = false;
     }
 
     private void init() {
@@ -116,8 +138,6 @@ public class SubFragment1 extends Fragment {
         getData(getResources().getString(R.string.serverBasePath) +
                 getResources().getString(R.string.queryRecruitReport)
                 + "/?pageNum=1&pageSize=" + PAGE_SIZE );
-        //获取列表数据
-//        getData();
     }
     private void getMenusData(){
         SharedPreferences sp = Objects.requireNonNull(getActivity()).getSharedPreferences("data",MODE_PRIVATE);
@@ -191,8 +211,11 @@ public class SubFragment1 extends Fragment {
     }
 
     private void getData(String requestUrl){
-
-
+        ZLoadingDialog dialog = new ZLoadingDialog(getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
         list = new ArrayList<>();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -203,12 +226,14 @@ public class SubFragment1 extends Fragment {
                         //初始化列表
                         initRecyclerView();
                         tv_blank.setVisibility(View.GONE);
+                        dialog.dismiss();
                         break;
 
                     case FAIL:
                         Log.i("获取 ", "失败");
                         tv_blank.setText("获取信息失败");
                         tv_blank.setVisibility(View.VISIBLE);
+                        dialog.dismiss();
                         break;
 
                     case ZERO:
@@ -217,6 +242,7 @@ public class SubFragment1 extends Fragment {
                         tv_blank.setText("无相关组队举报信息");
                         tv_blank.setVisibility(View.VISIBLE);
                         initRecyclerView();
+                        dialog.dismiss();
                         break;
                 }
             }
@@ -271,7 +297,7 @@ public class SubFragment1 extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        studentRecruitRecyclerViewAdapter = new AdminReportRecruitRecyclerViewAdapter(this.getContext(), list,userNameList, userPortraitList);
+        studentRecruitRecyclerViewAdapter = new AdminReportRecruitRecyclerViewAdapter(this.getContext(),list,userNameList,userPortraitList,userInfo);
         recyclerView.setAdapter(studentRecruitRecyclerViewAdapter);
 
         recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
@@ -327,7 +353,11 @@ public class SubFragment1 extends Fragment {
 
     }
     private void fetchRecruitInfo(String requestUrl){
-
+        ZLoadingDialog dialog = new ZLoadingDialog(getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
 
         new Handler().postDelayed(() -> {
             @SuppressLint("HandlerLeak")
@@ -338,18 +368,21 @@ public class SubFragment1 extends Fragment {
                         case SUCCESS:
                             Log.i("获取", "成功");
                             tv_blank.setVisibility(View.GONE);
-                            studentRecruitRecyclerViewAdapter.setList(list, userPortraitList);
+                            studentRecruitRecyclerViewAdapter.setList(list, userNameList,userPortraitList);
                             studentRecruitRecyclerViewAdapter.notifyDataSetChanged();
+                            dialog.dismiss();
                             break;
                         case FAIL:
                             Log.i("获取", "失败");
                             tv_blank.setText("获取信息失败");
                             tv_blank.setVisibility(View.VISIBLE);
+                            dialog.dismiss();
                             break;
                         case ZERO:
                             Log.i("获取", "0");
                             tv_blank.setText("无相关组队举报信息");
                             tv_blank.setVisibility(View.VISIBLE);
+                            dialog.dismiss();
                             break;
                     }
                     recyclerView.refreshComplete();

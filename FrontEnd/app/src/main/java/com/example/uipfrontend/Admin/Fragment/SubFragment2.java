@@ -76,6 +76,7 @@ public class SubFragment2 extends Fragment {
 
 
     private List<CourseComment> comments =new ArrayList<>();//用户评论列表
+//    private List<CourseComment> comments;
 
     private View rootView;  //根视图（下拉筛选框）
     private View rootContentView;    //根视图内容
@@ -192,7 +193,7 @@ public class SubFragment2 extends Fragment {
                 System.out.println("university:"+selectedUniversity+"  institute:"+selectedInstitute);
 
                 getData(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryCommentByUniAndInsReport)
-                        + "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE  + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
+                        + "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE   + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute+ "&state=0");
 
 
                 dropDownMenu.setTabText(var1);
@@ -224,9 +225,9 @@ public class SubFragment2 extends Fragment {
                     case ZERO:
                         Log.i("获取: ", "0");
                         //Toast.makeText(recyclerView.getContext(),"暂时没有新的信息！",Toast.LENGTH_SHORT).show();
-                        //initRecyclerView();
                         tv_blank.setText("无相关评论举报信息");
                         tv_blank.setVisibility(View.VISIBLE);
+                        initRecyclerView();
                         break;
                 }
             }
@@ -277,7 +278,6 @@ public class SubFragment2 extends Fragment {
                             System.out.println("评论列表为空\n");
                         }else {
                             msg.what = SUCCESS;
-
                             //System.out.println("评论列表为:"+comments.toString());
                         }
                         handler.sendMessage(msg);
@@ -286,8 +286,6 @@ public class SubFragment2 extends Fragment {
                 }
             });
         }).start();
-
-
     }
 
 
@@ -302,6 +300,8 @@ public class SubFragment2 extends Fragment {
 
         studentCourseRecyclerViewAdapter = new AdminReportCourseCommentAdapter(this.getContext(),comments);
         recyclerView.setAdapter(studentCourseRecyclerViewAdapter);
+        studentCourseRecyclerViewAdapter.notifyDataSetChanged();
+
 
         recyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
         recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
@@ -340,12 +340,23 @@ public class SubFragment2 extends Fragment {
 
                     new Thread(()->{
                         CUR_PAGE_NUM = 1;
-                        Request request = new Request.Builder()
-                                .url(getResources().getString(R.string.serverBasePath) +
-                                        getResources().getString(R.string.queryCommentReport)
-                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE +"&state=0")
-                                .get()
-                                .build();
+                        Request request;
+                        if(selectedUniversity <= 0 && selectedInstitute <=0 ){
+                            request = new Request.Builder()
+                                    .url(getResources().getString(R.string.serverBasePath) +
+                                            getResources().getString(R.string.queryCommentReport)
+                                            + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE +"&state=0")
+                                    .get()
+                                    .build();
+                        }else{
+                            request = new Request.Builder()
+                                    .url(getResources().getString(R.string.serverBasePath) +
+                                            getResources().getString(R.string.queryCommentByUniAndInsReport)
+                                            + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE +"&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute+"&state=0")
+                                    .get()
+                                    .build();
+                        }
+
                         Message msg = new Message();
                         OkHttpClient okHttpClient = new OkHttpClient();
                         Call call = okHttpClient.newCall(request);
@@ -405,12 +416,22 @@ public class SubFragment2 extends Fragment {
 
                     new Thread(()->{
                         CUR_PAGE_NUM++;
-                        Request request = new Request.Builder()
-                                .url(getResources().getString(R.string.serverBasePath) +
-                                        getResources().getString(R.string.queryCommentReport)
-                                        + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize=" + PAGE_SIZE + "&state=0")
-                                .get()
-                                .build();
+                        Request request;
+                        if(selectedUniversity <= 0 && selectedInstitute <=0 ){
+                            request = new Request.Builder()
+                                    .url(getResources().getString(R.string.serverBasePath) +
+                                            getResources().getString(R.string.queryCommentReport)
+                                            + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE +"&state=0")
+                                    .get()
+                                    .build();
+                        }else{
+                            request = new Request.Builder()
+                                    .url(getResources().getString(R.string.serverBasePath) +
+                                            getResources().getString(R.string.queryCommentByUniAndInsReport)
+                                            + "/?pageNum="+ CUR_PAGE_NUM +"&pageSize="+ PAGE_SIZE +"&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute+"&state=0")
+                                    .get()
+                                    .build();
+                        }
                         Message msg = new Message();
                         OkHttpClient okHttpClient = new OkHttpClient();
                         Call call = okHttpClient.newCall(request);

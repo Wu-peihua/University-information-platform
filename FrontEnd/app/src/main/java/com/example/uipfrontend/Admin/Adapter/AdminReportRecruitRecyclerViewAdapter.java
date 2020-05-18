@@ -35,11 +35,14 @@ public class AdminReportRecruitRecyclerViewAdapter extends RecyclerView.Adapter 
     private List<String> userNameList;
     private List<String> userPortraitList;
 
-    public AdminReportRecruitRecyclerViewAdapter(Context context, List list,List userNameList,List userPortraitList) {
+    private UserInfo userInfo;
+
+    public AdminReportRecruitRecyclerViewAdapter(Context context, List list,List userNameList,List userPortraitList,UserInfo userInfo) {
         this.context = context;
         this.list = list;
         this.userNameList = userNameList;
         this.userPortraitList = userPortraitList;
+        this.userInfo = userInfo;
     }
 
 
@@ -94,8 +97,11 @@ public class AdminReportRecruitRecyclerViewAdapter extends RecyclerView.Adapter 
     }
 
 
-    public void setList(List<RecruitInfo> list , List<String> userPortraitList) { this.list = list; this.userNameList = userPortraitList; }
-
+    public void setList(List<RecruitInfo> list,List userNameList,List userPortraitList){
+        this.list = list;
+        this.userNameList = userNameList;
+        this.userPortraitList = userPortraitList;
+    }
 
 
     @NonNull
@@ -116,18 +122,21 @@ public class AdminReportRecruitRecyclerViewAdapter extends RecyclerView.Adapter 
         viewHolder.title.setText(list.get(pos).getTitle());
         viewHolder.content.setText(list.get(pos).getContent());
         //发布人头像
-        setImage(context,viewHolder.portrait,"http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg");
+        setImage(context,viewHolder.portrait,userPortraitList.get(pos));
         viewHolder.portrait.setBorderWidth(0);
 
-        //临时显示组队信息图片
+
+        //显示组队信息图片
         ArrayList<ImageInfo> imageInfo = new ArrayList<>();
         ImageInfo info = new ImageInfo();
-        String tempUrl[] = list.get(pos).getPictures().split(",");
-        for(String url : tempUrl){
-            //localhost需改为服务器的ip
-            info.setThumbnailUrl(url); //略缩图
-            info.setBigImageUrl(url);  //点击放大图
-            imageInfo.add(info);
+        if(list.get(pos).getPictures() != null){
+            String tempUrl[] = list.get(pos).getPictures().split(",");
+            for(String url : tempUrl){
+                //localhost需改为服务器的ip才能正常显示图片
+                info.setThumbnailUrl(url); //略缩图
+                info.setBigImageUrl(url);  //点击放大图
+                imageInfo.add(info);
+            }
         }
 
         viewHolder.nineGridView.setAdapter(new NineGridViewClickAdapter(context, imageInfo));
