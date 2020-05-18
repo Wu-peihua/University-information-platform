@@ -135,26 +135,28 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 
         AdminCourseCommentRecyclerViewAdapter.ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
-        CourseComment comment = courseComments.get(pos);
+        //CourseComment comment = courseComments.get(pos);
 
         //设置 commentator id
         //设置评论用户名字与头像
         //System.out.println("user id:"+user.getUserId());
         //System.out.println("commentator id:"+comment.getCommentatorId());
-        String isMe = user.getUserId().equals(comment.getCommentatorId()) ? "(我)" : "";
+//        String isMe = user.getUserId().equals(comment.getCommentatorId()) ? "(我)" : "";
+        String isMe = user.getUserId().equals(courseComments.get(pos).getCommentatorId()) ? "(我)" : "";
 
-        viewHolder.userName.setText(comment.getFromName()+isMe);
-        setImage(context,viewHolder.userimg,comment.getPortrait());;
+
+        viewHolder.userName.setText(courseComments.get(pos).getFromName()+isMe);
+        setImage(context,viewHolder.userimg,courseComments.get(pos).getPortrait());;
 
         DateFormat datefomat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        String commentDate = datefomat.format(comment.getInfoDate());
+        String commentDate = datefomat.format(courseComments.get(pos).getInfoDate());
         /// System.out.println("日期格式："+commentDate);
         viewHolder.commentDate.setText(commentDate);
 
         //courseImage.setImageResource(course.getImageurl());
-        viewHolder.commentContent.setText(comment.getContent());
+        viewHolder.commentContent.setText(courseComments.get(pos).getContent());
         viewHolder.score.setStepSize((float) 0.5);
-        viewHolder.score.setRating(comment.getScore());
+        viewHolder.score.setRating(courseComments.get(pos).getScore());
 
         //举报提示框
         viewHolder.BtnBadReport.setOnClickListener(new View.OnClickListener() {

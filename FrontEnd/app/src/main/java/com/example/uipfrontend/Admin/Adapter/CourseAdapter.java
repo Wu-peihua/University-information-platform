@@ -22,6 +22,7 @@ import com.lzy.ninegrid.NineGridView;
 import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
 import com.lzy.widget.CircleImageView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,32 +60,6 @@ public class CourseAdapter extends RecyclerView.Adapter {
     }
 
 
-//        @OnClick(R.id.tv_student_group_item_delete)
-//        public void delete(View view) {
-//            final GlobalDialog delDialog = new GlobalDialog(context);
-//            delDialog.setCanceledOnTouchOutside(true);
-//            delDialog.getTitle().setText("提示");
-//            delDialog.getContent().setText("确定删除吗?");
-//            delDialog.setLeftBtnText("取消");
-//            delDialog.setRightBtnText("确定");
-//            delDialog.setLeftOnclick(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(context, "取消", Toast.LENGTH_SHORT).show();
-//                    delDialog.dismiss();
-//                }
-//            });
-//            delDialog.setRightOnclick(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(context, "确定", Toast.LENGTH_SHORT).show();
-//                    delDialog.dismiss();
-//                }
-//            });
-//            delDialog.show();
-//        }
-
-
 
     @NonNull
     @Override
@@ -107,9 +82,22 @@ public class CourseAdapter extends RecyclerView.Adapter {
         Course course = mTags.get(pos);
         viewHolder.name.setText(course.getName());
         viewHolder.teacher.setText(course.getTeacher());
-        viewHolder.score.setText(String.valueOf(course.getScore()));
+//        viewHolder.score.setText(String.valueOf(course.getScore()));
+//        viewHolder.content.setText(course.getDescription());
+//        viewHolder.card_item.setOnClickListener(view -> itemClickListener.onItemClick(pos));
+        Glide.with(context).load(course.getCoursePicture())
+                .placeholder(R.drawable.coding_class)
+                .error(R.drawable.coding_class)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(viewHolder.img);
+
+        BigDecimal b   =   new   BigDecimal(course.getScore());
+        float trimScore =   b.setScale(1,   BigDecimal.ROUND_HALF_UP).floatValue();
+        viewHolder.score.setText(String.valueOf(trimScore));
         viewHolder.content.setText(course.getDescription());
         viewHolder.card_item.setOnClickListener(view -> itemClickListener.onItemClick(pos));
+
+
         //设置点击监听器
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,26 +109,6 @@ public class CourseAdapter extends RecyclerView.Adapter {
                 }
             }
         });
-
-        /*
-        * holder.tvName.setText(mTags.get(position).getName());
-        holder.tvTeacher.setText(mTags.get(position).getTeacher());
-        holder.tvScore.setText(String.valueOf(mTags.get(position).getScore()));
-        holder.tvContent.setText(mTags.get(position).getDescription());
-
-
-        //holder.bindData(mTags.get(position));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null) {
-                    Log.e("click", "!");
-                    itemClickListener.onItemClick(position);
-                }
-            }
-        });
-        * */
-
 
     }
 

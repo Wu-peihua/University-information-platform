@@ -34,6 +34,8 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.qlh.dropdownmenu.DropDownMenu;
 //import com.qlh.dropdownmenu.view.MultiMenusView;
 import com.example.uipfrontend.Utils.MultiMenusView;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 
 import java.io.IOException;
@@ -121,6 +123,11 @@ public class AdminCourseFragment extends Fragment {
     //请求后端课程数据
     private void getData(String requestUrl){
         //courses = new ArrayList<>();
+        ZLoadingDialog dialog = new ZLoadingDialog(getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message message){
@@ -344,8 +351,6 @@ public class AdminCourseFragment extends Fragment {
     }
     private void initRecyclerView() {
         recyclerView = rootContentView.findViewById(R.id.rv_admin_group);
-
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -367,10 +372,14 @@ public class AdminCourseFragment extends Fragment {
 //                Log.e("course位置", "" + position + "被点击了！");
                 System.out.println("点击了"+"courseId:"+courseID.toString());
 
-                Intent intent = new Intent(getContext(), AdminCourseDetailActivity.class);
-                intent.putExtra("coursedetail",courses.get(position));
-
-                startActivity(intent);
+                Intent intent = new Intent(rootView.getContext(), AdminCourseDetailActivity.class);
+//                intent.putExtra("coursedetail",courses.get(position));
+//
+//                startActivity(intent);
+                intent.putExtra("pos", position);
+                intent.putExtra("beginFrom", "courseList");
+                intent.putExtra("coursedetail", courses.get(position));
+                startActivityForResult(intent, myRequestCode);
 
             }
         });

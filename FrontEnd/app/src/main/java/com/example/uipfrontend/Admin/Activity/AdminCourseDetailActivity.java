@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,10 +17,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Admin.Adapter.AdminCourseCommentRecyclerViewAdapter;
 import com.example.uipfrontend.Entity.Course;
 import com.example.uipfrontend.Entity.CourseComment;
 import com.example.uipfrontend.Entity.ResponseCourseComment;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -29,6 +33,7 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,12 +58,15 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
     //private ListView CommentList;
     private TextView commentSum;//评论数目
     private FButton EditCourse;//编辑课程
-
+    private EditText CommentEidt ;//编辑评论框
+    private RatingBar UserRating;//评分星星
 
     private TextView Name ;
     private TextView Teacher;
     private TextView Description;
     private TextView Score ;
+    private  RatingBar BarScore;//评分平均分
+    private ImageView CourseImage;
 
     private TextView order_by_time; // 评论按时间排序
     private TextView order_by_like; // 评论按热度排序
@@ -69,16 +77,32 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
 
     //private View rootView;
     private Long globalcourseid ;//课程id
+    private Integer globalcourseschoolId;//课程所属学校id
+
     private List<CourseComment> comments =new ArrayList<>();//用户评论列表
-    private List<CourseComment> list_order_by_asc; // ↓：按时间从远到近
-    private List<CourseComment> list_order_by_des; // ↑：按时间从近到远
+
 
     //分页请求课程评论数据
     private static final int SUCCESS = 1;
     private static final int FAIL = -1;
     private static final int ZERO = 0; //记录请求回来的数据条数是否为零
-    private static final int PAGE_SIZE = 6;   //默认一次请求6条数据
+    private static final int PAGE_SIZE = 20;   //默认一次请求6条数据
     private static int CUR_PAGE_NUM = 1;
+
+    private UserInfo user;//全局用户信息
+    private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private static boolean flag = true;
+
+    private String     beginFrom; // 标识从哪里启动这个Activity
+    private int        coursePos;   // 该条课程在list的位置
+
+    // 课程评分变化
+    private static final String s1 = "insertCoursecomment";
+    private static final String s2 = "deleteCourseComment";
+    private static final String s3 = "increaseLikeInCommentDetail";
+    private static final String s4 = "decreaseLikeInCommentDetail";
+
+    private  Course coursedetail;//全局的课程
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,18 +113,19 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
         setContentView(R.layout.item_admin_course_details);
 
         //接受点击事件传参数
-        Course coursedetail = (Course) Objects.requireNonNull(getIntent().getExtras()).get("coursedetail");
+        beginFrom = getIntent().getStringExtra("beginFrom");
+        coursePos = getIntent().getIntExtra("pos", -1);
 
+        coursedetail = (Course) Objects.requireNonNull(getIntent().getExtras()).get("coursedetail");
         globalcourseid = coursedetail.getCourseID();
-        //Bundle bundle = getIntent().getExtras();
-        //String nameID = bundle.getString("name");
+        globalcourseschoolId = coursedetail.getSchoolId();//非本校用户禁止评分
+
         init(coursedetail);
     }
 
     public void init(Course coursedetail){
-        //评论列表初始化
-        //initCommentData();
         //课程卡片详情
+        user = (UserInfo) getApplication();
         initCardView(coursedetail);
         getCommentData();
 
@@ -114,11 +139,10 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
         Teacher = (TextView)this.findViewById(R.id.adminTeacherName);
         Description = (TextView)this.findViewById(R.id.admincourseDescription);
         Score = (TextView)this.findViewById(R.id.adminRatingScore);
+        BarScore = (RatingBar)this.findViewById(R.id.admincourseRatingBar);
+        CourseImage = (ImageView)this.findViewById(R.id.admincourseImage);
 
-        Name.setText(course.getName());
-        Teacher.setText(course.getTeacher());
-        Description.setText(course.getDescription());
-        Score.setText(String.valueOf(course.getScore()));
+
 
         EditCourse = (FButton) findViewById(R.id.admin_fbtn_Editcourse) ;
         commentSum = (TextView) findViewById(R.id.admin_course_comment_sum);
@@ -126,34 +150,23 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
         order_by_time = findViewById(R.id.admin_tv_course_comment_order_by_time);
         order_by_like = findViewById(R.id.admin_tv_course_comment_order_by_like);
 
-        // 按热度从高到低排序
-        order_by_like.setOnClickListener(view -> {
-            if(!order_by_time.getText().toString().equals("时间")) {
-                order_by_like.setTextColor(getResources().getColor(R.color.blue));
-                order_by_time.setTextColor(getResources().getColor(R.color.gray));
-                order_by_time.setText("时间");
-                commentAdapter.setList(comments);
-                commentAdapter.notifyDataSetChanged();
-            }
-        });
+        Name.setText(course.getName());
+        Teacher.setText(course.getTeacher());
+        Description.setText(course.getDescription());
+        Glide.with(this).load(course.getCoursePicture())
+                .placeholder(R.drawable.mysql_logo)
+                .error(R.drawable.mysql_logo)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(CourseImage);
 
-        // 按时间排序
-        order_by_time.setOnClickListener(view -> {
-            order_by_time.setTextColor(getResources().getColor(R.color.blue));
-            order_by_like.setTextColor(getResources().getColor(R.color.gray));
-            String text = order_by_time.getText().toString();
-            if(text.contains("↑")){
-                order_by_time.setText("时间↓");
-                commentAdapter.setList(list_order_by_asc);
-            } else if(text.contains("↓")) {
-                order_by_time.setText("时间↑");
-                commentAdapter.setList(list_order_by_des);
-            } else {
-                order_by_time.setText("时间↓");
-                commentAdapter.setList(list_order_by_asc);
-            }
-            commentAdapter.notifyDataSetChanged();
-        });
+        //评分文本bar显示设置精确到0.1
+        BarScore.setStepSize((float) 0.1);
+        BigDecimal b   =   new   BigDecimal(course.getScore());
+        float trimScore =   b.setScale(1,   BigDecimal.ROUND_HALF_UP).floatValue();
+        Score.setText(String.valueOf(trimScore));
+        BarScore.setRating(trimScore);
+        setCommentSum();
+
 
 
         /***************************编辑课程**********************************************/
@@ -185,6 +198,53 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
         });
 
     }
+
+    private void setListListener() {
+        // 按热度从高到低排序
+        order_by_like.setOnClickListener(view -> {
+            if(!order_by_time.getText().toString().equals("时间")) {
+                order_by_like.setTextColor(getResources().getColor(R.color.blue));
+                order_by_time.setTextColor(getResources().getColor(R.color.gray));
+                order_by_time.setText("时间");
+                flag = true;
+                sortByLikeNum();
+                commentAdapter.setList(comments);
+                commentAdapter.notifyDataSetChanged();
+            }
+        });
+
+        // 按时间排序
+        order_by_time.setOnClickListener(view -> {
+            order_by_time.setTextColor(getResources().getColor(R.color.blue));
+            order_by_like.setTextColor(getResources().getColor(R.color.gray));
+            String text = order_by_time.getText().toString();
+            if (flag) { sortByTimeAsc(); flag = false; }
+            else { Collections.reverse(comments); }
+
+            if (text.contains("↑")) {
+                order_by_time.setText("时间↓");
+            } else if (text.contains("↓")) {
+                order_by_time.setText("时间↑");
+            } else {
+                order_by_time.setText("时间↓");
+            }
+            commentAdapter.setList(comments);
+            commentAdapter.notifyDataSetChanged();
+        });
+    }
+
+    /**
+     * 设置评论数目
+     */
+    private void setCommentSum() {
+        if (comments.size() == 0) {
+            commentSum.setText("还没有人评论，快来抢沙发吧。");
+        } else {
+            commentSum.setText(comments.size() + "条评论");
+        }
+    }
+    /**获取评论数据
+     * */
     public void getCommentData(){
         //courses = new ArrayList<>();
         @SuppressLint("HandlerLeak")
@@ -195,6 +255,8 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
                         Log.i("获取: ", "成功");
                         //初始化列表
                         initRecyclerView();
+                        setListListener();
+                        setCommentSum();
                         break;
 
                     case FAIL:
@@ -205,6 +267,8 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
                         Log.i("获取: ", "0");
                         //Toast.makeText(recyclerView.getContext(),"暂时没有新的信息！",Toast.LENGTH_SHORT).show();
                         initRecyclerView();
+                        setListListener();
+                        setCommentSum();
                         break;
                 }
             }
@@ -231,7 +295,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
                 public void onResponse(Call call, Response response) throws IOException {
 
                     String data = response.body().string();
-                    System.out.println("课程评论请求返回数据:"+data);
+//                    System.out.println("课程评论请求返回数据:"+data);
 
                     //日期格式化
                     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd hh:mm").create();
@@ -255,60 +319,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
                             System.out.println("评论列表为空\n");
                         } else {
                             msg.what = SUCCESS;
-                            //两个排序列表同步更新
-                            //升序
-                            list_order_by_asc = new ArrayList<>();
-                            list_order_by_asc.addAll(comments);
-                            Collections.sort(list_order_by_asc, new Comparator<CourseComment>() {
-                                DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                                @Override
-                                public int compare(CourseComment p1, CourseComment p2) {
-                                    //try {
-                                    return  p1.getInfoDate().compareTo(p2.getInfoDate());
-                                    //return f.parse(p1.getInfoDate().toString()).compareTo(f.parse(p2.getInfoDate().toString()));
-                                    //} catch (ParseException e) {
-                                    //    throw new IllegalArgumentException(e);
-                                    // }
-                                }
-                            });
-
-                            //降序排列
-                            Collections.sort(comments, new Comparator<CourseComment>() {
-                                @Override
-                                public int compare(CourseComment c1, CourseComment c2) {
-                                    int s1 = c1.getLikeCount();
-                                    int s2 = c2.getLikeCount();
-                                    return s1 < s2 ? s1 : (s1 == s2) ? 0 : -1;
-                                }
-                            });
-
-                            //count = mTags.size();
-                            list_order_by_des = new ArrayList<>();
-                            list_order_by_des.addAll(comments);
-                            Collections.sort(list_order_by_des, new Comparator<CourseComment>() {
-                                DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                                @Override
-                                public int compare(CourseComment p1, CourseComment p2) {
-                                    //try {
-                                    //    return f.parse(p2.getInfoDate().toString()).compareTo(f.parse(p1.getInfoDate().toString()));
-                                    // } catch (ParseException e) {
-                                    //     throw new IllegalArgumentException(e);
-                                    // }
-                                    return p2.getInfoDate().compareTo(p1.getInfoDate());
-                                }
-                            });
-
-                            Collections.sort(comments, new Comparator<CourseComment>() {
-                                @Override
-                                public int compare(CourseComment p1, CourseComment p2) {
-                                    int s1 = p1.getLikeCount();
-                                    int s2 = p2.getLikeCount();
-                                    return s1 < s2 ? s1 : (s1 == s2) ? 0 : -1;
-                                }
-                            });
-
-
-                            System.out.println("评论列表为:"+comments.toString());
+                            //System.out.println("评论列表为:"+comments.toString());
                         }
                         handler.sendMessage(msg);
                         Log.i("获取: ", String.valueOf(comments.size()));
@@ -318,7 +329,8 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
         }).start();
 
 
-    }public void initRecyclerView() {
+    }
+    public void initRecyclerView() {
 
         recyclerView = (XRecyclerView) findViewById(R.id.rv_admin_comment);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -348,12 +360,16 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
                                     Log.i("刷新", "成功");
                                     commentAdapter.setList(comments);
                                     commentAdapter.notifyDataSetChanged();
+                                    setCommentSum();
+                                    setListListener();
                                     break;
                                 case FAIL:
                                     Log.i("刷新", "失败");
                                     break;
                                 case ZERO:
                                     Log.i("刷新", "0");
+                                    setCommentSum();
+                                    setListListener();
                                     break;
                             }
                             recyclerView.refreshComplete();
@@ -413,6 +429,8 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
                                     Log.i("加载", "成功");
                                     recyclerView.refreshComplete();
                                     commentAdapter.notifyDataSetChanged();
+                                    setCommentSum();
+                                    setListListener();
                                     break;
                                 case FAIL:
                                     Log.i("加载", "失败");
@@ -420,6 +438,8 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
                                 case ZERO:
                                     Log.i("加载", "0");
                                     recyclerView.setNoMore(true);
+                                    setCommentSum();
+                                    setListListener();
                                     break;
                             }
                         }
@@ -468,5 +488,117 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
         });
 
 
+    }
+    private void queryUpdatedAverageScore(Long courseId){
+
+
+        //更新card view 中的Score UI
+        final Handler UIhandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                super.handleMessage(msg);
+                if(msg.what == 1){
+                    //String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());//String类
+                    //mText.setText(date);
+                    BarScore.setStepSize((float) 0.1);
+                    BigDecimal b   =   new   BigDecimal(coursedetail.getScore());
+                    float trimScore =   b.setScale(1,   BigDecimal.ROUND_HALF_UP).floatValue();
+                    Score.setText(String.valueOf(trimScore));
+                    BarScore.setRating(trimScore);
+
+                }
+            }
+        };
+
+
+        //mText.setText("更新前");
+        final Thread UIthread = new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                Message message = new Message();
+                message.what = 1;
+                UIhandler.sendMessage(message);
+            }
+
+        });
+
+        new Handler().postDelayed(() -> {
+
+            @SuppressLint("HandlerLeak")
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg){
+                    switch (msg.what){
+                        case SUCCESS:
+                            Log.i("获取", "成功");
+                            UIthread.start();
+                            break;
+                        case FAIL:
+                            Log.i("获取", "失败");
+                            break;
+                        case ZERO:
+                            Log.i("获取", "0");
+                            break;
+                    }
+
+                }
+            };
+
+            new Thread(()->{
+                Request request = new Request.Builder()
+                        .url(getResources().getString(R.string.serverBasePath) +
+                                getResources().getString(R.string.queryCourseByInfoid)
+                                + "/?infoId="+globalcourseid)
+                        .get()
+                        .build();
+                Message msg = new Message();
+                OkHttpClient okHttpClient = new OkHttpClient();
+                Call call = okHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.i("获取: ", e.getMessage());
+                        msg.what = FAIL;
+                        handler.sendMessage(msg);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String data = response.body().string();
+                        Course responseCourse = new Gson().fromJson(data,
+                                Course.class);
+
+                        coursedetail = responseCourse;
+                        System.out.println("删除后更新分数："+coursedetail.getScore());
+                        msg.what = SUCCESS;
+                        handler.sendMessage(msg);
+
+
+                    }
+                });
+            }).start();
+        }, 1500);
+
+
+
+
+    }
+
+
+    private void sortByLikeNum() {
+        Collections.sort(comments, (p1, p2) -> {
+            int s1 = p1.getLikeCount();
+            int s2 = p2.getLikeCount();
+            return s1 < s2 ? s1 : (s1 == s2) ? 0 : -1;
+        });
+    }
+
+    private void sortByTimeAsc() {
+        Collections.sort(comments, (p1, p2) -> {
+
+            return Objects.requireNonNull(p1.getInfoDate()).compareTo(p2.getInfoDate());
+
+        });
     }
 }
