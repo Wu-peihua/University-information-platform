@@ -79,29 +79,30 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public Map queryResourceByType(Integer pageNum, Integer pageSize, Integer subjectId, Integer typeId) {
+    public Map queryResourceByTypeAndKeyword(Integer pageNum, Integer pageSize, Integer subjectId, Integer typeId, String keyword) {
         Map resourceMap = new HashMap();
         PageHelper.startPage(pageNum, pageSize);
-        Page<Resource> data = resourceMapper.queryResourceByType(subjectId, typeId);
-        UserInfo userInfo;
-        for (Resource resource : data) {
-            userInfo = userInfoMapper.selectByPrimaryKey(resource.getUserId());
-            resource.setUserName(userInfo.getUserName());
-            resource.setPortrait(userInfo.getPortrait());
+        Page<Resource> data;
+        if (keyword == null || keyword == "") {
+            if (subjectId == 0 && typeId == 0)
+                data = resourceMapper.queryResource();
+            else if (typeId == 0)
+                data = resourceMapper.queryResourceBySubjectId(subjectId);
+            else if (subjectId == 0)
+                data = resourceMapper.queryResourceByTypeId(typeId);
+            else
+                data = resourceMapper.queryResourceByType(subjectId, typeId);
+        } else {
+            keyword = "%" + keyword + "%";
+            if (subjectId == 0 && typeId == 0)
+                data = resourceMapper.queryResourceByKeyword(keyword);
+            else if (typeId == 0)
+                data = resourceMapper.queryResourceBySubjectIdAndKeyword(subjectId, keyword);
+            else if (subjectId == 0)
+                data = resourceMapper.queryResourceByTypeIdAndKeyword(typeId, keyword);
+            else
+                data = resourceMapper.queryResourceByTypeAndKeyword(subjectId, typeId, keyword);
         }
-        resourceMap.put("resInfoList", data);
-        resourceMap.put("total", data.getTotal());
-        resourceMap.put("pageSize", data.getPageSize());
-        resourceMap.put("pageNum", pageNum);
-
-        return resourceMap;
-    }
-
-    @Override
-    public Map queryResource(Integer pageNum, Integer pageSize) {
-        Map resourceMap = new HashMap();
-        PageHelper.startPage(pageNum, pageSize);
-        Page<Resource> data = resourceMapper.queryResource();
         UserInfo userInfo;
         for (Resource resource : data) {
             userInfo = userInfoMapper.selectByPrimaryKey(resource.getUserId());

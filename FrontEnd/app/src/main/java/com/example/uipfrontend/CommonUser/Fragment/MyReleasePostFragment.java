@@ -94,7 +94,7 @@ public class MyReleasePostFragment extends Fragment {
         dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE) //设置类型
                 .setLoadingColor(getResources().getColor(R.color.blue)) //颜色
                 .setHintText("加载中...")
-                .setCancelable(false)
+                .setCanceledOnTouchOutside(false)
                 .show();
         
         @SuppressLint("HandlerLeak")

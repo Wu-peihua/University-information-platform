@@ -13,7 +13,5 @@ public interface ResourceService {
 
     Map queryResourceByUserId(Integer pageNum, Integer pageSize, Long userId);
 
-    Map queryResourceByType(Integer pageNum, Integer pageSize, Integer subjectId, Integer typeId);
-
-    Map queryResource(Integer pageNum, Integer pageSize);
+    Map queryResourceByTypeAndKeyword(Integer pageNum, Integer pageSize, Integer subjectId, Integer typeId,String keyword);
 }

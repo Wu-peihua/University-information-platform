@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.service.notification.ZenPolicy;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
@@ -22,21 +21,24 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.uipfrontend.CommonUser.Activity.AddResActivity;
 import com.example.uipfrontend.CommonUser.Adapter.ResInfoAdapter;
 import com.example.uipfrontend.Entity.ResInfo;
-import com.example.uipfrontend.Entity.ResponseRecruit;
 import com.example.uipfrontend.Entity.ResponseResource;
+import com.example.uipfrontend.Entity.UserInfo;
+import com.example.uipfrontend.Entity.UserRecord;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Utils.UserOperationRecord;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.qlh.dropdownmenu.DropDownMenu;
-import com.qlh.dropdownmenu.view.MultiMenusView;
+import com.example.uipfrontend.Utils.MultiMenusView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,23 +52,22 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class ResourceFragment extends Fragment {
-
     private View rootView;
     private View rootContentView;
 
+    private List<ResInfo> resInfoList;
+    private UserInfo user;
+
     private XRecyclerView xRecyclerView;
     private ResInfoAdapter resInfoAdapter;
-
-    private List<ResInfo> posts;
-    private List<ResInfo> whole;
-
     private DropDownMenu dropDownMenu;
     private ForegroundColorSpan span;
     private EditText et_search;
     private ImageView iv_delete;
-
+    private String keyword = "";
     FloatingActionButton fab;
 
+    private String subject = "全部";
     private int subjectId = 0;
     private int typeId = 0;
 
@@ -91,6 +92,7 @@ public class ResourceFragment extends Fragment {
             rootView = inflater.inflate(R.layout.fragment_cu_resource, null);
             rootContentView = inflater.inflate(R.layout.fragment_cu_resource_content, null);
 
+            user = (UserInfo) getActivity().getApplication();
             initDropDownMenu();
             setSearch();
             initFab();
@@ -130,34 +132,47 @@ public class ResourceFragment extends Fragment {
 
         multiMenusView.setOnSelectListener(new MultiMenusView.OnSelectListener() {
             @Override
-            public void getValue(String showText) {
-                dropDownMenu.setTabText(showText);
+            public void getMenuOne(String var1, int position) {
+                subject = var1;
+                subjectId = position;
+            }
+
+            @Override
+            public void getMenuTwo(String var1, int position) {
+                typeId = position;
+                getData();
+                dropDownMenu.setTabText(subject + "" + var1);
                 dropDownMenu.closeMenu();
             }
         });
     }
 
     /**
-     * 描述：根据资源类型获取资源信息
+     * 描述：根据资源类型和关键字获取资源信息
      */
     private void getData() {
+        xRecyclerView.setNoMore(false);
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message message) {
                 switch (message.what) {
                     case NETWORK_ERR:
                         Log.i("获取资源-结果", "网络错误");
+                        Toast.makeText(getActivity(), "网络错误，请检查网络后再试", Toast.LENGTH_SHORT).show();
                         break;
                     case SERVER_ERR:
                         Log.i("获取资源-结果", "服务器错误");
+                        Toast.makeText(getActivity(), "服务器错误，请稍后再试", Toast.LENGTH_SHORT).show();
                         break;
                     case ZERO:
                         Log.i("获取资源-结果", "空");
+                        xRecyclerView.scheduleLayoutAnimation();
                         resInfoAdapter.notifyDataSetChanged();
                         break;
                     case SUCCESS:
                         Log.i("获取资源-结果", "成功");
-                        Log.i("获取资源-数量", String.valueOf(posts.size()));
+                        Log.i("获取资源-数量", String.valueOf(resInfoList.size()));
+                        xRecyclerView.scheduleLayoutAnimation();
                         resInfoAdapter.notifyDataSetChanged();
                         break;
                 }
@@ -168,8 +183,8 @@ public class ResourceFragment extends Fragment {
             CUR_PAGE_NUM = 1;
             Request request = new Request.Builder()
                     .url(getResources().getString(R.string.serverBasePath) +
-                            getResources().getString(R.string.queryResourceByType)
-                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE + "&subjectId=" + subjectId + "&typeId=" + typeId)
+                            getResources().getString(R.string.queryResourceByTypeAndKeyword)
+                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE + "&subjectId=" + subjectId + "&typeId=" + typeId + "&keyword=" + keyword)
                     .get()
                     .build();
             Message msg = new Message();
@@ -190,16 +205,15 @@ public class ResourceFragment extends Fragment {
 
                     if (responseResource.getResInfoList() == null)
                         msg.what = SERVER_ERR;
-                    else if (responseResource.getResInfoList().size() == 0)
-                        msg.what = ZERO;
                     else {
-                        if (posts.size() != 0) {
-                            posts.clear();
-                            whole.clear();
+                        if (resInfoList.size() != 0)
+                            resInfoList.clear();
+                        if (responseResource.getResInfoList().size() == 0)
+                            msg.what = ZERO;
+                        else {
+                            resInfoList.addAll(responseResource.getResInfoList());
+                            msg.what = SUCCESS;
                         }
-                        posts.addAll(responseResource.getResInfoList());
-                        whole.addAll(responseResource.getResInfoList());
-                        msg.what = SUCCESS;
                     }
                     handler.sendMessage(msg);
                 }
@@ -208,7 +222,7 @@ public class ResourceFragment extends Fragment {
     }
 
     /**
-     * 描述：根据资源类型加载更多资源
+     * 描述：根据资源类型和关键字加载更多资源
      */
     private void loadMoreData() {
         @SuppressLint("HandlerLeak")
@@ -218,23 +232,25 @@ public class ResourceFragment extends Fragment {
                 switch (message.what) {
                     case NETWORK_ERR:
                         Log.i("加载资源-结果", "网络错误");
+                        Toast.makeText(getActivity(), "网络错误，请检查网络后再试", Toast.LENGTH_SHORT).show();
                         break;
                     case SERVER_ERR:
                         Log.i("加载资源-结果", "服务器错误");
+                        Toast.makeText(getActivity(), "服务器错误，请稍后再试", Toast.LENGTH_SHORT).show();
                         break;
                     case ZERO:
                         Log.i("加载资源-结果", "空");
-                        Log.i("加载资源-总数", String.valueOf(posts.size()));
+                        Log.i("加载资源-总数", String.valueOf(resInfoList.size()));
                         xRecyclerView.setNoMore(true);
                         break;
                     case SUCCESS:
                         Log.i("加载资源-结果", "成功");
-                        Log.i("加载资源-总数", String.valueOf(posts.size()));
+                        Log.i("加载资源-总数", String.valueOf(resInfoList.size()));
                         resInfoAdapter.notifyDataSetChanged();
                         break;
                     case FINISH:
                         Log.i("加载资源-结果", "加载完毕");
-                        Log.i("加载资源-总数", String.valueOf(posts.size()));
+                        Log.i("加载资源-总数", String.valueOf(resInfoList.size()));
                         xRecyclerView.setNoMore(true);
                         break;
                 }
@@ -245,8 +261,8 @@ public class ResourceFragment extends Fragment {
             CUR_PAGE_NUM++;
             Request request = new Request.Builder()
                     .url(getResources().getString(R.string.serverBasePath) +
-                            getResources().getString(R.string.queryResourceByType)
-                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE + "&subjectId=" + subjectId + "&typeId=" + typeId)
+                            getResources().getString(R.string.queryResourceByTypeAndKeyword)
+                            + "/?pageNum=" + CUR_PAGE_NUM + "&pageSize=" + PAGE_SIZE + "&subjectId=" + subjectId + "&typeId=" + typeId + "&keyword=" + keyword)
                     .get()
                     .build();
             Message msg = new Message();
@@ -270,8 +286,7 @@ public class ResourceFragment extends Fragment {
                     else if (responseResource.getResInfoList().size() == 0)
                         msg.what = ZERO;
                     else {
-                        posts.addAll(responseResource.getResInfoList());
-                        whole.addAll(responseResource.getResInfoList());
+                        resInfoList.addAll(responseResource.getResInfoList());
                         if (CUR_PAGE_NUM * PAGE_SIZE < responseResource.getTotal())
                             msg.what = SUCCESS;
                         else
@@ -284,11 +299,10 @@ public class ResourceFragment extends Fragment {
     }
 
     private void initXRecyclerView() {
-        posts = new ArrayList<>();
-        whole = new ArrayList<>();
+        resInfoList = new ArrayList<>();
         xRecyclerView = rootContentView.findViewById(R.id.rv_cu_res);
 
-        resInfoAdapter = new ResInfoAdapter(posts, rootContentView.getContext());
+        resInfoAdapter = new ResInfoAdapter(resInfoList, rootContentView.getContext());
         resInfoAdapter.setHasStableIds(true);
         xRecyclerView.setAdapter(resInfoAdapter);
 
@@ -296,7 +310,7 @@ public class ResourceFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(rootContentView.getContext()) {
             @Override
             public boolean canScrollVertically() {
-                if (posts == null || posts.size() == 0)
+                if (resInfoList == null || resInfoList.size() == 0)
                     return false;
                 return super.canScrollVertically();
             }
@@ -308,13 +322,6 @@ public class ResourceFragment extends Fragment {
 
         LayoutAnimationController animationController = AnimationUtils.loadLayoutAnimation(rootContentView.getContext(), R.anim.layout_animation);
         xRecyclerView.setLayoutAnimation(animationController);
-
-        //        resInfoAdapter.setOnItemClickListener(new ResInfoAdapter.OnItemClickListener() {
-        //            @Override
-        //            public void onClick(int position) {
-        //                Toast.makeText(rootView.getContext(), "点击了" + position, Toast.LENGTH_SHORT).show();
-        //            }
-        //        });
 
         xRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
@@ -330,6 +337,55 @@ public class ResourceFragment extends Fragment {
                 new Handler().postDelayed(() -> {
                     loadMoreData();
                 }, 1000);
+            }
+        });
+
+        resInfoAdapter.setOnItemLikeClickListener((isSelected, position) -> {
+            if (isSelected) {
+                resInfoList.get(position).setLikeNumber(resInfoList.get(position).getLikeNumber() + 1);
+                UserRecord record = new UserRecord();
+                record.setUserId(user.getUserId());
+                record.setToId(resInfoList.get(position).getInfoId());
+                record.setTag(1);
+                record.setType(6);
+                UserOperationRecord.insertRecord(getContext(), record, user);
+            } else {
+                resInfoList.get(position).setLikeNumber(resInfoList.get(position).getLikeNumber() - 1);
+                String key = "resource" + resInfoList.get(position).getInfoId();
+                Long infoId = user.getLikeRecord().get(key);
+                UserOperationRecord.deleteRecord(getContext(), infoId);
+                user.getLikeRecord().remove(key);
+            }
+        });
+        resInfoAdapter.setOnItemReportClickListener((view, position) -> {
+            String key = "resource" + resInfoList.get(position).getInfoId();
+            if (user.getReportRecord().containsKey(key)) {
+                Toast.makeText(getActivity(), "已经举报，感谢您的反馈", Toast.LENGTH_SHORT).show();
+            } else {
+                AlertDialog dialog = new AlertDialog.Builder(getContext())
+                        .setTitle("提示")
+                        .setMessage("是否确定举报该资源")
+                        .setPositiveButton("确定", (dialog1, which) -> {
+                            resInfoList.get(position).setReportNumber(resInfoList.get(position).getReportNumber() + 1);
+
+                            UserRecord record = new UserRecord();
+                            record.setUserId(user.getUserId());
+                            record.setToId(resInfoList.get(position).getInfoId());
+                            record.setTag(2);
+                            record.setType(6);
+                            UserOperationRecord.insertRecord(getContext(), record, user);
+
+                            ((ImageView) view).setColorFilter(getContext().getResources().getColor(R.color.blue));
+                            resInfoAdapter.notifyDataSetChanged();
+
+                            Toast.makeText(getContext(), "举报成功，感谢您的反馈", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("取消", null)
+                        .setCancelable(false)
+                        .create();
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
             }
         });
     }
@@ -358,26 +414,16 @@ public class ResourceFragment extends Fragment {
                     iv_delete.setVisibility(View.VISIBLE);
                 }
 
-                setSearchResult(editable.toString().trim());
+                keyword = editable.toString().trim();
+                getData();
+                if (keyword.equals(""))
+                    resInfoAdapter.setText(null, null);
+                else
+                    resInfoAdapter.setText(keyword, span);
+                resInfoAdapter.notifyDataSetChanged();
+
             }
         });
-    }
-
-    private void setSearchResult(String text) {
-        posts.clear();
-        if (text.equals("")) {
-            posts.addAll(whole);
-            resInfoAdapter.setText(null, null);
-        } else {
-            for (int i = 0; i < whole.size(); i++) {
-                if (whole.get(i).getTitle().contains(text)) {
-                    posts.add(whole.get(i));
-                }
-            }
-            resInfoAdapter.setText(text, span);
-        }
-        resInfoAdapter.notifyDataSetChanged();
-        xRecyclerView.scheduleLayoutAnimation();
     }
 
     public void initFab() {
@@ -394,9 +440,7 @@ public class ResourceFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1)
-            if (resultCode == 1) {
+            if (resultCode == 1)
                 getData();
-                resInfoAdapter.notifyDataSetChanged();
-            }
     }
 }

@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getUserRecord(UserInfo user) {
         new Thread(()->{
-            
+
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(getResources().getString(R.string.serverBasePath)
@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
                     JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
                     JsonArray jsonArray1 = jsonObject.getAsJsonArray("likeRecord");
                     JsonArray jsonArray2 = jsonObject.getAsJsonArray("reportRecord");
-                    
+
                     Map<String, Long> map1 = new HashMap<>();
                     Map<String, Long> map2 = new HashMap<>();
                     Gson gson = new Gson();
@@ -240,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
                             case 1: key = "post"; break;
                             case 2: key = "comment"; break;
                             case 3: key = "reply"; break;
+                            case 6: key="resource"; break;
                         }
                         key += record.getToId();
                         map1.put(key, record.getInfoId());
@@ -251,11 +252,12 @@ public class MainActivity extends AppCompatActivity {
                             case 1: key = "post"; break;
                             case 2: key = "comment"; break;
                             case 3: key = "reply"; break;
+                            case 6: key="resource"; break;
                         }
                         key += record.getToId();
                         map2.put(key, record.getInfoId());
                     }
-                    
+
                     user.setLikeRecord(map1);
                     user.setReportRecord(map2);
                 }

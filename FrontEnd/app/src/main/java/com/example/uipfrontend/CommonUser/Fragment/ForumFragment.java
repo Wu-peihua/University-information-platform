@@ -35,6 +35,7 @@ import com.example.uipfrontend.CommonUser.Adapter.ForumListRecyclerViewAdapter;
 import com.example.uipfrontend.Entity.ForumPosts;
 import com.example.uipfrontend.Entity.ResponsePosts;
 import com.example.uipfrontend.Entity.UserInfo;
+import com.example.uipfrontend.LoginAndRegist.LoginActivity;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Utils.KeyboardStateObserver;
 import com.google.gson.Gson;
@@ -133,7 +134,7 @@ public class ForumFragment extends Fragment {
         dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE) //设置类型
                 .setLoadingColor(getResources().getColor(R.color.blue)) //颜色
                 .setHintText("加载中...")
-                .setCancelable(false);
+                .setCanceledOnTouchOutside(false);
         if (showDialog) dialog.show();
         
         @SuppressLint("HandlerLeak")
@@ -358,7 +359,10 @@ public class ForumFragment extends Fragment {
         iv_new.setOnClickListener(view -> {
             UserInfo user = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();
             if (user.getUserId() == null) {
-                // todo: 跳转到登录界面
+                // todo 登录成功后进入新建帖子
+                Intent intent = new Intent(rootView.getContext(), LoginActivity.class);
+                intent.putExtra("loginAfter", "WritePost");
+                startActivity(intent);
                 Toast.makeText(rootView.getContext(), "请登录", Toast.LENGTH_LONG).show();
             } else {
                 Intent intent = new Intent(rootView.getContext(), WritePostActivity.class);

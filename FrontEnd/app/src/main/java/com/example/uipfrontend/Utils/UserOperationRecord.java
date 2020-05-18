@@ -24,6 +24,8 @@ import okhttp3.Response;
 
 public class UserOperationRecord {
 
+    private static long lastClickTime;
+
     /**
      * 描述：用户添加操作
      * 参数：context- 获取string里的地址
@@ -65,6 +67,7 @@ public class UserOperationRecord {
                             case 2: key = "comment"; break;
                             case 3: key = "reply"; break;
                             case 5: key = "course_comment";break;
+                            case 6: key = "resource";break;
                         }
                         key += record.getToId();
                         
@@ -130,12 +133,22 @@ public class UserOperationRecord {
      * 返回：true：全部为数字，插入成功，返回的是评论的infoId
      *      false：包含非数字，插入失败，返回的是错误信息
      */
-    private static boolean isNumber(String s) {
+    public static boolean isNumber(String s) {
         for (int i = 0; i < s.length(); i++) {
             if (!Character.isDigit(s.charAt(i))) {
                 return false;
             }
         }
         return true;
+    }
+
+    public static boolean isFastClick() {
+        long time = System.currentTimeMillis();
+        long timeD = time - lastClickTime;
+        if (0 < timeD && timeD < 1000) {
+            return true;
+        }
+        lastClickTime = time;
+        return false;
     }
 }

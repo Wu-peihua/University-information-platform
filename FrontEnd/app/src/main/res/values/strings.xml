@@ -2,10 +2,8 @@
     <string name="app_name">UIPFrontEnd</string>
 
     <!--url配置-->
-    <!--string name="serverBasePath">http://192.168.1.106:8080/uip</string-->
-    <string name="serverBasePath">http://192.168.1.104:8080/uip</string>
-    <!--string name="myIP">192.168.0.103</string-->
-    <string name="myIP">192.168.1.104</string>
+    <string name="serverBasePath">http://192.168.1.5:8080/uip</string>
+    <string name="myIP">192.168.1.5</string>
 
     <!--获取顶部筛选菜单-->
     <string name="queryUniversity">/university/queryuniversity</string>
@@ -93,7 +91,7 @@
     <string name="selectCertificationByUserId">/certification/selectcertificationbyuserid</string>
 
     <!--根据资源类型获取资源信息-->
-    <string name="queryResourceByType">/resource/queryresourcebytype</string>
+    <string name="queryResourceByTypeAndKeyword">/resource/queryresourcebytypeandkeyword</string>
     <!--插入资源信息-->
     <string name="insertResource">/resource/insertresource</string>
     <!--根据用户id获取资源信息-->

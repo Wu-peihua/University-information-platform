@@ -46,6 +46,8 @@ import com.lzy.ninegrid.NineGridView;
 import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -161,6 +163,13 @@ public class StudentVerifyActivity extends AppCompatActivity {
         option1 = strUniversity != null ? strUniversity.split(",") : new String[0];
         option2 = strInstitute != null ? strInstitute.split(",") : new String[0];
 
+        ZLoadingDialog dialog = new ZLoadingDialog(this);
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE) //设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue)) //颜色
+                .setHintText("加载中...")
+                .setCanceledOnTouchOutside(false)
+                .show();
+        
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
@@ -171,6 +180,7 @@ public class StudentVerifyActivity extends AppCompatActivity {
                         break;
                     case SERVER_ERR:
                         Log.i("获取未认证: ", "失败 - 服务器错误");
+                        Toast.makeText(StudentVerifyActivity.this, "请稍后再试", Toast.LENGTH_LONG).show();
                         break;
                     case ZERO:
                         Log.i("获取未认证: ", "未提交");
@@ -183,6 +193,7 @@ public class StudentVerifyActivity extends AppCompatActivity {
                         setData();
                         break;
                 }
+                dialog.dismiss();
                 super.handleMessage(msg);
             }
         };

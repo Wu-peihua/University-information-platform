@@ -1,9 +1,11 @@
 package com.example.uipfrontend.CommonUser.Adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Icon;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import com.bigkoo.alertview.AlertView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.ResInfo;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.luck.picture.lib.widget.longimage.SubsamplingScaleImageView;
 import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
@@ -29,6 +32,7 @@ import java.util.List;
 public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ResInfo> resInfoList;
     private Context context;
+    private UserInfo user;
 
     private int beginPos;
     private String text;
@@ -38,6 +42,7 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         super();
         this.resInfoList = resInfoList;
         this.context = context;
+        user = (UserInfo) context.getApplicationContext();
     }
 
     public void setText(String text, ForegroundColorSpan span) {
@@ -76,14 +81,24 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public interface OnItemClickListener {
-        void onClick(int position);
+    public interface OnItemLikeClickListener {
+        void onClick(boolean isSelected, int position);
     }
 
-    private OnItemClickListener onItemClickListenerlistener;
+    private OnItemLikeClickListener onItemLikeClickListener;
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListenerlistener) {
-        this.onItemClickListenerlistener = onItemClickListenerlistener;
+    public void setOnItemLikeClickListener(OnItemLikeClickListener onItemLikeClickListener) {
+        this.onItemLikeClickListener = onItemLikeClickListener;
+    }
+
+    public interface OnItemReportClickListener {
+        void onClick(View view, int position);
+    }
+
+    private OnItemReportClickListener onItemReportClickListener;
+
+    public void setOnItemReportClickListener(OnItemReportClickListener onItemReportClickListener) {
+        this.onItemReportClickListener = onItemReportClickListener;
     }
 
     @Override
@@ -117,9 +132,9 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (text == null) {
                 resInfoViewHolder.tv_title.setText(resInfo.getTitle());
             } else {
-                beginPos = resInfoList.get(position).getTitle().indexOf(text);
+                beginPos = resInfo.getTitle().indexOf(text);
                 if (beginPos != -1) {
-                    SpannableStringBuilder builder = new SpannableStringBuilder(resInfoList.get(position).getTitle());
+                    SpannableStringBuilder builder = new SpannableStringBuilder(resInfo.getTitle());
                     builder.setSpan(span, beginPos, beginPos + text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     resInfoViewHolder.tv_title.setText(builder);
                 }
@@ -147,43 +162,13 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             resInfoViewHolder.tv_link.setText(resInfo.getAddress());
             resInfoViewHolder.tv_time.setText(resInfo.getCreated());
             resInfoViewHolder.icv_like.setCount(resInfo.getLikeNumber());
-            resInfoViewHolder.icv_like.setOnStateChangedListener(new IconCountView.OnSelectedStateChangedListener() {
-                @Override
-                public void select(boolean isSelected) {
-                    if (isSelected)
-                        resInfo.setLikeNumber(resInfo.getLikeNumber() + 1);
-                    else
-                        resInfo.setLikeNumber(resInfo.getLikeNumber() - 1);
-                    notifyDataSetChanged();
-                }
-            });
+            if (user.getLikeRecord().containsKey("resource" + resInfo.getInfoId()))
+                resInfoViewHolder.icv_like.setState(true);
+            if (user.getReportRecord().containsKey("resource" + resInfo.getInfoId()))
+                resInfoViewHolder.iv_report.setColorFilter(context.getResources().getColor(R.color.blue));
 
-            resInfoViewHolder.iv_report.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    //弹出对话框 选择拍照或从相册选择
-                    new AlertView.Builder().setContext(view.getContext())
-                            .setStyle(AlertView.Style.ActionSheet)
-                            .setTitle("确定举报？")
-                            .setCancelText("取消")
-                            .setDestructive("确定")
-                            .setOthers(null)
-                            .setOnItemClickListener((object, position) -> {
-                                switch (position) {
-                                    case 0:
-                                        resInfoViewHolder.iv_report.setColorFilter(context.getResources().getColor(R.color.blue));
-                                        resInfoViewHolder.iv_report.setEnabled(false);
-                                        Toast.makeText(context, "举报成功", Toast.LENGTH_SHORT).show();
-                                        break;
-                                }
-                            })
-                            .build()
-                            .show();
-                }
-            });
-
-            //resInfoViewHolder.ll_item.setOnClickListener(view -> onItemClickListenerlistener.onClick(position));
+            resInfoViewHolder.icv_like.setOnStateChangedListener(isSelected -> onItemLikeClickListener.onClick(isSelected, position));
+            resInfoViewHolder.iv_report.setOnClickListener(v -> onItemReportClickListener.onClick(v, position));
         }
     }
 

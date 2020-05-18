@@ -18,10 +18,22 @@ public interface ResourceMapper {
     int updateByPrimaryKeySelective(Resource record);
 
     int updateByPrimaryKey(Resource record);
-    
+
     Page<Resource> queryResourceByUserId(Long userId);
+
+    Page<Resource> queryResourceBySubjectId(@Param("subjectId") Integer subjectId);
+
+    Page<Resource> queryResourceByTypeId(@Param("typeId") Integer typeId);
 
     Page<Resource> queryResourceByType(@Param("subjectId") Integer subjectId, @Param("typeId") Integer typeId);
 
     Page<Resource> queryResource();
+
+    Page<Resource> queryResourceBySubjectIdAndKeyword(@Param("subjectId") Integer subjectId, @Param("keyword") String keyword);
+
+    Page<Resource> queryResourceByTypeIdAndKeyword(@Param("typeId") Integer typeId, @Param("keyword") String keyword);
+
+    Page<Resource> queryResourceByTypeAndKeyword(@Param("subjectId") Integer subjectId, @Param("typeId") Integer typeId, @Param("keyword") String keyword);
+
+    Page<Resource> queryResourceByKeyword(@Param("keyword") String keyword);
 }
