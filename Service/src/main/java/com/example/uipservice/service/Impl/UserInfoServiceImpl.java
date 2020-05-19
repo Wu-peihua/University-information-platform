@@ -129,11 +129,13 @@ public class UserInfoServiceImpl implements UserInfoService {
                 String resultKey = RSAUtil.privateDecrypt(pwd,key);
                 //与数据库中的密码对比
                 if(resultKey.equals(userInfo.getPw())){
-                    modelMap.put("success",userInfo);
+                    modelMap.put("success",true);
+                    modelMap.put("userInfo",userInfo);
                 }else{
                     //密码错误信息
                     System.out.println("密码错误！");
-                    modelMap.put("fail","密码错误！");
+                    modelMap.put("success",false);
+                    modelMap.put("msg","密码错误！");
                 }
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
@@ -142,7 +144,8 @@ public class UserInfoServiceImpl implements UserInfoService {
             }
         }else{
             System.out.println("用户名不存在！");
-            modelMap.put("false","用户名不存在！");
+            modelMap.put("success",false);
+            modelMap.put("msg","用户名不存在！");
         }
         return  modelMap;
     }
@@ -166,10 +169,12 @@ public class UserInfoServiceImpl implements UserInfoService {
                 userInfo = userInfoMapper.selectByUserName(userName);
                 if(effectNum > 0 ){
                     //增加成功
-                    modelMap.put("success",userInfo);
+                    modelMap.put("success",true);
+                    modelMap.put("userInfo",userInfo);
                 }else{
                     System.out.println("注册失败");
-                    modelMap.put("false","注册失败！");
+                    modelMap.put("success",false);
+                    modelMap.put("msg","注册失败！");
                 }
 
             } catch (NoSuchAlgorithmException e) {
@@ -180,7 +185,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 
         }else{
             System.out.println("用户名已存在");
-            modelMap.put("false","用户名已存在");
+            modelMap.put("success",false);
+            modelMap.put("msg","用户名已存在");
         }
         return modelMap;
     }

@@ -105,7 +105,7 @@ public class UserInfoController {
      * 获取RSA算法公钥
      * @return modelMap
      */
-    @RequestMapping(value = "/getpublickey", method = RequestMethod.POST)
+    @RequestMapping(value = "/getpublickey", method = RequestMethod.GET)
     private Map<String,Object> getPublicKey(){
         Map<String,Object> modelMap = new HashMap<String, Object>();
         modelMap.put("publicKey",publicKey);
