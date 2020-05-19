@@ -1,5 +1,7 @@
 package com.example.uipservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class StuCertification {
@@ -18,7 +20,7 @@ public class StuCertification {
     private String stuCard;
 
     private Integer stuCer;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date created;
 
     public Long getInfoId() {

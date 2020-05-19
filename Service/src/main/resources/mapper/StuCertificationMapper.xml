@@ -31,6 +31,21 @@
     where info_id = #{infoId,jdbcType=BIGINT}
   </select>
 
+  <select id="queryStuCertification" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from stu_certification
+    where stu_cer = 0
+    </select>
+
+  <select id="queryStuCertificationByUniAndIns" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    select
+    *
+    from stu_certification
+    where university_id = #{universityId} and institute_id = #{instituteId} and stu_cer = 0
+    </select>
+
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from stu_certification
     where info_id = #{infoId,jdbcType=BIGINT}
@@ -150,4 +165,19 @@
       created = #{created,jdbcType=TIMESTAMP}
     where info_id = #{infoId,jdbcType=BIGINT}
   </update>
+
+  <update id="certificationPass" parameterType="com.example.uipservice.entity.StuCertification" >
+    update stu_certification
+    set stu_cer = 1
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+
+  <update id="certificationUnPass" parameterType="com.example.uipservice.entity.StuCertification" >
+    update stu_certification
+    set stu_cer = 2
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </update>
+
+
+
 </mapper>
