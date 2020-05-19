@@ -3,6 +3,7 @@ package com.example.uipservice.web;
 import com.example.uipservice.entity.UserInfo;
 import com.example.uipservice.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,9 @@ public class UserInfoController {
 
     @Autowired
     UserInfoService userInfoService;
+
+    @Value("${publicKey}")
+    String publicKey;
 
     /**
      * 插入一个新用户
@@ -76,6 +80,37 @@ public class UserInfoController {
     }
 
 
+    /**
+     * 用户登录接口
+     * @param pwd 前端发送的RSA加密后的密文
+     * @return modelMap
+     */
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    private Map<String,Object> login(String userName,String pwd){
+        Map<String,Object> modelMap = new HashMap<String, Object>();
+        return userInfoService.login(userName,pwd);
+    }
+
+    /**
+     * 用户注册接口
+     * @return modelMap
+     */
+    @RequestMapping(value = "/regist", method = RequestMethod.POST)
+    private Map<String,Object> regist(String userName,String pwd){
+        Map<String,Object> modelMap = new HashMap<String, Object>();
+        return userInfoService.regist(userName,pwd);
+    }
+
+    /**
+     * 获取RSA算法公钥
+     * @return modelMap
+     */
+    @RequestMapping(value = "/getpublickey", method = RequestMethod.POST)
+    private Map<String,Object> getPublicKey(){
+        Map<String,Object> modelMap = new HashMap<String, Object>();
+        modelMap.put("publicKey",publicKey);
+        return modelMap;
+    }
 
 
 
