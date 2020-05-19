@@ -18,20 +18,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.uipfrontend.Entity.Certification;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
+import com.lzy.ninegrid.ImageInfo;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import info.hoang8f.widget.FButton;
 
 public class AdminCertificationAdapter extends RecyclerView.Adapter {
     private Context context;
-    private List list;
+    private List<Certification> list;
+    private List<String> universityList;
+    private List<String> instituteList;
 
-    public AdminCertificationAdapter(Context context, List list) {
+    private UserInfo userInfo;
+
+    public AdminCertificationAdapter(Context context, List list,List universityList,List instituteList,UserInfo userInfo) {
         this.context = context;
         this.list = list;
+        this.universityList = universityList;
+        this.instituteList = instituteList;
+        this.userInfo = userInfo;
     }
 
 
@@ -60,10 +71,31 @@ public class AdminCertificationAdapter extends RecyclerView.Adapter {
         }
 
 
-
-
+    }
+    public interface StudentPassClickListener {
+        void onPassClick(int position);
     }
 
+    private StudentPassClickListener studentPassClickListener;
+
+    public void setStudentPassClickListener(StudentPassClickListener studentPassClickListener) {
+        this.studentPassClickListener = studentPassClickListener;
+    }
+    public interface StudentUnPassClickListener {
+        void onUnPassClick(int position);
+    }
+
+    private StudentUnPassClickListener studentUnPassClickListener;
+
+    public void setStudentUnPassClickListener(StudentUnPassClickListener studentUnPassClickListener) {
+        this.studentUnPassClickListener = studentUnPassClickListener;
+    }
+
+    public void setList(List<Certification> list,List universityList,List instituteList){
+        this.list = list;
+        this.universityList = universityList;
+        this.instituteList = instituteList;
+    }
 
 
 //
@@ -72,17 +104,18 @@ public class AdminCertificationAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_admin_cer, null);
 
-        return new AdminCertificationAdapter.ViewHolder(view);
+        return new ViewHolder(view);
     }
 
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int pos) {
 
-        AdminCertificationAdapter.ViewHolder viewHolder = new AdminCertificationAdapter.ViewHolder(holder.itemView);
+        //AdminCertificationAdapter.ViewHolder viewHolder = new AdminCertificationAdapter.ViewHolder(holder.itemView);
+
+        ViewHolder viewHolder = new ViewHolder(holder.itemView);
 
         viewHolder.portrait.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 final Dialog dialog = new Dialog(context, R.style.Theme_Design_NoActionBar);
@@ -101,14 +134,32 @@ public class AdminCertificationAdapter extends RecyclerView.Adapter {
             }
         });
 
-        viewHolder.studentName.setText("王大明");
-        viewHolder.studentNum.setText("20172131154");
-        viewHolder.studentTime.setText("2020-04-13 15:30");
-        viewHolder.studentSchool.setText("华南师范大学");
-        viewHolder.studentCollege.setText("计算机学院");
+        viewHolder.studentName.setText(list.get(pos).getStuName());
+        viewHolder.studentNum.setText(list.get(pos).getStuNumber());
+        viewHolder.studentTime.setText(list.get(pos).getCreated());
+        viewHolder.studentSchool.setText(universityList.get(pos));
+        viewHolder.studentCollege.setText(instituteList.get(pos));
+
+        setImage(context,viewHolder.portrait,list.get(pos).getStuCard());
+
+        //显示组队信息图片
+        ArrayList<ImageInfo> imageInfo = new ArrayList<>();
+        ImageInfo info = new ImageInfo();
+        if(list.get(pos).getStuCard() != null){
+            String tempUrl[] = list.get(pos).getStuCard().split(",");
+            for(String url : tempUrl){
+                //localhost需改为服务器的ip才能正常显示图片
+                info.setThumbnailUrl(url); //略缩图
+                info.setBigImageUrl(url);  //点击放大图
+                imageInfo.add(info);
+            }
+        }
+
+
+
 
         //临时图片地址
-       setImage(context,viewHolder.portrait,"http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg");
+//       setImage(context,viewHolder.portrait,"http://5b0988e595225.cdn.sohucs.com/images/20181204/bb053972948e4279b6a5c0eae3dc167e.jpeg");
 //        ArrayList<ImageInfo> imageInfo = new ArrayList<>();
 //        ImageInfo info = new ImageInfo();
 //        info.setThumbnailUrl("http://image.biaobaiju.com/uploads/20180111/00/1515601824-VFslzoEJkU.jpg");
@@ -117,6 +168,21 @@ public class AdminCertificationAdapter extends RecyclerView.Adapter {
 //        viewHolder.portrait.setAdapter(new NineGridViewClickAdapter(context, imageInfo));
 
 
+
+        viewHolder.pass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (studentPassClickListener != null)
+                    studentPassClickListener.onPassClick(pos);
+            }
+        });
+        viewHolder.unpass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (studentUnPassClickListener != null)
+                    studentUnPassClickListener.onUnPassClick(pos);
+            }
+        });
 
     }
 
@@ -132,9 +198,8 @@ public class AdminCertificationAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
 
-//        return list.size();
+        return list.size();
 
-        return 10;
     }
 
     public ImageView getView(ImageView imgg) {

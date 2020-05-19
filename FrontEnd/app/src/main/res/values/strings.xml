@@ -5,6 +5,7 @@
     <string name="serverBasePath">http://192.168.1.5:8080/uip</string>
     <string name="myIP">192.168.1.5</string>
 
+
     <!--获取顶部筛选菜单-->
     <string name="queryUniversity">/university/queryuniversity</string>
     <string name="queryInstitute">/institute/queryinstitute</string>
@@ -115,6 +116,14 @@
     <string name="modifyCommentReportNumber">/courseeval/modifycommentreportnumber</string>
     <!--评论审核不通过，删除评论-->
     <string name="AdmindeleteComment">/courseeval/deletecourseeval</string>
+    <!--学生认证审核，分页获取所有学生认证申请-->
+    <string name="queryCertification">/certification/querycertification</string>
+    <!--学生认证审核，根据学校学院id分页获取所有学生认证申请-->
+    <string name="queryCertificationByUniAndIns">/certification/querycertificationbyuniandins</string>
+    <!--学生认证审核通过，修改stu_cer为1，同时修改usertype为1-->
+    <string name="CertificationPass">/certification/certificationpass</string>
+    <!--学生认证审核不通过，修改stu_cer为2-->
+    <string name="CertificationUnPass">/certification/certificationunpass</string>
 
 
     <!--新版登录专用-->

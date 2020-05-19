@@ -1,6 +1,8 @@
 package com.example.uipfrontend.Entity;
 
-public class Certification {
+import java.io.Serializable;
+
+public class Certification implements Serializable {
     private Long infoId;
     private Long userId;
     private String stuName;
@@ -82,4 +84,13 @@ public class Certification {
     public void setCreated(String created) {
         this.created = created;
     }
+
+    @Override
+    public String toString(){
+        return "Certification[ infoId:" + infoId + ",userId:" + userId + ",stuName:" + stuName + ",stuNumber:" + stuNumber + ",stuCard:" + stuCard  +
+                ",stuCer:" + stuCer + ",institute::" + institudeId + ",universityId:" + universityId  + "]";
+    }
+
+
+
 }
