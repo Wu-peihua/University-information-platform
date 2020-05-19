@@ -4,22 +4,22 @@ import com.example.uipservice.entity.UserInfo;
 import org.springframework.stereotype.Service;
 
 @Service
-    public interface UserInfoMapper {
-        int deleteByPrimaryKey(Long userId);
+public interface UserInfoMapper {
+    int deleteByPrimaryKey(Long userId);
 
-        int insert(UserInfo record);
+    int insert(UserInfo record);
 
-        int insertSelective(UserInfo record);
+    int insertSelective(UserInfo record);
 
-        UserInfo selectByPrimaryKey(Long userId);
+    UserInfo selectByPrimaryKey(Long userId);
 
-        UserInfo selectByUserName(String name);
+    UserInfo selectByUserName(String name);
 
-        UserInfo getUserInfoByUserPassword(String userName, String userPassword);
+    UserInfo getUserInfoByUserPassword(String userName, String userPassword);
 
-        int updateByPrimaryKeySelective(UserInfo record);
+    int updateByPrimaryKeySelective(UserInfo record);
 
-        int updateByPrimaryKey(UserInfo record);
+    int updateByPrimaryKey(UserInfo record);
 
 
 }

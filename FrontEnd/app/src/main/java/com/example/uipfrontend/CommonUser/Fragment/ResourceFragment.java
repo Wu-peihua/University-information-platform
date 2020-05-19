@@ -61,7 +61,7 @@ public class ResourceFragment extends Fragment {
     private XRecyclerView xRecyclerView;
     private ResInfoAdapter resInfoAdapter;
     private DropDownMenu dropDownMenu;
-    private ForegroundColorSpan span;
+    private ForegroundColorSpan span, tmp;
     private EditText et_search;
     private ImageView iv_delete;
     private String keyword = "";
@@ -92,11 +92,11 @@ public class ResourceFragment extends Fragment {
             rootView = inflater.inflate(R.layout.fragment_cu_resource, null);
             rootContentView = inflater.inflate(R.layout.fragment_cu_resource_content, null);
 
+            resInfoList = new ArrayList<>();
             user = (UserInfo) getActivity().getApplication();
             initDropDownMenu();
             setSearch();
             initFab();
-            initXRecyclerView();
             getData();
         }
         return rootView;
@@ -151,10 +151,10 @@ public class ResourceFragment extends Fragment {
      * 描述：根据资源类型和关键字获取资源信息
      */
     private void getData() {
-        xRecyclerView.setNoMore(false);
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message message) {
+                initXRecyclerView();
                 switch (message.what) {
                     case NETWORK_ERR:
                         Log.i("获取资源-结果", "网络错误");
@@ -299,12 +299,13 @@ public class ResourceFragment extends Fragment {
     }
 
     private void initXRecyclerView() {
-        resInfoList = new ArrayList<>();
         xRecyclerView = rootContentView.findViewById(R.id.rv_cu_res);
 
         resInfoAdapter = new ResInfoAdapter(resInfoList, rootContentView.getContext());
         resInfoAdapter.setHasStableIds(true);
+        resInfoAdapter.setText(keyword, span);
         xRecyclerView.setAdapter(resInfoAdapter);
+        xRecyclerView.setNoMore(false);
 
         xRecyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
         LinearLayoutManager layoutManager = new LinearLayoutManager(rootContentView.getContext()) {
@@ -376,7 +377,7 @@ public class ResourceFragment extends Fragment {
                             UserOperationRecord.insertRecord(getContext(), record, user);
 
                             ((ImageView) view).setColorFilter(getContext().getResources().getColor(R.color.blue));
-                            resInfoAdapter.notifyDataSetChanged();
+                            resInfoAdapter.notifyItemChanged(position);
 
                             Toast.makeText(getContext(), "举报成功，感谢您的反馈", Toast.LENGTH_SHORT).show();
                         })
@@ -391,7 +392,7 @@ public class ResourceFragment extends Fragment {
     }
 
     private void setSearch() {
-        span = new ForegroundColorSpan(Color.rgb(255, 0, 0));
+        tmp = new ForegroundColorSpan(Color.rgb(255, 0, 0));
         et_search = rootContentView.findViewById(R.id.edt_cu_res_search);
         iv_delete = rootContentView.findViewById(R.id.imgv_cu_res_delete);
 
@@ -415,13 +416,11 @@ public class ResourceFragment extends Fragment {
                 }
 
                 keyword = editable.toString().trim();
-                getData();
                 if (keyword.equals(""))
-                    resInfoAdapter.setText(null, null);
+                    span = null;
                 else
-                    resInfoAdapter.setText(keyword, span);
-                resInfoAdapter.notifyDataSetChanged();
-
+                    span = tmp;
+                getData();
             }
         });
     }

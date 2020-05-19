@@ -75,9 +75,9 @@ public class MyReleaseResFragment extends Fragment {
             }
         } else {
             rootView = inflater.inflate(R.layout.fragment_my_release_res, null);
+            resInfoList = new ArrayList<>();
             user = (UserInfo) getActivity().getApplication();
             userId = user.getUserId();
-            initXRecyclerView();
             getData();
         }
         return rootView;
@@ -90,6 +90,7 @@ public class MyReleaseResFragment extends Fragment {
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message message) {
+                initXRecyclerView();
                 switch (message.what) {
                     case NETWORK_ERR:
                         Log.i("获取资源发布记录-结果", "网络错误");
@@ -252,9 +253,7 @@ public class MyReleaseResFragment extends Fragment {
                         break;
                     case SUCCESS:
                         Log.i("删除资源发布记录-结果", "成功");
-                        resInfoList.remove(deletePos);
-                        xRecyclerView.scheduleLayoutAnimation();
-                        adapter.notifyDataSetChanged();
+                        getData();
                         break;
                 }
             }
@@ -298,11 +297,11 @@ public class MyReleaseResFragment extends Fragment {
     }
 
     public void initXRecyclerView() {
-        resInfoList = new ArrayList<>();
         xRecyclerView = rootView.findViewById(R.id.xrv_mr_res);
         adapter = new MyReleaseResInfoAdapter(resInfoList, rootView.getContext());
         adapter.setHasStableIds(true);
         xRecyclerView.setAdapter(adapter);
+        xRecyclerView.setNoMore(false);
 
         xRecyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
         LinearLayoutManager layoutManager = new LinearLayoutManager(rootView.getContext()) {
@@ -405,10 +404,8 @@ public class MyReleaseResFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1)
             if (resultCode == 1) {
+                xRecyclerView.scheduleLayoutAnimation();
                 deleteData();
-                new Handler().postDelayed(() -> {
-                    getData();
-                }, 100);
             }
     }
 }

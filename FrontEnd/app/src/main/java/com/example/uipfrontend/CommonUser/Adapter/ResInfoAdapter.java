@@ -129,7 +129,7 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ResInfoViewHolder resInfoViewHolder = (ResInfoViewHolder) viewHolder;
             ResInfo resInfo = resInfoList.get(position);
 
-            if (text == null) {
+            if (text == "") {
                 resInfoViewHolder.tv_title.setText(resInfo.getTitle());
             } else {
                 beginPos = resInfo.getTitle().indexOf(text);

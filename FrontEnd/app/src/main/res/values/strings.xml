@@ -2,9 +2,13 @@
     <string name="app_name">UIPFrontEnd</string>
 
     <!--url配置-->
-    <string name="serverBasePath">http://192.168.1.5:8080/uip</string>
+    <string name="serverBasePath">http://192.168.1.106:8080/uip</string>
     <string name="myIP">192.168.1.5</string>
 
+    <!--登录注册-->
+    <string name="getPublicKey">/userinfo/getpublickey</string>
+    <string name="registUrl">/userinfo/regist</string>
+    <string name="loginUrl">/userinfo/login</string>
 
     <!--获取顶部筛选菜单-->
     <string name="queryUniversity">/university/queryuniversity</string>
