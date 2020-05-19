@@ -60,7 +60,7 @@ public class CertificationController {
      * 认证成功
      * @return modelMap
      */
-    @RequestMapping(value = "/certicationpass", method = RequestMethod.POST)
+    @RequestMapping(value = "/certificationpass", method = RequestMethod.POST)
     private Map<String,Object> certificationPass(Long infoId){
         Map<String,Object> modelMap = new HashMap<String, Object>();
         modelMap.put("success", certificationService.certificationPass(infoId));
@@ -70,7 +70,7 @@ public class CertificationController {
      * 认证失败
      * @return modelMap
      */
-    @RequestMapping(value = "/certicationunpass", method = RequestMethod.POST)
+    @RequestMapping(value = "/certificationunpass", method = RequestMethod.POST)
     private Map<String,Object> certificationUnPass(Long infoId){
         Map<String,Object> modelMap = new HashMap<String, Object>();
         modelMap.put("success", certificationService.certificationUnPass(infoId));

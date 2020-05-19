@@ -44,12 +44,12 @@ public class CertificationImpl implements CertificationService {
 
     @Override
     public boolean certificationPass(Long infoId) {
-        StuCertification stuCertification = certificationMapper.selectByPrimaryKey(infoId);
-        int effect = userInfoMapper.updateUserToStudent(stuCertification.getUserId());
         if(infoId != null){
             try {
+                StuCertification stuCertification = certificationMapper.selectByPrimaryKey(infoId);
+                int effect = userInfoMapper.updateUserToStudent(stuCertification.getUserId());
                 int effectNum = certificationMapper.certificationPass(infoId);
-                if(effectNum > 0){
+                if(effectNum > 0 && effect > 0){
                     return true;
                 }else{
                     throw new RuntimeException("服务器错误，学生认证失败！");
