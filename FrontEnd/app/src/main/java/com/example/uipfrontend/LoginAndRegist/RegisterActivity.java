@@ -19,7 +19,8 @@ import com.example.uipfrontend.Entity.ResponseRecruit;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.MainActivity;
 import com.example.uipfrontend.R;
-import com.example.uipfrontend.Utils.RSAUtil;
+import com.example.uipfrontend.Utils.RSAEncrypt;
+import com.example.uipfrontend.Utils.RSAUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 
@@ -164,15 +166,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             builder.add("userName", userName);
             //对password加密
             RSAPublicKey rsaPublicKey = null;
+//            try {
+//                rsaPublicKey = RSAEncrypt.getPublicKey(publicKey);
+//            } catch (NoSuchAlgorithmException e) {
+//                e.printStackTrace();
+//            } catch (InvalidKeySpecException e) {
+//                e.printStackTrace();
+//            }
+            //使用publicKey加密
+            String postPassword = null;
+            RSAPublicKey key = null;
+
             try {
-                rsaPublicKey = RSAUtil.getPublicKey(publicKey);
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (InvalidKeySpecException e) {
+                key = RSAUtils.getPublicKey(publicKey);
+                postPassword = RSAUtils.publicEncrypt(password,key);
+                postPassword = postPassword.replaceAll("\n", "");
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            //使用publicKey加密
-            String postPassword = RSAUtil.publicEncrypt(password,rsaPublicKey);
             builder.add("pwd",postPassword);
             System.out.println("postPassword:"+postPassword);
 

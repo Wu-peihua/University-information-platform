@@ -4,6 +4,7 @@ import com.example.uipservice.dao.UserInfoMapper;
 import com.example.uipservice.entity.UserInfo;
 import com.example.uipservice.service.UserInfoService;
 import com.example.uipservice.util.RSAUtil;
+import com.example.uipservice.util.RSAUtils;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -126,7 +127,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 //解密pwd
                 RSAPrivateKey key = null;
                 key = RSAUtil.getPrivateKey(privateKey);
-                String resultKey = RSAUtil.privateDecrypt(pwd,key);
+                String resultKey = RSAUtils.privateDecrypt(pwd,key);
                 //与数据库中的密码对比
                 if(resultKey.equals(userInfo.getPw())){
                     modelMap.put("success",true);
@@ -159,8 +160,8 @@ public class UserInfoServiceImpl implements UserInfoService {
             RSAPrivateKey key = null;
             try {
                 //解密pwd
-                key = RSAUtil.getPrivateKey(privateKey);
-                String resultKey = RSAUtil.privateDecrypt(pwd,key);
+                key = RSAUtils.getPrivateKey(privateKey);
+                String resultKey = RSAUtils.privateDecrypt(pwd,key);
 
                 userInfo = new UserInfo();
                 userInfo.setUserName(userName);
