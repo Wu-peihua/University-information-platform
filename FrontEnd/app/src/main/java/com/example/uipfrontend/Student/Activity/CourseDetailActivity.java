@@ -287,7 +287,7 @@ public class CourseDetailActivity extends AppCompatActivity {
                 //System.out.println("user university id:"+user.getUniversityId());
                 //System.out.println("global course id:"+globalcourseschoolId);
 
-                if(user.getUserId()==null||!user.getUniversityId().equals(globalcourseschoolId)){
+                if(user.getUniversityId()==null||!user.getUniversityId().equals(globalcourseschoolId)){
 
                      Toast.makeText(getApplicationContext(), "非本校学生不能参与课程评分噢！", Toast.LENGTH_SHORT).show();
                }
