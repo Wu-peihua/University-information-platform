@@ -33,6 +33,7 @@ import com.example.uipfrontend.CommonUser.Activity.PostDetailActivity;
 import com.example.uipfrontend.Entity.Course;
 import com.example.uipfrontend.Entity.ResponseCourse;
 import com.example.uipfrontend.Entity.ResponseCourseComment;
+import com.example.uipfrontend.Entity.ResponseUserInfo;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.Entity.UserRecord;
 import com.example.uipfrontend.R;
@@ -70,6 +71,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.example.uipfrontend.Utils.UserOperationRecord.isFastClick;
+import static com.example.uipfrontend.Utils.UserOperationRecord.isNumber;
 
 public class CourseDetailActivity extends AppCompatActivity {
 
@@ -124,7 +128,6 @@ public class CourseDetailActivity extends AppCompatActivity {
     private  Course coursedetail;//全局的课程
 
 
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -147,10 +150,90 @@ public class CourseDetailActivity extends AppCompatActivity {
     public void init(Course coursedetail){
         //课程卡片详情
         user = (UserInfo) getApplication();
+        //user.setUniversityId(1);//设置默认学校测试添加评论
         initCardView(coursedetail);
         getCommentData();
-        //setListListener();
+
     }
+
+    public void getUserData(){
+        //courses = new ArrayList<>();
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message message){
+                switch (message.what){
+                    case SUCCESS:
+                        Log.i("获取: ", "成功");
+                        //初始化列表
+
+                        break;
+
+                    case FAIL:
+                        Log.i("获取: ", "失败");
+                        break;
+
+                }
+            }
+        };
+
+        //查询评论数据
+        new Thread(()->{
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath) +
+                            getResources().getString(R.string.getUser)
+                            + "/?userId="+4)
+                    .get()
+                    .build();
+            Message msg = new Message();
+            OkHttpClient okHttpClient = new OkHttpClient();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.i("获取: ", e.getMessage());
+                    msg.what = FAIL;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+
+                    String data = response.body().string();
+                    System.out.println("请求返回数据:"+data);
+
+                    //日期格式化
+                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd hh:mm").create();
+                    ResponseUserInfo responseUserInfo = gson.fromJson(data,
+                            ResponseUserInfo.class);
+
+                    if(responseUserInfo==null) {
+                        System.out.println("response user info获取失败");
+                    }
+
+                    UserInfo tempuser = responseUserInfo.getUserInfo();
+                    System.out.println("user university id:"+user.getUniversityId());
+                    //获取新的comments --更新列表
+
+
+                    if (tempuser == null){
+                        System.out.println("没有数据");
+                    }
+                    else {
+
+                            msg.what = SUCCESS;
+
+                            //System.out.println("评论列表为:"+comments.toString());
+                        }
+                        handler.sendMessage(msg);
+
+                    }
+
+            });
+        }).start();
+
+
+    }
+
 
     public  void initCardView(Course course) {
 
@@ -201,7 +284,11 @@ public class CourseDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //评分判断
-                if(user.getUniversityId()==null||user.getUniversityId()!=globalcourseschoolId){
+                //System.out.println("user university id:"+user.getUniversityId());
+                //System.out.println("global course id:"+globalcourseschoolId);
+
+                if(user.getUserId()==null||!user.getUniversityId().equals(globalcourseschoolId)){
+
                      Toast.makeText(getApplicationContext(), "非本校学生不能参与课程评分噢！", Toast.LENGTH_SHORT).show();
                }
                 else {
@@ -267,16 +354,9 @@ public class CourseDetailActivity extends AppCompatActivity {
      */
     private void setListListener() {
 
-        //System.out.println("当前comments size:"+comments.size());
-
         commentAdapter.setOnLikeSelectListener((isSelected, pos) -> {
 
-            System.out.println("当前comments size:"+comments.size());
-            System.out.println("当前comments pos:"+pos);
-            System.out.println("当前comment:"+comments.get(pos));
-            //System.out.println("new course comment id"+comments.get(pos).getInfoId());
-            if (!user.getLikeRecord().containsKey("course_comment"+comments.get(pos).getInfoId())) {
-
+            if(isSelected){
                 comments.get(pos).setLikeCount(comments.get(pos).getLikeCount() + 1);
                 UserRecord record = new UserRecord();
                 record.setUserId(user.getUserId());
@@ -295,12 +375,12 @@ public class CourseDetailActivity extends AppCompatActivity {
                 user.getLikeRecord().remove("course_comment"+comments.get(pos).getInfoId());
 
             }
-            commentAdapter.notifyDataSetChanged();
+
         });
 
         //adpter删除用户评论/举报用户评论
         commentAdapter.setOnMoreClickListener((view, pos) -> {
-            System.out.println("new course comment id"+comments.get(pos).getInfoId());
+            //System.out.println("new course comment id"+comments.get(pos).getInfoId());
             if (user.getUserId().equals(comments.get(pos).getCommentatorId())) {
                 new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
                         .setTitleText("提示")
@@ -487,24 +567,6 @@ public class CourseDetailActivity extends AppCompatActivity {
 
     }
 
-
-    public void initCommentData() {
-
-        DateFormat datefomat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-
-        String datestring = "2020-4-1 20:35";
-        Date commentDate = null;
-        try {
-            commentDate = datefomat.parse(datestring);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        for(int i=0;i<10;i++) {
-            comments.add(new CourseComment((long) 1, (long) 3, "interesting", (float)4, commentDate));
-
-        }
-
-    }
 
     public void initRecyclerView() {
 
