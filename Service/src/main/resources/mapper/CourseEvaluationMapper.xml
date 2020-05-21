@@ -176,13 +176,17 @@
     order by like_number desc
   </select>
 
-  <select id="queryEvaluationByUniAndInsByReport" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
-    select
+  <select id="queryCourseEvaluationByUniAndInsByReport" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">
+    SELECT
     info_id, commentator_id, course_id, content, score, report_number,like_number, info_date,
-    course_evaluation.created, user_name, portrait
-    from course_evaluation left join user_info
-        on commentator_id = user_id and university_id = #{universityId} and institute_id = #{instituteId}
-    where  report_number >= 10
+   evaluation.created, user_name, portrait
+    FROM (SELECT C.`info_id`,C.`commentator_id`,C.`course_id`,C.`content`,C.`score`,C.`report_number`,C.`like_number`,C.`info_date`,C.`created`
+FROM course_evaluation AS C INNER JOIN courses AS D
+    ON course_id=D.info_id
+    WHERE university_id=#{universityId,jdbcType=BIGINT} AND institute_id=#{instituteId,jdbcType=BIGINT}
+    )AS evaluation INNER JOIN user_info
+        ON commentator_id = user_id
+    WHERE  report_number >= 10
   </select>
 
   <select id="queryCourseEvaluationByReport" resultMap="BaseResultMap" parameterType="com.github.pagehelper.Page">

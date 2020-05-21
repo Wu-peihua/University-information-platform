@@ -199,9 +199,13 @@ public class AdminCertificationFragment extends Fragment {
                 dropDownMenu.closeMenu();
             }
         });
-
     }
     private void getData(String requestUrl){
+        ZLoadingDialog dialog = new ZLoadingDialog(getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
         list = new ArrayList<>();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
@@ -212,12 +216,14 @@ public class AdminCertificationFragment extends Fragment {
                         //初始化列表
                         initRecyclerView();
                         tv_blank.setVisibility(View.GONE);
+                        dialog.dismiss();
                         break;
 
                     case FAIL:
                         Log.i("获取 ", "失败");
                         tv_blank.setText("获取信息失败");
                         tv_blank.setVisibility(View.VISIBLE);
+                        dialog.dismiss();
                         break;
 
                     case ZERO:
@@ -226,6 +232,7 @@ public class AdminCertificationFragment extends Fragment {
                         tv_blank.setText("无相关信息");
                         tv_blank.setVisibility(View.VISIBLE);
                         initRecyclerView();
+                        dialog.dismiss();
                         break;
                 }
             }
@@ -329,7 +336,12 @@ public class AdminCertificationFragment extends Fragment {
         });
 
     }
-    public void fetchCertificationInfo(String requestUrl){
+    private void fetchCertificationInfo(String requestUrl){
+        ZLoadingDialog dialog = new ZLoadingDialog(getContext());
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
         new Handler().postDelayed(() -> {
             @SuppressLint("HandlerLeak")
             Handler handler = new Handler(){
@@ -341,16 +353,19 @@ public class AdminCertificationFragment extends Fragment {
                             tv_blank.setVisibility(View.GONE);
                             admincertificationAdapter.setList(list, myuniversityList,myinstituteList);
                             admincertificationAdapter.notifyDataSetChanged();
+                            dialog.dismiss();
                             break;
                         case FAIL:
                             Log.i("获取", "失败");
                             tv_blank.setText("获取信息失败");
                             tv_blank.setVisibility(View.VISIBLE);
+                            dialog.dismiss();
                             break;
                         case ZERO:
                             Log.i("获取", "0");
                             tv_blank.setText("无相关信息");
                             tv_blank.setVisibility(View.VISIBLE);
+                            dialog.dismiss();
                             break;
                     }
                     recyclerView.refreshComplete();
