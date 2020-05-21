@@ -240,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
                             case 1: key = "post"; break;
                             case 2: key = "comment"; break;
                             case 3: key = "reply"; break;
+                            case 5: key ="course_comment";break;
                             case 6: key="resource"; break;
                         }
                         key += record.getToId();
@@ -252,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
                             case 1: key = "post"; break;
                             case 2: key = "comment"; break;
                             case 3: key = "reply"; break;
+                            case 5: key ="course_comment";break;
                             case 6: key="resource"; break;
                         }
                         key += record.getToId();

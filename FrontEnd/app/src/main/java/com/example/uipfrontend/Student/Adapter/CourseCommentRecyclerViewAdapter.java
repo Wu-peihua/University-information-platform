@@ -155,11 +155,11 @@ public class CourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
         // 点赞监听
 
         viewHolder.BtnLike.setCount(courseComments.get(pos).getLikeCount());
-        //System.out.println("点赞记录："+user.getLikeRecord());
-        //System.out.println("举报记录："+user.getReportRecord());
-        Long curId = courseComments.get(pos).getInfoId();
 
+        Long curId = courseComments.get(pos).getInfoId();
+        //System.out.println("点赞记录："+user.getLikeRecord());
         if (user.getLikeRecord().containsKey("course_comment"+curId)) {
+
             viewHolder.BtnLike.setState(true);
         }else{
             viewHolder.BtnLike.setState(false);

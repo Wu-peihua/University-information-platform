@@ -362,7 +362,8 @@ public class StudentMyReleaseCourseFragment extends Fragment {
         });
 
         adapter.setOnLikeSelectListener((isSelected, pos) -> {
-            if (!user.getLikeRecord().containsKey("course_comment"+list.get(pos).getInfoId())) {
+           // if (!user.getLikeRecord().containsKey("course_comment"+list.get(pos).getInfoId())) {
+            if(isSelected){
                 list.get(pos).setLikeCount(list.get(pos).getLikeCount() + 1);
                 UserRecord record = new UserRecord();
                 record.setUserId(user.getUserId());
@@ -382,7 +383,7 @@ public class StudentMyReleaseCourseFragment extends Fragment {
                 user.getLikeRecord().remove("course_comment"+list.get(pos).getInfoId());
 
             }
-            adapter.notifyDataSetChanged();
+
         });
 
         UserRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener()

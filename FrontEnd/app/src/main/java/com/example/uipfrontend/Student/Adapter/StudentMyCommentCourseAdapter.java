@@ -134,12 +134,12 @@ public class StudentMyCommentCourseAdapter extends RecyclerView.Adapter<Recycler
 
             // 点赞监听
             commentViewHolder.icv_like.setCount(courseComment.getLikeCount());
-            if (user.getLikeRecord().containsKey(courseComment.getInfoId())) {
+            if (user.getLikeRecord().containsKey("course_comment"+courseComment.getInfoId())) {
                 ((MyCommentCourseViewHolder) viewHolder).icv_like.setState(true);
-                System.out.println("mine 已经点赞");
+                //System.out.println("mine 已经点赞");
             } else {
                 ((MyCommentCourseViewHolder) viewHolder).icv_like.setState(false);
-                System.out.println("mine 未点赞");
+                //System.out.println("mine 未点赞");
             }
             ((MyCommentCourseViewHolder) viewHolder).icv_like.setOnStateChangedListener(isSelected -> onLikeSelectListener.select(isSelected, position));
 
