@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,12 +14,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.uipfrontend.CommonUser.CommonUserActivity;
-import com.example.uipfrontend.Entity.ResponseRecruit;
 import com.example.uipfrontend.Entity.UserInfo;
-import com.example.uipfrontend.MainActivity;
 import com.example.uipfrontend.R;
-import com.example.uipfrontend.Utils.RSAEncrypt;
-import com.example.uipfrontend.Utils.RSAUtils;
+import com.example.uipfrontend.Utils.RSAUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -29,15 +25,11 @@ import com.google.gson.JsonParser;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.InvalidKeySpecException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -178,8 +170,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             RSAPublicKey key = null;
 
             try {
-                key = RSAUtils.getPublicKey(publicKey);
-                postPassword = RSAUtils.publicEncrypt(password,key);
+                key = RSAUtil.getPublicKey(publicKey);
+                postPassword = RSAUtil.publicEncrypt(password,key);
                 postPassword = postPassword.replaceAll("\n", "");
             } catch (Exception e) {
                 e.printStackTrace();

@@ -127,7 +127,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 //解密pwd
                 RSAPrivateKey key = null;
                 key = RSAUtil.getPrivateKey(privateKey);
-                String resultKey = RSAUtils.privateDecrypt(pwd,key);
+                String resultKey = RSAUtil.privateDecrypt(pwd,key);
                 //与数据库中的密码对比
                 if(resultKey.equals(userInfo.getPw())){
                     modelMap.put("success",true);
@@ -138,9 +138,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                     modelMap.put("success",false);
                     modelMap.put("msg","密码错误！");
                 }
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (InvalidKeySpecException e) {
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 e.printStackTrace();
             }
         }else{
@@ -160,8 +158,8 @@ public class UserInfoServiceImpl implements UserInfoService {
             RSAPrivateKey key = null;
             try {
                 //解密pwd
-                key = RSAUtils.getPrivateKey(privateKey);
-                String resultKey = RSAUtils.privateDecrypt(pwd,key);
+                key = RSAUtil.getPrivateKey(privateKey);
+                String resultKey = RSAUtil.privateDecrypt(pwd,key);
 
                 userInfo = new UserInfo();
                 userInfo.setUserName(userName);
