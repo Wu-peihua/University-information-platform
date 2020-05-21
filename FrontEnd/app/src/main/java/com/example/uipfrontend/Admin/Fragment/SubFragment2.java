@@ -75,7 +75,7 @@ public class SubFragment2 extends Fragment {
     private AdminReportCourseCommentAdapter studentCourseRecyclerViewAdapter;
 
 
-    private List<CourseComment> comments =new ArrayList<>();//用户评论列表
+    private List<CourseComment> comments;//用户评论列表
 //    private List<CourseComment> comments;
 
     private View rootView;  //根视图（下拉筛选框）
@@ -127,9 +127,6 @@ public class SubFragment2 extends Fragment {
         getMenusData();
         initMenus();
         initListener();
-//        getData(getResources().getString(R.string.serverBasePath) +
-//                getResources().getString(R.string.queryRecruitReport)
-//                + "/?pageNum=1&pageSize=" + PAGE_SIZE );
         getData(getResources().getString(R.string.serverBasePath) +
                 getResources().getString(R.string.queryCommentReport)
                 + "/?pageNum=1&pageSize=" + PAGE_SIZE);
@@ -193,7 +190,7 @@ public class SubFragment2 extends Fragment {
                 System.out.println("university:"+selectedUniversity+"  institute:"+selectedInstitute);
 
                 getData(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryCommentByUniAndInsReport)
-                        + "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE   + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute+ "&state=0");
+                        + "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE   + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
 
 
                 dropDownMenu.setTabText(var1);
@@ -204,7 +201,7 @@ public class SubFragment2 extends Fragment {
     }
 
     private void getData(String requestUrl){
-        //courses = new ArrayList<>();
+        comments = new ArrayList<>();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message message){
