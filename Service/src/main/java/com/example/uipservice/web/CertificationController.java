@@ -30,6 +30,17 @@ public class CertificationController {
     }
 
     /**
+     * 更新新认证信息
+     * @return modelMap
+     */
+    @RequestMapping(value = "/updatecertification", method = RequestMethod.POST)
+    private Map<String, Object> updateCertification(@RequestBody StuCertification certification) {
+        Map<String, Object> modelMap = new HashMap<>();
+        modelMap.put("result", certificationService.updateCertification(certification));
+        return modelMap;
+    }
+
+    /**
      * 获取认证信息
      * @return modelMap
      */

@@ -5,8 +5,8 @@
     <!--string name="serverBasePath">http://192.168.1.106:8080/uip</string-->
     <!--string name="myIP">192.168.1.5</string-->
 
-    <string name="serverBasePath">http://192.168.1.106:8080/uip</string>
-    <string name="myIP">192.168.1.104</string>
+    <string name="serverBasePath">http://192.168.0.103:8080/uip</string>
+    <string name="myIP">192.168.0.103</string>
 
     <!--登录注册-->
     <string name="getPublicKey">/userinfo/getpublickey</string>
@@ -96,6 +96,8 @@
     <string name="deleteReply">/commentreply/deletereply</string>
     <!--新建认证-->
     <string name="insertCertification">/certification/insertcertification</string>
+    <!--更新认证-->
+    <string name="updateCertification">/certification/updatecertification</string>
     <!--查看待审核的认证-->
     <string name="selectCertificationByUserId">/certification/selectcertificationbyuserid</string>
 

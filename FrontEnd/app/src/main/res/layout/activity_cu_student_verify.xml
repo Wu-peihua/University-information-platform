@@ -34,8 +34,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -110,6 +109,16 @@
                 app:met_floatingLabelTextSize="13sp"
                 app:met_iconLeft="@drawable/ic_photo" />
 
+            <!-- 选择照片 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_cu_verify_picture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:overScrollMode="never" />
+
             <!-- 状态 -->
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/met_cu_verify_state"
@@ -126,16 +135,7 @@
                 app:met_floatingLabelTextSize="13sp"
                 app:met_iconLeft="@drawable/ic_vertify" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_cu_verify_picture"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp"
-                android:overScrollMode="never" />
-
-            <!-- 图片 -->
+            <!-- 已上传的图片 -->
             <com.lzy.ninegrid.NineGridView
                 android:id="@+id/nineGrid_cu_verify_picture"
                 android:layout_width="match_parent"

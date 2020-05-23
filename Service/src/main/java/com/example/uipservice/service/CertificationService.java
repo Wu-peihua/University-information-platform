@@ -11,6 +11,9 @@ public interface CertificationService {
     // 新建一条认证
     boolean insertCertification(StuCertification certification);
 
+    // 修改认证
+    boolean updateCertification(StuCertification certification);
+
     //根据id修改stu_cer，认证成功
     boolean certificationPass(Long infoId);
 

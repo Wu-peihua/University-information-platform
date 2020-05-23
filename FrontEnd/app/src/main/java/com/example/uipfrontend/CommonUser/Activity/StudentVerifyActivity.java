@@ -28,7 +28,9 @@ import com.bigkoo.alertview.AlertView;
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.example.uipfrontend.Entity.Certification;
+import com.example.uipfrontend.Entity.Student;
 import com.example.uipfrontend.Entity.UserInfo;
+import com.example.uipfrontend.LoginAndRegist.LoginActivity;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.GridImageAdapter;
 import com.example.uipfrontend.Student.FullyGridLayoutManager;
@@ -82,6 +84,9 @@ public class StudentVerifyActivity extends AppCompatActivity {
     private final int maxSelectNum = 3; // 最大照片数
     private final String SELECT_FROM_PHOTO_ALBUM = "SELECT_FROM_PHOTO_ALBUM";
     private final String TAKING_PHOTO            = "TAKING_PHOTO";
+    
+    private boolean isFirstTime = true; // true: 插入, false: 更新
+    private boolean editable = true;    // 编辑框是否可编辑
 
     private UserInfo user;
 
@@ -98,11 +103,13 @@ public class StudentVerifyActivity extends AppCompatActivity {
     private MaterialEditText stuName;    // 姓名
     private MaterialEditText stuCard;    // 学生证
     private MaterialEditText state;      // 状态
+    private String stateText = "";
 
     private List<LocalMedia> selectList; // 证明图片
     private List<String> selectString;   // 证明图片的本地地址
     private String url;                  // 证明图片的网络地址
 
+    private RecyclerView recyclerView;
     private GridImageAdapter adapter;
 
     private int themeId; // 主题风格
@@ -120,8 +127,10 @@ public class StudentVerifyActivity extends AppCompatActivity {
         stuName = findViewById(R.id.met_cu_verify_name);
         stuCard = findViewById(R.id.met_cu_verify_card);
         state = findViewById(R.id.met_cu_verify_state);
-        
+
         getData();
+        initNoLinkOptionsPicker();
+        initRecyclerView();
     }
 
     /**
@@ -177,19 +186,50 @@ public class StudentVerifyActivity extends AppCompatActivity {
                     case NETWORK_ERR:
                         Log.i("获取未认证: ", "失败 - 网络错误");
                         Toast.makeText(StudentVerifyActivity.this, "网络错误", Toast.LENGTH_LONG).show();
+                        initToolBar();
                         break;
                     case SERVER_ERR:
                         Log.i("获取未认证: ", "失败 - 服务器错误");
                         Toast.makeText(StudentVerifyActivity.this, "请稍后再试", Toast.LENGTH_LONG).show();
+                        initToolBar();
                         break;
                     case ZERO:
                         Log.i("获取未认证: ", "未提交");
                         initToolBar();
-                        initRecyclerView();
-                        initNoLinkOptionsPicker();
                         break;
                     case SUCCESS:
                         Log.i("获取未认证: ", "成功");
+                        
+                        SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(StudentVerifyActivity.this, SweetAlertDialog.NORMAL_TYPE);
+                        String content = "";
+                        switch (certification.getStuCer()) {
+                            case 0: editable = false;
+                                content = "请等待管理员审核";
+                                stateText = "已提交，请等待管理员审核";
+                                break;
+                            case 1: isFirstTime = false;
+                                content = "提交的信息不充分, 请修改后重新提交";
+                                break;
+                            case 2: editable = false;
+                                content = "已通过审核, 是否跳转到登录页面？";
+                                stateText = "已通过，点击跳转到登录页面";
+                                state.setOnClickListener(view -> {
+                                    Intent intent = new Intent(StudentVerifyActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                });
+                                sweetAlertDialog.setConfirmClickListener(sweetAlertDialog1 -> {
+                                    Intent intent = new Intent(StudentVerifyActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    sweetAlertDialog1.dismiss();
+                                }).setCancelText("取消").showCancelButton(true);
+                                break;
+                        }
+                        sweetAlertDialog.setTitleText("提示")
+                                .setConfirmText("确定")
+                                .setContentText(content)
+                                .show();
+
+                        if (editable) initToolBar();
                         setData();
                         break;
                 }
@@ -230,9 +270,6 @@ public class StudentVerifyActivity extends AppCompatActivity {
                     if (certification == null) {
                         msg.what = ZERO;
                     } else { 
-                        // TODO: 通过 - 提示重新登录，状态改为"已通过"；
-                        //  不通过 - 弹框提示，点击关闭按钮时删除原来提交的认证信息，回到原始提交页面；
-                        //  待审核 - (已经实现)
                         msg.what = SUCCESS;
                     }
                     handler.sendMessage(msg);
@@ -245,41 +282,43 @@ public class StudentVerifyActivity extends AppCompatActivity {
      * 描述：用户已提交认证申请，显示用户提交的信息
      */
     void setData() {
-        
-        universityOption = certification.getUniversityId();
-        instituteOption = certification.getInstitudeId();
-        String str = option1[universityOption - 1] + " - " + option2[instituteOption - 1];
+        universityOption = certification.getUniversityId() - 1;
+        instituteOption = certification.getInstitudeId() - 1;
+        String str = option1[universityOption] + " - " + option2[instituteOption];
+
         school.setText(str);
-        school.setFocusable(false);
-        
         stuNumber.setText(certification.getStuNumber());
-        stuNumber.setFocusable(false);
-        
         stuName.setText(certification.getStuName());
-        stuName.setFocusable(false);
         
-        stuCard.setVisibility(View.GONE);
-        
-        state.setVisibility(View.VISIBLE);
-        state.setText("已提交，请等待管理员审核");
-        state.setFocusable(false);
-        
-        url = certification.getStuCard();
-        selectString = Arrays.asList(url.split(","));
-        
-        List<ImageInfo> imageList = new ArrayList<>();
-        for(String picUrl : selectString) {
-            picUrl = picUrl.replace("localhost", getResources().getString(R.string.myIP));
-            picUrl = picUrl.replace("\"", "");
-            ImageInfo image = new ImageInfo();
-            image.setThumbnailUrl(picUrl);
-            image.setBigImageUrl(picUrl);
-            imageList.add(image); 
+        if (!editable) {
+            school.setFocusable(false);
+            stuNumber.setFocusable(false);
+            stuName.setFocusable(false);
+            
+            stuCard.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            
+            state.setVisibility(View.VISIBLE);
+            state.setText(stateText);
+            state.setFocusable(false);
+
+            url = certification.getStuCard();
+            selectString = Arrays.asList(url.split(","));
+
+            List<ImageInfo> imageList = new ArrayList<>();
+            for(String picUrl : selectString) {
+                picUrl = picUrl.replace("localhost", getResources().getString(R.string.myIP));
+                picUrl = picUrl.replace("\"", "");
+                ImageInfo image = new ImageInfo();
+                image.setThumbnailUrl(picUrl);
+                image.setBigImageUrl(picUrl);
+                imageList.add(image);
+            }
+            NineGridView.setImageLoader(new PicassoImageLoader());
+            NineGridView verifyPic = findViewById(R.id.nineGrid_cu_verify_picture);
+            verifyPic.setAdapter(new NineGridViewClickAdapter(this, imageList));
+            verifyPic.setVisibility(View.VISIBLE);
         }
-        NineGridView.setImageLoader(new PicassoImageLoader());
-        NineGridView verifyPic = findViewById(R.id.nineGrid_cu_verify_picture);
-        verifyPic.setAdapter(new NineGridViewClickAdapter(this, imageList));
-        verifyPic.setVisibility(View.VISIBLE);
     }
     
     // 不联动的多级选项
@@ -318,7 +357,7 @@ public class StudentVerifyActivity extends AppCompatActivity {
     private void initRecyclerView() {
         selectList = new ArrayList<>();
 
-        RecyclerView recyclerView = findViewById(R.id.rv_cu_verify_picture);
+        recyclerView = findViewById(R.id.rv_cu_verify_picture);
 
         themeId = R.style.picture_default_style;
         statusBarColorPrimaryDark = R.color.blue;
@@ -410,8 +449,11 @@ public class StudentVerifyActivity extends AppCompatActivity {
                         pDialog.setTitleText("请稍后");
                         pDialog.setCancelable(false);
                         pDialog.show();
-
+                        
+                        Long infoId = null;
+                        if (certification != null) infoId = certification.getInfoId();
                         certification = new Certification();
+                        certification.setInfoId(infoId);
                         certification.setUserId(user.getUserId());
                         certification.setStuNumber(no);
                         certification.setStuName(name);
@@ -674,11 +716,13 @@ public class StudentVerifyActivity extends AppCompatActivity {
 
             Gson gson = new Gson();
             String json = gson.toJson(certification);
+            
+            String requestUrl = isFirstTime ? getResources().getString(R.string.insertCertification) 
+                    : getResources().getString(R.string.updateCertification);
 
             RequestBody requestBody = FormBody.create(json, MediaType.parse("application/json;charset=utf-8"));
             Request request = new Request.Builder()
-                    .url(getResources().getString(R.string.serverBasePath)
-                        + getResources().getString(R.string.insertCertification))
+                    .url(getResources().getString(R.string.serverBasePath) + requestUrl)
                     .post(requestBody)
                     .build();
             

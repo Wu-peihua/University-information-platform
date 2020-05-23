@@ -43,6 +43,17 @@ public class CertificationImpl implements CertificationService {
     }
 
     @Override
+    public boolean updateCertification(StuCertification certification) {
+        try {
+            int effectNum = certificationMapper.updateByPrimaryKeySelective(certification);
+            if (effectNum > 0) return true;
+            else throw new RuntimeException("服务器错误！修改认证信息失败！");
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
     public boolean certificationPass(Long infoId) {
         if(infoId != null){
             try {
