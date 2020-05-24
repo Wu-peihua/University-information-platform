@@ -195,6 +195,7 @@ public class AdminCertificationFragment extends Fragment {
                         + "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE  + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
 
 
+
                 dropDownMenu.setTabText(var1);
                 dropDownMenu.closeMenu();
             }

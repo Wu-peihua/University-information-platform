@@ -51,8 +51,6 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
 //    //用户数据测试
 //    private Map<Long, UserInfo> userInfos = new HashMap<>() ;//<userid,Userinfo>
 
-    private onItemClickListener itemClickListener;//设置点击监听器
-
 
     //分页请求课程评论数据
     private static final int SUCCESS = 1;
@@ -60,22 +58,24 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     private static final int ZERO = 0; //记录请求回来的数据条数是否为零
     //评论用户
 
+    private onItemClickListener onClickListener;
+
 
     public void setList(List<CourseComment> list) {
         this.courseComments= list;
 
     }
 
-//    public void getAllCommentUser(){
+    public void setonItemClickListener(onItemClickListener itemClickListener) {
+        this.onClickListener = itemClickListener;
+    }
+
+    //    public void getAllCommentUser(){
 //
 //        for(CourseComment c:courseComments){
 //            requestUserInfo(c.getCommentatorId());//请求评论列表下所有的用户
 //        }
 //    }
-
-    public void setOnItemClickListener(onItemClickListener clickListener) {
-        this.itemClickListener = clickListener;
-    }
 
 
     public AdminCourseCommentRecyclerViewAdapter(Context context, List<CourseComment> list) {
@@ -158,38 +158,9 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
         viewHolder.score.setStepSize((float) 0.5);
         viewHolder.score.setRating(courseComments.get(pos).getScore());
 
-        //举报提示框
-        viewHolder.BtnBadReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        viewHolder.BtnBadReport.setOnClickListener(view -> onClickListener.onClick(view,pos));
 
-                new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText("您确定删除这条评论吗？")
-                        .setContentText("删除后不能取消！")
-                        .setConfirmText("确认")
-                        .setCancelText("取消")
-                        .showCancelButton(true)
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-                                sDialog.cancel();
-                            }
-                        })
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-                                sDialog.setTitleText("删除成功！")
-                                        .showCancelButton(false)
-                                        .setContentText("OK")
-                                        .setConfirmClickListener(null)
-                                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                            }
-                        })
-                        .show();
 
-                Log.i("click","删除该评论！");
-            }
-        });
     }
     //设置用户头像
     private void setImage(Context context, ImageView imageView, String url) {
@@ -201,7 +172,7 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     }
     //点击
     public interface onItemClickListener {
-        void onClick(int pos);
+        void onClick(View view , int pos);
     }
 
     @Override
@@ -221,6 +192,7 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     public int getItemViewType(int position) {
         return position;
     }
+
 
 }
 

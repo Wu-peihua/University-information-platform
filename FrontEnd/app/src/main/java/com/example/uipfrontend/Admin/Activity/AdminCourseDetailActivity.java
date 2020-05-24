@@ -2,6 +2,7 @@ package com.example.uipfrontend.Admin.Activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,6 +33,8 @@ import com.google.gson.GsonBuilder;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -44,11 +47,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import info.hoang8f.widget.FButton;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 //import com.example.uipfrontend.Student.Adapter.CourseCommentRecyclerViewAdapter;
@@ -231,6 +237,29 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
             commentAdapter.setList(comments);
             commentAdapter.notifyDataSetChanged();
         });
+
+        commentAdapter.setonItemClickListener((view, pos) -> {
+            //System.out.println("new course comment id"+comments.get(pos).getInfoId());
+            new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("提示")
+                    .setContentText("确定要删除这条评论吗？")
+                    .setConfirmText("确定")
+                    .setCancelText("取消")
+                    .showCancelButton(true)
+                    .setConfirmClickListener(sweetAlertDialog -> {
+                        sweetAlertDialog.changeAlertType(SweetAlertDialog.PROGRESS_TYPE);
+                        sweetAlertDialog.setTitle("请稍后");
+                        sweetAlertDialog.setContentText("");
+                        sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                        sweetAlertDialog.setCancelable(false);
+                        sweetAlertDialog.showCancelButton(false);
+                        sweetAlertDialog.show();
+                        deleteComment(comments.get(pos).getInfoId(), pos, sweetAlertDialog);
+                    })
+                    .setCancelClickListener(SweetAlertDialog::cancel)
+                    .show();
+        });
+
     }
 
     /**
@@ -327,7 +356,6 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
                 }
             });
         }).start();
-
 
     }
     public void initRecyclerView() {
@@ -600,5 +628,75 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
             return Objects.requireNonNull(p1.getInfoDate()).compareTo(p2.getInfoDate());
 
         });
+    }
+
+    /**
+     * 用户删除评论 数据库更新
+     */
+    private void deleteComment(Long id, int pos, SweetAlertDialog sDialog) {
+
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAIL:
+                        Log.i("删除评论: ", "失败");
+                        sDialog.setTitleText("删除失败")
+                                .setContentText("出了点问题，请稍候再试")
+                                .showCancelButton(false)
+                                .setConfirmText("确定")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        break;
+                    case SUCCESS:
+                        Log.i("删除评论: ", "成功");
+                        sDialog.setTitleText("删除成功")
+                                .setContentText("")
+                                .showCancelButton(false)
+                                .setConfirmText("关闭")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                        comments.remove(pos);
+                        commentAdapter.notifyDataSetChanged();
+                        setCommentSum();
+                        queryUpdatedAverageScore(globalcourseid);
+                        //mySendBroadCast(s2);//course列表view更新
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+        new Thread(()->{
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+
+            FormBody.Builder builder = new FormBody.Builder();
+            builder.add("infoId", String.valueOf(id));
+            RequestBody requestBody = builder.build();
+
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.deleteCourseEvaluation))
+                    .post(requestBody)
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("删除评论: ", e.getMessage());
+                    msg.what = FAIL;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.i("删除评论：", response.body().string());
+                    msg.what = SUCCESS;
+                    handler.sendMessage(msg);
+                }
+            });
+
+        }).start();
     }
 }
