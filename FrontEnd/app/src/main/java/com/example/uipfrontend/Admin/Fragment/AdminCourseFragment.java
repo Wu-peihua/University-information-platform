@@ -77,7 +77,7 @@ public class AdminCourseFragment extends Fragment {
     private static final int SUCCESS = 1;
     private static final int FAIL = -1;
     private static final int ZERO = 0; //记录请求回来的数据条数是否为零
-    private static final int PAGE_SIZE = 6;   //默认一次请求6条数据
+    private static final int PAGE_SIZE = 20;   //默认一次请求6条数据
     private static int CUR_PAGE_NUM = 1;
 
     //记录下拉筛选菜单选择的学校ID和学院ID

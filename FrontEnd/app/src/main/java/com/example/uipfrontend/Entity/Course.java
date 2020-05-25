@@ -18,7 +18,7 @@ public class Course implements Serializable {
 */
     private Long infoId;
 
-    private Integer userId;
+    private Long userId;
 
     private Integer universityId;
 
@@ -30,7 +30,7 @@ public class Course implements Serializable {
 
     private String coursePicture;
 
-    private Date infoDate;
+    private String infoDate;
 
     private String description;
 
@@ -40,6 +40,10 @@ public class Course implements Serializable {
     private Float averageScore;
 
     private Date created;
+
+    public Course(){
+
+    };
 
 
     public Course(Long courseID,String _name, String _teacher,String _description,Float _score){
@@ -109,6 +113,10 @@ public class Course implements Serializable {
     public  void setTeacher(String teacher) {
         this.teacherName = teacher;
     }
+
+    public void setUserId(Long userId){ this.userId = userId;}
+
+    public void setInfoDate(String _infoDate){this.infoDate = _infoDate;}
 
     /*public  void  setScore(Integer score) {
         this.averageScore = score;

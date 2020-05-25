@@ -3,6 +3,7 @@ package com.example.uipfrontend.Admin.Activity;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -25,15 +26,26 @@ import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
+import com.example.uipfrontend.Entity.Course;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Adapter.GridImageAdapter;
 import com.example.uipfrontend.Student.FullyGridLayoutManager;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +53,15 @@ import java.util.Date;
 import java.util.List;
 
 import fj.edittextcount.lib.FJEditTextCount;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 import static com.example.uipfrontend.CommonUser.Activity.AddResActivity.hideSystemKeyboard;
@@ -69,8 +90,9 @@ public class AdminAddCourseActivity extends AppCompatActivity {
 
     private OptionsPickerView pvNoLinkOptions;
     private MaterialEditText school;
+
     private int schoolOption;
-    private int subjectOption;
+    private int instituteOption;
 
     //发布课程名
     private MaterialEditText title;
@@ -79,29 +101,38 @@ public class AdminAddCourseActivity extends AppCompatActivity {
     //课程简介
     private FJEditTextCount description;
 
+    private String[] option1 ;
+    private String[] option2 ;
+
+    private Course course;
+
+    //上传图片的本地路径
+    List<String> selectString = new ArrayList<>();
+    //服务器返回的图片url
+    String url = "";  //url字符串，逗号分隔，存入数据库中
+
+    private UserInfo userInfo; //记录当前登陆用户的信息
+
+    private boolean isModify = false;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_add_course);
-//        getSupportActionBar().hide();
 
+        course = new Course();
 
-//        setTitle("发布课程");
+        userInfo = (UserInfo)getApplication();  //获取登录用户信息
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().setStatusBarColor(getResources().getColor(R.color.blue));
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setHomeButtonEnabled(true);
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
-//
-//        initRecyclerView();
 
         initToolBar();
         initRecyclerView();
         initView();
+        initData();
 
         initNoLinkOptionsPicker();
     }
@@ -127,7 +158,6 @@ public class AdminAddCourseActivity extends AppCompatActivity {
         statusBarColorPrimaryDark = R.color.blue;
         upResId = R.drawable.arrow_up;
         downResId = R.drawable.arrow_down;
-//        dialogBuilderSelect = NiftyDialogBuilder.getInstance(this);
 
         //照片上传功能
         //每行显示3张照片
@@ -170,19 +200,115 @@ public class AdminAddCourseActivity extends AppCompatActivity {
         description = findViewById(R.id.et_admin_description);
     }
 
+    //toolbar带有保存按钮
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.submit_menu, menu);
+        return true;
+    }
+
+    //toolbar的操作
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            /*
+             * 将actionBar的HomeButtonEnabled设为ture，
+             *
+             * 将会执行此case
+             */
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.submit:
+                if (TextUtils.isEmpty(school.getText().toString().trim())) {
+                    school.requestFocus();
+                    hideSystemKeyboard(AdminAddCourseActivity.this, school);
+                    Toast.makeText(this, "请选择发布面向的学校及学科！", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(title.getText().toString().trim())) {
+                    title.requestFocus();
+                    Toast.makeText(this, "请输入课程标题！", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(teacher.getText().toString().trim())) {
+                    teacher.requestFocus();
+                    Toast.makeText(this, "请输入教师姓名！", Toast.LENGTH_SHORT).show();
+                }else if(TextUtils.isEmpty(description.getText().trim())) {
+                    description.requestFocus();
+                    Toast.makeText(this, "请输入课程信息的描述！", Toast.LENGTH_SHORT).show();
+                }
+//                else if(TextUtils.isEmpty(course.getCoursePicture().trim())){
+//                    Toast.makeText(this, "请选择课程照片！", Toast.LENGTH_SHORT).show();
+//                    course.setCoursePicture("https://image.slidesharecdn.com/itpresentation-160222172239/95/computer-networks-presentation-2-638.jpg?cb=1456162084\n");
+//                }
+                else {
+                    DialogInterface.OnClickListener dialog_OL = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                //确定
+                                case -1:
+                                    Intent intent = new Intent();
+
+                                    course.setUserId(userInfo.getUserId());
+                                    course.setTeacher(teacher.getText().toString());
+                                    course.setDescription(description.getText());
+                                    @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                                    course.setInfoDate(simpleDateFormat.format(new Date()));
+                                    course.setSchoolId(schoolOption+1);
+                                    course.setAcademyId(instituteOption+1);
+                                    course.setCourseName(title.getText().toString());
+                                    //course.setCoursePicture(userInfo.getPortrait());
+                                    course.setScore(0f);
+
+                                    if(selectString.size() != 0){
+                                        uploadImage();
+                                    }else{
+                                        if(!isModify){
+                                            insertOrModifyCourse(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.InsertCourse));
+                                        }else{
+                                            insertOrModifyCourse(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.UpdateCourse));
+                                        }
+                                    }
+
+                                    Toast.makeText(AdminAddCourseActivity.this, "课程发布成功", Toast.LENGTH_SHORT).show();
+
+                                    AdminAddCourseActivity.this.finish();
+                                    break;
+                                //取消
+                                case -2:
+                                    dialog.dismiss();
+                                    break;
+                                //其他
+                                case -3:
+                                    dialog.dismiss();
+                                    break;
+                            }
+                        }
+                    };
+                    AlertDialog dialog = new AlertDialog.Builder(AdminAddCourseActivity.this)
+                            .setTitle("提示")
+                            .setMessage("是否确认发布该课程？")
+                            .setPositiveButton("确定", dialog_OL)
+                            .setNegativeButton("取消", dialog_OL)
+                            .setCancelable(false)
+                            .create();
+                    dialog.show();
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
+                }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     //不联动的多级选项
     @SuppressLint("ClickableViewAccessibility")
     private void initNoLinkOptionsPicker() {
-        String[] option1 = {"华南师范大学"};
-        String[] option2 = {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
-                "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"};
+
 
         pvNoLinkOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
 
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
                 schoolOption = options1;
-                subjectOption = options2;
+                instituteOption = options2;
                 String str = option1[options1] + "-" + option2[options2];
                 school.setText(str);
             }
@@ -311,86 +437,6 @@ public class AdminAddCourseActivity extends AppCompatActivity {
                     .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
         }
     }
-        @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.submit_menu, menu);
-        return true;
-    }
-
-    //toolbar的操作
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            /*
-             * 将actionBar的HomeButtonEnabled设为ture，
-             *
-             * 将会执行此case
-             */
-            case android.R.id.home:
-                finish();
-                break;
-            case R.id.submit:
-                if (TextUtils.isEmpty(school.getText().toString().trim())) {
-                    school.requestFocus();
-                    hideSystemKeyboard(AdminAddCourseActivity.this, school);
-                    Toast.makeText(this, "请选择发布面向的学校及学科！", Toast.LENGTH_SHORT).show();
-                } else if (TextUtils.isEmpty(title.getText().toString().trim())) {
-                    title.requestFocus();
-                    Toast.makeText(this, "请输入课程名！", Toast.LENGTH_SHORT).show();
-                } else if (TextUtils.isEmpty(teacher.getText().toString().trim())) {
-                    teacher.requestFocus();
-                    Toast.makeText(this, "请输入课程教师的姓名！", Toast.LENGTH_SHORT).show();
-                }else if(TextUtils.isEmpty(description.getText().trim())) {
-                    description.requestFocus();
-                    Toast.makeText(this, "请输入课程简介！", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    DialogInterface.OnClickListener dialog_OL = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                //确定
-                                case -1:
-                                    Intent intent = new Intent();
-                                    String username = "张咩阿";
-                                    String strTitle = title.getText().toString().trim();
-                                    String strDescription = description.getText().trim();
-                                    String strContact = teacher.getText().toString();
-                                    Date date = new Date(System.currentTimeMillis());
-                                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
-                                    String strTime = format.format(date);
-
-                                    setResult(1, intent);
-                                    Toast.makeText(AdminAddCourseActivity.this, "课程发布成功", Toast.LENGTH_SHORT).show();
-
-                                    AdminAddCourseActivity.this.finish();
-                                    break;
-                                //取消
-                                case -2:
-                                    dialog.dismiss();
-                                    break;
-                                //其他
-                                case -3:
-                                    dialog.dismiss();
-                                    break;
-                            }
-                        }
-                    };
-                    AlertDialog dialog = new AlertDialog.Builder(AdminAddCourseActivity.this)
-                            .setTitle("提示")
-                            .setMessage("是否确认发布该课程？")
-                            .setPositiveButton("确定", dialog_OL)
-                            .setNegativeButton("取消", dialog_OL)
-                            .setCancelable(false)
-                            .create();
-                    dialog.show();
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blue));
-                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.blue));
-                }
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
 
     //给上传图片添加点击事件
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
@@ -430,19 +476,13 @@ public class AdminAddCourseActivity extends AppCompatActivity {
                 case PictureConfig.CHOOSE_REQUEST:
                     // 图片选择结果回调
                     selectList = PictureSelector.obtainMultipleResult(data);
-                    String selectString = "";
-                    // 例如 LocalMedia 里面返回三种path
-                    // 1.media.getPath(); 为原图path
-                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
-                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
-                    // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
-                    // 4.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
+
                     for (LocalMedia media : selectList) {
-                        selectString += media.getPath();
-                        Log.i(TAG, "压缩---->" + media.getCompressPath());
-                        Log.i(TAG, "原图---->" + media.getPath());
-                        Log.i(TAG, "裁剪---->" + media.getCutPath());
-                        Log.i(TAG, "Android Q 特有Path---->" + media.getAndroidQToPath());
+                        selectString.add(media.getPath());
+//                        Log.i(TAG, "压缩---->" + media.getCompressPath());
+//                        Log.i(TAG, "原图---->" + media.getPath());
+//                        Log.i(TAG, "裁剪---->" + media.getCutPath());
+//                        Log.i(TAG, "Android Q 特有Path---->" + media.getAndroidQToPath());
                     }
 
                     adapter.setList(selectList);
@@ -452,4 +492,155 @@ public class AdminAddCourseActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    public void initData() {
+
+        //通过sharepreference获取大学选项和学院选项
+        SharedPreferences sp = getSharedPreferences("data",MODE_PRIVATE);
+        //第二个参数为缺省值，如果不存在该key，返回缺省值
+        String strUniversity = sp.getString("university",null);
+        String strInstitute = sp.getString("institute",null);
+
+        List<String> universityList = new ArrayList<>();
+        List<String> instituteList = new ArrayList<>();
+        //将String转为List
+        String str1[] = strUniversity.split(",");
+        universityList = Arrays.asList(str1);
+        String str[] = strInstitute.split(",");
+        instituteList = Arrays.asList(str);
+
+        option1 = universityList.toArray(new String[0]);
+        option2 = instituteList.toArray(new String[0]);
+
+
+
+        Intent intent = getIntent();
+        Course newCourse = (Course) intent.getSerializableExtra("course");
+        if (newCourse != null) {
+
+            school.setText(option1[newCourse.getSchoolId()-1] + "-" + option2[newCourse.getAcademyId()-1]);
+            title.setText(newCourse.getName());
+            teacher.setText(newCourse.getTeacher());
+            description.setText(newCourse.getDescription());
+            course.setCourseID(newCourse.getCourseID());
+            isModify = true;
+        }
+
+    }
+    public void insertOrModifyCourse(String requestUrl){
+
+        ZLoadingDialog dialog = new ZLoadingDialog(AdminAddCourseActivity.this);
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //建立client
+                final OkHttpClient[] client = {new OkHttpClient()};
+                //将传送实体类转为string类型的键值对
+                Gson gson = new Gson();
+                String json = gson.toJson(course);
+
+                //设置请求体并设置contentType
+                RequestBody requestBody = FormBody.create(MediaType.parse("application/json;charset=utf-8"),json);
+                //请求
+                Request request=new Request.Builder()
+                        .url(requestUrl)
+                        .post(requestBody)
+                        .build();
+                //新建call联结client和request
+                Call call= client[0].newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        //请求失败的处理
+                        Log.i("RESPONSE:","fail"+e.getMessage());
+                        dialog.dismiss();
+                    }
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        Log.i("RESPONSE:",response.body().string());
+                        dialog.dismiss();
+                    }
+
+                });
+            }
+        }).start();
+
+
+    }
+
+    //先上传图片，成功后返回url再上传表单信息
+    public void uploadImage(){
+
+        ZLoadingDialog dialog = new ZLoadingDialog(AdminAddCourseActivity.this);
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //建立client
+                final OkHttpClient[] client = {new OkHttpClient()};
+
+                //创建MultipartBody.Builder，用于添加请求的数据
+                MultipartBody.Builder builder = new MultipartBody.Builder();
+                for (String tempName : selectString) { //对文件进行遍历
+                    File file = new File(tempName); //生成文件
+                    //根据文件的后缀名，获得文件类型
+                    builder.addFormDataPart( //给Builder添加上传的文件
+                            "image",  //请求的名字
+                            file.getName(), //文件的文字，服务器端用来解析的
+                            RequestBody.create(MediaType.parse("multipart/form-data"), file) //创建RequestBody，把上传的文件放入
+                    );
+                }
+
+                Request.Builder requestBuilder = new Request.Builder();
+                requestBuilder.url(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.uploadImage))
+                        .post(builder.build());
+
+
+                //新建call联结client和request
+                Call call= client[0].newCall(requestBuilder.build());
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        //请求失败的处理
+                        Log.i("RESPONSE:","fail"+e.getMessage());
+                    }
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String responseBody = response.body().string();
+                        Log.i("RESPONSE:",responseBody);
+                        //图片上传成功后再上传表单信息
+                        //解析大学json字符串数组
+                        JsonObject jsonObjectUrl = new JsonParser().parse(responseBody).getAsJsonObject();
+                        JsonArray jsonArrayUrl = jsonObjectUrl.getAsJsonArray("urlList");
+
+                        //循环遍历数组
+                        for (JsonElement jsonElement : jsonArrayUrl) {
+                            url += jsonElement.toString() + ",";
+                        }
+
+                        System.out.println("url:"+url);
+
+                        course.setCoursePicture(url);
+
+                        if(!isModify){
+                            insertOrModifyCourse(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.InsertCourse));
+                        }else{
+                            insertOrModifyCourse(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.UpdateCourse));
+                        }
+                    }
+
+                });
+            }
+        }).start();
+
+    }
 }

@@ -102,11 +102,6 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
     private String     beginFrom; // 标识从哪里启动这个Activity
     private int        coursePos;   // 该条课程在list的位置
 
-    // 课程评分变化
-    private static final String s1 = "insertCoursecomment";
-    private static final String s2 = "deleteCourseComment";
-    private static final String s3 = "increaseLikeInCommentDetail";
-    private static final String s4 = "decreaseLikeInCommentDetail";
 
     private  Course coursedetail;//全局的课程
 
@@ -198,7 +193,9 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
 //                Commentdialog.setContentView(DialogView);
 //                Commentdialog.show();
                 Intent intent = new Intent(AdminCourseDetailActivity.this,AdminAddCourseActivity.class);
-                startActivity(intent);
+                intent.putExtra("course",coursedetail);
+                startActivityForResult(intent, 1);
+//                startActivity(intent);
                 Log.i("click","点击了编辑课程按钮");
             }
         });
