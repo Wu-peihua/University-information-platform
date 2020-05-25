@@ -42,7 +42,7 @@ public class CourseServiceImpl implements CourseService {
     public boolean updateCourse(Courses Course) {
         if(Course.getCourseName() != null){
             try{
-                int effectNum = courseMapper.updateByPrimaryKey(Course);
+                int effectNum = courseMapper.updateByPrimaryKeySelective(Course);
                 if(effectNum > 0){
                     return true;
                 }else{

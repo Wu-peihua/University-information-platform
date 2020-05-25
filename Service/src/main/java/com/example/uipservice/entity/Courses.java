@@ -1,5 +1,7 @@
 package com.example.uipservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class Courses {
@@ -16,7 +18,7 @@ public class Courses {
     private String teacherName;
 
     private String coursePicture;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date infoDate;
 
     private String description;

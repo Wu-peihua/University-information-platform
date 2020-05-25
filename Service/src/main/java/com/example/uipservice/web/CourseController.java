@@ -35,7 +35,7 @@ public class CourseController {
      * @return modelMap
      */
     @RequestMapping(value = "/updatecourse", method = RequestMethod.POST)
-    private Map<String,Object> updateCourse(Courses Course){
+    private Map<String,Object> updateCourse(@RequestBody Courses Course){
         Map<String,Object> modelMap = new HashMap<String, Object>();
         modelMap.put("success", courseService.updateCourse(Course));
         return modelMap;

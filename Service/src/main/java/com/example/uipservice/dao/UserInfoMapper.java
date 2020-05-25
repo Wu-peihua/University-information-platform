@@ -21,6 +21,6 @@ public interface UserInfoMapper {
 
     int updateByPrimaryKey(UserInfo record);
 
-    int updateUserToStudent(Long userId);
+    int updateUserToStudent(String stuNumber, String stuCard, Integer universityId, Integer instituteId, Long userId);
 
 }

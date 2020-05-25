@@ -58,7 +58,7 @@ public class CertificationImpl implements CertificationService {
         if(infoId != null){
             try {
                 StuCertification stuCertification = certificationMapper.selectByPrimaryKey(infoId);
-                int effect = userInfoMapper.updateUserToStudent(stuCertification.getUserId());
+                int effect = userInfoMapper.updateUserToStudent(stuCertification.getStuNumber(),stuCertification.getStuCard(),stuCertification.getUniversityId(),stuCertification.getInstitudeId(),stuCertification.getUserId());
                 int effectNum = certificationMapper.certificationPass(infoId);
                 if(effectNum > 0 && effect > 0){
                     return true;

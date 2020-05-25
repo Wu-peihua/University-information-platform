@@ -153,7 +153,11 @@
 
   <update id="updateUserToStudent" parameterType="com.example.uipservice.entity.UserInfo">
     update user_info
-    set user_type = 1
+    set user_type = 1,
+      stu_number = #{stuNumber,jdbcType=VARCHAR},
+      stu_card = #{stuCard,jdbcType=VARCHAR},
+      university_id = #{universityId,jdbcType=INTEGER},
+      institute_id = #{instituteId,jdbcType=INTEGER}
     where user_id = #{userId,jdbcType=BIGINT}
   </update>
 
