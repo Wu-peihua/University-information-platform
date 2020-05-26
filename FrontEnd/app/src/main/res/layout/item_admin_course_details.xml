@@ -121,10 +121,14 @@
 
                 </Button-->
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
                 <info.hoang8f.widget.FButton
                     android:id="@+id/admin_fbtn_Editcourse"
                     android:layout_margin="@dimen/margin_s"
-                    android:layout_width="wrap_content"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="编辑课程"
                     android:layout_centerHorizontal="true"
@@ -134,6 +138,21 @@
                     fbutton:cornerRadius="10dp"
 
                     />
+
+                <info.hoang8f.widget.FButton
+                    android:id="@+id/admin_fbtn_Deletecourse"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="@dimen/margin_s"
+                    android:text="删除课程"
+                    android:textColor="@color/white"
+                    fbutton:cornerRadius="10dp"
+                    fbutton:fButtonColor="@color/colorPrimary"
+                    fbutton:shadowEnabled="false"
+
+                    />
+                </LinearLayout>
 
             </LinearLayout>
 

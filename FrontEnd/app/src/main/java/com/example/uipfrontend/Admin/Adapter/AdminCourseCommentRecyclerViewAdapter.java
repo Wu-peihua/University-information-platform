@@ -61,6 +61,7 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     private onItemClickListener onClickListener;
 
 
+
     public void setList(List<CourseComment> list) {
         this.courseComments= list;
 
@@ -172,6 +173,10 @@ public class AdminCourseCommentRecyclerViewAdapter extends RecyclerView.Adapter{
     }
     //点击
     public interface onItemClickListener {
+        void onClick(View view , int pos);
+    }
+
+    public interface deleteClikListener {
         void onClick(View view , int pos);
     }
 

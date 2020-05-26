@@ -64,6 +64,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
     //private ListView CommentList;
     private TextView commentSum;//评论数目
     private FButton EditCourse;//编辑课程
+    private FButton DeleteCourse;//珊瑚课程
     private EditText CommentEidt ;//编辑评论框
     private RatingBar UserRating;//评分星星
 
@@ -104,6 +105,9 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
 
 
     private  Course coursedetail;//全局的课程
+
+    private static final String s1 = "deleteCourse";
+    private static final String s2 = "deleteCourseComment";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,6 +150,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
 
 
         EditCourse = (FButton) findViewById(R.id.admin_fbtn_Editcourse) ;
+        DeleteCourse = (FButton) findViewById(R.id.admin_fbtn_Deletecourse) ;
         commentSum = (TextView) findViewById(R.id.admin_course_comment_sum);
 
         order_by_time = findViewById(R.id.admin_tv_course_comment_order_by_time);
@@ -192,14 +197,40 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
 //                }
 //                Commentdialog.setContentView(DialogView);
 //                Commentdialog.show();
+
                 Intent intent = new Intent(AdminCourseDetailActivity.this,AdminAddCourseActivity.class);
                 intent.putExtra("course",coursedetail);
                 startActivityForResult(intent, 1);
 //                startActivity(intent);
                 Log.i("click","点击了编辑课程按钮");
+                AdminCourseDetailActivity.this.finish();
             }
         });
 
+        DeleteCourse.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new SweetAlertDialog(AdminCourseDetailActivity.this, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("提示")
+                        .setContentText("确定要删除这条评论吗？")
+                        .setConfirmText("确定")
+                        .setCancelText("取消")
+                        .showCancelButton(true)
+                        .setConfirmClickListener(sweetAlertDialog -> {
+                            sweetAlertDialog.changeAlertType(SweetAlertDialog.PROGRESS_TYPE);
+                            sweetAlertDialog.setTitle("请稍后");
+                            sweetAlertDialog.setContentText("");
+                            sweetAlertDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                            sweetAlertDialog.setCancelable(false);
+                            sweetAlertDialog.showCancelButton(false);
+                            sweetAlertDialog.show();
+                            deleteCourse(globalcourseid, sweetAlertDialog);
+                        })
+                        .setCancelClickListener(SweetAlertDialog::cancel)
+                        .show();
+            }
+        });
     }
 
     private void setListListener() {
@@ -611,6 +642,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
     }
 
 
+
     private void sortByLikeNum() {
         Collections.sort(comments, (p1, p2) -> {
             int s1 = p1.getLikeCount();
@@ -657,7 +689,7 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
                         commentAdapter.notifyDataSetChanged();
                         setCommentSum();
                         queryUpdatedAverageScore(globalcourseid);
-                        //mySendBroadCast(s2);//course列表view更新
+                        mySendBroadCast(s2);//course列表view更新
                         break;
                 }
                 super.handleMessage(msg);
@@ -695,5 +727,78 @@ public class AdminCourseDetailActivity extends AppCompatActivity {
             });
 
         }).start();
+    }
+
+    private void deleteCourse(Long id, SweetAlertDialog sDialog){
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case FAIL:
+                        Log.i("删除评论: ", "失败");
+                        sDialog.setTitleText("删除失败")
+                                .setContentText("出了点问题，请稍候再试")
+                                .showCancelButton(false)
+                                .setConfirmText("确定")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        break;
+                    case SUCCESS:
+                        Log.i("删除评论: ", "成功");
+                        sDialog.setTitleText("删除成功")
+                                .setContentText("")
+                                .showCancelButton(false)
+                                .setConfirmText("即将关闭页面")
+                                .setConfirmClickListener(null)
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                        AdminCourseDetailActivity.this.finish();
+                        mySendBroadCast(s1);//course列表view更新
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+        new Thread(()->{
+            Message msg = new Message();
+            OkHttpClient client = new OkHttpClient();
+
+            FormBody.Builder builder = new FormBody.Builder();
+            builder.add("infoId", String.valueOf(id));
+            RequestBody requestBody = builder.build();
+
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath)
+                            + getResources().getString(R.string.DeleteCourse))
+                    .post(requestBody)
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("删除课程: ", e.getMessage());
+                    msg.what = FAIL;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.i("删除课程：", response.body().string());
+                    msg.what = SUCCESS;
+                    handler.sendMessage(msg);
+                }
+            });
+
+        }).start();
+    }
+
+    /**
+     * 描述：删除评论后发送广播(给AdminCommentFragment)
+     */
+    private void mySendBroadCast(String s) {
+        Intent intent = new Intent();
+        intent.putExtra("pos", coursePos);
+        intent.setAction(s);
+        sendBroadcast(intent);
     }
 }

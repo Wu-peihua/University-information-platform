@@ -115,6 +115,8 @@ public class AdminAddCourseActivity extends AppCompatActivity {
 
     private boolean isModify = false;
 
+    private static final String s1 = "addCourse";
+
 
 
     @Override
@@ -270,6 +272,7 @@ public class AdminAddCourseActivity extends AppCompatActivity {
 
                                     Toast.makeText(AdminAddCourseActivity.this, "课程发布成功", Toast.LENGTH_SHORT).show();
 
+                                    mySendBroadCast(s1);
                                     AdminAddCourseActivity.this.finish();
                                     break;
                                 //取消
@@ -638,9 +641,21 @@ public class AdminAddCourseActivity extends AppCompatActivity {
                         }
                     }
 
+
                 });
             }
         }).start();
 
+    }
+
+
+    /**
+     * 描述：删除评论后发送广播(给AdminCommentFragment)
+     */
+    private void mySendBroadCast(String s) {
+        Intent intent = new Intent();
+        intent.putExtra("pos", 1);
+        intent.setAction(s);
+        sendBroadcast(intent);
     }
 }

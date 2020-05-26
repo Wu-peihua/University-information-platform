@@ -1,7 +1,10 @@
 package com.example.uipfrontend.Admin.Fragment;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.uipfrontend.Admin.Activity.AdminAddCourseActivity;
@@ -87,6 +91,12 @@ public class AdminCourseFragment extends Fragment {
 
     private static final int myRequestCode = 166;
 
+    private MyActivityBroadcastReceiver receiver1,receiver2,receiver3,receiver4;//删除课程、删除评论、编辑课程,新建课程变化
+
+    private static final String s1 = "deleteCourse";
+    private static final String s2 = "deleteCourseComment";
+    private static final String s3 = "addCourse";
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -118,7 +128,7 @@ public class AdminCourseFragment extends Fragment {
 
         initListener();
         initFAB();
-
+        registerBroadCast();
     }
     //请求后端课程数据
     private void getData(String requestUrl){
@@ -289,20 +299,7 @@ public class AdminCourseFragment extends Fragment {
 
         dropDownMenu = rootView.findViewById(R.id.admin_dropDownMenu_student_course);
         headers = new String[]{"所属院校"};
-//        //初始化多级菜单
-//        final String[] levelOneMenu = {"华南师范大学"};
-//        //学院 暂定18个
-//        final String[][] levelTwoMenu = {
-//                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
-//                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"},
-//                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
-//                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"},
-//                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
-//                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"},
-//                {"计算机学院","软件学院","信息光电子学院","数学科学学院","地理科学学院","生命科学学院","外国语言文化学院","经济与管理学院","化学学院",
-//                        "心理学院","文学院","法学院","物理与电信工程学院","马克思学院","历史文化学院","音乐学院","教育信息技术学院","教育科学学院"}
-//
-//        };
+
         multiMenusView = new MultiMenusView(this.getContext(),levelOneMenu,levelTwoMenu);
         popupViews.add(multiMenusView);
         //初始化内容视图
@@ -316,14 +313,6 @@ public class AdminCourseFragment extends Fragment {
 
     private void initListener() {
 
-        //下拉菜单
-//        multiMenusView.setOnSelectListener(new MultiMenusView.OnSelectListener() {
-//            @Override
-//            public void getValue(String showText) {
-//                dropDownMenu.setTabText(showText);
-//                dropDownMenu.closeMenu();
-//            }
-//        });
         multiMenusView.setOnSelectListener(new com.example.uipfrontend.Utils.MultiMenusView.OnSelectListener() {
             @Override
             public void getMenuOne(String var1, int position) {
@@ -435,6 +424,51 @@ public class AdminCourseFragment extends Fragment {
         });
     }
 
+    private LocalBroadcastManager broadcastManager;
 
+    //接受课程详情的广播
+    private class MyActivityBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (Objects.requireNonNull(intent.getAction())) {
+                case s1:
+                case s2:
+                case s3:
+                    getData(getResources().getString(R.string.serverBasePath) +
+                            getResources().getString(R.string.queryCourse)
+                            + "/?pageNum=1&pageSize=" + PAGE_SIZE );
+                    studentCourseRecyclerViewAdapter.notifyDataSetChanged();
+                    break;
+
+            }
+        }
+    }
+
+    //描述：注册广播
+    private void registerBroadCast() {
+
+        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+
+        receiver1 = new MyActivityBroadcastReceiver ();
+        rootView.getContext().registerReceiver(receiver1, new IntentFilter(s1));
+
+        receiver2 = new MyActivityBroadcastReceiver ();
+        rootView.getContext().registerReceiver(receiver2, new IntentFilter(s2));
+
+        receiver3 = new MyActivityBroadcastReceiver();
+        rootView.getContext().registerReceiver(receiver3, new IntentFilter(s3));
+
+
+
+    }
+
+    //描述：取消广播注册
+    public void onDestroy() {
+        super.onDestroy();
+        Objects.requireNonNull(getActivity()).unregisterReceiver(receiver1);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(receiver2);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(receiver3);
+    }
 
 }
