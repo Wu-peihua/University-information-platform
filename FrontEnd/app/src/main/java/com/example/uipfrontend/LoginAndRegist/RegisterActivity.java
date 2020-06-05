@@ -25,7 +25,9 @@ import com.google.gson.JsonParser;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -156,28 +158,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             //设置请求体并设置contentType
             FormBody.Builder builder = new FormBody.Builder();
             builder.add("userName", userName);
-            //对password加密
-            RSAPublicKey rsaPublicKey = null;
-//            try {
-//                rsaPublicKey = RSAEncrypt.getPublicKey(publicKey);
-//            } catch (NoSuchAlgorithmException e) {
-//                e.printStackTrace();
-//            } catch (InvalidKeySpecException e) {
-//                e.printStackTrace();
-//            }
+
             //使用publicKey加密
-            String postPassword = null;
+            String postPassword;
             RSAPublicKey key = null;
 
             try {
                 key = RSAUtil.getPublicKey(publicKey);
-                postPassword = RSAUtil.publicEncrypt(password,key);
-                postPassword = postPassword.replaceAll("\n", "");
-            } catch (Exception e) {
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 e.printStackTrace();
             }
+            //公钥加密后的结果，同一数据每次加密结果不同
+            postPassword = RSAUtil.publicEncrypt(password,key);
+
+
             builder.add("pwd",postPassword);
-            System.out.println("postPassword:"+postPassword);
 
             RequestBody requestBody = builder.build();
 

@@ -2,11 +2,8 @@
     <string name="app_name">UIPFrontEnd</string>
 
     <!--url配置-->
-    <!--string name="serverBasePath">http://192.168.1.106:8080/uip</string-->
-    <!--string name="myIP">192.168.1.5</string-->
-
-    <string name="serverBasePath">http://192.168.0.103:8080/uip</string>
-    <string name="myIP">192.168.0.103</string>
+    <string name="serverBasePath">http://192.168.1.107:8080/uip</string>
+    <string name="myIP">192.168.1.107</string>
 
     <!--登录注册-->
     <string name="getPublicKey">/userinfo/getpublickey</string>

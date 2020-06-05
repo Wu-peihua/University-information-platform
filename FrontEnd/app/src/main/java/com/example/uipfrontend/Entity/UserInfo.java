@@ -6,6 +6,11 @@ import java.util.Date;
 import java.util.Map;
 
 public class UserInfo extends Application {
+
+
+    public UserInfo() {
+    }
+
     public Long getUserId() {
         return userId;
     }
@@ -117,4 +122,7 @@ public class UserInfo extends Application {
     private Map<String, Long> likeRecord;
     
     private Map<String, Long> reportRecord;
+
+
+
 }

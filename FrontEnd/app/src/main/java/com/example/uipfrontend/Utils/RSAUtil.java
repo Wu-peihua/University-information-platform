@@ -1,9 +1,5 @@
 package com.example.uipfrontend.Utils;
 
-//import org.apache.commons.codec.binary.Base64;
-import android.util.Base64;
-
-
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
 import java.security.*;
@@ -14,9 +10,9 @@ import java.security.spec.X509EncodedKeySpec;
 
 public class RSAUtil {
 
-    private static final String CHARSET = "UTF-8";
-    private static final String RSA_ALGORITHM = "RSA";
-
+    public static final String CHARSET = "UTF-8";
+    public static final String RSA_ALGORITHM = "RSA";
+    public static final String ECB_PKCS1_PADDING = "RSA/ECB/PKCS1Padding";//加密填充方式
 
 
     /**
@@ -27,7 +23,7 @@ public class RSAUtil {
     public static RSAPublicKey getPublicKey(String publicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
         //通过X509编码的Key指令获得公钥对象
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(Base64.decode(publicKey,Base64.DEFAULT));
+        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(Base64Ext.decode(publicKey,Base64Ext.DEFAULT));
         RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(x509KeySpec);
         return key;
     }
@@ -41,14 +37,15 @@ public class RSAUtil {
      */
     public static String publicEncrypt(String data, RSAPublicKey publicKey){
         try{
-            Cipher cipher = Cipher.getInstance("RSA");
+            Cipher cipher = Cipher.getInstance(ECB_PKCS1_PADDING);
+
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            return Base64.encodeToString(rsaSplitCodec(cipher, Cipher.ENCRYPT_MODE, data.getBytes("UTF-8"), publicKey.getModulus().bitLength()),Base64.DEFAULT);
+            return Base64Ext.encodeToString(rsaSplitCodec(cipher, Cipher.ENCRYPT_MODE, data.getBytes("UTF-8"), publicKey.getModulus().bitLength()),Base64Ext.DEFAULT);
+
         }catch(Exception e){
             throw new RuntimeException("加密字符串[" + data + "]时遇到异常", e);
         }
     }
-
 
 
 
