@@ -132,17 +132,20 @@ public class StudentMyReleaseCourseFragment extends Fragment {
                         Log.i("获取参与的课程评论: ", "失败");
                         tv_blank_text.setText("好像出了点问题");
                         tv_blank_text.setVisibility(View.VISIBLE);
+                        dialog.dismiss();
                         break;
                     case ZERO:
                         Log.i("获取参与的课程评论: ", "空");
                         //tv_blank_text.setText("还没有发过的帖子，去发一条");
                         tv_blank_text.setVisibility(View.VISIBLE);
+                        dialog.dismiss();
                         break;
                     case SUCCESS:
                         Log.i("获取参与的课程评论: ", "成功");
                         tv_blank_text.setVisibility(View.GONE);
                         adapter.setList(list);
                         adapter.notifyDataSetChanged();
+                        dialog.dismiss();
                         break;
                 }
                 super.handleMessage(msg);

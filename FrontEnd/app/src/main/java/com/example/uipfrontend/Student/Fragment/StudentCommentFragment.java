@@ -177,16 +177,19 @@ public class StudentCommentFragment extends Fragment {
                         Log.i("获取: ", "成功");
                         //初始化列表
                         initRecyclerView();
+                        dialog.dismiss();
                         break;
 
                     case FAIL:
                         Log.i("获取: ", "失败");
+                        dialog.dismiss();
                         break;
 
                     case ZERO:
                         Log.i("获取: ", "0");
                         //Toast.makeText(recyclerView.getContext(),"暂时没有新的信息！",Toast.LENGTH_SHORT).show();
                         initRecyclerView();
+                        dialog.dismiss();
                         break;
                 }
             }
