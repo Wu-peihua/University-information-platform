@@ -46,6 +46,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -330,14 +332,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void getPublicKeyAndLogin(String requestUrl1,String requestUrl2, String userName,String password){
 
+        ZLoadingDialog dialog = new ZLoadingDialog(LoginActivity.this);
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
+
         @SuppressLint("HandlerLeak") Handler handler = new Handler(){
             public void handleMessage(@NotNull Message msg) {
                 switch (msg.what){
                     case SUCCESS:
                         loginRequest(requestUrl2,userName,password);
+                        dialog.dismiss();
                         break;
                     case FAIL:
                         System.out.println("获取公钥失败！");
+                        dialog.dismiss();
                         break;
                 }
             }
@@ -494,19 +504,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    private void initUser(){
-        UserInfo user = (UserInfo) getApplication();
-//        user.setUserId(4L);
-//        user.setUserName("悟空");
-//        user.setPortrait("http://pic4.zhimg.com/50/v2-6ecab2cd6c1bbf9835030682db83543d_hd.jpg");
-    }
 
     private void getMenusData(){
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 if (msg.what == MenuDataOk) {//初始化下拉筛选
-//                    initListener();
                 }
                 super.handleMessage(msg);
             }

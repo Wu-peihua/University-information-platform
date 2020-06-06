@@ -13,15 +13,15 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.uipfrontend.CommonUser.CommonUserActivity;
 import com.example.uipfrontend.Entity.ResponseUserInfo;
-import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Utils.RSAUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.zyao89.view.zloading.ZLoadingDialog;
+import com.zyao89.view.zloading.Z_TYPE;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -88,14 +88,22 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private void getPublicKeyAndRegist(String requestUrl1,String requestUrl2, String userName,String password){
 
+        ZLoadingDialog dialog = new ZLoadingDialog(RegisterActivity.this);
+        dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
+                .setLoadingColor(getResources().getColor(R.color.blue))//颜色
+                .setHintText("加载中...")
+                .show();
+
         @SuppressLint("HandlerLeak") Handler handler = new Handler(){
             public void handleMessage(@NotNull Message msg) {
                 switch (msg.what){
                     case SUCCESS:
                         regist(requestUrl2,userName,password);
+                        dialog.dismiss();
                         break;
                     case FAIL:
                         System.out.println("获取公钥失败！");
+                        dialog.dismiss();
                         break;
                 }
             }
