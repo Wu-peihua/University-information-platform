@@ -68,7 +68,13 @@
         <activity
             android:name=".LoginAndRegist.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".LoginAndRegist.ForgetPwActivity"
             android:theme="@style/AppTheme.NoActionBar"
@@ -80,11 +86,6 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".CommonUser.Activity.WritePostActivity"

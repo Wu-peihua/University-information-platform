@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.uipfrontend.CommonUser.CommonUserActivity;
+import com.example.uipfrontend.Entity.ResponseUserInfo;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Utils.RSAUtil;
@@ -41,6 +42,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private static final int SUCCESS = 1;
     private static final int FAIL = -1;
+    private static final int DUPLICATE = 2;
     String publicKey;
 
 
@@ -140,14 +142,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void handleMessage(@NotNull Message msg) {
                 switch (msg.what){
                     case SUCCESS:
-                        //跳转到普通用户首页
-                        Intent i = new Intent(RegisterActivity.this , CommonUserActivity.class);
+                        //跳转到登录页面
+                        Intent i = new Intent(RegisterActivity.this , LoginActivity.class);
                         startActivity(i);
                         break;
                     case FAIL:
                         Toast.makeText(RegisterActivity.this,"注册失败！",Toast.LENGTH_SHORT).show();
-                        register.setBackground(getResources().getDrawable(R.drawable.bg_login_submit_lock));
-                        register.setTextColor(getResources().getColor(R.color.account_lock_font_color));
+                        register.setBackground(getResources().getDrawable(R.drawable.bg_login_submit));
+                        register.setTextColor(getResources().getColor(R.color.white));
+                        register.setEnabled(true);
+                        break;
+                    case DUPLICATE:
+                        Toast.makeText(RegisterActivity.this,"用户名已存在！",Toast.LENGTH_SHORT).show();
+                        register.setBackground(getResources().getDrawable(R.drawable.bg_login_submit));
+                        register.setTextColor(getResources().getColor(R.color.white));
                         register.setEnabled(true);
                         break;
                 }
@@ -170,7 +178,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
             //公钥加密后的结果，同一数据每次加密结果不同
             postPassword = RSAUtil.publicEncrypt(password,key);
-
 
             builder.add("pwd",postPassword);
 
@@ -203,16 +210,19 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     boolean success = new Gson().fromJson(element,boolean.class);
                     if(success){
                         JsonElement userInfo = jsonObject.get("userInfo");
-                        UserInfo userInfo1 = new Gson().fromJson(userInfo,UserInfo.class);
+                        ResponseUserInfo userInfo1 = new Gson().fromJson(userInfo,ResponseUserInfo.class);
                         System.out.println(userInfo1);
                         msg.what = SUCCESS;
-                        //将用户信息存放到Application中
-                        //
+
                     }else{
                         JsonElement element1 = jsonObject.get("msg");
                         String msgStr = new Gson().fromJson(element1,String.class);
                         System.out.println("msg:"+msgStr);
-                        msg.what = FAIL;
+                        if(msgStr.equals("用户名已存在")){
+                            msg.what = DUPLICATE;
+                        }else{
+                            msg.what = FAIL;
+                        }
                     }
 
                     handler.sendMessage(msg);

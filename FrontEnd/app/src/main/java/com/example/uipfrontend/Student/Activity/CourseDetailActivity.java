@@ -210,12 +210,12 @@ public class CourseDetailActivity extends AppCompatActivity {
                         System.out.println("response user info获取失败");
                     }
 
-                    UserInfo tempuser = responseUserInfo.getUserInfo();
-                    System.out.println("user university id:"+user.getUniversityId());
-                    //获取新的comments --更新列表
+//                    UserInfo tempuser = responseUserInfo.getUserInfo();
+//                    System.out.println("user university id:"+user.getUniversityId());
+//                    //获取新的comments --更新列表
 
 
-                    if (tempuser == null){
+                    if (responseUserInfo == null){
                         System.out.println("没有数据");
                     }
                     else {
