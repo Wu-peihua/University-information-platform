@@ -2,6 +2,8 @@ package com.example.uipfrontend.Entity;
 
 import android.app.Application;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -99,28 +101,40 @@ public class UserInfo extends Application {
     
     public void setReportRecord(Map<String, Long> record) { this.reportRecord = record; }
 
+    @Expose
     private Long userId;
 
+    @Expose
     private String userName;
 
+    @Expose
     private String pw;
 
+    @Expose
     private String stuNumber;
 
+    @Expose
     private String stuCard;
 
+    @Expose
     private String portrait;
 
+    @Expose
     private Integer universityId;
 
+    @Expose
     private Integer instituteId;
 
+    @Expose
     private Integer userType;
 
+    @Expose
     private Date created;
 
+    @Expose(serialize = false)
     private Map<String, Long> likeRecord;
-    
+
+    @Expose(serialize = false)
     private Map<String, Long> reportRecord;
 
 

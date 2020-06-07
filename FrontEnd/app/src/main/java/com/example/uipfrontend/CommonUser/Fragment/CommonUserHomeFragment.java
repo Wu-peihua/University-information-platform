@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,18 +26,40 @@ import com.example.uipfrontend.CommonUser.Activity.CommonUserModifyPasswordActiv
 import com.example.uipfrontend.CommonUser.Activity.CommonUserMyReleaseActivity;
 import com.example.uipfrontend.CommonUser.Activity.CommonUserPersonalInfoActivity;
 import com.example.uipfrontend.CommonUser.Activity.StudentVerifyActivity;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class CommonUserHomeFragment extends Fragment implements View.OnClickListener {
 
     private View rootView;
     private Activity activity;
+    
+    private UserInfo user;
 
     private TextView tv_name;
     private String str_name = "立即登录";
     private TextView tv_isVertify;
     private ImageView iv_portrait;
-    private Uri uri_portrait;
+    private String uri_portrait;
 
     @Nullable
     @Override
@@ -48,7 +73,7 @@ public class CommonUserHomeFragment extends Fragment implements View.OnClickList
         } else {
             rootView = inflater.inflate(R.layout.fragment_cu_home, null);
             activity = getActivity();
-
+            user = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();
             init();
         }
         return rootView;
@@ -63,11 +88,11 @@ public class CommonUserHomeFragment extends Fragment implements View.OnClickList
         tv_name = rootView.findViewById(R.id.tv_cu_home_name);
         tv_isVertify = rootView.findViewById(R.id.tv_cu_home_isVertify);
         iv_portrait = rootView.findViewById(R.id.iv_cu_home_portrait);
-        uri_portrait = getResourcesUri(R.drawable.ic_default_portrait);
-
-        str_name = "张咩阿";
+        
+        str_name = user.getUserName();
         tv_name.setText(str_name);
         tv_isVertify.setText("否");
+        uri_portrait = user.getPortrait();
         Glide.with(rootView.getContext()).load(uri_portrait)
                 .placeholder(R.drawable.portrait_default)
                 .error(R.drawable.portrait_default)
@@ -81,7 +106,7 @@ public class CommonUserHomeFragment extends Fragment implements View.OnClickList
         switch (view.getId()) {
             case R.id.rl_cu_home_personalInfo:
                 Intent intent0 = new Intent(activity, CommonUserPersonalInfoActivity.class);
-                intent0.putExtra("oldPortrait", uri_portrait.toString());
+                intent0.putExtra("oldPortrait", uri_portrait);
                 intent0.putExtra("oldNickname", str_name);
                 startActivityForResult(intent0, 0);
                 break;
@@ -103,17 +128,29 @@ public class CommonUserHomeFragment extends Fragment implements View.OnClickList
 
         if (requestCode == 0) {
             if (resultCode == 1) {
+                String tmp = "";
+                if (user == null) {
+                    user = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();
+                }
                 if (data.getStringExtra("newNickname") != null) {
-                    str_name = data.getStringExtra("newNickname");
-                    tv_name.setText(str_name);
+                    tmp = data.getStringExtra("newNickname");
+                    if (!tmp.equals(str_name)) {
+                        str_name = tmp;
+                        user.setUserName(str_name);
+                        tv_name.setText(str_name);
+                    }
                 }
                 if (data.getStringExtra("newPortrait") != null) {
-                    uri_portrait = Uri.parse(data.getStringExtra("newPortrait"));
-                    Glide.with(rootView.getContext()).load(uri_portrait)
-                            .placeholder(R.drawable.portrait_default)
-                            .error(R.drawable.portrait_default)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(iv_portrait);
+                    tmp = data.getStringExtra("newPortrait");
+                    if (!tmp.equals(uri_portrait)) {
+                        uri_portrait = tmp;
+                        user.setPortrait(uri_portrait);
+                        Glide.with(rootView.getContext()).load(uri_portrait)
+                                .placeholder(R.drawable.portrait_default)
+                                .error(R.drawable.portrait_default)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(iv_portrait);
+                    }
                 }
             }
         }

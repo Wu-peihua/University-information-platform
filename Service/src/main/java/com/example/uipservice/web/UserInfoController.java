@@ -73,7 +73,7 @@ public class UserInfoController {
      * @return modelMap
      */
     @RequestMapping(value = "/updateuserinfo", method = RequestMethod.POST)
-    private Map<String,Object> updateUserInfo(UserInfo userInfo){
+    private Map<String,Object> updateUserInfo(@RequestBody UserInfo userInfo){
         Map<String,Object> modelMap = new HashMap<String, Object>();
         modelMap.put("success", userInfoService.updateUserInfo(userInfo));
         return modelMap;

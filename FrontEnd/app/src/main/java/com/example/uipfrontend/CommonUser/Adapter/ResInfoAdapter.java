@@ -162,6 +162,7 @@ public class ResInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             resInfoViewHolder.tv_link.setText(resInfo.getAddress());
             resInfoViewHolder.tv_time.setText(resInfo.getCreated());
             resInfoViewHolder.icv_like.setCount(resInfo.getLikeNumber());
+            if (user == null) user = (UserInfo) context.getApplicationContext();
             if (user.getLikeRecord().containsKey("resource" + resInfo.getInfoId()))
                 resInfoViewHolder.icv_like.setState(true);
             if (user.getReportRecord().containsKey("resource" + resInfo.getInfoId()))

@@ -1,13 +1,12 @@
 package com.example.uipfrontend.LoginAndRegist;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.uipfrontend.Admin.AdminHomeActivity;
@@ -36,11 +36,11 @@ import com.example.uipfrontend.Entity.ResponseUserInfo;
 import com.example.uipfrontend.Entity.University;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.Entity.UserRecord;
-import com.example.uipfrontend.MainActivity;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.StudentActivity;
 import com.example.uipfrontend.Utils.RSAUtil;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -454,6 +454,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     handler.sendMessage(msg);
                 }
 
+                @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
 
@@ -466,7 +467,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     boolean success = new Gson().fromJson(element,boolean.class);
                     if(success){
                         JsonElement userInfo = jsonObject.get("userInfo");
-                        ResponseUserInfo userInfo1 = new Gson().fromJson(userInfo,ResponseUserInfo.class);
+                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+                        ResponseUserInfo userInfo1 = gson.fromJson(userInfo,ResponseUserInfo.class);
                         System.out.println(userInfo1);
                         msg.what = SUCCESS;
                         //将用户信息存放到getApplication中
@@ -474,7 +476,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         user.setUserId(userInfo1.getUserId());
                         user.setUserName(userInfo1.getUserName());
                         user.setPortrait(userInfo1.getPortrait());
-                        user.setCreated(userInfo1.getCreated());
+                        // user.setCreated(userInfo1.getCreated()); // TODO date问题
                         user.setInstituteId(userInfo1.getInstituteId());
                         user.setPw(userInfo1.getPw());
                         user.setUniversityId(userInfo1.getUniversityId());

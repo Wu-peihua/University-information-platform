@@ -2,8 +2,8 @@
     <string name="app_name">UIPFrontEnd</string>
 
     <!--url配置-->
-    <string name="serverBasePath">http://192.168.1.106:8080/uip</string>
-    <string name="myIP">192.168.1.106</string>
+    <string name="serverBasePath">http://192.168.0.103:8080/uip</string>
+    <string name="myIP">192.168.0.103</string>
 
     <!--登录注册-->
     <string name="getPublicKey">/userinfo/getpublickey</string>
@@ -16,6 +16,9 @@
     <!--图片上传-->
     <string name="uploadImage">/image/upload</string>
 
+    <!--更新用户信息-->
+    <string name="updateUserInfo">/userinfo/updateuserinfo</string>
+    
     <!--获取用户记录-->
     <string name="getUserRecord">/userrecord/queryrecord</string>
     <!--添加用户记录-->

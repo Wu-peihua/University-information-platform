@@ -58,7 +58,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         if(userInfo.getUserId()!=null ){
             try{
                 UserInfo userInfo1 = userInfoMapper.selectByPrimaryKey(userInfo.getUserId());
-                if(userInfo1 != null){
+                if(userInfo1 == null){
                     throw new RuntimeException("用该用户不存在！");
                 }
                 int effectNum = userInfoMapper.updateByPrimaryKey(userInfo);

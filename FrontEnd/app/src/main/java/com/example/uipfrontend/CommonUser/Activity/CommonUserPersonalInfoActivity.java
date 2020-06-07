@@ -1,22 +1,25 @@
 package com.example.uipfrontend.CommonUser.Activity;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,22 +28,46 @@ import android.widget.Toast;
 import com.bigkoo.alertview.AlertView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.example.uipfrontend.MainActivity;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
-import com.example.uipfrontend.Student.Activity.StudentModifyNameActivity;
 import com.example.uipfrontend.Utils.ImageDialog;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class CommonUserPersonalInfoActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final int NETWORK_ERR = -2;
+    private static final int SERVER_ERR = -1;
+    private static final int SUCCESS = 1;
+
     private ImageView iv_portrait;
     private Uri uri_portrait;
+    private String portraitNet;
     private TextView tv_name;
 
     private Intent backIntent;
@@ -51,6 +78,7 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
     final private int maxSelectNum = 1;
     //照片存储列表
     private List<LocalMedia> selectList;
+    private String portraitLocal;
     //主题风格
     private int themeId = R.style.picture_default_style;
     //状态栏背景色
@@ -159,8 +187,7 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 tv_name.setText(et.getText().toString().trim());
-                                backIntent.putExtra("newNickname", tv_name.getText().toString());
-                                setResult(1, backIntent);
+                                updateUserInfo();
                             }
                         })
                         .setNegativeButton("取消", null)
@@ -287,10 +314,10 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
                     // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
                     // 4.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
                     LocalMedia media = selectList.get(0);
-                    uri_portrait = Uri.fromFile(new File(media.getPath()));
+                    portraitLocal = media.getPath();
+                    uri_portrait = Uri.fromFile(new File(portraitLocal));
                     Glide.with(this).load(uri_portrait).into(iv_portrait);
-                    backIntent.putExtra("newPortrait", uri_portrait.toString());
-                    setResult(1, backIntent);
+                    updatePortrait();
                     break;
             }
         }
@@ -303,5 +330,168 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
                 resources.getResourceTypeName(id) + "/" +
                 resources.getResourceEntryName(id));
         return drawableUri;
+    }
+
+    private void updatePortrait() {
+
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            public void handleMessage(Message message) {
+                switch (message.what) {
+                    case NETWORK_ERR:
+                        Log.i("上传图片: ", "失败 - 网络错误");
+                        Toast.makeText(CommonUserPersonalInfoActivity.this, 
+                                "头像修改失败", Toast.LENGTH_SHORT).show();
+                        break;
+                    case SERVER_ERR:
+                        Log.i("上传图片: ", "失败 - 服务器错误");
+                        Toast.makeText(CommonUserPersonalInfoActivity.this,
+                                "头像修改失败", Toast.LENGTH_SHORT).show();
+                        break;
+                    case SUCCESS:
+                        Log.i("上传图片: ", "成功");
+                        backIntent.putExtra("newPortrait", portraitNet);
+                        setResult(1, backIntent);
+                        updateUserInfo();
+                        break;
+                }
+            }
+        };
+        uploadImage(handler);
+    }
+    
+    private void uploadImage(Handler handler) {
+
+        new Thread(() -> {
+            OkHttpClient client = new OkHttpClient();
+            Message msg = new Message();
+
+            // 创建MultipartBody.Builder，用于添加请求的数据
+            MultipartBody.Builder builder = new MultipartBody.Builder();
+            File file = new File(portraitLocal); // 生成文件
+            // 根据文件的后缀名，获得文件类型
+            builder.addFormDataPart( // 给Builder添加上传的文件
+                    "image",  // 请求的名字
+                    file.getName(), // 文件名，服务器端用来解析的
+                    RequestBody.create(file, MediaType.parse("multipart/form-data")) // 创建RequestBody，把上传的文件放入
+            );
+
+            Request.Builder requestBuilder = new Request.Builder();
+            requestBuilder.url(getResources().getString(R.string.serverBasePath)
+                    + getResources().getString(R.string.uploadImage))
+                    .post(builder.build());
+
+            Call call= client.newCall(requestBuilder.build());
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("上传图片: ","失败" + e.getMessage());
+                    msg.what = NETWORK_ERR;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String resStr = Objects.requireNonNull(response.body()).string();
+                    Log.i("上传图片: ", resStr);
+                    // 图片上传成功后再上传表单信息
+                    // 解析大学json字符串数组
+                    JsonObject jsonObjectUrl = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonArray jsonArrayUrl = jsonObjectUrl.getAsJsonArray("urlList");
+
+                    portraitNet = "";
+                    // 循环遍历数组
+                    for (JsonElement jsonElement : jsonArrayUrl) {
+                        portraitNet += jsonElement.toString() + ",";
+                    }
+
+                    if (portraitNet.equals("")) {
+                        msg.what = SERVER_ERR;
+                    }
+                    else {
+                        msg.what = SUCCESS;
+                    }
+
+                    handler.sendMessage(msg);
+                }
+
+            });
+        }).start();
+
+    }
+
+    private void updateUserInfo() {
+        UserInfo user = (UserInfo) getApplication();
+        if (!user.getUserName().equals(tv_name.getText().toString()))
+            user.setUserName(tv_name.getText().toString());
+        if (portraitNet != null )
+            user.setPortrait(portraitNet);
+
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                switch (msg.what) {
+                    case NETWORK_ERR:
+                        Log.i("修改信息: ", "失败 - 网络错误");
+                        Toast.makeText(CommonUserPersonalInfoActivity.this,
+                                "信息修改失败", Toast.LENGTH_SHORT).show();
+                        break;
+                    case SERVER_ERR:
+                        Log.i("修改信息: ", "失败 - 服务器错误");
+                        Toast.makeText(CommonUserPersonalInfoActivity.this,
+                                "信息修改失败", Toast.LENGTH_SHORT).show();
+                        break;
+                    case SUCCESS:
+                        Log.i("修改信息: ", "成功");
+                        backIntent.putExtra("newNickname", tv_name.getText().toString());
+                        setResult(1, backIntent);
+                        break;
+                }
+            }
+        };
+        
+        new Thread(()->{
+            Message msg = new Message();
+            OkHttpClient okHttpClient = new OkHttpClient();
+            
+            GsonBuilder builder = new GsonBuilder();
+            builder.excludeFieldsWithoutExposeAnnotation();
+            Gson gson = builder.setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+            String json = gson.toJson(user);
+
+            Log.i("提交表单-用户信息：", json);
+
+            RequestBody requestBody = FormBody.create(json, MediaType.parse("application/json;charset=utf-8"));
+
+            Request request = new Request.Builder()
+                    .url(getResources().getString(R.string.serverBasePath) + 
+                            getResources().getString(R.string.updateUserInfo))
+                    .post(requestBody)
+                    .build();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.i("提交失败:", Objects.requireNonNull(e.getMessage()));
+                    msg.what = NETWORK_ERR;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    String resStr = Objects.requireNonNull(response.body()).string();
+                    Log.i("提交成功:", resStr);
+
+                    JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
+                    JsonElement element = jsonObject.get("success");
+
+                    boolean res = new Gson().fromJson(element, boolean.class);
+                    if (res) msg.what = SUCCESS;
+                    else msg.what = SERVER_ERR;
+                    handler.sendMessage(msg);
+                }
+            });
+        }).start();
     }
 }
