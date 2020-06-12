@@ -4,8 +4,6 @@ import com.example.uipservice.dao.UserInfoMapper;
 import com.example.uipservice.entity.UserInfo;
 import com.example.uipservice.service.UserInfoService;
 import com.example.uipservice.util.RSAUtil;
-import com.example.uipservice.util.RSAUtils;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -188,6 +186,27 @@ public class UserInfoServiceImpl implements UserInfoService {
             modelMap.put("msg","用户名已存在");
         }
         return modelMap;
+    }
+
+    @Override
+    public boolean updatePassword(Long userId, String pw) {
+        if (userId != null && pw != null) {
+            try {
+                RSAPrivateKey key = RSAUtil.getPrivateKey(privateKey);
+                String newPw = RSAUtil.privateDecrypt(pw, key);
+                int effectNum = userInfoMapper.updatePassword(userId, newPw);
+                if (effectNum > 0) {
+                    return true;
+                } else {
+                    throw new RuntimeException("服务器错误，修改密码失败！");
+                }
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                e.printStackTrace();
+                throw new RuntimeException("服务器错误，修改密码失败！");
+            }
+        } else {
+            throw new RuntimeException("数据错误");
+        }
     }
 
 

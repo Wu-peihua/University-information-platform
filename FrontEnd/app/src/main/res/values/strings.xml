@@ -18,6 +18,8 @@
 
     <!--更新用户信息-->
     <string name="updateUserInfo">/userinfo/updateuserinfo</string>
+    <!--修改密码-->
+    <string name="modifyPassword">/userinfo/modifypassword</string>
     
     <!--获取用户记录-->
     <string name="getUserRecord">/userrecord/queryrecord</string>

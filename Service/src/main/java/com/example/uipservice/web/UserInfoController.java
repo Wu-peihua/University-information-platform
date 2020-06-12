@@ -112,6 +112,11 @@ public class UserInfoController {
         return modelMap;
     }
 
-
+    @RequestMapping(value = "/modifypassword", method = RequestMethod.POST)
+    private Map<String, Object> modifyPassword(Long userId, String newPw) {
+        Map<String,Object> modelMap = new HashMap<>();
+        modelMap.put("result", userInfoService.updatePassword(userId, newPw));
+        return modelMap;
+    }
 
 }

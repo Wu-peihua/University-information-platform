@@ -30,4 +30,7 @@ public interface UserInfoService {
     //用户注册
     Map<String,Object> regist(String userName, String pwd);
 
+    // 修改密码
+    boolean updatePassword(Long userId, String pw);
+
 }
