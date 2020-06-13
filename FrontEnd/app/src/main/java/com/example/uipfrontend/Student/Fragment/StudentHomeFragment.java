@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.example.uipfrontend.Student.Activity.StudentModifyPasswordActivity;
@@ -40,6 +41,8 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
     private Uri portrait;  //头像uri
 
     private UserInfo userInfo;
+    private String str_name ;
+    private String uri_portrait;
 
     @Nullable
     @Override
@@ -67,6 +70,8 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
         rootView.findViewById(R.id.rl_student_home_vertify).setOnClickListener(this);
 
         userInfo = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();  //获取登录用户信息
+        str_name = userInfo.getUserName();
+        uri_portrait = userInfo.getPortrait();
 
         imPortrait = rootView.findViewById(R.id.iv_student_home_portrait);
         portrait = getResourcesUri(R.drawable.ic_default_portrait);
@@ -85,7 +90,10 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
         switch (view.getId()) {
             case R.id.rl_student_personalInfo:
                 Intent intent0 = new Intent(activity, StudentPersonalInfoActivity.class);
-                startActivity(intent0);
+                intent0.putExtra("oldPortrait", uri_portrait);
+                intent0.putExtra("oldNickname", str_name);
+                startActivityForResult(intent0, 0);
+                //startActivity(intent0);
                 break;
             case R.id.rl_student_home_vertify:
                 Intent intent1 = new Intent(activity,StudentVerifyInfoActivity.class);
@@ -116,4 +124,40 @@ public class StudentHomeFragment extends Fragment  implements View.OnClickListen
                 resources.getResourceEntryName(id));
         return drawableUri;
     }
+
+    //修改用户信息
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 0) {
+            if (resultCode == 1) {
+                String tmp = "";
+                if (userInfo == null) {
+                    userInfo = (UserInfo) Objects.requireNonNull(getActivity()).getApplication();
+                }
+                if (data.getStringExtra("newNickname") != null) {
+                    tmp = data.getStringExtra("newNickname");
+                    if (!tmp.equals(str_name)) {
+                        str_name = tmp;
+                        userInfo.setUserName(str_name);
+                        name.setText(str_name);
+                    }
+                }
+                if (data.getStringExtra("newPortrait") != null) {
+                    tmp = data.getStringExtra("newPortrait");
+                    if (!tmp.equals(uri_portrait)) {
+                        uri_portrait = tmp;
+                        userInfo.setPortrait(uri_portrait);
+                        Glide.with(rootView.getContext()).load(uri_portrait)
+                                .placeholder(R.drawable.portrait_default)
+                                .error(R.drawable.portrait_default)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(imPortrait);
+                    }
+                }
+            }
+        }
+    }
+
 }

@@ -162,6 +162,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 userInfo = new UserInfo();
                 userInfo.setUserName(userName);
                 userInfo.setPw(resultKey);
+                userInfo.setPortrait("http://bpic.588ku.com/element_pic/01/48/89/075744458690810.jpg");//设置默认头像
                 int effectNum = userInfoMapper.insertSelective(userInfo);
                 userInfo = userInfoMapper.selectByUserName(userName);
                 if(effectNum > 0 ){

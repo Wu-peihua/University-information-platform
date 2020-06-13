@@ -87,6 +87,7 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
     private int upResId, downResId;
     private int chooseMode = PictureMimeType.ofAll();
 
+    private UserInfo userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,16 +127,23 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
         iv_portrait = findViewById(R.id.iv_cu_personalPortrait);
         tv_name = findViewById(R.id.tv_cu_personalName);
 
+        //修改个人信息点击闪退问题
+        //userInfo = (UserInfo)getApplication();  //获取登录用户信息
+        //Glide.with(this).load(userInfo.getPortrait()).into(iv_portrait);
+        //tv_name.setText(userInfo.getUserName());
+
+
         Intent receivedIntent = getIntent();
         uri_portrait = Uri.parse(receivedIntent.getStringExtra("oldPortrait"));
-        iv_portrait.setOnClickListener(this);
-        Glide.with(this).load(uri_portrait)
-                .placeholder(R.drawable.portrait_default)
-                .error(R.drawable.portrait_default)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(iv_portrait);
 
-        tv_name.setText(receivedIntent.getStringExtra("oldNickname"));
+            iv_portrait.setOnClickListener(this);
+            Glide.with(this).load(uri_portrait)
+                    .placeholder(R.drawable.portrait_default)
+                    .error(R.drawable.portrait_default)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(iv_portrait);
+
+       tv_name.setText(receivedIntent.getStringExtra("oldNickname"));
     }
 
     @Override
