@@ -159,10 +159,12 @@ public class StudentRecruitRecyclerViewAdapter extends RecyclerView.Adapter {
 
         //显示组队信息图片
         ArrayList<ImageInfo> imageInfo = new ArrayList<>();
-        ImageInfo info = new ImageInfo();
+        ImageInfo info;
         if(list.get(pos).getPictures() != null){
             String tempUrl[] = list.get(pos).getPictures().split(",");
             for(String url : tempUrl){
+                info = new ImageInfo();
+                url = url.substring(1,url.length()-1);
                 //localhost需改为服务器的ip才能正常显示图片
                 info.setThumbnailUrl(url); //略缩图
                 info.setBigImageUrl(url);  //点击放大图

@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">UIPFrontEnd</string>
+    <string name="app_name">高校信息共享平台</string>
 
     <!--url配置-->
-    <string name="serverBasePath">http://192.168.44.116:8080/uip</string>
-    <string name="myIP">192.168.44.116</string>
+    <string name="serverBasePath">http://121.199.64.171:8080/uip</string>
+    <string name="myIP">121.199.64.171</string>
 
     <!--登录注册-->
     <string name="getPublicKey">/userinfo/getpublickey</string>

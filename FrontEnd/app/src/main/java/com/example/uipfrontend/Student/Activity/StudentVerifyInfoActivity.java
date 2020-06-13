@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -100,7 +101,7 @@ public class StudentVerifyInfoActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(getResources().getColor(R.color.blue));
 
         setTitle("");
-        Toolbar toolbar = findViewById(R.id.cu_toolbar_studentVerify);
+        Toolbar toolbar = findViewById(R.id.toolbar_vertifyInfo);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -248,6 +249,23 @@ public class StudentVerifyInfoActivity extends AppCompatActivity {
             cer_pictures.setAdapter(new NineGridViewClickAdapter(this, imageList));
 
         }
+    }
+
+    //toolbar的操作
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            /*
+             * 将actionBar的HomeButtonEnabled设为ture，
+             *
+             * 将会执行此case
+             */
+            case android.R.id.home:
+                finish();
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

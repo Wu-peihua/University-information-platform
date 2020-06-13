@@ -132,7 +132,6 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
         //Glide.with(this).load(userInfo.getPortrait()).into(iv_portrait);
         //tv_name.setText(userInfo.getUserName());
 
-
         Intent receivedIntent = getIntent();
         uri_portrait = Uri.parse(receivedIntent.getStringExtra("oldPortrait"));
 
@@ -347,17 +346,17 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
             public void handleMessage(Message message) {
                 switch (message.what) {
                     case NETWORK_ERR:
-                        Log.i("上传图片: ", "失败 - 网络错误");
+                        Log.i("上传图片", "失败 - 网络错误");
                         Toast.makeText(CommonUserPersonalInfoActivity.this, 
                                 "头像修改失败", Toast.LENGTH_SHORT).show();
                         break;
                     case SERVER_ERR:
-                        Log.i("上传图片: ", "失败 - 服务器错误");
+                        Log.i("上传图片", "失败 - 服务器错误");
                         Toast.makeText(CommonUserPersonalInfoActivity.this,
                                 "头像修改失败", Toast.LENGTH_SHORT).show();
                         break;
                     case SUCCESS:
-                        Log.i("上传图片: ", "成功");
+                        Log.i("上传图片", "成功");
                         backIntent.putExtra("newPortrait", portraitNet);
                         setResult(1, backIntent);
                         updateUserInfo();
@@ -393,7 +392,7 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("上传图片: ","失败" + e.getMessage());
+                    Log.i("上传图片 ","失败" + e.getMessage());
                     msg.what = NETWORK_ERR;
                     handler.sendMessage(msg);
                 }
@@ -401,17 +400,17 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String resStr = Objects.requireNonNull(response.body()).string();
-                    Log.i("上传图片: ", resStr);
+                    Log.i("上传图片 ", resStr);
                     // 图片上传成功后再上传表单信息
                     // 解析大学json字符串数组
                     JsonObject jsonObjectUrl = new JsonParser().parse(resStr).getAsJsonObject();
                     JsonArray jsonArrayUrl = jsonObjectUrl.getAsJsonArray("urlList");
 
-                    portraitNet = "";
-                    // 循环遍历数组
                     for (JsonElement jsonElement : jsonArrayUrl) {
-                        portraitNet += jsonElement.toString() + ",";
+                        portraitNet = jsonElement.toString();
                     }
+
+                    portraitNet = portraitNet.substring(1,portraitNet.length()-1);
 
                     if (portraitNet.equals("")) {
                         msg.what = SERVER_ERR;
@@ -441,17 +440,17 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
             public void handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
                     case NETWORK_ERR:
-                        Log.i("修改信息: ", "失败 - 网络错误");
+                        Log.i("修改信息 ", "失败 - 网络错误");
                         Toast.makeText(CommonUserPersonalInfoActivity.this,
                                 "信息修改失败", Toast.LENGTH_SHORT).show();
                         break;
                     case SERVER_ERR:
-                        Log.i("修改信息: ", "失败 - 服务器错误");
+                        Log.i("修改信息 ", "失败 - 服务器错误");
                         Toast.makeText(CommonUserPersonalInfoActivity.this,
                                 "信息修改失败", Toast.LENGTH_SHORT).show();
                         break;
                     case SUCCESS:
-                        Log.i("修改信息: ", "成功");
+                        Log.i("修改信息 ", "成功");
                         backIntent.putExtra("newNickname", tv_name.getText().toString());
                         setResult(1, backIntent);
                         break;
@@ -468,7 +467,7 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
             Gson gson = builder.setDateFormat("yyyy-MM-dd HH:mm:ss").create();
             String json = gson.toJson(user);
 
-            Log.i("提交表单-用户信息：", json);
+            Log.i("提交表单-用户信息", json);
 
             RequestBody requestBody = FormBody.create(json, MediaType.parse("application/json;charset=utf-8"));
 
@@ -481,7 +480,7 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.i("提交失败:", Objects.requireNonNull(e.getMessage()));
+                    Log.i("提交失败", Objects.requireNonNull(e.getMessage()));
                     msg.what = NETWORK_ERR;
                     handler.sendMessage(msg);
                 }
@@ -489,7 +488,7 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String resStr = Objects.requireNonNull(response.body()).string();
-                    Log.i("提交成功:", resStr);
+                    Log.i("提交成功", resStr);
 
                     JsonObject jsonObject = new JsonParser().parse(resStr).getAsJsonObject();
                     JsonElement element = jsonObject.get("success");

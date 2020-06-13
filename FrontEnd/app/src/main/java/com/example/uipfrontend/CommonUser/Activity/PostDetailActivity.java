@@ -16,7 +16,9 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,8 +26,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
@@ -158,9 +162,25 @@ public class PostDetailActivity extends AppCompatActivity {
         post = (ForumPosts) Objects.requireNonNull(getIntent().getExtras())
                 .get("detail"); // 获取intent传递来的帖子对象
         list = new ArrayList<>();
-        
+
+        initToolBar();
         getComment();
         init();
+    }
+
+    public void initToolBar() {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        getWindow().setStatusBarColor(getResources().getColor(R.color.blue));
+
+        setTitle("");
+        Toolbar toolbar = findViewById(R.id.toolbar_postDetail);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     /**
@@ -1080,5 +1100,15 @@ public class PostDetailActivity extends AppCompatActivity {
         intent.putExtra("pos", postPos);
         intent.setAction(s);
         sendBroadcast(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

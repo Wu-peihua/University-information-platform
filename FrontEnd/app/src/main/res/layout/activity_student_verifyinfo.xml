@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/student_toolbar_VerifyInfo"
+            android:id="@+id/toolbar_vertifyInfo"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:maxLines="1"
-                android:text="学生认证信息"
+                android:text="学生认证"
                 android:textColor="@color/white"
                 android:textSize="@dimen/fontSize_l" />
 
