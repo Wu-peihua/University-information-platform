@@ -197,7 +197,6 @@ public class SubFragment1 extends Fragment {
 
                 if(selectedUniversity <= 0 )
                     selectedUniversity = 1;
-                System.out.println("university:"+selectedUniversity+"  institute:"+selectedInstitute);
 
                 getData(getResources().getString(R.string.serverBasePath) + getResources().getString(R.string.queryRecruitByUniAndInsReport)
                         + "/?pageNum="+ 1 +"&pageSize="+ PAGE_SIZE  + "&universityId=" + selectedUniversity + "&instituteId=" + selectedInstitute);
@@ -211,11 +210,13 @@ public class SubFragment1 extends Fragment {
     }
 
     private void getData(String requestUrl){
+
         ZLoadingDialog dialog = new ZLoadingDialog(getContext());
         dialog.setLoadingBuilder(Z_TYPE.DOUBLE_CIRCLE)//设置类型
                 .setLoadingColor(getResources().getColor(R.color.blue))//颜色
                 .setHintText("加载中...")
                 .show();
+
         list = new ArrayList<>();
         @SuppressLint("HandlerLeak")
         Handler handler = new Handler() {
