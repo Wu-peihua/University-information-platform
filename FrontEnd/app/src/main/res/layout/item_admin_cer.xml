@@ -81,8 +81,8 @@
 
                 <info.hoang8f.widget.FButton
                     android:id="@+id/admin_btn_pass_cer"
-                    android:layout_margin="@dimen/margin_s"
-                    android:layout_width="50dp"
+                    android:layout_margin="3dp"
+                    android:layout_width="40dp"
                     android:layout_height="30dp"
                     android:text="通过"
                     android:layout_toLeftOf="@id/admin_btn_unpass_cer"
@@ -94,8 +94,8 @@
                     />
                 <info.hoang8f.widget.FButton
                     android:id="@+id/admin_btn_unpass_cer"
-                    android:layout_margin="@dimen/margin_s"
-                    android:layout_width="50dp"
+                    android:layout_margin="3dp"
+                    android:layout_width="40dp"
                     android:layout_height="30dp"
 
                     android:layout_alignParentRight="true"
