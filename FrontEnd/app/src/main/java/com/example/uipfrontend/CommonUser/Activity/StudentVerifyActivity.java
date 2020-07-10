@@ -715,6 +715,8 @@ public class StudentVerifyActivity extends AppCompatActivity {
             Message msg = new Message();
 
             Gson gson = new Gson();
+            certification.setStuCard(certification.getStuCard().replaceAll("\"",""));
+            certification.setStuCard(certification.getStuCard().replaceAll(",",""));
             String json = gson.toJson(certification);
             
             String requestUrl = isFirstTime ? getResources().getString(R.string.insertCertification) 
