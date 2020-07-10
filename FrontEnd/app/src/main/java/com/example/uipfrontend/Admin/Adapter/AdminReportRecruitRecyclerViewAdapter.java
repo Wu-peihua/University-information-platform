@@ -35,6 +35,10 @@ public class AdminReportRecruitRecyclerViewAdapter extends RecyclerView.Adapter 
     private List<String> userNameList;
     private List<String> userPortraitList;
 
+    private static final int SUCCESS = 1;
+    private static final int FAIL = -1;
+    private static final int ZERO = 0; //记录请求回来的数据条数是否为零
+
     private UserInfo userInfo;
 
     public AdminReportRecruitRecyclerViewAdapter(Context context, List list,List userNameList,List userPortraitList,UserInfo userInfo) {
@@ -128,10 +132,12 @@ public class AdminReportRecruitRecyclerViewAdapter extends RecyclerView.Adapter 
 
         //显示组队信息图片
         ArrayList<ImageInfo> imageInfo = new ArrayList<>();
-        ImageInfo info = new ImageInfo();
+        ImageInfo info;
         if(list.get(pos).getPictures() != null){
             String tempUrl[] = list.get(pos).getPictures().split(",");
             for(String url : tempUrl){
+                info = new ImageInfo();
+                url = url.substring(1,url.length()-1);
                 //localhost需改为服务器的ip才能正常显示图片
                 info.setThumbnailUrl(url); //略缩图
                 info.setBigImageUrl(url);  //点击放大图
