@@ -151,7 +151,7 @@ public class AdminAddCourseActivity extends AppCompatActivity {
         }
     }
 
-    private void initRecyclerView(){
+    public void initRecyclerView(){
         recyclerView = findViewById(R.id.rv_admin_picture);
 
         //主题风格id设置
@@ -627,12 +627,13 @@ public class AdminAddCourseActivity extends AppCompatActivity {
 
                         //循环遍历数组
                         for (JsonElement jsonElement : jsonArrayUrl) {
-                            url += jsonElement.toString() + ",";
+                            url += jsonElement.toString();
+
                         }
 
                         System.out.println("url:"+url);
-
-                        course.setCoursePicture(url);
+                        url.replaceAll("\"","");
+                        course.setCoursePicture(url.replaceAll("\"",""));
 
                         if(!isModify){
                             insertOrModifyCourse(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.InsertCourse));
