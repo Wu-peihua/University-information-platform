@@ -19,15 +19,6 @@
             android:paddingTop="@dimen/padding_xxxl"
             android:paddingBottom="@dimen/padding_xxl">
 
-            <com.lzy.widget.CircleImageView
-                android:id="@+id/iv_admin_home_portrait"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_alignParentRight="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_default_portrait"
-                app:civ_BorderWidth="0dp" />
-
             <TextView
                 android:id="@+id/tv_admin_home_name"
                 android:layout_width="wrap_content"
@@ -58,14 +49,54 @@
                 android:paddingBottom="@dimen/fontSize_xs"
                 android:text="管理员" />
 
+            <com.lzy.widget.CircleImageView
+                android:id="@+id/iv_admin_home_portrait"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_default_portrait"
+                app:civ_BorderWidth="0dp" />
+
         </RelativeLayout>
-        <!--        分割线-->
-        <!--        <ImageView-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="1dp"-->
-        <!--            android:background="@color/divider" />-->
 
+        <RelativeLayout
+            android:id="@+id/rl_admin_personalInfo"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/home_select_bg"
+            android:paddingLeft="30dp">
 
+            <ImageView
+                android:id="@+id/iv_admin_personalInfo"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/ic_vertify" />
+
+            <TextView
+                android:id="@+id/tv_admin_personalInfoLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/iv_admin_personalInfo"
+                android:text="个人信息"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:typeface="serif" />
+
+            <ImageView
+                android:layout_width="13dp"
+                android:layout_height="13dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="30dp"
+                android:src="@drawable/ic_back" />
+
+        </RelativeLayout>
 
 
         <RelativeLayout
