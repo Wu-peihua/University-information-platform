@@ -31,6 +31,7 @@ import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.example.uipfrontend.Entity.ResInfo;
+import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -66,6 +67,7 @@ public class AddResActivity extends AppCompatActivity implements View.OnTouchLis
     private String title;
     private String description;
     private String address;
+    private UserInfo user;
     private Long userId;
     private int subjectId;
     private int typeId;
@@ -87,6 +89,8 @@ public class AddResActivity extends AppCompatActivity implements View.OnTouchLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_res);
 
+        user = (UserInfo) getApplication();
+        userId = user.getUserId();
         initToolBar();
         initView();
         initNoLinkOptionsPicker();
@@ -119,7 +123,6 @@ public class AddResActivity extends AppCompatActivity implements View.OnTouchLis
     }
 
     public void initData() {
-        userId = (long) 4;
         Intent intent = getIntent();
         ResInfo acceptData = (ResInfo) intent.getSerializableExtra("resInfo");
         if (acceptData != null) {
