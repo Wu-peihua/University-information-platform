@@ -15,6 +15,7 @@ import com.example.uipfrontend.CommonUser.Activity.PostDetailActivity;
 import com.example.uipfrontend.CommonUser.Activity.WritePostActivity;
 import com.example.uipfrontend.Entity.ForumPosts;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Utils.DateUtil;
 
 import java.util.List;
 
@@ -92,7 +93,7 @@ public class MyReleasePostAdapter extends RecyclerView.Adapter   {
 
             viewHolder.tv_title.setText(list.get(position).getTitle());
             viewHolder.tv_poster.setText(list.get(position).getUserName());
-            viewHolder.tv_time.setText(list.get(position).getCreated());
+            viewHolder.tv_time.setText(DateUtil.fromToday(list.get(position).getCreated()));
 
             // 跳转到帖子详情
             viewHolder.tv_detail.setOnClickListener(view -> onDetailClickListener.onClick(view, position));

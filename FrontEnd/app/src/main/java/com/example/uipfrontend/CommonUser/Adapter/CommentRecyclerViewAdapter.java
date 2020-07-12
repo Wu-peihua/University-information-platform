@@ -19,6 +19,7 @@ import com.example.uipfrontend.CommonUser.Activity.CommentDetailActivity;
 import com.example.uipfrontend.Entity.PostComment;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Utils.DateUtil;
 import com.lzy.widget.CircleImageView;
 import com.parfoismeng.expandabletextviewlib.weiget.ExpandableTextView;
 import com.sunbinqiang.iconcountview.IconCountView;
@@ -101,7 +102,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter {
         String isMe = user.getUserId().equals(list.get(position).getFromId()) ? "(我)" : "";
         viewHolder.tv_userName.setText(String.format("%s%s", list.get(position).getFromName(), isMe));
         viewHolder.tv_content.setContentText(list.get(position).getContent());
-        viewHolder.tv_time.setText(list.get(position).getCreated());
+        viewHolder.tv_time.setText(DateUtil.fromToday(list.get(position).getCreated()));
         
         viewHolder.praise.setCount(list.get(position).getLikeNumber());
         if (user.getLikeRecord().containsKey("comment" + list.get(position).getInfoId())) {

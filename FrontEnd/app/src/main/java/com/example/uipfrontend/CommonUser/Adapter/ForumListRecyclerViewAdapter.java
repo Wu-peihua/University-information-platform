@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uipfrontend.Entity.ForumPosts;
 import com.example.uipfrontend.R;
+import com.example.uipfrontend.Utils.DateUtil;
 
 import java.util.List;
 
@@ -85,7 +86,7 @@ public class ForumListRecyclerViewAdapter extends RecyclerView.Adapter  {
             }
         }
         viewHolder.tv_poster.setText(list.get(position).getUserName());
-        viewHolder.tv_time.setText(list.get(position).getCreated());
+        viewHolder.tv_time.setText(DateUtil.fromToday(list.get(position).getCreated()));
         viewHolder.tv_like.setText(String.valueOf(list.get(position).getLikeNumber()));
         viewHolder.tv_reply.setText(String.valueOf(list.get(position).getReplyNumber()));
         viewHolder.ll_item.setOnClickListener(view -> itemClickListener.onClick(view, position));
