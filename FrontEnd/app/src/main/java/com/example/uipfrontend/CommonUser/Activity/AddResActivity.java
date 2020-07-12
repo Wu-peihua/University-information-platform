@@ -75,8 +75,7 @@ public class AddResActivity extends AppCompatActivity implements View.OnTouchLis
     String[] option1 = {"哲学", "经济学", "法学", "教育学", "文学", "历史学", "理学", "工学", "农学", "医学", "军事学", "管理学", "艺术学"};
     String[] option2 = {"论文、报告", "试题", "电子书", "视频课程", "其他"};
     //url的正则表达式
-    private String regex = "^(?=^.{3,255}$)(http(s)?:\\/\\/)?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}" +
-            "(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\\d+)*(\\/\\w+\\.\\w+)*([\\?&]\\w+=\\w*)*$";
+    private String regex = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
 
     private static final int NETWORK_ERR = -2;
     private static final int SERVER_ERR = -1;
