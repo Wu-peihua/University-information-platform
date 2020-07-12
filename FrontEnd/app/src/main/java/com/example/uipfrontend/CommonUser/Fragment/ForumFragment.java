@@ -148,6 +148,7 @@ public class ForumFragment extends Fragment {
                     case SERVER_ERR:
                         Log.i("获取帖子: ", "失败 - 服务器错误");
                         setTip("好像出了点问题，请稍候再试", View.VISIBLE);
+                        break;
                     case ZERO:
                         Log.i("获取帖子: ", "空");
                         setTip("还没有帖子，去发一条", View.VISIBLE);

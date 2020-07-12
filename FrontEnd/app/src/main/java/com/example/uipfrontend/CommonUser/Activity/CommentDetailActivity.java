@@ -12,7 +12,9 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,8 +23,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
@@ -148,12 +152,31 @@ public class CommentDetailActivity extends AppCompatActivity {
 
     private void init() {
         user = (UserInfo) getApplication();
+        initToolBar();
         initRecyclerView();
         initHeadView();
         setHeadView();
         initCommentDialog();
         setHeadListener();
         setListListener();
+    }
+
+    /**
+     * 描述：自定义toolbar
+     */
+    public void initToolBar() {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        getWindow().setStatusBarColor(getResources().getColor(R.color.blue));
+
+        setTitle("");
+        Toolbar toolbar = findViewById(R.id.toolbar_commentDetail);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
     
     /**
@@ -186,6 +209,7 @@ public class CommentDetailActivity extends AppCompatActivity {
                         Log.i("获取回复: ", "成功");
                         adapter.setList(list);
                         adapter.notifyDataSetChanged();
+                        xRecyclerView.setNoMore(false);
                         break;
                 }
                 setReplySum();
@@ -835,5 +859,18 @@ public class CommentDetailActivity extends AppCompatActivity {
         intent.putExtra("pos", commentPos);
         intent.setAction(s);
         sendBroadcast(intent);
+    }
+
+    /**
+     * 描述：toolbar按钮监听
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

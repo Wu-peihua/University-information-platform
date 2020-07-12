@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -321,7 +322,11 @@ public class CommonUserPersonalInfoActivity extends AppCompatActivity implements
                     // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
                     // 4.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
                     LocalMedia media = selectList.get(0);
-                    portraitLocal = media.getPath();
+                    if (Build.VERSION.SDK_INT == 29) {
+                        portraitLocal = media.getAndroidQToPath();
+                    } else {
+                        portraitLocal = media.getPath();
+                    }
                     uri_portrait = Uri.fromFile(new File(portraitLocal));
                     Glide.with(this).load(uri_portrait).into(iv_portrait);
                     updatePortrait();

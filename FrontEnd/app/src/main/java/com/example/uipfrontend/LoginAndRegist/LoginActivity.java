@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -83,6 +84,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private LinearLayout mLayBackBar;
     private TextView mTvLoginForgetPwd;
     private Button mBtLoginRegister;
+    private CheckBox autoLogin;
 
     private static final int SUCCESS = 1;
     private static final int FAIL = -1;
@@ -156,6 +158,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mEtLoginUsername.addTextChangedListener(this);
         mEtLoginPwd.setOnFocusChangeListener(this);
         mEtLoginPwd.addTextChangedListener(this);
+
+
+        //自动登录
+        autoLogin = findViewById(R.id.cb_remember_login);
+
+        SharedPreferences sharedPre=getSharedPreferences("autoLogin", MODE_PRIVATE);
+        String username = sharedPre.getString("username", "");
+        String password = sharedPre.getString("password", ""); // TODO 加密保存
+        if (!username.equals("") && !password.equals("")) {
+            mEtLoginUsername.setText(username);
+            mEtLoginPwd.setText(password);
+            // mBtLoginSubmit.performClick();
+        } 
+
     }
 
     @Override
@@ -188,6 +204,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 getPublicKeyAndLogin(getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.getPublicKey),
                         getResources().getString(R.string.serverBasePath)+getResources().getString(R.string.loginUrl)
                         ,mEtLoginUsername.getText().toString(),mEtLoginPwd.getText().toString());
+                if (autoLogin.isChecked()) {
+                    saveLoginInfo();
+                }
                 break;
             case R.id.bt_login_register:
                 //注册
@@ -243,6 +262,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    private void saveLoginInfo() {
+        // 获取SharedPreferences对象
+        SharedPreferences sharedPre = getSharedPreferences("autoLogin", MODE_PRIVATE);
+        //获取Editor对象
+        SharedPreferences.Editor editor=sharedPre.edit();
+        //设置参数
+        editor.putString("username", mEtLoginUsername.getText().toString().trim());
+        editor.putString("password", mEtLoginPwd.getText().toString().trim());
+        //提交
+        editor.apply();
+    }
 
     //用户名密码焦点改变
     @Override
@@ -405,6 +435,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }else{
                             i = new Intent(LoginActivity.this, AdminHomeActivity.class);
                         }
+                        // 销毁当前Activity
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(i);
                         break;
                     case FAIL:
@@ -475,7 +507,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         UserInfo user = (UserInfo) getApplication();
                         user.setUserId(userInfo1.getUserId());
                         user.setUserName(userInfo1.getUserName());
-                        user.setPortrait(userInfo1.getPortrait());
+                        String portrait = userInfo1.getPortrait();
+                        portrait = portrait.replace("localhost", getResources().getString(R.string.myIP));
+                        portrait = portrait.replace("\"", "");
+                        user.setPortrait(portrait);
                         // user.setCreated(userInfo1.getCreated()); // TODO date问题
                         user.setInstituteId(userInfo1.getInstituteId());
                         user.setPw(userInfo1.getPw());

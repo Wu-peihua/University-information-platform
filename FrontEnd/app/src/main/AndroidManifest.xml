@@ -93,7 +93,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".CommonUser.Activity.PostDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CommonUser.Activity.CommentDetailActivity" />
+        <activity android:name=".CommonUser.Activity.CommentDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

@@ -1,17 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".CommonUser.Activity.CommentDetailActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_commentDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_commentDetail"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:textAlignment="center"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:maxLines="1"
+                android:text="评论详情"
+                android:textColor="@color/white"
+                android:textSize="@dimen/fontSize_l" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+    
     <!-- 评论回复 -->
     <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/rv_cu_forum_comment_reply"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/appbar_commentDetail"
         android:layout_above="@+id/ll_cu_forum_comment_detail_comment_bar"
         android:clipChildren="false"
         android:clipToPadding="false"

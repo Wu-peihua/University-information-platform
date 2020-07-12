@@ -168,6 +168,9 @@ public class PostDetailActivity extends AppCompatActivity {
         init();
     }
 
+    /**
+     * 描述：自定义toolbar
+     */
     public void initToolBar() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().setStatusBarColor(getResources().getColor(R.color.blue));
@@ -232,6 +235,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         Log.i("获取评论: ", "成功");
                         adapter.setList(list);
                         adapter.notifyDataSetChanged();
+                        xRecyclerView.setNoMore(false);
                         break;
                 }
                 setCommentSum();
@@ -1102,6 +1106,9 @@ public class PostDetailActivity extends AppCompatActivity {
         sendBroadcast(intent);
     }
 
+    /**
+     * 描述：toolbar按钮监听
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,7 +29,6 @@ import com.bigkoo.alertview.AlertView;
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.example.uipfrontend.Entity.Certification;
-import com.example.uipfrontend.Entity.Student;
 import com.example.uipfrontend.Entity.UserInfo;
 import com.example.uipfrontend.LoginAndRegist.LoginActivity;
 import com.example.uipfrontend.R;
@@ -607,7 +607,11 @@ public class StudentVerifyActivity extends AppCompatActivity {
                     // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
                     // 4.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
                     for (LocalMedia media : selectList) {
-                        selectString.add(media.getPath());
+                        if (Build.VERSION.SDK_INT == 29) {
+                            selectString.add(media.getAndroidQToPath());
+                        } else {
+                            selectString.add(media.getPath());
+                        }
                         Log.i(TAG, "压缩---->" + media.getCompressPath());
                         Log.i(TAG, "原图---->" + media.getPath());
                         Log.i(TAG, "裁剪---->" + media.getCutPath());
