@@ -10,8 +10,9 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>uipservice</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>uipservice</name>
+    <packaging>jar</packaging>
     <description>Demo project for Spring Boot</description>
 
     <properties>
